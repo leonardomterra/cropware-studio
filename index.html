@@ -1942,22 +1942,6 @@
     font-size: 11px;
     color: #94a3b8;
   }
-  .gen-key-wrap { display: flex; gap: 8px; }
-  .gen-key-wrap input { flex: 1; }
-  .gen-eye-btn {
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    border-radius: 9px;
-    padding: 8px 13px;
-    cursor: pointer;
-    color: #64748b;
-    transition: all 0.15s;
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .gen-eye-btn:hover { background: #e2e8f0; }
   .gen-dropzone {
     border: 2px dashed #e2e8f0;
     border-radius: 10px;
@@ -4528,8 +4512,6 @@ let genImageMime = 'image/jpeg';
 
 function openGenerator() {
   document.getElementById('genModal').classList.add('open');
-  const googleKey = localStorage.getItem('cropware_google_key');
-  if (googleKey) document.getElementById('genGoogleKey').value = googleKey;
 }
 
 function closeGenerator() {
@@ -4643,12 +4625,7 @@ async function saveConfig() {
   }
 }
 
-function toggleKey(inputId, btnId) {
-  const input = document.getElementById(inputId);
-  const btn   = document.getElementById(btnId);
-  if (input.type === 'password') { input.type = 'text';     btn.innerHTML = '<span class="material-symbols-outlined sz-18">visibility_off</span>'; }
-  else                           { input.type = 'password'; btn.innerHTML = '<span class="material-symbols-outlined sz-18">visibility</span>'; }
-}
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const fileInput = document.getElementById('genImageInput');
@@ -4799,7 +4776,7 @@ async function fetchGeminiWithRetry(url, init, label) {
   throw lastErr || new Error(`${label}: falhou após retries`);
 }
 
-async function callGeminiText(googleKey, theme, tone, userImageBase64, userImageMime, extraDirection) {
+async function callGeminiText(theme, tone, userImageBase64, userImageMime, extraDirection) {
   const systemPrompt = buildSystemPrompt(tone);
   const directionSuffix = extraDirection && extraDirection.trim()
     ? `\n\nDireção adicional do usuário: ${extraDirection.trim()}`
@@ -4814,14 +4791,20 @@ async function callGeminiText(googleKey, theme, tone, userImageBase64, userImage
       ];
 
   const resp = await fetchGeminiWithRetry(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${googleKey}`,
+    `${SUPABASE_URL}/functions/v1/gemini`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+      },
       body: JSON.stringify({
-        contents: [{ parts: userParts }],
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        generationConfig: { responseMimeType: 'application/json' }
+        model: 'gemini-2.5-flash',
+        body: {
+          contents: [{ parts: userParts }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          generationConfig: { responseMimeType: 'application/json' }
+        }
       })
     },
     'Gemini texto'
@@ -4835,16 +4818,12 @@ async function callGeminiText(googleKey, theme, tone, userImageBase64, userImage
 }
 
 // Chama o Gemini imagem (3.1 Flash Image Preview) e retorna { base64, mime }.
-async function callGeminiImage(googleKey, imagePrompt, extraDirection) {
-  // Restrições duras que o modelo de imagem TEM que obedecer.
-  // Modelos de difusão respondem melhor a frases positivas ("plain, unbranded")
-  // do que a negações ("no logos"), então usamos as duas formas.
+async function callGeminiImage(imagePrompt, extraDirection) {
   const hardRules = [
     'Strict rule: absolutely NO text, NO watermarks, NO logos, NO brand marks, NO writing anywhere in the image.',
     'All clothing, caps, shirts and uniforms must be PLAIN and UNBRANDED — no prints, no logos, no labels, no visible text.',
     'All equipment, machinery, tools and devices must be generic and unbranded — no visible brand names or labels.',
   ];
-  // Restrições vindas da configuração de estilo (campo "Evitar")
   const avoid = (designConfig.avoid || '').trim();
   if (avoid) {
     hardRules.push(`Additional brand restrictions to avoid: ${avoid}`);
@@ -4854,15 +4833,21 @@ async function callGeminiImage(googleKey, imagePrompt, extraDirection) {
     : '';
   const finalPrompt = `${imagePrompt}\n\n${hardRules.join('\n')}${directionBlock}`;
   const resp = await fetchGeminiWithRetry(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image-preview:generateContent?key=${googleKey}`,
+    `${SUPABASE_URL}/functions/v1/gemini`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: finalPrompt }] }],
-        generationConfig: {
-          responseModalities: ['TEXT', 'IMAGE'],
-          imageConfig: { aspectRatio: '4:5' }
+        model: 'gemini-3.1-flash-image-preview',
+        body: {
+          contents: [{ parts: [{ text: finalPrompt }] }],
+          generationConfig: {
+            responseModalities: ['TEXT', 'IMAGE'],
+            imageConfig: { aspectRatio: '4:5' }
+          }
         }
       })
     },
@@ -4879,16 +4864,12 @@ async function callGeminiImage(googleKey, imagePrompt, extraDirection) {
 }
 
 async function generatePost() {
-  const googleKey = document.getElementById('genGoogleKey').value.trim();
   const theme     = document.getElementById('genTheme').value.trim();
   const tone      = designConfig.tone || 'casual';
   const btn       = document.getElementById('genBtn');
   const needImage = !genImageBase64;
 
-  if (!googleKey) { setGenStatus('Informe a chave API Google AI.', 'error'); return; }
   if (!theme)     { setGenStatus('Descreva o tema do post.', 'error'); return; }
-
-  localStorage.setItem('cropware_google_key', googleKey);
 
   btn.disabled = true;
   btn.textContent = 'Gerando...';
@@ -4896,7 +4877,7 @@ async function generatePost() {
 
   try {
     // Passo 1: Gemini texto
-    const parsed = await callGeminiText(googleKey, theme, tone, genImageBase64, genImageMime);
+    const parsed = await callGeminiText(theme, tone, genImageBase64, genImageMime);
 
     // Passo 2: Gemini imagem (se não houver upload)
     let finalImgBase64 = genImageBase64;
@@ -4905,7 +4886,7 @@ async function generatePost() {
     if (needImage) {
       setGenStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">hourglass_empty</span>Passo 2/2 — Nano Banana gerando imagem...', '');
       const imgPrompt = parsed.imagePrompt || `Photorealistic agricultural field photo related to: ${theme}. Golden hour lighting, no text.`;
-      const img = await callGeminiImage(googleKey, imgPrompt);
+      const img = await callGeminiImage(imgPrompt);
       finalImgBase64 = img.base64;
       finalImgMime   = img.mime;
     }
@@ -4971,16 +4952,6 @@ async function generatePost() {
 
 // ── REGENERAÇÃO PARCIAL (texto / imagem / legenda) ──────────
 
-// Retorna a chave Google do localStorage ou pede ao usuário.
-function getGoogleKeyOrPrompt() {
-  let key = localStorage.getItem('cropware_google_key') || '';
-  if (!key) {
-    key = (prompt('Informe sua chave API Google AI para regenerar:') || '').trim();
-    if (key) localStorage.setItem('cropware_google_key', key);
-  }
-  return key;
-}
-
 // Desabilita os 3 botões de regen e mostra estado "gerando" no btn clicado.
 function setRegenBusy(busy, activeBtnId) {
   ['pcRegenText', 'pcRegenImage', 'pcRegenLegend'].forEach(id => {
@@ -5006,12 +4977,10 @@ function getRegenDirection() {
 async function regenerateText() {
   const post = posts[current];
   if (!post || !post.isGenerated) return;
-  const key = getGoogleKeyOrPrompt();
-  if (!key) return;
   const direction = getRegenDirection();
   setRegenBusy(true, 'pcRegenText');
   try {
-    const parsed = await callGeminiText(key, post.theme || post.title || '', post.tone || 'casual', null, null, direction);
+    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction);
     pushUndoSnapshot(post, {
       kind: 'text',
       hookHTML:       post.hookHTML,
@@ -5042,13 +5011,11 @@ async function regenerateText() {
 async function regenerateImage() {
   const post = posts[current];
   if (!post || !post.isGenerated) return;
-  const key = getGoogleKeyOrPrompt();
-  if (!key) return;
   const direction = getRegenDirection();
   const imagePrompt = post.imagePrompt || `Photorealistic agricultural field photo related to: ${post.theme || ''}. Golden hour lighting, no text.`;
   setRegenBusy(true, 'pcRegenImage');
   try {
-    const img = await callGeminiImage(key, imagePrompt, direction);
+    const img = await callGeminiImage(imagePrompt, direction);
     pushUndoSnapshot(post, { kind: 'image', bgImage: post.bgImage });
     post.bgImage = `data:${img.mime};base64,${img.base64}`;
     const postEl = document.getElementById(post.id);
@@ -5064,12 +5031,10 @@ async function regenerateImage() {
 async function regenerateLegend() {
   const post = posts[current];
   if (!post || !post.isGenerated) return;
-  const key = getGoogleKeyOrPrompt();
-  if (!key) return;
   const direction = getRegenDirection();
   setRegenBusy(true, 'pcRegenLegend');
   try {
-    const parsed = await callGeminiText(key, post.theme || post.title || '', post.tone || 'casual', null, null, direction);
+    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction);
     pushUndoSnapshot(post, { kind: 'legend', legend: legends[current] });
     // Aplica apenas a legenda + hashtags, preserva hook/complement/imagem
     legends[current] = sanitizeLegend((parsed.legend || '') + (parsed.hashtags ? '\n\n' + parsed.hashtags : ''));
@@ -5127,15 +5092,6 @@ function setGenStatus(msg, type) {
       <button class="gen-close" onclick="closeGenerator()"><span class="material-symbols-outlined">close</span></button>
     </div>
     <div class="gen-body">
-
-      <div class="gen-group">
-        <label>Chave API Google AI <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0">(copy + imagem)</span></label>
-        <div class="gen-key-wrap">
-          <input type="password" id="genGoogleKey" placeholder="AIzaSy..." autocomplete="off" />
-          <button class="gen-eye-btn" id="genGoogleEyeBtn" onclick="toggleKey('genGoogleKey','genGoogleEyeBtn')"><span class="material-symbols-outlined sz-18">visibility</span></button>
-        </div>
-        <small>Chave salva localmente no navegador.</small>
-      </div>
 
       <div class="gen-group">
         <label>Tema / Contexto do Post</label>
