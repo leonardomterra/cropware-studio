@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cropware — Studio de Posts</title>
+<link rel="icon" type="image/png" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300;400;500;600;700;800&family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=DM+Sans:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -64,13 +65,25 @@
   .login-msg.error   { color: #dc2626; }
 
   /* ── LOGOUT BTN (sidebar) ── */
+  .logout-row {
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+    padding-top: 8px;
+  }
+  .logout-email {
+    font-size: 13px; color: #94a3b8;
+    font-family: 'Google Sans Flex', sans-serif;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    min-width: 0; flex: 1;
+  }
   .logout-btn {
-    display: flex; align-items: center; gap: 6px;
-    padding: 8px 16px;
+    display: flex; align-items: center; gap: 4px;
+    padding: 4px 0;
     border: none; background: none; cursor: pointer;
     font-size: 13px; font-family: 'Google Sans Flex', sans-serif;
     color: #94a3b8; transition: color 0.2s;
-    width: 100%;
+    flex-shrink: 0;
   }
   .logout-btn:hover { color: #dc2626; }
 
@@ -147,7 +160,7 @@
   .sidebar-header {
     flex-shrink: 0;
     padding: 0 16px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--text);
     border-bottom: 1px solid var(--border);
@@ -160,7 +173,7 @@
     box-sizing: border-box;
   }
   .aside-label {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--text);
     padding: 0 16px;
@@ -2306,12 +2319,6 @@
   <!-- COLUNA 1: Lista de posts -->
   <aside id="sidebarAside">
     <div class="aside-label">Posts</div>
-
-    <div style="margin-top:auto; border-top:1px solid var(--border);">
-      <button class="logout-btn" onclick="handleLogout()">
-        <span class="material-symbols-outlined sz-18">logout</span>Sair
-      </button>
-    </div>
   </aside>
 
   <!-- COLUNA 2: Legenda -->
@@ -2688,7 +2695,8 @@ function buildSidebar() {
   genWrap.innerHTML =
     '<button class="btn-cfg" onclick="openConfig()">Configurar Estilo</button>' +
     '<button class="btn-gen-ai" onclick="openGenerator()">Gerar com IA</button>' +
-    '<button class="btn-download" id="downloadBtn" onclick="downloadCurrent()" style="display:none"><span class="material-symbols-outlined sz-18">download</span>Baixar Post</button>';
+    '<button class="btn-download" id="downloadBtn" onclick="downloadCurrent()" style="display:none"><span class="material-symbols-outlined sz-18">download</span>Baixar Post</button>' +
+    '<div class="logout-row"><span class="logout-email" id="userEmail"></span><button class="logout-btn" onclick="handleLogout()"><span class="material-symbols-outlined sz-18">logout</span>Sair</button></div>';
   aside.appendChild(genWrap);
 }
 
@@ -2861,6 +2869,8 @@ function showApp(user) {
   currentUser = user;
   document.getElementById('loginScreen').classList.add('hidden');
   document.querySelector('main').style.display = '';
+  const emailEl = document.getElementById('userEmail');
+  if (emailEl && user.email) emailEl.textContent = user.email;
 }
 
 // Exibe um toast vermelho no canto superior direito quando algo da
@@ -4445,6 +4455,8 @@ async function bootStudio() {
   await loadDesignConfig();  // carrega diretriz de marca/voz do Supabase
   ensureLogoSvgMarkup();     // pré-carrega SVG markup (pro html2canvas inline)
   buildSidebar();
+  const emailEl = document.getElementById('userEmail');
+  if (emailEl && currentUser && currentUser.email) emailEl.textContent = currentUser.email;
   buildDots();
   initPostControls();  // wire up swatches, toggles e botões de regen
   if (posts.length > 0) {
