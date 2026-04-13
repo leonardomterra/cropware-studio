@@ -501,15 +501,14 @@
   #legendText[contenteditable="true"] {
     cursor: text;
     border-radius: 4px;
-    transition: outline-color 120ms ease;
+    outline: none;
+    transition: background 120ms ease;
   }
   #legendText[contenteditable="true"]:hover {
-    outline: 1px dashed rgba(74,162,118,0.45);
-    outline-offset: 4px;
+    background: rgba(0,0,0,0.02);
   }
   #legendText[contenteditable="true"]:focus {
-    outline: 1px dashed rgba(74,162,118,0.85);
-    outline-offset: 4px;
+    background: #f1f5f9;
   }
 
   .brand-strip {
@@ -1744,7 +1743,7 @@
   .legend-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
   .legend-text {
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.75;
     color: var(--muted);
     white-space: pre-wrap;
