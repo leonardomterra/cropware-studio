@@ -6,7 +6,7 @@
 <title>Cropware — Studio de Posts</title>
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300;400;500;600;700;800&family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=DM+Sans:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300;400;500;600;700;800&family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=DM+Sans:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Raleway:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -342,9 +342,10 @@
     position: absolute;
     display: flex;
     align-items: center;
-    font-family: 'Raleway', 'DM Sans', sans-serif;
-    font-size: calc(28px * var(--site-scale, 1));
-    font-weight: 500;
+    font-family: 'Space Mono', monospace;
+    font-size: calc(24px * var(--site-scale, 1));
+    font-weight: 400;
+    text-transform: uppercase;
     color: rgba(255,255,255,0.70);
     letter-spacing: 0.04em;
     text-shadow: 0 1px 6px rgba(0,0,0,0.45);
@@ -365,6 +366,19 @@
   .post[data-style="split"] .post-site[data-pos="bc"],
   .post[data-style="split"] .post-site[data-pos="br"] { height: calc(29px * var(--logo-scale, 1)); }
   .post-site.post-site-dark {
+    color: rgba(71, 85, 105, 0.70);
+    text-shadow: none;
+  }
+
+  /* Brand mode: controle universal claro/escuro para logo + site */
+  .post[data-brand="light"] img[src*="logo-cropware"] {
+    filter: brightness(0) invert(1) !important;
+  }
+  .post[data-brand="dark"] img[src*="logo-cropware"] {
+    filter: brightness(0) invert(0.3) !important;
+    opacity: 1 !important;
+  }
+  .post[data-brand="dark"] .post-site {
     color: rgba(71, 85, 105, 0.70);
     text-shadow: none;
   }
@@ -1964,6 +1978,33 @@
   .copy-btn:hover { color: var(--text); border-color: rgba(0,0,0,0.2); }
   .copy-btn.copied { color: var(--green); border-color: var(--green); }
 
+  .filename-section {
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    flex-shrink: 0;
+    display: none;
+  }
+  .filename-section.visible { display: block; }
+  .filename-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .filename-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-weight: 400;
+    background: rgba(0,0,0,0.03);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    word-break: break-all;
+    user-select: all;
+  }
+
   .legend-body {
     flex: 1;
     overflow-y: auto;
@@ -2365,17 +2406,11 @@
      ────────────────────────────────────────────────────────── */
   /* ── STUDIO MODE SELECTOR ── */
   .studio-tabs {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    flex-shrink: 0;
-    height: 40px;
-    box-sizing: border-box;
-    width: 100%;
-    padding: 0 12px;
+    display: none;
   }
   .studio-mode-select {
+    width: 100%;
+    box-sizing: border-box;
     font-family: 'Google Sans Flex', sans-serif;
     font-size: 14px;
     font-weight: 500;
@@ -2668,6 +2703,15 @@
       <div class="legend-text" id="legendText"></div>
       <div class="hashtags" id="hashtagsContainer"></div>
     </div>
+    <div class="filename-section" id="filenameSection">
+      <div class="filename-header">
+        <span class="legend-label">Nome do arquivo</span>
+        <button class="copy-btn" id="copyFilenameBtn" onclick="copyFilename()">
+          <span class="material-symbols-outlined sz-16">content_copy</span>Copiar
+        </button>
+      </div>
+      <div class="filename-text" id="filenameText"></div>
+    </div>
   </div>
 
   <!-- COLUNA 3: Ferramentas de edição -->
@@ -2816,6 +2860,13 @@
             <span class="pc-label-value" id="pcLogoScaleValue">100%</span>
           </div>
           <input type="range" class="pc-range" id="pcLogoScale" min="60" max="140" step="5" value="100">
+        </div>
+        <div class="pc-sub" id="pcSubBrandMode">
+          <div class="pc-label">Cor Logo / Site</div>
+          <div class="pc-toggle" id="pcBrandModeToggle">
+            <button data-brand="light">Claro</button>
+            <button data-brand="dark">Escuro</button>
+          </div>
         </div>
       </div>
     </div>
@@ -3139,6 +3190,10 @@ function buildSidebar() {
   const items = getModeItems();
   const currentIdx = getModeCurrentIdx();
 
+  // Salva o seletor de modo ANTES do innerHTML destruí-lo
+  const modeSelect = document.getElementById('studioModeSelect');
+  if (modeSelect) modeSelect.remove(); // detach do DOM, mantém em memória
+
   aside.innerHTML = `<div class="aside-label">${isCarousel ? 'Carrosséis' : 'Posts'}</div>`;
   items.forEach((p, i) => {
     const item = document.createElement('div');
@@ -3169,12 +3224,20 @@ function buildSidebar() {
   const isLinkedinCarousel = activeMode === 'linkedin-carousel';
   const dlLabel = isLinkedinCarousel ? 'Baixar PDF' : (isCarousel ? 'Baixar Carrossel' : 'Baixar Post');
   const dlAction = isLinkedinCarousel ? 'downloadLinkedInCarouselPDF()' : (isCarousel ? 'downloadCarousel()' : 'downloadCurrent()');
-  genWrap.innerHTML =
+  // Re-anexa o seletor de modo (salvo antes do innerHTML wipe)
+  if (modeSelect) genWrap.appendChild(modeSelect);
+  genWrap.insertAdjacentHTML('beforeend',
     '<button class="btn-cfg" onclick="openConfig()">Configurar Estilo</button>' +
     `<button class="btn-gen-ai" onclick="openGenerator()">${genLabel}</button>` +
     `<button class="btn-download" id="downloadBtn" onclick="${dlAction}" style="display:none"><span class="material-symbols-outlined sz-18">download</span>${dlLabel}</button>` +
-    '<div class="logout-row"><span class="logout-email" id="userEmail"></span><button class="logout-btn" onclick="handleLogout()"><span class="material-symbols-outlined sz-18">logout</span>Sair</button></div>';
+    '<div class="logout-row"><span class="logout-email" id="userEmail"></span><button class="logout-btn" onclick="handleLogout()"><span class="material-symbols-outlined sz-18">logout</span>Sair</button></div>');
   aside.appendChild(genWrap);
+  // Restaura email do usuário (o rebuild da sidebar apaga o conteúdo)
+  const emailEl = document.getElementById('userEmail');
+  if (emailEl && currentUser && currentUser.email) emailEl.textContent = currentUser.email;
+  // Restaura visibilidade do botão download (o rebuild recria com display:none)
+  const dlBtn = document.getElementById('downloadBtn');
+  if (dlBtn && items.length > 0) dlBtn.style.display = 'flex';
 }
 
 function buildDots() {
@@ -3742,6 +3805,7 @@ function renderGeneratedPost(postData, legendText) {
   if (!postData.sitePos)   postData.sitePos   = 'bl';
   if (postData.siteEnabled == null) postData.siteEnabled = true;
   if (postData.siteScale == null)   postData.siteScale   = 1;
+  if (!postData.brandMode) postData.brandMode = 'light';
   if (!postData.overlayColor)     postData.overlayColor     = '#000000';
   if (postData.overlayOpacity == null) postData.overlayOpacity = 55;
   if (!postData.overlayDirection) postData.overlayDirection = postData.layout === 'bottom' ? 'bottom' : 'top';
@@ -3807,6 +3871,7 @@ function renderGeneratedCarousel(carouselData, legendText) {
     if (!slideData.sitePos)   slideData.sitePos   = 'bl';
     if (slideData.siteEnabled == null) slideData.siteEnabled = true;
     if (slideData.siteScale == null)   slideData.siteScale   = 1;
+    if (!slideData.brandMode) slideData.brandMode = 'light';
     if (!slideData.overlayColor)     slideData.overlayColor     = '#000000';
     if (slideData.overlayOpacity == null) slideData.overlayOpacity = 55;
     if (!slideData.overlayDirection) slideData.overlayDirection = slideData.layout === 'bottom' ? 'bottom' : 'top';
@@ -3930,12 +3995,11 @@ function getLogoClass(logoPos) {
   }
 }
 
-function renderSiteText(postData, { dark = false } = {}) {
+function renderSiteText(postData) {
   if (postData.siteEnabled === false) return '';
   const text = escapeHTML(postData.siteText || 'cropware.app');
   const pos  = postData.sitePos || 'bl';
-  const cls  = 'post-site' + (dark ? ' post-site-dark' : '');
-  return `<div class="${cls}" data-pos="${pos}">${text}</div>`;
+  return `<div class="post-site" data-pos="${pos}">${text}</div>`;
 }
 
 function renderClassicStyle(postData) {
@@ -3985,7 +4049,7 @@ function renderClassicStyle(postData) {
       ${complementBlock}
       ${bulletsHTML}
     </div>
-    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware" style="filter:brightness(0) invert(1);">` : ''}
+    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
     ${renderSiteText(postData)}
     <div class="brand-strip"></div>
   `;
@@ -4014,7 +4078,7 @@ function renderDashboardStyle(postData) {
       <div class="dash-separator"></div>
       <div class="dash-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
     </div>
-    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware" style="filter:brightness(0) invert(1);">` : ''}
+    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
     ${renderSiteText(postData)}
   `;
 }
@@ -4105,7 +4169,7 @@ function renderRevistaStyle(postData) {
       <div class="revista-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
       ${postData.logoEnabled !== false ? '<img class="revista-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     </div>
-    ${renderSiteText(postData, { dark: siteDark })}
+    ${renderSiteText(postData)}
   `;
 }
 
@@ -4140,7 +4204,7 @@ function renderColunaStyle(postData) {
       <div class="coluna-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
       <div class="coluna-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
     </div>
-    ${renderSiteText(postData, { dark: siteDark })}
+    ${renderSiteText(postData)}
   `;
 }
 
@@ -4225,6 +4289,7 @@ function applyPostVariant(postEl, postData) {
   postEl.dataset.style   = style;
   postEl.dataset.layout  = layout;
   postEl.dataset.logoPos = logoPos;
+  postEl.dataset.brand   = postData.brandMode || 'light';
 
   let html;
   switch (style) {
@@ -4372,6 +4437,10 @@ function updatePostControls(idx) {
   });
   document.querySelectorAll('#pcLogoToggle button').forEach(b => {
     b.classList.toggle('active', b.dataset.logo === logoPos);
+  });
+  const brandMode = post.brandMode || 'light';
+  document.querySelectorAll('#pcBrandModeToggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.brand === brandMode);
   });
 
   // Sliders de escala (hook / complement / bullets)
@@ -4931,6 +5000,20 @@ function initPostControls() {
       saveSession();
     });
   });
+  // Toggle brand mode (claro/escuro) logo + site
+  document.querySelectorAll('#pcBrandModeToggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.brandMode = btn.dataset.brand;
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.dataset.brand = post.brandMode;
+      document.querySelectorAll('#pcBrandModeToggle button').forEach(b => {
+        b.classList.toggle('active', b.dataset.brand === post.brandMode);
+      });
+      saveSession();
+    });
+  });
   // Helper pra wire de slider de escala (hook / complement / bullets)
   const wireScaleSlider = (inputId, labelId, cssVar, postField) => {
     const range = document.getElementById(inputId);
@@ -5358,11 +5441,105 @@ function preBlurImage(src, blurPx) {
   });
 }
 
+// Unsharp mask: pré-aguça o canvas para compensar a compressão do LinkedIn.
+// radius = raio do blur gaussiano (px), amount = intensidade do sharpening (0-1).
+function sharpenCanvas(canvas, radius = 1, amount = 0.3) {
+  const w = canvas.width, h = canvas.height;
+
+  // Contexto do canvas original (leitura frequente de pixels)
+  const origCtx = canvas.getContext('2d', { willReadFrequently: true });
+  const origData = origCtx.getImageData(0, 0, w, h);
+
+  // Cria canvas temporário com versão blurred
+  const blurCanvas = document.createElement('canvas');
+  blurCanvas.width = w;
+  blurCanvas.height = h;
+  const blurCtx = blurCanvas.getContext('2d', { willReadFrequently: true });
+  blurCtx.filter = `blur(${radius}px)`;
+  // Padding para evitar bordas transparentes do blur
+  const pad = radius * 3;
+  blurCtx.drawImage(canvas, -pad, -pad, w + pad * 2, h + pad * 2);
+  const blurData = blurCtx.getImageData(0, 0, w, h);
+
+  // Aplica unsharp mask: pixel = original + amount * (original - blurred)
+  // ImageData.data é Uint8ClampedArray — clampa automaticamente em [0, 255]
+  const orig = origData.data;
+  const blur = blurData.data;
+  for (let i = 0; i < orig.length; i += 4) {
+    orig[i]     = orig[i]     + amount * (orig[i]     - blur[i]);     // R
+    orig[i + 1] = orig[i + 1] + amount * (orig[i + 1] - blur[i + 1]); // G
+    orig[i + 2] = orig[i + 2] + amount * (orig[i + 2] - blur[i + 2]); // B
+    // Alpha (i+3) inalterado
+  }
+
+  origCtx.putImageData(origData, 0, 0);
+  return canvas;
+}
+
 // Extrai URL da imagem de fundo de um elemento blur (dash-card-blur / moldura-glass-blur)
 function extractBlurBgSrc(postEl) {
   const blurDiv = postEl.querySelector('.dash-card-blur, .moldura-glass-blur');
   if (!blurDiv) return null;
   return (blurDiv.style.backgroundImage || '').replace(/url\(['"]?|['"]?\)/g, '');
+}
+
+// Ativa as camadas de glass no DOM clonado para export (html2canvas não suporta backdrop-filter).
+// O blur div é redimensionado para cobrir o post inteiro e deslocado com offsets negativos
+// para que background-size:cover alinhe pixel-a-pixel com o .bg principal.
+function activateGlassLayers(cloneEl, blurredUrl, postW, postH) {
+  cloneEl.querySelectorAll('.dash-card-blur, .moldura-glass-blur').forEach(d => {
+    const card = d.parentElement; // .dash-card ou .moldura-glass
+    const origBgImage = d.style.backgroundImage;
+
+    // Calcula posição do card relativa ao post via getBoundingClientRect (robusto no clone)
+    const post = card.closest('.post');
+    const cardRect = card.getBoundingClientRect();
+    const postRect = post.getBoundingClientRect();
+    const cx = (cardRect.left - postRect.left) + card.clientLeft;
+    const cy = (cardRect.top  - postRect.top)  + card.clientTop;
+
+    // Limpa inline styles e usa setProperty com !important para sobrescrever
+    // o CSS "inset: -40px !important" que impedia o posicionamento correto
+    d.style.cssText = '';
+    d.style.setProperty('display', 'block', 'important');
+    d.style.setProperty('position', 'absolute', 'important');
+    d.style.setProperty('z-index', '0', 'important');
+    d.style.setProperty('inset', 'auto', 'important');
+    d.style.setProperty('top', `${-cy}px`, 'important');
+    d.style.setProperty('left', `${-cx}px`, 'important');
+    d.style.setProperty('width', `${postW}px`, 'important');
+    d.style.setProperty('height', `${postH}px`, 'important');
+    d.style.setProperty('background-size', 'cover', 'important');
+    d.style.setProperty('background-position', 'center', 'important');
+    d.style.setProperty('pointer-events', 'none');
+
+    if (blurredUrl) {
+      d.style.setProperty('background-image', `url('${blurredUrl}')`, 'important');
+      d.style.setProperty('filter', 'none', 'important');
+    } else {
+      d.style.setProperty('background-image', origBgImage, 'important');
+      d.style.setProperty('filter', 'blur(28px)', 'important');
+    }
+  });
+  cloneEl.querySelectorAll('.dash-card-inner-overlay, .moldura-glass-inner-overlay').forEach(d => {
+    d.style.setProperty('display', 'block', 'important');
+    d.style.setProperty('z-index', '1', 'important');
+    // Na tela, o overlay é desfocado junto com a imagem pelo backdrop-filter,
+    // ficando mais suave/diluído. No export, é uma camada nítida em cima do blur,
+    // parecendo mais escura. Opacidade 0.45 compensa essa diferença.
+    d.style.setProperty('opacity', '0.45', 'important');
+  });
+  cloneEl.querySelectorAll('.dash-card-tint, .moldura-glass-tint').forEach(d => {
+    d.style.setProperty('display', 'block', 'important');
+    d.style.setProperty('z-index', '2', 'important');
+  });
+  cloneEl.querySelectorAll('.dash-card, .moldura-glass').forEach(glass => {
+    Array.from(glass.children).forEach(child => {
+      const cls = child.className || '';
+      if (cls.includes('-blur') || cls.includes('-inner-overlay') || cls.includes('-tint')) return;
+      child.style.setProperty('z-index', '5', 'important');
+    });
+  });
 }
 
 // Mede as dimensões reais dos imgs da logo no DOM vivo (postEl),
@@ -5458,6 +5635,7 @@ async function ensureFontsReady() {
     '800 78px "Google Sans Flex"',
     '400 30px "Google Sans Flex"',
     '600 30px "Google Sans Flex"',
+    '400 24px "Space Mono"',
   ];
   try {
     await Promise.all(variants.map(v => document.fonts.load(v, sample)));
@@ -5542,30 +5720,8 @@ async function downloadCurrent() {
           cloneEl.querySelectorAll('.safe-zone-guide').forEach(g => g.remove());
           // Substitui <img> da logo por <svg> inline com fill fixo
           inlineLogosForCapture(cloneEl, clonedDoc, logoDims);
-          // Ativa camadas de glass que ficam escondidas na tela
-          // (backdrop-filter não funciona no html2canvas)
-          // Força z-index inline — html2canvas nem sempre respeita !important do CSS
-          cloneEl.querySelectorAll('.dash-card-blur, .moldura-glass-blur').forEach(d => {
-            d.style.cssText += ';display:block;position:absolute;z-index:0;';
-            if (blurredUrl) {
-              d.style.backgroundImage = `url('${blurredUrl}')`;
-              d.style.filter = 'none';
-            }
-          });
-          cloneEl.querySelectorAll('.dash-card-inner-overlay, .moldura-glass-inner-overlay').forEach(d => {
-            d.style.cssText += ';display:block;position:absolute;z-index:1;';
-          });
-          cloneEl.querySelectorAll('.dash-card-tint, .moldura-glass-tint').forEach(d => {
-            d.style.cssText += ';display:block;position:absolute;z-index:2;';
-          });
-          // Garante que conteúdo do glass fique ACIMA das camadas de overlay
-          cloneEl.querySelectorAll('.dash-card, .moldura-glass').forEach(glass => {
-            Array.from(glass.children).forEach(child => {
-              const cls = child.className || '';
-              if (cls.includes('-blur') || cls.includes('-inner-overlay') || cls.includes('-tint')) return;
-              child.style.zIndex = '5';
-            });
-          });
+          // Ativa camadas de glass alinhadas com o fundo (backdrop-filter não funciona no html2canvas)
+          activateGlassLayers(cloneEl, blurredUrl, 1080, postH);
         }
       },
     });
@@ -5592,9 +5748,10 @@ async function downloadCurrent() {
 }
 
 // Captura um único slide como JPEG blob (para uso no ZIP do carrossel)
-// Captura um slide como canvas HTML (alta resolução, scale 4x = 4320×5400).
-// Usado como base tanto para JPEG (downloadCarousel) quanto PDF (downloadLinkedInCarouselPDF).
-async function captureSlideAsCanvas(slideData) {
+// Captura um slide como canvas HTML.
+// scale=4 (padrão): 4320×5400 — para download JPEG direto (máxima qualidade).
+// scale=2: 2160×2700 — otimizado para LinkedIn PDF (LinkedIn reduz para ~1080×1350 de qualquer forma).
+async function captureSlideAsCanvas(slideData, scale = 4) {
   const postEl = document.getElementById(slideData.id);
   if (!postEl) throw new Error('Slide element not found');
   const scaler = document.getElementById('postScaler');
@@ -5627,7 +5784,7 @@ async function captureSlideAsCanvas(slideData) {
     const blurredUrl = blurSrc ? await preBlurImage(blurSrc, 24) : null;
 
     return await html2canvas(postEl, {
-      scale: 4,
+      scale: scale,
       useCORS: true,
       allowTaint: true,
       backgroundColor: null,
@@ -5649,27 +5806,8 @@ async function captureSlideAsCanvas(slideData) {
           cloneEl.querySelectorAll('.hook').forEach(h => { h.style.paddingRight = '6px'; });
           cloneEl.querySelectorAll('.safe-zone-guide').forEach(g => g.remove());
           inlineLogosForCapture(cloneEl, clonedDoc, logoDims);
-          // Ativa camadas de glass escondidas na tela + força z-index inline
-          cloneEl.querySelectorAll('.dash-card-blur, .moldura-glass-blur').forEach(d => {
-            d.style.cssText += ';display:block;position:absolute;z-index:0;';
-            if (blurredUrl) {
-              d.style.backgroundImage = `url('${blurredUrl}')`;
-              d.style.filter = 'none';
-            }
-          });
-          cloneEl.querySelectorAll('.dash-card-inner-overlay, .moldura-glass-inner-overlay').forEach(d => {
-            d.style.cssText += ';display:block;position:absolute;z-index:1;';
-          });
-          cloneEl.querySelectorAll('.dash-card-tint, .moldura-glass-tint').forEach(d => {
-            d.style.cssText += ';display:block;position:absolute;z-index:2;';
-          });
-          cloneEl.querySelectorAll('.dash-card, .moldura-glass').forEach(glass => {
-            Array.from(glass.children).forEach(child => {
-              const cls = child.className || '';
-              if (cls.includes('-blur') || cls.includes('-inner-overlay') || cls.includes('-tint')) return;
-              child.style.zIndex = '5';
-            });
-          });
+          // Ativa camadas de glass alinhadas com o fundo (backdrop-filter não funciona no html2canvas)
+          activateGlassLayers(cloneEl, blurredUrl, 1080, postH);
         }
       },
     });
@@ -5697,18 +5835,24 @@ async function downloadCarousel() {
 
   try {
     const zip = new JSZip();
+    const safeName = (carousel.theme || carousel.title || 'carrossel')
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_|_$/g, '')
+      .slice(0, 60);
 
     for (let i = 0; i < carousel.slides.length; i++) {
       setGenStatus(`<span class="material-symbols-outlined sz-18" style="margin-right:6px">hourglass_empty</span>Exportando slide ${i + 1}/${carousel.slides.length}...`, '');
       const blob = await captureSlideAsBlob(carousel.slides[i]);
-      zip.file(`${carousel.title}_slide_${i + 1}.jpg`, blob);
+      zip.file(`${safeName}_slide_${i + 1}.jpg`, blob);
     }
 
     setGenStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">check_circle</span>Compactando ZIP...', 'success');
     const zipBlob = await zip.generateAsync({ type: 'blob' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(zipBlob);
-    link.download = `cropware_carrossel_${Date.now()}.zip`;
+    link.download = `cropware_carrossel_${safeName}.zip`;
     link.click();
     URL.revokeObjectURL(link.href);
     setGenStatus('', '');
@@ -5721,8 +5865,9 @@ async function downloadCarousel() {
   btn.style.opacity = '';
 }
 
-// Gera PDF de alta resolução para carrosséis LinkedIn.
-// Cada slide vira uma página do PDF (canvas 4x → ~300 DPI efetivo).
+// Gera PDF otimizado para LinkedIn.
+// Pipeline: scale 2x (supersampling) → downscale para 1080×1350 (resolução nativa LinkedIn)
+// → unsharp mask → JPEG flat. LinkedIn recebe imagem 1:1 sem precisar redimensionar.
 async function downloadLinkedInCarouselPDF() {
   const items = getModeItems();
   if (items.length === 0 || !items[getModeCurrentIdx()]) return;
@@ -5744,6 +5889,7 @@ async function downloadLinkedInCarouselPDF() {
       format: [pageW, pageH],
       hotfixes: ['px_scaling'],
       compress: true,
+      putOnlyUsedFonts: true,
     });
 
     for (let i = 0; i < carousel.slides.length; i++) {
@@ -5751,14 +5897,30 @@ async function downloadLinkedInCarouselPDF() {
 
       if (i > 0) pdf.addPage([pageW, pageH], pageH > pageW ? 'portrait' : 'landscape');
 
-      // Captura canvas em alta resolução (4320×5400 a scale 4)
-      const canvas = await captureSlideAsCanvas(carousel.slides[i]);
-      // JPEG quality 0.92 — nitidez excelente a ~90% menos tamanho que PNG
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
-      pdf.addImage(imgData, 'JPEG', 0, 0, pageW, pageH, `slide_${i}`, 'FAST');
+      // 1) Captura a scale 2 (2160×2700) — supersampling para texto nítido
+      const hiRes = await captureSlideAsCanvas(carousel.slides[i], 2);
+
+      // 2) Downscale para exatamente 1080×1350 (resolução nativa do LinkedIn)
+      //    O browser usa interpolação bicúbica — texto fica com AA suave
+      const flat = document.createElement('canvas');
+      flat.width = pageW;   // 1080
+      flat.height = pageH;  // 1350 ou 1920
+      const fCtx = flat.getContext('2d');
+      fCtx.imageSmoothingEnabled = true;
+      fCtx.imageSmoothingQuality = 'high';
+      fCtx.drawImage(hiRes, 0, 0, pageW, pageH);
+
+      // 3) Pré-aguça para compensar blur da compressão do LinkedIn
+      sharpenCanvas(flat, 1, 0.3);
+
+      // 4) JPEG 0.95 — imagem flat 1:1 com LinkedIn, sem DPI desnecessário
+      const imgData = flat.toDataURL('image/jpeg', 0.95);
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageW, pageH, `slide_${i}`, 'NONE');
     }
 
     setGenStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">check_circle</span>Gerando PDF...', 'success');
+    const pdfSize = pdf.output('arraybuffer').byteLength;
+    console.log(`[Cropware] LinkedIn PDF: ${carousel.slides.length} slides, ${(pdfSize / 1024 / 1024).toFixed(1)} MB (flat ${pageW}×${pageH} JPEG + unsharp mask)`);
 
     // Nome do arquivo baseado no tema
     const safeName = (carousel.theme || carousel.title || 'carrossel')
@@ -5793,6 +5955,39 @@ function updateLegend(idx) {
   const btn = document.getElementById('copyBtn');
   btn.innerHTML = '<span class="material-symbols-outlined sz-16">content_copy</span>Copiar';
   btn.classList.remove('copied');
+  updateFilename();
+}
+
+function generateFilename() {
+  const items = getModeItems();
+  const item = items[getModeCurrentIdx()];
+  if (!item) return '';
+  const base = (item.theme || item.title || item.sub || 'cropware')
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_|_$/g, '')
+    .slice(0, 60);
+  const isLinkedinCarousel = activeMode === 'linkedin-carousel';
+  if (isLinkedinCarousel) return `cropware_linkedin_${base}.pdf`;
+  if (isCarouselMode()) return `cropware_carrossel_${base}.zip`;
+  return `cropware_${base}.jpg`;
+}
+
+function updateFilename() {
+  const section = document.getElementById('filenameSection');
+  const textEl = document.getElementById('filenameText');
+  const name = generateFilename();
+  if (name) {
+    textEl.textContent = name;
+    section.classList.add('visible');
+  } else {
+    section.classList.remove('visible');
+  }
+  // Reset botão copiar
+  const btn = document.getElementById('copyFilenameBtn');
+  btn.innerHTML = '<span class="material-symbols-outlined sz-16">content_copy</span>Copiar';
+  btn.classList.remove('copied');
 }
 
 function copyLegend() {
@@ -5800,6 +5995,20 @@ function copyLegend() {
   if (!full) return;
   navigator.clipboard.writeText(full).then(() => {
     const btn = document.getElementById('copyBtn');
+    btn.innerHTML = '<span class="material-symbols-outlined sz-16">check</span>Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerHTML = '<span class="material-symbols-outlined sz-16">content_copy</span>Copiar';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+function copyFilename() {
+  const name = generateFilename();
+  if (!name) return;
+  navigator.clipboard.writeText(name).then(() => {
+    const btn = document.getElementById('copyFilenameBtn');
     btn.innerHTML = '<span class="material-symbols-outlined sz-16">check</span>Copiado';
     btn.classList.add('copied');
     setTimeout(() => {
@@ -6069,13 +6278,16 @@ document.addEventListener('DOMContentLoaded', () => {
 function buildSystemPrompt(tone) {
   const toneDirectives = {
     casual:      'TOM: linguagem próxima e coloquial, como conversa no WhatsApp. Use "você", expressões leves do campo.',
-    tecnico:     'TOM: vocabulário preciso do agro (NDVI, talhão, IPM, manejo integrado). Cite números quando possível.',
+    tecnico:     'TOM: vocabulário preciso do agro (NDVI, talhão, IPM, manejo integrado). Use termos técnicos reais, sem inventar números.',
     inspirador:  'TOM: aspiracional, foco em transformação, futuro e empoderamento do produtor.',
     provocativo: 'TOM: abertura que desafia o senso comum, pergunta incômoda ou afirmação direta. Pode ser até desconfortável.',
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.casual;
 
   return `Você é um copywriter especialista na marca Cropware (plataforma de gestão agrícola).
+
+REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais da Cropware. Use apenas benefícios qualitativos e conceituais. Qualquer número inventado é desinformação e prejudica a marca.
+
 Crie posts para Instagram seguindo exatamente este padrão visual:
 
 HOOK (texto grande, impactante):
@@ -6105,10 +6317,12 @@ COMPLEMENT (texto de apoio menor):
 - 1-2 linhas, máximo 36 caracteres cada
 - Use <strong> para destacar palavras-chave
 - Complementa o hook com insight ou conclusão
+- NUNCA inclua números, porcentagens ou estatísticas inventadas
 
 BULLETS (3 pontos de apoio, iconizados — aparecem abaixo do complement):
 - Exatamente 3 bullets, curtos e diretos
-- Cada "text": máximo 6 palavras, afirmação concreta (benefício, número ou fato)
+- Cada "text": máximo 6 palavras, afirmação concreta (benefício ou fato)
+- PROIBIDO inventar estatísticas, porcentagens ou números sem fonte (ex: "80% do potencial", "3x mais rápido"). Use benefícios qualitativos
 - PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
 - NÃO repita palavras ou ideias do hook/complement
 - Cada "icon": nome exato de um Material Symbol, ESCOLHER APENAS da lista abaixo
@@ -6378,13 +6592,16 @@ async function generatePost() {
 function buildCarouselSystemPrompt(tone, slideCount) {
   const toneDirectives = {
     casual:      'TOM: linguagem próxima e coloquial, como conversa no WhatsApp. Use "você", expressões leves do campo.',
-    tecnico:     'TOM: vocabulário preciso do agro (NDVI, talhão, IPM, manejo integrado). Cite números quando possível.',
+    tecnico:     'TOM: vocabulário preciso do agro (NDVI, talhão, IPM, manejo integrado). Use termos técnicos reais, sem inventar números.',
     inspirador:  'TOM: aspiracional, foco em transformação, futuro e empoderamento do produtor.',
     provocativo: 'TOM: abertura que desafia o senso comum, pergunta incômoda ou afirmação direta. Pode ser até desconfortável.',
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.casual;
 
   return `Você é um copywriter especialista na marca Cropware (plataforma de gestão agrícola).
+
+REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais da Cropware. Use apenas benefícios qualitativos e conceituais.
+
 Crie um CARROSSEL para Instagram com ${slideCount} slides seguindo exatamente este padrão:
 
 ESTRUTURA DO CARROSSEL:
@@ -6666,13 +6883,16 @@ function stripHTML(html) {
 function buildInsertSlideSystemPrompt(tone) {
   const toneDirectives = {
     casual:      'TOM: linguagem próxima e coloquial, como conversa no WhatsApp. Use "você", expressões leves do campo.',
-    tecnico:     'TOM: vocabulário preciso do agro (NDVI, talhão, IPM, manejo integrado). Cite números quando possível.',
+    tecnico:     'TOM: vocabulário preciso do agro (NDVI, talhão, IPM, manejo integrado). Use termos técnicos reais, sem inventar números.',
     inspirador:  'TOM: aspiracional, foco em transformação, futuro e empoderamento do produtor.',
     provocativo: 'TOM: abertura que desafia o senso comum, pergunta incômoda ou afirmação direta.',
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.casual;
 
   return `Você é um copywriter especialista na marca Cropware (plataforma de gestão agrícola).
+
+REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais da Cropware. Use apenas benefícios qualitativos e conceituais.
+
 Crie UM ÚNICO slide complementar para encaixar entre slides existentes de um carrossel.
 O slide deve manter coerência narrativa e visual com os slides vizinhos fornecidos no contexto.
 
@@ -6850,6 +7070,7 @@ async function confirmInsertSlide() {
       glassOpacity:    ref.glassOpacity,
       logoEnabled:     ref.logoEnabled,
       logoScale:       ref.logoScale,
+      brandMode:       ref.brandMode,
       siteText:        ref.siteText,
       sitePos:         ref.sitePos,
       siteEnabled:     ref.siteEnabled,
@@ -7031,6 +7252,9 @@ function setRegenBusy(busy, activeBtnId) {
       const el = document.getElementById(id);
       if (el && el.dataset.label) el.textContent = el.dataset.label;
     });
+    // Limpa o campo de direção após regenerar
+    const dirEl = document.getElementById('pcRegenPrompt');
+    if (dirEl) dirEl.value = '';
   }
 }
 
@@ -7078,10 +7302,13 @@ async function regenerateImage() {
   const post = getActivePost();
   if (!post || !post.isGenerated) return;
   const direction = getRegenDirection();
-  const imagePrompt = post.imagePrompt || `Photorealistic agricultural field photo related to: ${post.theme || ''}. Golden hour lighting, no text.`;
+  // Se o usuário deu direção, ela vira o prompt principal da imagem
+  const imagePrompt = direction
+    ? `Photorealistic high-quality agricultural photo: ${direction}. Style: documentary photography, Fujifilm, 50mm, natural dramatic lighting. No text, no logos, no watermarks.`
+    : (post.imagePrompt || `Photorealistic agricultural field photo related to: ${post.theme || ''}. Golden hour lighting, no text.`);
   setRegenBusy(true, 'pcRegenImage');
   try {
-    const img = await callGeminiImage(imagePrompt, direction);
+    const img = await callGeminiImage(imagePrompt, '');
     pushUndoSnapshot(post, { kind: 'image', bgImage: post.bgImage });
     post.bgImage = `data:${img.mime};base64,${img.base64}`;
     const postEl = document.getElementById(post.id);
