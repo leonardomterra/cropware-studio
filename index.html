@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300;400;500;600;700;800&family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=DM+Sans:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   /* ── LOGIN SCREEN ── */
@@ -137,6 +139,13 @@
 
   /* ── MAIN LAYOUT ── */
   main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .main-columns {
     display: flex;
     flex: 1;
     min-height: 0;
@@ -415,7 +424,7 @@
     text-shadow: 0 2px 28px rgba(0,0,0,0.5);
   }
 
-  .hook em { font-style: normal; color: var(--post-accent); }
+  .hook em, .hook i { font-style: normal; color: var(--post-accent); }
 
   .separator {
     width: 100%;
@@ -440,7 +449,7 @@
     max-width: 580px;
   }
 
-  .complement strong { color: #fff; font-weight: 600; }
+  .complement strong, .complement b { color: #fff; font-weight: 600; }
 
   /* ── BULLETS COM ÍCONE (modelo classic) ── */
   .post-bullets {
@@ -555,7 +564,6 @@
     bottom: 110px;
     padding: 60px 64px 58px;
     border-radius: 28px;
-    background: var(--dash-card-bg, rgba(15, 30, 20, 0.65));
     backdrop-filter: blur(24px) saturate(160%);
     -webkit-backdrop-filter: blur(24px) saturate(160%);
     border: 1px solid rgba(255,255,255,0.15);
@@ -564,6 +572,33 @@
       0 2px 8px rgba(0,0,0,0.12);
     overflow: hidden;
   }
+  .dash-card > * { position: relative; z-index: 3; }
+  .dash-card-blur {
+    position: absolute !important;
+    inset: -40px !important;
+    z-index: 0 !important;
+    background-size: cover;
+    background-position: center;
+    filter: blur(28px);
+    pointer-events: none;
+    display: none;
+  }
+  .dash-card-inner-overlay {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 1 !important;
+    border-radius: inherit;
+    pointer-events: none;
+    display: none;
+  }
+  .dash-card-tint {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 2 !important;
+    border-radius: inherit;
+    pointer-events: none;
+    display: none;
+  }
   .dash-card[data-layout="top"] {
     bottom: auto;
     top: 140px;
@@ -571,7 +606,6 @@
   .dash-card[data-align="right"] {
     text-align: right;
   }
-  .dash-card > * { position: relative; z-index: 3; }
   .dash-bar {
     width: 72px;
     height: 4px;
@@ -590,7 +624,7 @@
     margin-bottom: 28px;
     text-shadow: 0 2px 24px rgba(0,0,0,0.5);
   }
-  .dash-hook em { font-style: normal; color: var(--post-accent); }
+  .dash-hook em, .dash-hook i { font-style: normal; color: var(--post-accent); }
   .dash-separator {
     width: 260px;
     height: 1px;
@@ -607,7 +641,7 @@
     color: rgba(255,255,255,0.82);
     max-width: 820px;
   }
-  .dash-complement strong { color: #fff; font-weight: 600; }
+  .dash-complement strong, .dash-complement b { color: #fff; font-weight: 600; }
 
   /* ── ESTILO: REVISTA ───────────────────────────────────── */
   .revista-photo {
@@ -660,7 +694,7 @@
     margin-bottom: 18px;
     text-shadow: none;
   }
-  .revista-hook em { font-style: normal; color: var(--post-accent); }
+  .revista-hook em, .revista-hook i { font-style: normal; color: var(--post-accent); }
   .revista-complement {
     font-family: 'Archivo', sans-serif;
     font-weight: 400;
@@ -669,14 +703,16 @@
     color: #4d4d4d;
     max-width: 880px;
   }
-  .revista-complement strong { color: #4d4d4d; font-weight: 600; }
+  .revista-complement strong, .revista-complement b { color: #4d4d4d; font-weight: 600; }
   /* Text mode: revista */
   .revista-block.text-light .revista-hook,
   .revista-block.text-light .revista-complement,
-  .revista-block.text-light .revista-complement strong { color: #ffffff; }
+  .revista-block.text-light .revista-complement strong,
+  .revista-block.text-light .revista-complement b { color: #ffffff; }
   .revista-block.text-dark .revista-hook,
   .revista-block.text-dark .revista-complement,
-  .revista-block.text-dark .revista-complement strong { color: #4d4d4d; }
+  .revista-block.text-dark .revista-complement strong,
+  .revista-block.text-dark .revista-complement b { color: #4d4d4d; }
   /* Logo da revista segue o modo de texto pro contraste funcionar */
   .revista-block.text-light .revista-logo { filter: brightness(0) invert(1); }
   .revista-logo {
@@ -762,7 +798,7 @@
     z-index: 2;
     text-shadow: 0 2px 16px rgba(0,0,0,0.3);
   }
-  .split-hook em { font-style: normal; color: var(--post-accent); }
+  .split-hook em, .split-hook i { font-style: normal; color: var(--post-accent); }
   .split-complement {
     font-family: 'Archivo', sans-serif;
     font-weight: 400;
@@ -773,14 +809,16 @@
     position: relative;
     z-index: 2;
   }
-  .split-complement strong { color: #fff; font-weight: 600; }
+  .split-complement strong, .split-complement b { color: #fff; font-weight: 600; }
   /* Text mode: split */
   .split-block.text-light .split-hook,
   .split-block.text-light .split-complement { color: #ffffff; }
-  .split-block.text-light .split-complement strong { color: #ffffff; }
+  .split-block.text-light .split-complement strong,
+  .split-block.text-light .split-complement b { color: #ffffff; }
   .split-block.text-dark .split-hook,
   .split-block.text-dark .split-complement { color: #4d4d4d; }
-  .split-block.text-dark .split-complement strong { color: #4d4d4d; }
+  .split-block.text-dark .split-complement strong,
+  .split-block.text-dark .split-complement b { color: #4d4d4d; }
   .split-block.text-dark .split-logo { filter: brightness(0) invert(0.3); }
   .split-logo {
     position: absolute;
@@ -824,7 +862,7 @@
     margin-bottom: 22px;
     text-shadow: none;
   }
-  .coluna-hook em { font-style: normal; color: var(--post-accent); }
+  .coluna-hook em, .coluna-hook i { font-style: normal; color: var(--post-accent); }
   .coluna-complement {
     font-family: 'Archivo', sans-serif;
     font-weight: 400;
@@ -832,32 +870,43 @@
     line-height: 1.55;
     color: #4d4d4d;
   }
-  .coluna-complement strong { color: #4d4d4d; font-weight: 600; }
+  .coluna-complement strong, .coluna-complement b { color: #4d4d4d; font-weight: 600; }
   .coluna-logo {
     position: absolute;
-    top: 56px;
-    left: 56px;
-    width: calc(190px * var(--logo-scale, 1));
+    width: calc(260px * var(--logo-scale, 1));
     height: auto;
     filter: brightness(0) invert(0.3);
+    /* Default: top-left */
+    top: 56px; left: 56px;
   }
+  .post[data-style="coluna"][data-logo-pos="tl"] .coluna-logo { top: 56px; left: 56px; bottom: auto; right: auto; }
+  .post[data-style="coluna"][data-logo-pos="tr"] .coluna-logo { top: 56px; right: 56px; bottom: auto; left: auto; }
+  .post[data-style="coluna"][data-logo-pos="bl"] .coluna-logo { bottom: 56px; left: 56px; top: auto; right: auto; }
+  .post[data-style="coluna"][data-logo-pos="br"] .coluna-logo { bottom: 56px; right: 56px; top: auto; left: auto; }
   .coluna-block.text-light .coluna-hook,
   .coluna-block.text-light .coluna-complement,
-  .coluna-block.text-light .coluna-complement strong { color: #ffffff; }
+  .coluna-block.text-light .coluna-complement strong,
+  .coluna-block.text-light .coluna-complement b { color: #ffffff; }
   .coluna-block.text-dark .coluna-hook,
   .coluna-block.text-dark .coluna-complement,
-  .coluna-block.text-dark .coluna-complement strong { color: #4d4d4d; }
+  .coluna-block.text-dark .coluna-complement strong,
+  .coluna-block.text-dark .coluna-complement b { color: #4d4d4d; }
   .coluna-block.text-light .coluna-logo { filter: brightness(0) invert(1); }
 
-  /* ── ESTILO: MOLDURA ──────────────────────────────────────── */
+  /* ── ESTILO: ESPECIAL (glassmorphism) ──────────────────────── */
   .moldura-bg {
     position: absolute;
     inset: 0;
-    background: #f8fafc;
+    background-size: cover;
+    background-position: center;
+  }
+  .moldura-overlay {
+    position: absolute;
+    inset: 0;
   }
   .moldura-header {
     position: absolute;
-    top: 72px;
+    top: 56px;
     left: 72px;
     right: 72px;
     display: flex;
@@ -869,54 +918,223 @@
   .moldura-logo {
     width: calc(190px * var(--logo-scale, 1));
     height: auto;
-    filter: brightness(0) invert(0.3);
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
   }
-  .moldura-photo {
+  .moldura-glass {
     position: absolute;
-    top: 168px;
-    left: 72px;
-    right: 72px;
-    height: 720px;
-    background-size: cover;
-    background-position: center;
-    border-radius: 4px;
-  }
-  .moldura-body {
-    position: absolute;
-    left: 72px;
-    right: 72px;
-    top: 922px;
-    bottom: 72px;
+    left: 36px;
+    right: 36px;
+    top: 140px;
+    bottom: 120px;
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 28px;
+    padding: 52px 40px 48px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 1;
+    box-shadow:
+      0 8px 32px rgba(0,0,0,0.28),
+      0 2px 8px rgba(0,0,0,0.12);
+  }
+  .moldura-glass > * { position: relative; z-index: 3; }
+  .moldura-glass-blur {
+    position: absolute !important;
+    inset: -40px !important;
+    z-index: 0 !important;
+    background-size: cover;
+    background-position: center;
+    filter: blur(28px);
+    pointer-events: none;
+    display: none;
+  }
+  .moldura-glass-inner-overlay {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 1 !important;
+    border-radius: inherit;
+    pointer-events: none;
+    display: none;
+  }
+  .moldura-glass-tint {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 2 !important;
+    border-radius: inherit;
+    pointer-events: none;
+    display: none;
+  }
+  .moldura-glass-accent {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 50%;
+    border-radius: 0 28px 0 0;
+    background: radial-gradient(ellipse at top right, var(--post-accent), transparent 70%);
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .moldura-glass-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--post-accent), transparent);
+    opacity: 0.6;
+    border-radius: 0 0 28px 28px;
+    z-index: 2;
+  }
+  .moldura-glass-line-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 10%, var(--post-accent) 50%, transparent 90%);
+    opacity: 0.35;
+    border-radius: 28px 28px 0 0;
+    z-index: 2;
+  }
+  .moldura-glass-sidebar {
+    position: absolute;
+    left: 0;
+    top: 40px;
+    bottom: 40px;
+    width: 3px;
+    background: linear-gradient(180deg, transparent, var(--post-accent) 30%, var(--post-accent) 70%, transparent);
+    opacity: 0.5;
+    border-radius: 0 2px 2px 0;
+    z-index: 2;
+  }
+  .moldura-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15) 20%, rgba(255,255,255,0.15) 80%, transparent);
+    margin: 24px 0 4px;
+    position: relative;
+    z-index: 3;
+  }
+  .moldura-glass.text-dark .moldura-divider {
+    background: linear-gradient(90deg, transparent, rgba(30,41,59,0.12) 20%, rgba(30,41,59,0.12) 80%, transparent);
+  }
+  .moldura-bullet-icon .material-symbols-outlined {
+    font-size: inherit;
   }
   .moldura-hook {
     font-family: 'Bricolage Grotesque', sans-serif;
     font-weight: 700;
     font-size: calc(56px * var(--hook-scale, 1));
     line-height: 1.06;
-    color: #4d4d4d;
+    color: #ffffff;
     letter-spacing: -1.4px;
     margin-bottom: 18px;
-    text-shadow: none;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 1;
   }
-  .moldura-hook em { font-style: normal; color: var(--post-accent); }
+  .moldura-hook em, .moldura-hook i {
+    font-style: normal;
+    color: var(--post-accent);
+    text-shadow: 0 0 24px rgba(122,184,126,0.3);
+  }
   .moldura-complement {
     font-family: 'Archivo', sans-serif;
     font-weight: 400;
-    font-size: calc(22px * var(--complement-scale, 1));
-    line-height: 1.5;
-    color: #4d4d4d;
+    font-size: calc(29px * var(--complement-scale, 1));
+    line-height: 1.45;
+    color: rgba(255,255,255,0.85);
+    position: relative;
+    z-index: 1;
   }
-  .moldura-complement strong { color: #4d4d4d; font-weight: 600; }
-  .moldura-bg.text-light ~ .moldura-body .moldura-hook,
-  .moldura-bg.text-light ~ .moldura-body .moldura-complement,
-  .moldura-bg.text-light ~ .moldura-body .moldura-complement strong { color: #ffffff; }
-  .moldura-bg.text-dark ~ .moldura-body .moldura-hook,
-  .moldura-bg.text-dark ~ .moldura-body .moldura-complement,
-  .moldura-bg.text-dark ~ .moldura-body .moldura-complement strong { color: #4d4d4d; }
-  .moldura-bg.text-light ~ .moldura-header .moldura-logo { filter: brightness(0) invert(1); }
+  .moldura-complement strong, .moldura-complement b { color: #ffffff; font-weight: 600; }
+  .moldura-bullets {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    position: relative;
+    z-index: 1;
+  }
+  .moldura-bullet {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .moldura-bullet-icon {
+    color: var(--post-accent);
+    font-size: calc(36px * var(--bullet-icon-scale, 1));
+    opacity: 0.9;
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+  .moldura-bullet .post-bullet-text {
+    font-family: 'Archivo', sans-serif;
+    font-size: calc(28px * var(--bullets-scale, 1));
+    color: rgba(255,255,255,0.8);
+    line-height: 1.4;
+  }
+  /* Text mode: dark (para fundo claro do vidro) */
+  .moldura-glass.text-dark .moldura-hook { color: #1e293b; text-shadow: none; }
+  .moldura-glass.text-dark .moldura-hook em,
+  .moldura-glass.text-dark .moldura-hook i { text-shadow: none; }
+  .moldura-glass.text-dark .moldura-complement { color: rgba(30,41,59,0.8); }
+  .moldura-glass.text-dark .moldura-complement strong,
+  .moldura-glass.text-dark .moldura-complement b { color: #1e293b; }
+  .moldura-glass.text-dark .moldura-bullet .post-bullet-text { color: rgba(30,41,59,0.75); }
+  .moldura-glass.text-dark ~ .moldura-header .moldura-logo { filter: brightness(0) invert(0.3); opacity: 1; }
+
+  /* ── TEXT TOOLBAR (floating) ── */
+  .text-toolbar {
+    position: fixed;
+    display: none;
+    align-items: center;
+    gap: 2px;
+    padding: 4px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+    z-index: 9999;
+    pointer-events: auto;
+    animation: ttFadeIn 0.12s ease-out;
+  }
+  .text-toolbar.visible { display: flex; }
+  @keyframes ttFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .text-toolbar-btn {
+    background: none;
+    border: none;
+    color: #cbd5e1;
+    font-size: 13px;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    transition: background 0.12s, color 0.12s;
+  }
+  .text-toolbar-btn:hover { background: #334155; color: #f1f5f9; }
+  .text-toolbar-btn.active { background: #475569; color: #ffffff; }
+  .text-toolbar-btn .material-symbols-outlined { font-size: 16px; }
+  .text-toolbar-sep {
+    width: 1px;
+    height: 20px;
+    background: #334155;
+    margin: 0 2px;
+  }
 
   /* ──────────────────────────────────────────────────────────
      STORY FORMAT — overrides 1080×1920 por estilo
@@ -974,9 +1192,12 @@
   .post[data-format="story"][data-style="split"] .post-site[data-pos="bc"],
   .post[data-format="story"][data-style="split"] .post-site[data-pos="br"] { bottom: 244px; }
 
-  /* COLUNA — split vertical 55/45, logo no topo do bloco */
+  /* COLUNA — split vertical 55/45, logo segue logoPos */
   .post[data-format="story"][data-style="coluna"] .coluna-block { padding: 280px 56px 280px; }
-  .post[data-format="story"][data-style="coluna"] .coluna-logo  { top: 216px; }
+  .post[data-format="story"][data-style="coluna"][data-logo-pos="tl"] .coluna-logo,
+  .post[data-format="story"][data-style="coluna"][data-logo-pos="tr"] .coluna-logo { top: 216px; }
+  .post[data-format="story"][data-style="coluna"][data-logo-pos="bl"] .coluna-logo,
+  .post[data-format="story"][data-style="coluna"][data-logo-pos="br"] .coluna-logo { bottom: 244px; }
   .post[data-format="story"][data-style="coluna"] .post-site[data-pos="bl"],
   .post[data-format="story"][data-style="coluna"] .post-site[data-pos="bc"],
   .post[data-format="story"][data-style="coluna"] .post-site[data-pos="br"] { bottom: 244px; }
@@ -986,8 +1207,7 @@
 
   /* MOLDURA — header/foto/body recalculados pro canvas 1920 */
   .post[data-format="story"][data-style="moldura"] .moldura-header { top: 216px; }
-  .post[data-format="story"][data-style="moldura"] .moldura-photo  { top: 310px; height: 1050px; }
-  .post[data-format="story"][data-style="moldura"] .moldura-body   { top: 1390px; bottom: 260px; }
+  .post[data-format="story"][data-style="moldura"] .moldura-glass  { top: 320px; bottom: 280px; }
   .post[data-format="story"][data-style="moldura"] .post-site[data-pos="bl"],
   .post[data-format="story"][data-style="moldura"] .post-site[data-pos="bc"],
   .post[data-format="story"][data-style="moldura"] .post-site[data-pos="br"] { bottom: 244px; }
@@ -1031,6 +1251,7 @@
     border-radius: 8px;
     background: white;
     overflow: hidden;
+    flex-shrink: 0;
   }
   .pc-group.hidden { display: none; }
   .pc-group-header {
@@ -1608,6 +1829,7 @@
     font-family: inherit;
     transition: all 140ms;
     width: 100%;
+    flex-shrink: 0;
   }
   .pc-reset-btn:hover {
     background: rgba(15, 23, 42, 0.03);
@@ -2141,6 +2363,99 @@
      controles) em pilha vertical de barras horizontais. Sidebar
      de posts vira tira rolável lateralmente no topo.
      ────────────────────────────────────────────────────────── */
+  /* ── STUDIO MODE SELECTOR ── */
+  .studio-tabs {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+    height: 40px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 12px;
+  }
+  .studio-mode-select {
+    font-family: 'Google Sans Flex', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .studio-mode-select:focus { border-color: var(--green); }
+  .studio-mode-select optgroup { font-weight: 600; color: var(--text); }
+  .studio-mode-select option { font-weight: 400; color: var(--text); }
+
+  /* ── SLIDE NAV (navegação entre slides do carrossel) ── */
+  .slide-nav {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 16px;
+    margin-bottom: 18px;
+    flex-shrink: 0;
+  }
+  .slide-nav.visible { display: flex; }
+  .slide-nav-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 18px;
+    transition: background 0.15s;
+  }
+  .slide-nav-btn:hover { background: rgba(0,0,0,0.04); }
+  .slide-nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .slide-nav-dots {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+  }
+  .slide-nav-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .slide-nav-dot.active {
+    background: var(--green);
+    transform: scale(1.25);
+  }
+  .slide-nav-label {
+    font-family: 'Google Sans Flex', sans-serif;
+    font-size: 13px;
+    color: #94a3b8;
+    margin: 0 4px;
+  }
+  .slide-nav.disabled { opacity: 0.45; pointer-events: none; }
+  .slide-nav-reorder { color: #94a3b8; }
+  .slide-nav-reorder:hover:not(:disabled) { color: var(--green); background: rgba(122,184,126,0.08); }
+  .slide-nav-add { color: #94a3b8; }
+  .slide-nav-add:hover:not(:disabled) { color: var(--green); background: rgba(122,184,126,0.08); }
+
+  /* ── CAROUSEL BADGE (sidebar) ── */
+  .thumb-badge {
+    font-family: 'Google Sans Flex', sans-serif;
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 400;
+  }
+
   @media (max-width: 900px) {
     body {
       height: auto;
@@ -2150,6 +2465,10 @@
       flex-direction: column;
       height: auto;
       min-height: 100vh;
+      overflow: visible;
+    }
+    .main-columns {
+      flex-direction: column;
       overflow: visible;
     }
 
@@ -2316,7 +2635,23 @@
 <!-- MAIN -->
 <main style="display:none">
 
-  <!-- COLUNA 1: Lista de posts -->
+  <!-- MODE SELECTOR -->
+  <div class="studio-tabs">
+    <select class="studio-mode-select" id="studioModeSelect" onchange="switchMode(this.value)">
+      <optgroup label="Instagram">
+        <option value="post" selected>Instagram — Post</option>
+        <option value="carousel">Instagram — Carrossel</option>
+      </optgroup>
+      <optgroup label="LinkedIn">
+        <option value="linkedin-post">LinkedIn — Post</option>
+        <option value="linkedin-carousel">LinkedIn — Carrossel</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <div class="main-columns">
+
+  <!-- COLUNA 1: Lista de posts / carrosséis -->
   <aside id="sidebarAside">
     <div class="aside-label">Posts</div>
   </aside>
@@ -2362,7 +2697,7 @@
           <button data-style="revista">Revista</button>
           <button data-style="split">Split</button>
           <button data-style="coluna">Coluna</button>
-          <button data-style="moldura">Moldura</button>
+          <button data-style="moldura">Especial</button>
         </div>
       </div>
     </div>
@@ -2458,6 +2793,14 @@
         <span class="material-symbols-outlined pc-group-header-chevron">expand_more</span>
       </button>
       <div class="pc-group-body">
+        <div class="pc-sub" id="pcSubLogoVisibility">
+          <div class="pc-vis-row">
+            <button type="button" class="pc-vis-btn active" data-vis="logo">
+              <span>Mostrar Logo</span>
+              <span class="pc-vis-switch"></span>
+            </button>
+          </div>
+        </div>
         <div class="pc-sub" id="pcSubLogoPosition">
           <div class="pc-label">Posição da Logo</div>
           <div class="pc-logo-grid" id="pcLogoToggle">
@@ -2593,12 +2936,19 @@
           </div>
         </div>
         <div class="pc-sub" id="pcSubFrameColor">
-          <div class="pc-label">Cor da Moldura</div>
+          <div class="pc-label">Cor do Vidro</div>
           <button class="pc-color-btn" id="pcFrameColorBtn" type="button" data-target="frameColor">
             <span class="pc-color-btn-swatch" id="pcFrameColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcFrameColorBtnLabel">#F8FAFC</span>
+            <span class="pc-color-btn-label" id="pcFrameColorBtnLabel">#0F1E14</span>
             <span class="material-symbols-outlined pc-color-btn-chevron">expand_more</span>
           </button>
+        </div>
+        <div class="pc-sub" id="pcSubGlassOpacity">
+          <div class="pc-label-row">
+            <span class="pc-label">Opacidade do Vidro</span>
+            <span class="pc-label-value" id="pcGlassOpacityValue">55%</span>
+          </div>
+          <input type="range" class="pc-range" id="pcGlassOpacity" min="0" max="100" step="5" value="55">
         </div>
         <div class="pc-sub" id="pcSubBlockTextMode">
           <div class="pc-label">Cor do Texto</div>
@@ -2646,8 +2996,21 @@
       <button class="empty-state-btn" onclick="openGenerator()">Gerar Primeiro Post</button>
     </div>
 
+    <!-- Slide nav (carrossel) -->
+    <div class="slide-nav" id="slideNav">
+      <button class="slide-nav-btn slide-nav-add" id="slideAddBefore" onclick="insertSlide('before')" title="Inserir slide antes"><span class="material-symbols-outlined sz-18">add</span></button>
+      <button class="slide-nav-btn slide-nav-reorder" id="slideMovePrev" onclick="moveSlide(-1)" title="Mover slide para esquerda"><span class="material-symbols-outlined sz-18">keyboard_double_arrow_left</span></button>
+      <button class="slide-nav-btn" id="slidePrev" onclick="goToSlide(getCurrentSlide() - 1)"><span class="material-symbols-outlined sz-18">chevron_left</span></button>
+      <div class="slide-nav-dots" id="slideNavDots"></div>
+      <span class="slide-nav-label" id="slideNavLabel"></span>
+      <button class="slide-nav-btn" id="slideNext" onclick="goToSlide(getCurrentSlide() + 1)"><span class="material-symbols-outlined sz-18">chevron_right</span></button>
+      <button class="slide-nav-btn slide-nav-reorder" id="slideMoveNext" onclick="moveSlide(1)" title="Mover slide para direita"><span class="material-symbols-outlined sz-18">keyboard_double_arrow_right</span></button>
+      <button class="slide-nav-btn slide-nav-add" id="slideAddAfter" onclick="insertSlide('after')" title="Inserir slide depois"><span class="material-symbols-outlined sz-18">add</span></button>
+    </div>
+
   </div><!-- /canvas-area -->
 
+  </div><!-- /main-columns -->
 </main>
 
 <!-- Elementos ocultos para manter compatibilidade com JS -->
@@ -2668,22 +3031,132 @@ const posts = [];
 const dotsContainer = document.getElementById('dotsContainer');
 let current = 0;
 
+// ── MODE & MULTI-PLATFORM STATE ─────────────────────────────
+// Modes: 'post' | 'carousel' | 'linkedin-post' | 'linkedin-carousel'
+let activeMode = 'post';
+
+// Instagram state
+let carousels = [];
+let carouselLegends = [];
+let currentCarousel = 0;
+let currentSlide = 0;
+
+// LinkedIn state
+const linkedinPosts = [];
+const linkedinLegends = [];
+let linkedinCurrentPost = 0;
+const linkedinCarousels = [];
+const linkedinCarouselLegends = [];
+let linkedinCurrentCarousel = 0;
+let linkedinCurrentSlide = 0;
+
+// Helpers: which platform and format
+function getPlatform() {
+  return activeMode.startsWith('linkedin') ? 'linkedin' : 'instagram';
+}
+function isCarouselMode() {
+  return activeMode === 'carousel' || activeMode === 'linkedin-carousel';
+}
+
+// Returns the items array for the current mode
+function getModeItems() {
+  switch (activeMode) {
+    case 'carousel':           return carousels;
+    case 'linkedin-post':      return linkedinPosts;
+    case 'linkedin-carousel':  return linkedinCarousels;
+    default:                   return posts;
+  }
+}
+function getModeLegends() {
+  switch (activeMode) {
+    case 'carousel':           return carouselLegends;
+    case 'linkedin-post':      return linkedinLegends;
+    case 'linkedin-carousel':  return linkedinCarouselLegends;
+    default:                   return legends;
+  }
+}
+function getModeCurrentIdx() {
+  switch (activeMode) {
+    case 'carousel':           return currentCarousel;
+    case 'linkedin-post':      return linkedinCurrentPost;
+    case 'linkedin-carousel':  return linkedinCurrentCarousel;
+    default:                   return current;
+  }
+}
+function setModeCurrentIdx(idx) {
+  switch (activeMode) {
+    case 'carousel':           currentCarousel = idx; break;
+    case 'linkedin-post':      linkedinCurrentPost = idx; break;
+    case 'linkedin-carousel':  linkedinCurrentCarousel = idx; break;
+    default:                   current = idx; break;
+  }
+}
+function getCurrentSlide() {
+  return activeMode === 'linkedin-carousel' ? linkedinCurrentSlide : currentSlide;
+}
+function setCurrentSlide(idx) {
+  if (activeMode === 'linkedin-carousel') linkedinCurrentSlide = idx;
+  else currentSlide = idx;
+}
+
+function switchMode(mode) {
+  if (mode === activeMode) return;
+  activeMode = mode;
+
+  // Sync dropdown
+  const sel = document.getElementById('studioModeSelect');
+  if (sel) sel.value = mode;
+
+  // Hide all post slides
+  document.querySelectorAll('.post-slide').forEach(s => s.classList.remove('visible'));
+
+  // Rebuild sidebar and UI for the active mode
+  buildSidebar();
+  buildDots();
+
+  const items = getModeItems();
+  if (items.length > 0) {
+    if (isCarouselMode()) {
+      const maxIdx = items.length - 1;
+      setModeCurrentIdx(Math.min(getModeCurrentIdx(), maxIdx));
+      currentSlide = 0;
+      linkedinCurrentSlide = 0;
+      goTo(getModeCurrentIdx());
+    } else {
+      setModeCurrentIdx(Math.min(getModeCurrentIdx(), items.length - 1));
+      goTo(getModeCurrentIdx());
+    }
+  } else {
+    updateEmptyStateVisibility();
+  }
+  updateSlideNav();
+  scalePost();
+}
+
 function buildSidebar() {
   const aside = document.getElementById('sidebarAside');
-  aside.innerHTML = '<div class="aside-label">Posts</div>';
-  posts.forEach((p, i) => {
+  const isCarousel = isCarouselMode();
+  const items = getModeItems();
+  const currentIdx = getModeCurrentIdx();
+
+  aside.innerHTML = `<div class="aside-label">${isCarousel ? 'Carrosséis' : 'Posts'}</div>`;
+  items.forEach((p, i) => {
     const item = document.createElement('div');
-    item.className = 'thumb-item' + (i === current ? ' active' : '');
+    item.className = 'thumb-item' + (i === currentIdx ? ' active' : '');
     const info = document.createElement('div');
     info.className = 'thumb-info';
     info.style.flex = '1';
     info.style.cursor = 'pointer';
     info.style.minWidth = '0';
-    info.innerHTML = `<div class="thumb-title">${p.title}</div><div class="thumb-sub">${p.sub}</div>`;
+    if (isCarousel) {
+      info.innerHTML = `<div class="thumb-title">${p.title}</div><div class="thumb-badge">${p.slides.length} slides</div>`;
+    } else {
+      info.innerHTML = `<div class="thumb-title">${p.title}</div><div class="thumb-sub">${p.sub}</div>`;
+    }
     info.addEventListener('click', () => goTo(i));
     const del = document.createElement('button');
     del.className = 'thumb-delete';
-    del.title = 'Deletar post';
+    del.title = isCarousel ? 'Deletar carrossel' : 'Deletar post';
     del.innerHTML = '<span class="material-symbols-outlined sz-16">close</span>';
     del.addEventListener('click', (e) => { e.stopPropagation(); deletePost(i); });
     item.appendChild(info);
@@ -2692,19 +3165,25 @@ function buildSidebar() {
   });
   const genWrap = document.createElement('div');
   genWrap.className = 'aside-gen-wrap';
+  const genLabel = isCarousel ? 'Gerar Carrossel' : 'Gerar com IA';
+  const isLinkedinCarousel = activeMode === 'linkedin-carousel';
+  const dlLabel = isLinkedinCarousel ? 'Baixar PDF' : (isCarousel ? 'Baixar Carrossel' : 'Baixar Post');
+  const dlAction = isLinkedinCarousel ? 'downloadLinkedInCarouselPDF()' : (isCarousel ? 'downloadCarousel()' : 'downloadCurrent()');
   genWrap.innerHTML =
     '<button class="btn-cfg" onclick="openConfig()">Configurar Estilo</button>' +
-    '<button class="btn-gen-ai" onclick="openGenerator()">Gerar com IA</button>' +
-    '<button class="btn-download" id="downloadBtn" onclick="downloadCurrent()" style="display:none"><span class="material-symbols-outlined sz-18">download</span>Baixar Post</button>' +
+    `<button class="btn-gen-ai" onclick="openGenerator()">${genLabel}</button>` +
+    `<button class="btn-download" id="downloadBtn" onclick="${dlAction}" style="display:none"><span class="material-symbols-outlined sz-18">download</span>${dlLabel}</button>` +
     '<div class="logout-row"><span class="logout-email" id="userEmail"></span><button class="logout-btn" onclick="handleLogout()"><span class="material-symbols-outlined sz-18">logout</span>Sair</button></div>';
   aside.appendChild(genWrap);
 }
 
 function buildDots() {
   dotsContainer.innerHTML = '';
-  posts.forEach((_, i) => {
+  const items = getModeItems();
+  const currentIdx = getModeCurrentIdx();
+  items.forEach((_, i) => {
     const dot = document.createElement('div');
-    dot.className = 'dot' + (i === current ? ' active' : '');
+    dot.className = 'dot' + (i === currentIdx ? ' active' : '');
     dot.addEventListener('click', () => goTo(i));
     dotsContainer.appendChild(dot);
   });
@@ -2713,15 +3192,30 @@ function buildDots() {
 // Atualiza o empty state UI com base em posts.length.
 // Chamado sempre que a lista de posts muda (delete, load, generate).
 function updateEmptyStateVisibility() {
-  const empty = posts.length === 0;
+  const items = getModeItems();
+  const empty = items.length === 0;
   const emptyEl = document.getElementById('emptyState');
   const scaler  = document.getElementById('postScaler');
-  if (emptyEl) emptyEl.classList.toggle('visible', empty);
+  if (emptyEl) {
+    emptyEl.classList.toggle('visible', empty);
+    const titleEl = emptyEl.querySelector('.empty-state-title');
+    const subEl = emptyEl.querySelector('.empty-state-sub');
+    const btnEl = emptyEl.querySelector('.empty-state-btn');
+    if (isCarouselMode()) {
+      if (titleEl) titleEl.textContent = 'Nenhum Carrossel Ainda';
+      if (subEl) subEl.textContent = 'Gere seu primeiro carrossel com a IA. Os últimos 6 ficam salvos aqui automaticamente.';
+      if (btnEl) btnEl.textContent = 'Gerar Primeiro Carrossel';
+    } else {
+      if (titleEl) titleEl.textContent = 'Nenhum Post Ainda';
+      if (subEl) subEl.textContent = 'Gere seu primeiro post com a IA. Os últimos 6 ficam salvos aqui automaticamente.';
+      if (btnEl) btnEl.textContent = 'Gerar Primeiro Post';
+    }
+  }
   if (scaler)  scaler.style.display = empty ? 'none' : '';
   if (!empty) return;
 
-  // Reset completo da UI quando não há posts
-  document.getElementById('postTitle').textContent = 'Nenhum Post Ainda';
+  // Reset completo da UI quando não há items
+  document.getElementById('postTitle').textContent = isCarouselMode() ? 'Nenhum Carrossel Ainda' : 'Nenhum Post Ainda';
   document.getElementById('postSub').textContent   = 'Gere o primeiro com a IA';
   document.getElementById('btnPrev').disabled = true;
   document.getElementById('btnNext').disabled = true;
@@ -2738,23 +3232,56 @@ function updateEmptyStateVisibility() {
   }
   const hashEl = document.getElementById('hashtagsContainer');
   if (hashEl) hashEl.innerHTML = '';
+  updateSlideNav();
 }
 
 function deletePost(idx) {
-  const post = posts[idx];
+  if (isCarouselMode()) {
+    deleteCarousel(idx);
+    return;
+  }
+  const items = getModeItems();
+  const legendsArr = getModeLegends();
+  const post = items[idx];
   if (!post) return;
   const slideEl = document.getElementById(post.slideId);
   if (slideEl) slideEl.remove();
   if (post.isGenerated) deletePostFromSupabase(post.id);
-  posts.splice(idx, 1);
-  legends.splice(idx, 1);
+  items.splice(idx, 1);
+  legendsArr.splice(idx, 1);
   buildSidebar();
   buildDots();
-  if (posts.length === 0) {
-    current = 0;
+  if (items.length === 0) {
+    setModeCurrentIdx(0);
     updateEmptyStateVisibility();
   } else {
-    goTo(Math.min(idx, posts.length - 1));
+    goTo(Math.min(idx, items.length - 1));
+  }
+  saveSession();
+}
+
+function deleteCarousel(idx) {
+  const items = getModeItems();
+  const legendsArr = getModeLegends();
+  const carousel = items[idx];
+  if (!carousel) return;
+  carousel.slides.forEach(s => {
+    const slideEl = document.getElementById(s.slideId);
+    if (slideEl) slideEl.remove();
+  });
+  if (carousel.isGenerated) deletePostFromSupabase(carousel.id);
+  items.splice(idx, 1);
+  legendsArr.splice(idx, 1);
+  buildSidebar();
+  buildDots();
+  if (items.length === 0) {
+    setModeCurrentIdx(0);
+    setCurrentSlide(0);
+    updateEmptyStateVisibility();
+  } else {
+    setModeCurrentIdx(Math.min(idx, items.length - 1));
+    setCurrentSlide(0);
+    goTo(getModeCurrentIdx());
   }
   saveSession();
 }
@@ -2762,42 +3289,212 @@ function deletePost(idx) {
 // Mostra o post no índice idx. Lida com empty state, primeira exibição
 // (sem post anterior pra esconder) e transições normais.
 function goTo(idx) {
-  if (posts.length === 0) { updateEmptyStateVisibility(); return; }
-  current = Math.max(0, Math.min(idx, posts.length - 1));
+  if (isCarouselMode()) {
+    goToCarousel(idx);
+    return;
+  }
+  const items = getModeItems();
+  if (items.length === 0) { updateEmptyStateVisibility(); return; }
+  setModeCurrentIdx(Math.max(0, Math.min(idx, items.length - 1)));
+  const currentIdx = getModeCurrentIdx();
 
-  // Limpa TODAS as marcações ativas — não depende de `current` anterior
-  // estar correto, o que quebrava quando vinha de empty state ou delete.
   document.querySelectorAll('.post-slide').forEach(s => s.classList.remove('visible'));
   document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
   Array.from(dotsContainer.children).forEach(d => d.classList.remove('active'));
 
-  const post = posts[current];
+  const post = getActivePost();
   const slide = document.getElementById(post.slideId);
   if (slide) slide.classList.add('visible');
-  const thumb = document.querySelectorAll('.thumb-item')[current];
+  const thumb = document.querySelectorAll('.thumb-item')[currentIdx];
   if (thumb) thumb.classList.add('active');
-  const dot = dotsContainer.children[current];
+  const dot = dotsContainer.children[currentIdx];
   if (dot) dot.classList.add('active');
 
   document.getElementById('postTitle').textContent = post.title;
   document.getElementById('postSub').textContent   = post.sub;
-  document.getElementById('btnPrev').disabled = current === 0;
-  document.getElementById('btnNext').disabled = current === posts.length - 1;
+  document.getElementById('btnPrev').disabled = currentIdx === 0;
+  document.getElementById('btnNext').disabled = currentIdx === items.length - 1;
   const dlBtn = document.getElementById('downloadBtn');
   if (dlBtn) dlBtn.style.display = 'flex';
   const cpBtn = document.getElementById('copyBtn');
   if (cpBtn) cpBtn.disabled = false;
 
-  updateLegend(current);
-  updatePostControls(current);
+  updateLegend(currentIdx);
+  updatePostControls(currentIdx);
   updateEmptyStateVisibility();
+  updateSlideNav();
   scalePost();
 }
 
+function goToCarousel(idx) {
+  const items = getModeItems();
+  if (items.length === 0) { updateEmptyStateVisibility(); return; }
+  setModeCurrentIdx(Math.max(0, Math.min(idx, items.length - 1)));
+  const currentIdx = getModeCurrentIdx();
+  setCurrentSlide(Math.min(getCurrentSlide(), items[currentIdx].slides.length - 1));
+
+  document.querySelectorAll('.post-slide').forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
+  Array.from(dotsContainer.children).forEach(d => d.classList.remove('active'));
+
+  const carousel = items[currentIdx];
+  const slideData = carousel.slides[getCurrentSlide()];
+  const slide = document.getElementById(slideData.slideId);
+  if (slide) slide.classList.add('visible');
+  const thumb = document.querySelectorAll('.thumb-item')[currentIdx];
+  if (thumb) thumb.classList.add('active');
+  const dot = dotsContainer.children[currentIdx];
+  if (dot) dot.classList.add('active');
+
+  document.getElementById('postTitle').textContent = carousel.title;
+  document.getElementById('postSub').textContent   = `Slide ${getCurrentSlide() + 1}/${carousel.slides.length}`;
+  document.getElementById('btnPrev').disabled = currentIdx === 0;
+  document.getElementById('btnNext').disabled = currentIdx === items.length - 1;
+  const dlBtn = document.getElementById('downloadBtn');
+  if (dlBtn) dlBtn.style.display = 'flex';
+  const cpBtn = document.getElementById('copyBtn');
+  if (cpBtn) cpBtn.disabled = false;
+
+  updateCarouselLegend();
+  updateCarouselPostControls();
+  updateEmptyStateVisibility();
+  updateSlideNav();
+  scalePost();
+}
+
+function goToSlide(slideIdx) {
+  const items = getModeItems();
+  if (items.length === 0) return;
+  const carousel = items[getModeCurrentIdx()];
+  if (!carousel) return;
+  slideIdx = Math.max(0, Math.min(slideIdx, carousel.slides.length - 1));
+  if (slideIdx === getCurrentSlide()) return;
+
+  const oldSlide = carousel.slides[getCurrentSlide()];
+  const oldEl = document.getElementById(oldSlide.slideId);
+  if (oldEl) oldEl.classList.remove('visible');
+
+  setCurrentSlide(slideIdx);
+
+  const newSlide = carousel.slides[getCurrentSlide()];
+  const newEl = document.getElementById(newSlide.slideId);
+  if (newEl) newEl.classList.add('visible');
+
+  document.getElementById('postSub').textContent = `Slide ${getCurrentSlide() + 1}/${carousel.slides.length}`;
+  updateSlideNav();
+  updateCarouselPostControls();
+  scalePost();
+}
+
+function updateSlideNav() {
+  const nav = document.getElementById('slideNav');
+  if (!nav) return;
+  const items = getModeItems();
+  if (items.length === 0) {
+    nav.classList.remove('visible');
+    return;
+  }
+  nav.classList.add('visible');
+
+  if (!isCarouselMode()) {
+    nav.classList.add('disabled');
+    const dotsEl = document.getElementById('slideNavDots');
+    dotsEl.innerHTML = '';
+    const dot = document.createElement('div');
+    dot.className = 'slide-nav-dot active';
+    dotsEl.appendChild(dot);
+    document.getElementById('slideNavLabel').textContent = '1/1';
+    document.getElementById('slidePrev').disabled = true;
+    document.getElementById('slideNext').disabled = true;
+    const _mp = document.getElementById('slideMovePrev');
+    const _mn = document.getElementById('slideMoveNext');
+    const _ab = document.getElementById('slideAddBefore');
+    const _aa = document.getElementById('slideAddAfter');
+    if (_mp) _mp.disabled = true;
+    if (_mn) _mn.disabled = true;
+    if (_ab) _ab.disabled = true;
+    if (_aa) _aa.disabled = true;
+    return;
+  }
+  nav.classList.remove('disabled');
+
+  const carousel = items[getModeCurrentIdx()];
+  if (!carousel) { nav.classList.remove('visible'); return; }
+
+  const dotsEl = document.getElementById('slideNavDots');
+  dotsEl.innerHTML = '';
+  const cs = getCurrentSlide();
+  carousel.slides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'slide-nav-dot' + (i === cs ? ' active' : '');
+    dot.addEventListener('click', () => goToSlide(i));
+    dotsEl.appendChild(dot);
+  });
+
+  document.getElementById('slideNavLabel').textContent = `${cs + 1}/${carousel.slides.length}`;
+  document.getElementById('slidePrev').disabled = cs === 0;
+  document.getElementById('slideNext').disabled = cs === carousel.slides.length - 1;
+
+  const movePrev = document.getElementById('slideMovePrev');
+  const moveNext = document.getElementById('slideMoveNext');
+  if (movePrev) movePrev.disabled = cs === 0;
+  if (moveNext) moveNext.disabled = cs === carousel.slides.length - 1;
+
+  const addBefore = document.getElementById('slideAddBefore');
+  const addAfter  = document.getElementById('slideAddAfter');
+  if (addBefore) addBefore.disabled = false;
+  if (addAfter)  addAfter.disabled  = false;
+}
+
+function moveSlide(direction) {
+  if (!isCarouselMode()) return;
+  const items = getModeItems();
+  const carousel = items[getModeCurrentIdx()];
+  if (!carousel || carousel.slides.length < 2) return;
+
+  const cs = getCurrentSlide();
+  const target = cs + direction;
+  if (target < 0 || target >= carousel.slides.length) return;
+
+  const temp = carousel.slides[cs];
+  carousel.slides[cs] = carousel.slides[target];
+  carousel.slides[target] = temp;
+
+  carousel.slides[cs].slideIndex = cs;
+  carousel.slides[target].slideIndex = target;
+
+  const oldEl = document.getElementById(carousel.slides[cs].slideId);
+  const newEl = document.getElementById(carousel.slides[target].slideId);
+  if (oldEl) oldEl.classList.remove('visible');
+  if (newEl) newEl.classList.add('visible');
+
+  setCurrentSlide(target);
+  document.getElementById('postSub').textContent = `Slide ${target + 1}/${carousel.slides.length}`;
+  updateSlideNav();
+  updateCarouselPostControls();
+  saveSession();
+}
+
+function updateCarouselLegend() {
+  const el = document.getElementById('legendText');
+  el.textContent = getModeLegends()[getModeCurrentIdx()] || '';
+  el.contentEditable = 'true';
+  document.getElementById('hashtagsContainer').innerHTML = '';
+  const btn = document.getElementById('copyBtn');
+  btn.innerHTML = '<span class="material-symbols-outlined sz-16">content_copy</span>Copiar';
+  btn.classList.remove('copied');
+}
+
+function updateCarouselPostControls() {
+  // updatePostControls already handles carousel mode via getActivePost()
+  updatePostControls(current);
+}
+
 function navigate(dir) {
-  if (posts.length === 0) return;
-  const next = current + dir;
-  if (next >= 0 && next < posts.length) goTo(next);
+  const items = getModeItems();
+  if (items.length === 0) return;
+  const next = getModeCurrentIdx() + dir;
+  if (next >= 0 && next < items.length) goTo(next);
 }
 
 // Init nav state (empty por padrão — load handler atualiza depois)
@@ -2808,7 +3505,7 @@ document.getElementById('btnNext').disabled = true;
 function scalePost() {
   const area    = document.getElementById('canvasArea');
   const scaler  = document.getElementById('postScaler');
-  const post    = posts[current];
+  const post    = getActivePost();
   const format  = (post && post.format) || 'feed';
   const postH   = format === 'story' ? 1920 : 1350;
   const aw      = area.clientWidth  - 40;
@@ -2898,23 +3595,49 @@ function showPersistError(msg) {
 }
 
 // ── SALVAR / CARREGAR / DELETAR ──────────────────────────────
-async function saveSession() {
+let _saveTimer = null;
+const _saveSessionCore = async function() {
   const generated = posts
     .map((p, i) => ({ post: p, legend: legends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
-  if (!generated.length) return;
+
+  const generatedCarousels = carousels
+    .map((c, i) => ({ post: c, legend: carouselLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
+  const generatedLinkedinPosts = linkedinPosts
+    .map((p, i) => ({ post: p, legend: linkedinLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
+  const generatedLinkedinCarousels = linkedinCarousels
+    .map((c, i) => ({ post: c, legend: linkedinCarouselLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
+  const allRows = [...generated, ...generatedCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels];
+  if (!allRows.length) return;
   const sid = getSessionId();
-  const rows = generated.map(x => ({
-    id: x.post.id, session_id: sid, post_data: x.post,
-    legend: x.legend, updated_at: new Date().toISOString(),
-  }));
-  try {
-    const { error } = await sb.from('cropware_posts').upsert(rows, { onConflict: 'id' });
-    if (error) throw error;
-  } catch(e) {
-    console.error('saveSession error:', e);
-    showPersistError('Falha ao salvar posts no Supabase: ' + (e.message || e));
+  const now = new Date().toISOString();
+
+  // Salva 1 row por vez para evitar timeout no Supabase
+  // (carrosséis têm múltiplas imagens base64 no jsonb e ficam enormes)
+  for (const x of allRows) {
+    try {
+      const { error } = await sb.from('cropware_posts').upsert(
+        { id: x.post.id, session_id: sid, post_data: x.post, legend: x.legend, updated_at: now },
+        { onConflict: 'id' }
+      );
+      if (error) throw error;
+    } catch(e) {
+      console.error('saveSession error:', e);
+      showPersistError('Falha ao salvar no Supabase: ' + (e.message || e));
+      return;
+    }
   }
+};
+// Debounce: agrupa saves rápidos (blur, style change) em 1 só
+function saveSession() {
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(_saveSessionCore, 800);
 }
 
 async function deletePostFromSupabase(postId) {
@@ -2935,12 +3658,19 @@ async function loadSession() {
       .order('created_at', { ascending: true });
     if (error) throw error;
     if (data && data.length) {
-      data.forEach(row => renderGeneratedPost(row.post_data, row.legend || ''));
+      data.forEach(row => {
+        const type = row.post_data && row.post_data.type;
+        if (type === 'carousel' || type === 'linkedin-carousel') {
+          renderGeneratedCarousel(row.post_data, row.legend || '');
+        } else {
+          renderGeneratedPost(row.post_data, row.legend || '');
+        }
+      });
       return;
     }
   } catch(e) {
     console.error('loadSession Supabase error:', e);
-    showPersistError('Falha ao carregar posts do Supabase: ' + (e.message || e));
+    showPersistError('Falha ao carregar do Supabase: ' + (e.message || e));
   }
   // Fallback: tenta localStorage (migração de sessões antigas)
   try {
@@ -3024,8 +3754,8 @@ function renderGeneratedPost(postData, legendText) {
   if (!postData.columnBlockColor)  postData.columnBlockColor  = '#f8fafc';
   if (!postData.columnTextMode)    postData.columnTextMode    = 'dark';
   if (!postData.columnSide)        postData.columnSide        = 'left';
-  if (!postData.frameColor)        postData.frameColor        = '#f8fafc';
-  if (!postData.frameTextMode)     postData.frameTextMode     = 'dark';
+  if (!postData.frameColor)        postData.frameColor        = '#0F1E14';
+  if (!postData.frameTextMode)     postData.frameTextMode     = 'light';
   if (!postData.format)            postData.format            = 'feed';
   if (postData.hookScale == null)       postData.hookScale       = 1;
   if (postData.complementScale == null) postData.complementScale = 1;
@@ -3038,8 +3768,12 @@ function renderGeneratedPost(postData, legendText) {
   if (postData.bulletIconsVisible == null) postData.bulletIconsVisible = true;
   if (postData.bulletIconScale == null)    postData.bulletIconScale    = 1;
 
-  posts.push(postData);
-  legends.push(sanitizeLegend(legendText || ''));
+  const isLinkedin = postData.type === 'linkedin-post';
+  const targetPosts = isLinkedin ? linkedinPosts : posts;
+  const targetLegends = isLinkedin ? linkedinLegends : legends;
+
+  targetPosts.push(postData);
+  targetLegends.push(sanitizeLegend(legendText || ''));
 
   const slide = document.createElement('div');
   slide.className = 'post-slide';
@@ -3055,7 +3789,75 @@ function renderGeneratedPost(postData, legendText) {
   document.getElementById('postScaler').appendChild(slide);
 
   applyPostVariant(postEl, postData);
-  return posts.length - 1;
+  return targetPosts.length - 1;
+}
+
+// Constrói o DOM de um carrossel (múltiplos slides) e adiciona a carousels[]/carouselLegends[].
+function renderGeneratedCarousel(carouselData, legendText) {
+  // Ensure each slide has proper defaults (reuse the same logic as renderGeneratedPost)
+  carouselData.slides.forEach((slideData, i) => {
+    if (!slideData.accent || ['#4aa276', '#3b9f73'].includes((slideData.accent || '').toLowerCase())) {
+      slideData.accent = '#7AB87E';
+    }
+    if (!slideData.layout)    slideData.layout    = 'top';
+    if (!slideData.textAlign) slideData.textAlign = 'left';
+    if (!slideData.logoPos)   slideData.logoPos   = 'br';
+    if (slideData.logoScale == null) slideData.logoScale = 1;
+    if (!slideData.siteText)  slideData.siteText  = 'cropware.app';
+    if (!slideData.sitePos)   slideData.sitePos   = 'bl';
+    if (slideData.siteEnabled == null) slideData.siteEnabled = true;
+    if (slideData.siteScale == null)   slideData.siteScale   = 1;
+    if (!slideData.overlayColor)     slideData.overlayColor     = '#000000';
+    if (slideData.overlayOpacity == null) slideData.overlayOpacity = 55;
+    if (!slideData.overlayDirection) slideData.overlayDirection = slideData.layout === 'bottom' ? 'bottom' : 'top';
+    if (!slideData.dashCardColor)    slideData.dashCardColor    = '#0F1E14';
+    if (slideData.dashCardOpacity == null) slideData.dashCardOpacity = 65;
+    if (!slideData.revistaBlockColor) slideData.revistaBlockColor = '#f8fafc';
+    if (!slideData.splitBlockColor)   slideData.splitBlockColor   = '#152F17';
+    if (!slideData.revistaTextMode)   slideData.revistaTextMode   = 'dark';
+    if (!slideData.splitTextMode)     slideData.splitTextMode     = 'light';
+    if (!slideData.columnBlockColor)  slideData.columnBlockColor  = '#f8fafc';
+    if (!slideData.columnTextMode)    slideData.columnTextMode    = 'dark';
+    if (!slideData.columnSide)        slideData.columnSide        = 'left';
+    if (!slideData.frameColor)        slideData.frameColor        = '#0F1E14';
+    if (!slideData.frameTextMode)     slideData.frameTextMode     = 'light';
+    if (!slideData.format)            slideData.format            = 'feed';
+    if (slideData.hookScale == null)       slideData.hookScale       = 1;
+    if (slideData.complementScale == null) slideData.complementScale = 1;
+    if (slideData.bulletsScale == null)    slideData.bulletsScale    = 1;
+    if (!slideData.style) slideData.style = 'classic';
+    if (!Array.isArray(slideData.bullets)) slideData.bullets = [];
+    if (slideData.hookVisible == null)        slideData.hookVisible        = true;
+    if (slideData.complementVisible == null)  slideData.complementVisible  = true;
+    if (slideData.bulletsVisible == null)     slideData.bulletsVisible     = true;
+    if (slideData.bulletIconsVisible == null) slideData.bulletIconsVisible = true;
+    if (slideData.bulletIconScale == null)    slideData.bulletIconScale    = 1;
+    slideData.isGenerated = true;
+    slideData.slideIndex = i;
+
+    // Create DOM for each slide
+    const slide = document.createElement('div');
+    slide.className = 'post-slide';
+    slide.id = slideData.slideId;
+
+    const postEl = document.createElement('div');
+    postEl.className = 'post';
+    postEl.id = slideData.id;
+    postEl.dataset.generated = 'true';
+    postEl.style.background = '#000';
+
+    slide.appendChild(postEl);
+    document.getElementById('postScaler').appendChild(slide);
+    applyPostVariant(postEl, slideData);
+  });
+
+  const isLinkedin = carouselData.type === 'linkedin-carousel';
+  const targetArr = isLinkedin ? linkedinCarousels : carousels;
+  const targetLeg = isLinkedin ? linkedinCarouselLegends : carouselLegends;
+
+  targetArr.push(carouselData);
+  targetLeg.push(sanitizeLegend(legendText || ''));
+  return targetArr.length - 1;
 }
 
 // Converte hex (#rrggbb) + alpha (0..1) em string rgba()
@@ -3183,7 +3985,7 @@ function renderClassicStyle(postData) {
       ${complementBlock}
       ${bulletsHTML}
     </div>
-    <img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware" style="filter:brightness(0) invert(1);">
+    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware" style="filter:brightness(0) invert(1);">` : ''}
     ${renderSiteText(postData)}
     <div class="brand-strip"></div>
   `;
@@ -3204,12 +4006,15 @@ function renderDashboardStyle(postData) {
     <div class="bg" id="${postData.bg}" style="background-image:url('${imgSrc}');"></div>
     <div class="post-overlay" style="${overlayStyle}"></div>
     <div class="dash-card" data-layout="${layout}" data-align="${textAlign}" style="background:${dashCardBg};">
+      <div class="dash-card-blur" style="background-image:url('${imgSrc}');"></div>
+      <div class="dash-card-inner-overlay" style="${overlayBg ? 'background:' + overlayBg : ''}"></div>
+      <div class="dash-card-tint" style="background:${dashCardBg};"></div>
       <div class="dash-bar"></div>
       <div class="dash-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
       <div class="dash-separator"></div>
       <div class="dash-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
     </div>
-    <img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware" style="filter:brightness(0) invert(1);">
+    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware" style="filter:brightness(0) invert(1);">` : ''}
     ${renderSiteText(postData)}
   `;
 }
@@ -3224,6 +4029,8 @@ function applyDashCardInline(postEl, post) {
   const card = postEl.querySelector('.dash-card');
   if (!card) return;
   card.style.background = buildDashCardBackground(post);
+  const tint = card.querySelector('.dash-card-tint');
+  if (tint) tint.style.background = buildDashCardBackground(post);
 }
 
 function buildSplitBlockBackground(color) {
@@ -3255,12 +4062,32 @@ function applyColunaBlockInline(postEl, post) {
   postEl.dataset.columnSide = post.columnSide || 'left';
 }
 
+function buildGlassBackground(postData) {
+  const color = postData.frameColor    || '#0F1E14';
+  const op    = postData.glassOpacity == null ? 55 : postData.glassOpacity;
+  return hexToRgba(color, Math.max(0, Math.min(100, op)) / 100);
+}
+
 function applyMolduraBlockInline(postEl, post) {
-  const bg = postEl.querySelector('.moldura-bg');
-  if (!bg) return;
-  bg.style.background = post.frameColor || '#f8fafc';
-  bg.classList.toggle('text-light', (post.frameTextMode || 'dark') === 'light');
-  bg.classList.toggle('text-dark',  (post.frameTextMode || 'dark') === 'dark');
+  const glass = postEl.querySelector('.moldura-glass');
+  if (!glass) return;
+  glass.style.background = buildGlassBackground(post);
+  const tint = glass.querySelector('.moldura-glass-tint');
+  if (tint) tint.style.background = buildGlassBackground(post);
+  glass.classList.toggle('text-light', (post.frameTextMode || 'light') === 'light');
+  glass.classList.toggle('text-dark',  (post.frameTextMode || 'light') === 'dark');
+  // Overlay configurável (externo + interno ao glass)
+  const bg = buildOverlayBackground(post.overlayColor || '#000000', post.overlayOpacity == null ? 40 : post.overlayOpacity, post.overlayDirection || 'full');
+  const overlay = postEl.querySelector('.moldura-overlay');
+  if (overlay) {
+    if (bg) { overlay.style.display = ''; overlay.style.background = bg; }
+    else    { overlay.style.display = 'none'; }
+  }
+  const innerOverlay = glass.querySelector('.moldura-glass-inner-overlay');
+  if (innerOverlay) {
+    if (bg) { innerOverlay.style.display = ''; innerOverlay.style.background = bg; }
+    else    { innerOverlay.style.display = 'none'; }
+  }
 }
 
 function renderRevistaStyle(postData) {
@@ -3276,7 +4103,7 @@ function renderRevistaStyle(postData) {
     <div class="revista-block text-${textMode}" style="background:${blockBg};">
       <div class="revista-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
       <div class="revista-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
-      <img class="revista-logo" src="logo-cropware-pb-final.svg" alt="Cropware">
+      ${postData.logoEnabled !== false ? '<img class="revista-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     </div>
     ${renderSiteText(postData, { dark: siteDark })}
   `;
@@ -3293,7 +4120,7 @@ function renderSplitStyle(postData) {
     <div class="split-block text-${textMode}" style="background:${blockBg};">
       <div class="split-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
       <div class="split-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
-      <img class="split-logo" src="logo-cropware-pb-final.svg" alt="Cropware">
+      ${postData.logoEnabled !== false ? '<img class="split-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     </div>
     ${renderSiteText(postData)}
   `;
@@ -3309,7 +4136,7 @@ function renderColunaStyle(postData) {
   return `
     <div class="coluna-photo" style="background-image:url('${imgSrc}');"></div>
     <div class="coluna-block text-${textMode}" style="background:${blockBg};">
-      <img class="coluna-logo" src="logo-cropware-pb-final.svg" alt="Cropware">
+      ${postData.logoEnabled !== false ? '<img class="coluna-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
       <div class="coluna-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
       <div class="coluna-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
     </div>
@@ -3321,20 +4148,57 @@ function renderMolduraStyle(postData) {
   const hookHTML       = postData.hookHTML       || '';
   const complementHTML = postData.complementHTML || '';
   const imgSrc         = postData.bgImage        || '';
-  const textMode       = postData.frameTextMode || 'dark';
-  const bg             = postData.frameColor    || '#f8fafc';
-  const siteDark       = textMode === 'dark';
+  const textMode       = postData.frameTextMode  || 'light';
+
+  const showHook        = postData.hookVisible        !== false;
+  const showComplement  = postData.complementVisible  !== false;
+  const showBullets     = postData.bulletsVisible     !== false;
+  const showBulletIcons = postData.bulletIconsVisible !== false;
+
+  const hookBlock = showHook
+    ? `<div class="moldura-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>`
+    : '';
+  const complementBlock = showComplement
+    ? `<div class="moldura-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>`
+    : '';
+
+  const bullets = Array.isArray(postData.bullets) ? postData.bullets.slice(0, 3) : [];
+  const bulletsHTML = (showBullets && bullets.length) ? `
+      <div class="moldura-bullets">
+        ${bullets.map((b, i) => `
+          <div class="moldura-bullet" data-bullet-idx="${i}">
+            ${showBulletIcons ? `<button type="button" class="moldura-bullet-icon" data-bullet-icon="${i}" title="Trocar ícone"><span class="material-symbols-outlined">${escapeHTML(b.icon || 'check_circle')}</span></button>` : ''}
+            <span class="post-bullet-text" contenteditable="true" spellcheck="false" data-bullet-text="${i}">${escapeHTML(b.text || '')}</span>
+          </div>
+        `).join('')}
+      </div>` : '';
+
+  const glassBg = buildGlassBackground(postData);
+  const overlayColor = postData.overlayColor || '#000000';
+  const overlayOp    = postData.overlayOpacity == null ? 40 : postData.overlayOpacity;
+  const overlayDir   = postData.overlayDirection || 'full';
+  const overlayBg    = buildOverlayBackground(overlayColor, overlayOp, overlayDir);
+
   return `
-    <div class="moldura-bg text-${textMode}" style="background:${bg};"></div>
+    <div class="moldura-bg" style="background-image:url('${imgSrc}');"></div>
+    <div class="moldura-overlay" style="${overlayBg ? 'background:' + overlayBg : 'display:none'}"></div>
     <div class="moldura-header">
-      <img class="moldura-logo" src="logo-cropware-pb-final.svg" alt="Cropware">
+      ${postData.logoEnabled !== false ? '<img class="moldura-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     </div>
-    <div class="moldura-photo" style="background-image:url('${imgSrc}');"></div>
-    <div class="moldura-body">
-      <div class="moldura-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
-      <div class="moldura-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
+    <div class="moldura-glass text-${textMode}" style="background:${glassBg};">
+      <div class="moldura-glass-blur" style="background-image:url('${imgSrc}');"></div>
+      <div class="moldura-glass-inner-overlay" style="${overlayBg ? 'background:' + overlayBg : ''}"></div>
+      <div class="moldura-glass-tint" style="background:${glassBg};"></div>
+      <div class="moldura-glass-accent"></div>
+      <div class="moldura-glass-line-top"></div>
+      <div class="moldura-glass-sidebar"></div>
+      ${hookBlock}
+      ${complementBlock}
+      ${(showBullets && bullets.length && (showHook || showComplement)) ? '<div class="moldura-divider"></div>' : ''}
+      ${bulletsHTML}
+      <div class="moldura-glass-line"></div>
     </div>
-    ${renderSiteText(postData, { dark: siteDark })}
+    ${renderSiteText(postData)}
   `;
 }
 
@@ -3386,9 +4250,33 @@ function applyPostVariant(postEl, postData) {
 }
 
 // Sincroniza o painel de controles com o post atual
+// Helper: returns the current active postData regardless of mode
+function getActivePost() {
+  const items = getModeItems();
+  const idx = getModeCurrentIdx();
+  if (isCarouselMode()) {
+    const carousel = items[idx];
+    return carousel ? carousel.slides[getCurrentSlide()] : undefined;
+  }
+  return items[idx];
+}
+
+function getActivePostEl() {
+  const p = getActivePost();
+  return p ? document.getElementById(p.id) : null;
+}
+
+function getActiveLegend() {
+  return getModeLegends()[getModeCurrentIdx()] || '';
+}
+
+function setActiveLegend(text) {
+  getModeLegends()[getModeCurrentIdx()] = text;
+}
+
 function updatePostControls(idx) {
   const panel = document.getElementById('postControls');
-  const post  = posts[idx];
+  const post = getActivePost();
   if (!post || !post.isGenerated) {
     panel.classList.remove('visible');
     return;
@@ -3431,16 +4319,18 @@ function updatePostControls(idx) {
   //   revista   : esconde "Posição do Texto", "Posição da Logo", "Fundo"
   //   split     : esconde "Posição do Texto", "Posição da Logo", "Fundo"
   setSubVisible('pcSubTextPosition',       currentStyle === 'classic' || currentStyle === 'dashboard');
-  setSubVisible('pcSubLogoPosition',       currentStyle === 'classic' || currentStyle === 'dashboard');
-  setSubVisible('pcSubBulletsEditor',      currentStyle === 'classic');
-  setSubVisible('pcSubBulletsScale',       currentStyle === 'classic');
-  setSubVisible('pcSubBulletIconScale',    currentStyle === 'classic');
-  setSubVisible('pcSubVisibility',         currentStyle === 'classic');
-  setSubVisible('pcSubVisibilityDivider',  currentStyle === 'classic');
+  const logoOn = post.logoEnabled !== false;
+  setSubVisible('pcSubLogoPosition',       logoOn && (currentStyle === 'classic' || currentStyle === 'dashboard' || currentStyle === 'coluna'));
+  setSubVisible('pcSubLogoScale',          logoOn);
+  setSubVisible('pcSubBulletsEditor',      currentStyle === 'classic' || currentStyle === 'moldura');
+  setSubVisible('pcSubBulletsScale',       currentStyle === 'classic' || currentStyle === 'moldura');
+  setSubVisible('pcSubBulletIconScale',    currentStyle === 'classic' || currentStyle === 'moldura');
+  setSubVisible('pcSubVisibility',         currentStyle === 'classic' || currentStyle === 'moldura');
+  setSubVisible('pcSubVisibilityDivider',  currentStyle === 'classic' || currentStyle === 'moldura');
   setGroupVisible('pcGroupBackground',     true);
-  setSubVisible('pcSubOverlayColor',       currentStyle === 'classic');
-  setSubVisible('pcSubOverlayOpacity',     currentStyle === 'classic');
-  setSubVisible('pcSubOverlayDirection',   currentStyle === 'classic');
+  setSubVisible('pcSubOverlayColor',       currentStyle === 'classic' || currentStyle === 'moldura');
+  setSubVisible('pcSubOverlayOpacity',     currentStyle === 'classic' || currentStyle === 'moldura');
+  setSubVisible('pcSubOverlayDirection',   currentStyle === 'classic' || currentStyle === 'moldura');
   setSubVisible('pcSubDashCardColor',      currentStyle === 'dashboard');
   setSubVisible('pcSubDashCardOpacity',    currentStyle === 'dashboard');
   setSubVisible('pcSubRevistaBlockColor',  currentStyle === 'revista');
@@ -3448,6 +4338,7 @@ function updatePostControls(idx) {
   setSubVisible('pcSubColunaBlockColor',   currentStyle === 'coluna');
   setSubVisible('pcSubColunaSide',         currentStyle === 'coluna');
   setSubVisible('pcSubFrameColor',         currentStyle === 'moldura');
+  setSubVisible('pcSubGlassOpacity',       currentStyle === 'moldura');
   setSubVisible('pcSubBlockTextMode',      currentStyle === 'revista' || currentStyle === 'split' || currentStyle === 'coluna' || currentStyle === 'moldura');
 
   // Visibility toggles (hook / complement / bullets / bulletIcons / site)
@@ -3457,6 +4348,7 @@ function updatePostControls(idx) {
     bullets:     post.bulletsVisible     !== false,
     bulletIcons: post.bulletIconsVisible !== false,
     site:        post.siteEnabled        !== false,
+    logo:        post.logoEnabled        !== false,
   };
   document.querySelectorAll('.pc-vis-btn').forEach(b => {
     b.classList.toggle('active', visState[b.dataset.vis]);
@@ -3534,7 +4426,7 @@ function updatePostControls(idx) {
   const revistaBlockColor = post.revistaBlockColor || '#f8fafc';
   const splitBlockColor   = post.splitBlockColor   || '#152F17';
   const columnBlockColor  = post.columnBlockColor  || '#f8fafc';
-  const frameColor        = post.frameColor        || '#f8fafc';
+  const frameColor        = post.frameColor        || '#0F1E14';
   const rbSw = document.getElementById('pcRevistaBlockColorBtnSwatch');
   const rbLb = document.getElementById('pcRevistaBlockColorBtnLabel');
   if (rbSw) rbSw.style.background = revistaBlockColor;
@@ -3552,6 +4444,13 @@ function updatePostControls(idx) {
   if (fbSw) fbSw.style.background = frameColor;
   if (fbLb) fbLb.textContent = frameColor.toUpperCase();
 
+  // Glass opacity
+  const glassOpacity = post.glassOpacity == null ? 55 : post.glassOpacity;
+  const glassOpRange = document.getElementById('pcGlassOpacity');
+  const glassOpValue = document.getElementById('pcGlassOpacityValue');
+  if (glassOpRange) glassOpRange.value = String(glassOpacity);
+  if (glassOpValue) glassOpValue.textContent = `${glassOpacity}%`;
+
   // Column — lado da foto
   const columnSide = post.columnSide || 'left';
   document.querySelectorAll('#pcColumnSideToggle button').forEach(b => {
@@ -3562,7 +4461,7 @@ function updatePostControls(idx) {
   const currentTextMode =
     currentStyle === 'split'   ? (post.splitTextMode   || 'light') :
     currentStyle === 'coluna'  ? (post.columnTextMode  || 'dark')  :
-    currentStyle === 'moldura' ? (post.frameTextMode   || 'dark')  :
+    currentStyle === 'moldura' ? (post.frameTextMode   || 'light') :
                                  (post.revistaTextMode || 'dark');
   document.querySelectorAll('#pcBlockTextModeToggle button').forEach(b => {
     b.classList.toggle('active', b.dataset.mode === currentTextMode);
@@ -3599,14 +4498,17 @@ function setSubVisible(id, visible) {
 
 // Aplica mudança de overlay no DOM sem destruir o innerHTML (evita perder edição inline)
 function applyOverlayInline(postEl, post) {
-  const overlay = postEl.querySelector('.post-overlay');
-  if (!overlay) return;
   const bg = buildOverlayBackground(post.overlayColor, post.overlayOpacity, post.overlayDirection);
-  if (bg) {
-    overlay.style.display = '';
-    overlay.style.background = bg;
-  } else {
-    overlay.style.display = 'none';
+  const overlay = postEl.querySelector('.post-overlay');
+  if (overlay) {
+    if (bg) { overlay.style.display = ''; overlay.style.background = bg; }
+    else    { overlay.style.display = 'none'; }
+  }
+  // Sincroniza overlay interno do glass (dash-card / moldura)
+  const innerOverlay = postEl.querySelector('.dash-card-inner-overlay');
+  if (innerOverlay) {
+    if (bg) { innerOverlay.style.display = ''; innerOverlay.style.background = bg; }
+    else    { innerOverlay.style.display = 'none'; }
   }
 }
 
@@ -3668,7 +4570,7 @@ function openColorDropdown(target, anchorEl) {
   dd.style.left = `${Math.max(12, left)}px`;
   dd.style.top  = `${Math.max(12, top)}px`;
   // Marca a célula ativa conforme a cor atual
-  const post = posts[current];
+  const post = getActivePost();
   const currentColor = post ? (
     target === 'accent'       ? post.accent             :
     target === 'dashCard'     ? post.dashCardColor      :
@@ -3711,7 +4613,7 @@ window.addEventListener('scroll', () => { if (activeColorTarget) closeColorDropd
 window.addEventListener('resize', () => { if (activeColorTarget) closeColorDropdown(); });
 
 function applyColorChoice(color) {
-  const post = posts[current];
+  const post = getActivePost();
   if (!post || !post.isGenerated) return;
   const postEl = document.getElementById(post.id);
   if (activeColorTarget === 'accent') {
@@ -3719,7 +4621,10 @@ function applyColorChoice(color) {
     if (postEl) postEl.style.setProperty('--post-accent', post.accent);
   } else if (activeColorTarget === 'overlay') {
     post.overlayColor = color;
-    if (postEl) applyOverlayInline(postEl, post);
+    if (postEl) {
+      if (post.style === 'moldura') applyMolduraBlockInline(postEl, post);
+      else applyOverlayInline(postEl, post);
+    }
   } else if (activeColorTarget === 'dashCard') {
     post.dashCardColor = color;
     if (postEl) applyDashCardInline(postEl, post);
@@ -3784,7 +4689,7 @@ function openIconDropdown(bulletIdx, anchorEl) {
   if (top + ddH > window.innerHeight - 12) top = r.top - ddH - 8;
   dd.style.left = `${Math.max(12, left)}px`;
   dd.style.top  = `${Math.max(12, top)}px`;
-  const post = posts[current];
+  const post = getActivePost();
   const currentIcon = post && post.bullets && post.bullets[bulletIdx] ? post.bullets[bulletIdx].icon : null;
   dd.querySelectorAll('.pc-icon-cell').forEach(cell => {
     cell.classList.toggle('active', currentIcon && cell.dataset.icon === currentIcon);
@@ -3816,7 +4721,7 @@ window.addEventListener('scroll', () => { if (activeIconBulletIdx != null) close
 window.addEventListener('resize', () => { if (activeIconBulletIdx != null) closeIconDropdown(); });
 
 function applyIconChoice(icon) {
-  const post = posts[current];
+  const post = getActivePost();
   if (!post || !post.isGenerated) return;
   const idx = activeIconBulletIdx;
   if (!Number.isInteger(idx) || !post.bullets || !post.bullets[idx]) return;
@@ -3836,7 +4741,7 @@ function rebuildBulletEditor() {
   const list = document.getElementById('pcBulletList');
   const addBtn = document.getElementById('pcBulletAdd');
   if (!list) return;
-  const post = posts[current];
+  const post = getActivePost();
   if (!post || !post.isGenerated) {
     list.innerHTML = '';
     if (addBtn) addBtn.disabled = true;
@@ -3868,7 +4773,7 @@ document.addEventListener('click', e => {
   }
   const rmBtn = e.target.closest('[data-sidebar-bullet-remove]');
   if (rmBtn) {
-    const post = posts[current];
+    const post = getActivePost();
     if (!post || !post.isGenerated || !Array.isArray(post.bullets)) return;
     const idx = Number(rmBtn.dataset.sidebarBulletRemove);
     if (!Number.isInteger(idx)) return;
@@ -3882,7 +4787,7 @@ document.addEventListener('click', e => {
 document.addEventListener('input', e => {
   const input = e.target.closest('[data-sidebar-bullet-text]');
   if (!input) return;
-  const post = posts[current];
+  const post = getActivePost();
   if (!post || !post.isGenerated || !Array.isArray(post.bullets)) return;
   const idx = Number(input.dataset.sidebarBulletText);
   if (!Number.isInteger(idx) || !post.bullets[idx]) return;
@@ -3926,13 +4831,14 @@ function initPostControls() {
   // Toggles de visibilidade (hook / complemento / bullets)
   document.querySelectorAll('.pc-vis-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       const key = btn.dataset.vis;
       const field = key === 'hook' ? 'hookVisible'
                   : key === 'complement' ? 'complementVisible'
                   : key === 'bulletIcons' ? 'bulletIconsVisible'
                   : key === 'site' ? 'siteEnabled'
+                  : key === 'logo' ? 'logoEnabled'
                   : 'bulletsVisible';
       post[field] = !post[field];
       const postEl = document.getElementById(post.id);
@@ -3945,7 +4851,7 @@ function initPostControls() {
   const bulletAddBtn = document.getElementById('pcBulletAdd');
   if (bulletAddBtn) {
     bulletAddBtn.addEventListener('click', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       if (!Array.isArray(post.bullets)) post.bullets = [];
       if (post.bullets.length >= 3) return;
@@ -3959,7 +4865,7 @@ function initPostControls() {
   // Seletor de estilo
   document.querySelectorAll('#pcStyleGrid button').forEach(btn => {
     btn.addEventListener('click', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post.style = btn.dataset.style;
       const postEl = document.getElementById(post.id);
@@ -3971,7 +4877,7 @@ function initPostControls() {
   // Toggle formato (feed / story)
   document.querySelectorAll('#pcFormatToggle button').forEach(btn => {
     btn.addEventListener('click', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post.format = btn.dataset.format;
       const postEl = document.getElementById(post.id);
@@ -3992,7 +4898,7 @@ function initPostControls() {
   // Toggle layout (texto)
   document.querySelectorAll('#pcLayoutToggle button').forEach(btn => {
     btn.addEventListener('click', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post.layout = btn.dataset.layout;
       const postEl = document.getElementById(post.id);
@@ -4004,7 +4910,7 @@ function initPostControls() {
   // Toggle alinhamento horizontal (esquerda/direita)
   document.querySelectorAll('#pcAlignToggle button').forEach(btn => {
     btn.addEventListener('click', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post.textAlign = btn.dataset.align;
       const postEl = document.getElementById(post.id);
@@ -4016,7 +4922,7 @@ function initPostControls() {
   // Toggle logo
   document.querySelectorAll('#pcLogoToggle button').forEach(btn => {
     btn.addEventListener('click', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post.logoPos = btn.dataset.logo;
       const postEl = document.getElementById(post.id);
@@ -4030,7 +4936,7 @@ function initPostControls() {
     const range = document.getElementById(inputId);
     if (!range) return;
     range.addEventListener('input', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post[postField] = Number(range.value) / 100;
       const postEl = document.getElementById(post.id);
@@ -4050,7 +4956,7 @@ function initPostControls() {
   const siteTextInput = document.getElementById('pcSiteText');
   if (siteTextInput) {
     siteTextInput.addEventListener('input', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post.siteText = siteTextInput.value;
       const postEl = document.getElementById(post.id);
@@ -4064,7 +4970,7 @@ function initPostControls() {
   // Site — grid de posição
   document.querySelectorAll('#pcSiteToggle button').forEach(btn => {
     btn.addEventListener('click', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post.sitePos = btn.dataset.site;
       const postEl = document.getElementById(post.id);
@@ -4124,7 +5030,7 @@ function initPostControls() {
   // Toggle Lado da Foto (coluna)
   document.querySelectorAll('#pcColumnSideToggle button').forEach(btn => {
     btn.addEventListener('click', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post.columnSide = btn.dataset.side;
       const postEl = document.getElementById(post.id);
@@ -4136,7 +5042,7 @@ function initPostControls() {
   // Toggle Cor do Texto (revista / split / coluna / moldura)
   document.querySelectorAll('#pcBlockTextModeToggle button').forEach(btn => {
     btn.addEventListener('click', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       const mode = btn.dataset.mode;
       if      (post.style === 'split')   post.splitTextMode   = mode;
@@ -4153,7 +5059,7 @@ function initPostControls() {
   const dashOpRange = document.getElementById('pcDashCardOpacity');
   if (dashOpRange) {
     dashOpRange.addEventListener('input', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post.dashCardOpacity = Number(dashOpRange.value);
       const postEl = document.getElementById(post.id);
@@ -4163,15 +5069,32 @@ function initPostControls() {
     });
     dashOpRange.addEventListener('change', () => saveSession());
   }
+  // Glass opacity (estilo especial/moldura)
+  const glassOpRange = document.getElementById('pcGlassOpacity');
+  if (glassOpRange) {
+    glassOpRange.addEventListener('input', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.glassOpacity = Number(glassOpRange.value);
+      const postEl = document.getElementById(post.id);
+      if (postEl) applyMolduraBlockInline(postEl, post);
+      const lbl = document.getElementById('pcGlassOpacityValue');
+      if (lbl) lbl.textContent = `${post.glassOpacity}%`;
+    });
+    glassOpRange.addEventListener('change', () => saveSession());
+  }
   // Overlay opacidade
   const opacityRange = document.getElementById('pcOverlayOpacity');
   if (opacityRange) {
     opacityRange.addEventListener('input', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post.overlayOpacity = Number(opacityRange.value);
       const postEl = document.getElementById(post.id);
-      if (postEl) applyOverlayInline(postEl, post);
+      if (postEl) {
+        if (post.style === 'moldura') applyMolduraBlockInline(postEl, post);
+        else applyOverlayInline(postEl, post);
+      }
       const lbl = document.getElementById('pcOverlayOpacityValue');
       if (lbl) lbl.textContent = post.overlayOpacity === 0 ? 'Sem overlay' : `${post.overlayOpacity}%`;
     });
@@ -4181,11 +5104,14 @@ function initPostControls() {
   const dirSelect = document.getElementById('pcOverlayDirection');
   if (dirSelect) {
     dirSelect.addEventListener('change', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post.overlayDirection = dirSelect.value;
       const postEl = document.getElementById(post.id);
-      if (postEl) applyOverlayInline(postEl, post);
+      if (postEl) {
+        if (post.style === 'moldura') applyMolduraBlockInline(postEl, post);
+        else applyOverlayInline(postEl, post);
+      }
       saveSession();
     });
   }
@@ -4193,7 +5119,7 @@ function initPostControls() {
   const bgUpload = document.getElementById('pcBgUpload');
   if (bgUpload) {
     bgUpload.addEventListener('change', () => {
-      const post = posts[current];
+      const post = getActivePost();
       if (!post || !post.isGenerated) return;
       const file = bgUpload.files && bgUpload.files[0];
       if (!file) return;
@@ -4228,7 +5154,7 @@ function initPostControls() {
 // Volta as configurações visuais do post atual ao padrão. Não mexe em texto,
 // imagem nem legenda — é só um reset do "template" (cor, layout, overlay, escala).
 function resetPostStyle() {
-  const post = posts[current];
+  const post = getActivePost();
   if (!post || !post.isGenerated) return;
   post.accent           = '#7AB87E';
   post.layout           = 'top';
@@ -4268,7 +5194,7 @@ function resetPostStyle() {
 function sanitizeEditable(html) {
   const tpl = document.createElement('template');
   tpl.innerHTML = html;
-  const allowed = new Set(['EM', 'STRONG', 'BR']);
+  const allowed = new Set(['EM', 'STRONG', 'BR', 'I', 'B']);
   const walk = (node) => {
     const kids = Array.from(node.childNodes);
     for (const child of kids) {
@@ -4296,6 +5222,23 @@ function sanitizeEditable(html) {
   return tpl.innerHTML;
 }
 
+// Finds a postData object by its DOM element ID (works for both posts and carousel slides)
+function findPostDataById(elementId) {
+  const p = posts.find(p => p.id === elementId);
+  if (p) return p;
+  for (const c of carousels) {
+    const s = c.slides.find(s => s.id === elementId);
+    if (s) return s;
+  }
+  const lp = linkedinPosts.find(p => p.id === elementId);
+  if (lp) return lp;
+  for (const c of linkedinCarousels) {
+    const s = c.slides.find(s => s.id === elementId);
+    if (s) return s;
+  }
+  return null;
+}
+
 // Blur global para salvar edições inline (blur não borbulha, capture=true)
 document.addEventListener('blur', function(e) {
   const target = e.target;
@@ -4306,16 +5249,16 @@ document.addEventListener('blur', function(e) {
     if (!target.isContentEditable) return;
     const postEl = target.closest('.post');
     if (!postEl) return;
-    const postIdx = posts.findIndex(p => p.id === postEl.id);
-    if (postIdx < 0 || !posts[postIdx].isGenerated) return;
+    const postData = findPostDataById(postEl.id);
+    if (!postData || !postData.isGenerated) return;
 
     const clean = sanitizeEditable(target.innerHTML);
     if (clean !== target.innerHTML) target.innerHTML = clean;
 
     if (target.classList.contains('hook')) {
-      posts[postIdx].hookHTML = clean;
+      postData.hookHTML = clean;
     } else {
-      posts[postIdx].complementHTML = clean;
+      postData.complementHTML = clean;
     }
     saveSession();
     return;
@@ -4326,21 +5269,25 @@ document.addEventListener('blur', function(e) {
     if (!target.isContentEditable) return;
     const postEl = target.closest('.post');
     if (!postEl) return;
-    const postIdx = posts.findIndex(p => p.id === postEl.id);
-    if (postIdx < 0 || !posts[postIdx].isGenerated) return;
+    const postData = findPostDataById(postEl.id);
+    if (!postData || !postData.isGenerated) return;
     const idx = Number(target.dataset.bulletText);
-    if (!Number.isInteger(idx) || !posts[postIdx].bullets || !posts[postIdx].bullets[idx]) return;
-    posts[postIdx].bullets[idx].text = target.innerText.trim();
+    if (!Number.isInteger(idx) || !postData.bullets || !postData.bullets[idx]) return;
+    postData.bullets[idx].text = target.innerText.trim();
     saveSession();
     return;
   }
 
   // Legenda do painel lateral
   if (target.id === 'legendText' && target.isContentEditable) {
-    const idx = current;
-    if (idx < 0 || !posts[idx] || !posts[idx].isGenerated) return;
-    // innerText preserva quebras de linha visíveis como \n
-    legends[idx] = target.innerText;
+    if (isCarouselMode()) {
+      getModeLegends()[getModeCurrentIdx()] = target.innerText;
+    } else {
+      const items = getModeItems();
+      const idx = getModeCurrentIdx();
+      if (idx < 0 || !items[idx] || !items[idx].isGenerated) return;
+      getModeLegends()[idx] = target.innerText;
+    }
     saveSession();
   }
 }, true);
@@ -4376,12 +5323,46 @@ function resolveLogoFillColor(img) {
     return block && block.classList.contains('text-light') ? '#ffffff' : '#4d4d4d';
   }
   if (cls.includes('moldura-logo')) {
-    // Moldura não tem wrapper — classe text-* fica no irmão .moldura-bg
     const post = img.closest('.post');
-    const bg = post && post.querySelector('.moldura-bg');
-    return bg && bg.classList.contains('text-light') ? '#ffffff' : '#4d4d4d';
+    const glass = post && post.querySelector('.moldura-glass');
+    return glass && glass.classList.contains('text-dark') ? '#4d4d4d' : '#ffffff';
   }
   return '#ffffff';
+}
+
+// Pré-desfoca uma imagem em canvas (html2canvas não renderiza filter:blur
+// nem backdrop-filter — precisamos entregar a imagem já desfocada).
+function preBlurImage(src, blurPx) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      // Escala reduzida: blur pesado elimina detalhe, não precisa full-res.
+      // blurPx é compensado pela escala para manter o mesmo efeito visual.
+      const scale = 0.5;
+      const scaledBlur = Math.round(blurPx * scale);
+      const w = Math.round(img.naturalWidth  * scale) || 540;
+      const h = Math.round(img.naturalHeight * scale) || 675;
+      const c  = document.createElement('canvas');
+      c.width  = w;
+      c.height = h;
+      const ctx = c.getContext('2d');
+      ctx.filter = `blur(${scaledBlur}px) saturate(160%)`;
+      // Desenha maior que o canvas para evitar bordas transparentes do blur
+      const pad = scaledBlur * 2;
+      ctx.drawImage(img, -pad, -pad, w + pad * 2, h + pad * 2);
+      resolve(c.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = () => resolve(null);  // fallback: mantém original
+    img.src = src;
+  });
+}
+
+// Extrai URL da imagem de fundo de um elemento blur (dash-card-blur / moldura-glass-blur)
+function extractBlurBgSrc(postEl) {
+  const blurDiv = postEl.querySelector('.dash-card-blur, .moldura-glass-blur');
+  if (!blurDiv) return null;
+  return (blurDiv.style.backgroundImage || '').replace(/url\(['"]?|['"]?\)/g, '');
 }
 
 // Mede as dimensões reais dos imgs da logo no DOM vivo (postEl),
@@ -4486,12 +5467,12 @@ async function ensureFontsReady() {
 
 // Download
 async function downloadCurrent() {
-  if (posts.length === 0 || !posts[current]) return;
+  const post = getActivePost();
+  if (!post) return;
   const btn = document.getElementById('downloadBtn');
   btn.disabled = true;
   btn.style.opacity = '0.5';
 
-  const post    = posts[current];
   const postEl  = document.getElementById(post.id);
   const slideId = post.id;
   const scaler  = document.getElementById('postScaler');
@@ -4525,6 +5506,11 @@ async function downloadCurrent() {
     //    dentro do onclone, getBoundingClientRect do clone pode retornar 0.
     const logoDims = captureLogoDims(postEl);
 
+    // 5) Pré-desfoca a imagem de fundo (html2canvas não renderiza
+    //    filter:blur nem backdrop-filter — entregamos a imagem já blurred)
+    const blurSrc = extractBlurBgSrc(postEl);
+    const blurredUrl = blurSrc ? await preBlurImage(blurSrc, 24) : null;
+
     const canvas = await html2canvas(postEl, {
       scale: 4,
       useCORS: true,
@@ -4556,12 +5542,36 @@ async function downloadCurrent() {
           cloneEl.querySelectorAll('.safe-zone-guide').forEach(g => g.remove());
           // Substitui <img> da logo por <svg> inline com fill fixo
           inlineLogosForCapture(cloneEl, clonedDoc, logoDims);
+          // Ativa camadas de glass que ficam escondidas na tela
+          // (backdrop-filter não funciona no html2canvas)
+          // Força z-index inline — html2canvas nem sempre respeita !important do CSS
+          cloneEl.querySelectorAll('.dash-card-blur, .moldura-glass-blur').forEach(d => {
+            d.style.cssText += ';display:block;position:absolute;z-index:0;';
+            if (blurredUrl) {
+              d.style.backgroundImage = `url('${blurredUrl}')`;
+              d.style.filter = 'none';
+            }
+          });
+          cloneEl.querySelectorAll('.dash-card-inner-overlay, .moldura-glass-inner-overlay').forEach(d => {
+            d.style.cssText += ';display:block;position:absolute;z-index:1;';
+          });
+          cloneEl.querySelectorAll('.dash-card-tint, .moldura-glass-tint').forEach(d => {
+            d.style.cssText += ';display:block;position:absolute;z-index:2;';
+          });
+          // Garante que conteúdo do glass fique ACIMA das camadas de overlay
+          cloneEl.querySelectorAll('.dash-card, .moldura-glass').forEach(glass => {
+            Array.from(glass.children).forEach(child => {
+              const cls = child.className || '';
+              if (cls.includes('-blur') || cls.includes('-inner-overlay') || cls.includes('-tint')) return;
+              child.style.zIndex = '5';
+            });
+          });
         }
       },
     });
 
     const link = document.createElement('a');
-    const baseFilename = posts[current].filename || 'cropware.jpg';
+    const baseFilename = post.filename || 'cropware.jpg';
     link.download = post.format === 'story'
       ? baseFilename.replace(/\.jpg$/i, '_story.jpg')
       : baseFilename;
@@ -4581,11 +5591,204 @@ async function downloadCurrent() {
   btn.style.opacity = '';
 }
 
+// Captura um único slide como JPEG blob (para uso no ZIP do carrossel)
+// Captura um slide como canvas HTML (alta resolução, scale 4x = 4320×5400).
+// Usado como base tanto para JPEG (downloadCarousel) quanto PDF (downloadLinkedInCarouselPDF).
+async function captureSlideAsCanvas(slideData) {
+  const postEl = document.getElementById(slideData.id);
+  if (!postEl) throw new Error('Slide element not found');
+  const scaler = document.getElementById('postScaler');
+  const postH = slideData.format === 'story' ? 1920 : 1350;
+
+  const slideWrapper = document.getElementById(slideData.slideId);
+  const wasVisible = slideWrapper && slideWrapper.classList.contains('visible');
+  if (slideWrapper) slideWrapper.classList.add('visible');
+
+  const savedTransform = scaler.style.transform;
+  const savedWidth = scaler.style.width;
+  const savedHeight = scaler.style.height;
+  const savedVisibility = scaler.style.visibility;
+
+  try {
+    await ensureFontsReady();
+    await ensureLogoSvgMarkup();
+
+    scaler.style.visibility = 'hidden';
+    scaler.style.transform = 'none';
+    scaler.style.width = '1080px';
+    scaler.style.height = `${postH}px`;
+
+    await new Promise(r => setTimeout(r, 80));
+
+    const logoDims = captureLogoDims(postEl);
+
+    // Pré-desfoca a imagem de fundo para o export
+    const blurSrc = extractBlurBgSrc(postEl);
+    const blurredUrl = blurSrc ? await preBlurImage(blurSrc, 24) : null;
+
+    return await html2canvas(postEl, {
+      scale: 4,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: null,
+      width: 1080,
+      height: postH,
+      logging: false,
+      onclone: (clonedDoc) => {
+        const cloneScaler = clonedDoc.getElementById('postScaler');
+        if (cloneScaler) {
+          cloneScaler.style.visibility = 'visible';
+          cloneScaler.style.transform = 'none';
+          cloneScaler.style.width = '1080px';
+          cloneScaler.style.height = `${postH}px`;
+        }
+        const cloneEl = clonedDoc.getElementById(slideData.id);
+        if (cloneEl) {
+          const slide = cloneEl.closest('.post-slide');
+          if (slide) { slide.style.display = 'block'; slide.style.visibility = 'visible'; }
+          cloneEl.querySelectorAll('.hook').forEach(h => { h.style.paddingRight = '6px'; });
+          cloneEl.querySelectorAll('.safe-zone-guide').forEach(g => g.remove());
+          inlineLogosForCapture(cloneEl, clonedDoc, logoDims);
+          // Ativa camadas de glass escondidas na tela + força z-index inline
+          cloneEl.querySelectorAll('.dash-card-blur, .moldura-glass-blur').forEach(d => {
+            d.style.cssText += ';display:block;position:absolute;z-index:0;';
+            if (blurredUrl) {
+              d.style.backgroundImage = `url('${blurredUrl}')`;
+              d.style.filter = 'none';
+            }
+          });
+          cloneEl.querySelectorAll('.dash-card-inner-overlay, .moldura-glass-inner-overlay').forEach(d => {
+            d.style.cssText += ';display:block;position:absolute;z-index:1;';
+          });
+          cloneEl.querySelectorAll('.dash-card-tint, .moldura-glass-tint').forEach(d => {
+            d.style.cssText += ';display:block;position:absolute;z-index:2;';
+          });
+          cloneEl.querySelectorAll('.dash-card, .moldura-glass').forEach(glass => {
+            Array.from(glass.children).forEach(child => {
+              const cls = child.className || '';
+              if (cls.includes('-blur') || cls.includes('-inner-overlay') || cls.includes('-tint')) return;
+              child.style.zIndex = '5';
+            });
+          });
+        }
+      },
+    });
+  } finally {
+    scaler.style.transform = savedTransform;
+    scaler.style.width = savedWidth;
+    scaler.style.height = savedHeight;
+    scaler.style.visibility = savedVisibility;
+    if (slideWrapper && !wasVisible) slideWrapper.classList.remove('visible');
+  }
+}
+
+async function captureSlideAsBlob(slideData) {
+  const canvas = await captureSlideAsCanvas(slideData);
+  return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
+}
+
+async function downloadCarousel() {
+  const items = getModeItems();
+  if (items.length === 0 || !items[getModeCurrentIdx()]) return;
+  const carousel = items[getModeCurrentIdx()];
+  const btn = document.getElementById('downloadBtn');
+  btn.disabled = true;
+  btn.style.opacity = '0.5';
+
+  try {
+    const zip = new JSZip();
+
+    for (let i = 0; i < carousel.slides.length; i++) {
+      setGenStatus(`<span class="material-symbols-outlined sz-18" style="margin-right:6px">hourglass_empty</span>Exportando slide ${i + 1}/${carousel.slides.length}...`, '');
+      const blob = await captureSlideAsBlob(carousel.slides[i]);
+      zip.file(`${carousel.title}_slide_${i + 1}.jpg`, blob);
+    }
+
+    setGenStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">check_circle</span>Compactando ZIP...', 'success');
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(zipBlob);
+    link.download = `cropware_carrossel_${Date.now()}.zip`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    setGenStatus('', '');
+  } catch(e) {
+    alert('Erro ao exportar carrossel: ' + e.message);
+    setGenStatus('', '');
+  }
+
+  btn.disabled = false;
+  btn.style.opacity = '';
+}
+
+// Gera PDF de alta resolução para carrosséis LinkedIn.
+// Cada slide vira uma página do PDF (canvas 4x → ~300 DPI efetivo).
+async function downloadLinkedInCarouselPDF() {
+  const items = getModeItems();
+  if (items.length === 0 || !items[getModeCurrentIdx()]) return;
+  const carousel = items[getModeCurrentIdx()];
+  const btn = document.getElementById('downloadBtn');
+  btn.disabled = true;
+  btn.style.opacity = '0.5';
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const postH = (carousel.slides[0] && carousel.slides[0].format === 'story') ? 1920 : 1350;
+    const pageW = 1080;
+    const pageH = postH;
+
+    // PDF com páginas em px (hotfix corrige a escala interna do jsPDF)
+    const pdf = new jsPDF({
+      orientation: pageH > pageW ? 'portrait' : 'landscape',
+      unit: 'px',
+      format: [pageW, pageH],
+      hotfixes: ['px_scaling'],
+      compress: true,
+    });
+
+    for (let i = 0; i < carousel.slides.length; i++) {
+      setGenStatus(`<span class="material-symbols-outlined sz-18" style="margin-right:6px">hourglass_empty</span>Renderizando slide ${i + 1}/${carousel.slides.length} para PDF...`, '');
+
+      if (i > 0) pdf.addPage([pageW, pageH], pageH > pageW ? 'portrait' : 'landscape');
+
+      // Captura canvas em alta resolução (4320×5400 a scale 4)
+      const canvas = await captureSlideAsCanvas(carousel.slides[i]);
+      // JPEG quality 0.92 — nitidez excelente a ~90% menos tamanho que PNG
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageW, pageH, `slide_${i}`, 'FAST');
+    }
+
+    setGenStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">check_circle</span>Gerando PDF...', 'success');
+
+    // Nome do arquivo baseado no tema
+    const safeName = (carousel.theme || carousel.title || 'carrossel')
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_|_$/g, '')
+      .slice(0, 60);
+    pdf.save(`cropware_linkedin_${safeName}.pdf`);
+    setGenStatus('', '');
+  } catch(e) {
+    alert('Erro ao exportar PDF: ' + e.message);
+    setGenStatus('', '');
+  }
+
+  btn.disabled = false;
+  btn.style.opacity = '';
+}
+
 function updateLegend(idx) {
   const el = document.getElementById('legendText');
-  el.textContent = legends[idx] || '';
-  // Edição inline só faz sentido em posts gerados.
-  el.contentEditable = posts[idx] && posts[idx].isGenerated ? 'true' : 'false';
+  if (isCarouselMode()) {
+    el.textContent = getModeLegends()[getModeCurrentIdx()] || '';
+    el.contentEditable = 'true';
+  } else {
+    const items = getModeItems();
+    const currentIdx = getModeCurrentIdx();
+    el.textContent = getModeLegends()[currentIdx] || '';
+    el.contentEditable = items[currentIdx] && items[currentIdx].isGenerated ? 'true' : 'false';
+  }
   document.getElementById('hashtagsContainer').innerHTML = '';
   const btn = document.getElementById('copyBtn');
   btn.innerHTML = '<span class="material-symbols-outlined sz-16">content_copy</span>Copiar';
@@ -4593,7 +5796,7 @@ function updateLegend(idx) {
 }
 
 function copyLegend() {
-  const full = legends[current];
+  const full = getActiveLegend();
   if (!full) return;
   navigator.clipboard.writeText(full).then(() => {
     const btn = document.getElementById('copyBtn');
@@ -4611,7 +5814,20 @@ let genImageBase64 = null;
 let genImageMime = 'image/jpeg';
 
 function openGenerator() {
+  const isCarousel = isCarouselMode();
+  const platform = getPlatform();
   document.getElementById('genModal').classList.add('open');
+  const headerSpan = document.querySelector('#genModal .gen-modal-header > span');
+  if (headerSpan) {
+    const prefix = platform === 'linkedin' ? 'LinkedIn — ' : '';
+    headerSpan.textContent = isCarousel ? `${prefix}Gerar Carrossel com IA` : `${prefix}Gerar Post com IA`;
+  }
+  const genBtn = document.getElementById('genBtn');
+  if (genBtn) genBtn.innerHTML = isCarousel
+    ? '<span class="material-symbols-outlined sz-18">draw</span>Gerar Carrossel'
+    : '<span class="material-symbols-outlined sz-18">draw</span>Gerar Post';
+  const slideCountGroup = document.getElementById('genSlideCountGroup');
+  if (slideCountGroup) slideCountGroup.style.display = isCarousel ? '' : 'none';
 }
 
 function closeGenerator() {
@@ -4626,10 +5842,21 @@ const DEFAULT_DESIGN_CONFIG = {
   tone:        'casual',
   avoid:       '',
 };
-let designConfig = { ...DEFAULT_DESIGN_CONFIG };
+const DEFAULT_LINKEDIN_CONFIG = {
+  description: 'Cropware é uma agtech que usa dados de campo e inteligência artificial para apoiar decisões agronômicas com precisão. No LinkedIn, a comunicação é técnica, consultiva e orientada a resultados — voltada para profissionais do agronegócio, líderes de operações agrícolas e tomadores de decisão. Evitar linguagem informal ou de rede social. Preferir dados, tendências e raciocínio estratégico.',
+  audience:    'gestor',
+  tone:        'tecnico',
+  avoid:       'Emojis, gírias, CTAs genéricos como "comenta aí", linguagem motivacional vazia, clichês de LinkedIn tipo "concordam?", posts excessivamente vendedores.',
+};
+let designConfigInstagram = { ...DEFAULT_DESIGN_CONFIG };
+let designConfigLinkedin  = { ...DEFAULT_LINKEDIN_CONFIG };
+
+function getActiveDesignConfig() {
+  return getPlatform() === 'linkedin' ? designConfigLinkedin : designConfigInstagram;
+}
 
 async function loadDesignConfig() {
-  let loadedFromSupabase = false;
+  let loadedIG = false, loadedLI = false;
   try {
     const { data, error } = await sb.from('cropware_design_config')
       .select('config')
@@ -4637,27 +5864,35 @@ async function loadDesignConfig() {
       .maybeSingle();
     if (error) throw error;
     if (data && data.config) {
-      designConfig = { ...DEFAULT_DESIGN_CONFIG, ...data.config };
-      loadedFromSupabase = true;
+      if (data.config.linkedin) {
+        designConfigLinkedin = { ...DEFAULT_LINKEDIN_CONFIG, ...data.config.linkedin };
+        loadedLI = true;
+      }
+      const ig = data.config.instagram || data.config;
+      if (ig.description !== undefined || ig.audience !== undefined) {
+        designConfigInstagram = { ...DEFAULT_DESIGN_CONFIG, ...ig };
+        loadedIG = true;
+      }
     }
   } catch (e) {
     console.error('loadDesignConfig error:', e);
   }
-  if (!loadedFromSupabase) {
+  if (!loadedIG) {
     try {
       const raw = localStorage.getItem(DESIGN_CFG_LOCAL_KEY);
-      if (raw) designConfig = { ...DEFAULT_DESIGN_CONFIG, ...JSON.parse(raw) };
-    } catch(_) { /* backup corrompido */ }
+      if (raw) designConfigInstagram = { ...DEFAULT_DESIGN_CONFIG, ...JSON.parse(raw) };
+    } catch(_) {}
   }
 }
 
 async function persistDesignConfig() {
+  const combined = { instagram: designConfigInstagram, linkedin: designConfigLinkedin };
   try {
-    localStorage.setItem(DESIGN_CFG_LOCAL_KEY, JSON.stringify(designConfig));
+    localStorage.setItem(DESIGN_CFG_LOCAL_KEY, JSON.stringify(designConfigInstagram));
   } catch(_) {}
   try {
     const { error } = await sb.from('cropware_design_config').upsert(
-      { session_id: getSessionId(), config: designConfig, updated_at: new Date().toISOString() },
+      { session_id: getSessionId(), config: combined, updated_at: new Date().toISOString() },
       { onConflict: 'session_id' }
     );
     if (error) throw error;
@@ -4668,22 +5903,25 @@ async function persistDesignConfig() {
   }
 }
 
-function buildDesignContext() {
+function buildDesignContext(platform) {
+  const cfg = (platform || getPlatform()) === 'linkedin' ? designConfigLinkedin : designConfigInstagram;
   const parts = [];
-  const d = (designConfig.description || '').trim();
+  const d = (cfg.description || '').trim();
   if (d) {
     parts.push(`DIRETRIZ DE MARCA (obrigatório respeitar):\n${d}`);
   }
   const audienceMap = {
-    produtor:  'produtor rural (linguagem prática, foco em rentabilidade e decisão no campo)',
-    agronomo:  'agrônomo (termos técnicos aceitos, raciocínio agronômico)',
-    gestor:    'gestor agro (foco em KPIs, custo por hectare, escala)',
-    tecnico:   'técnico de campo (linguagem operacional, passo-a-passo)',
-    misto:     'produtor rural e agrônomo (equilibre prática e técnica)',
+    produtor:     'produtor rural (linguagem prática, foco em rentabilidade e decisão no campo)',
+    agronomo:     'agrônomo (termos técnicos aceitos, raciocínio agronômico)',
+    gestor:       'gestor agro / líder de operações (foco em KPIs, custo por hectare, escala)',
+    tecnico:      'técnico de campo (linguagem operacional, passo-a-passo)',
+    misto:        'produtor rural e agrônomo (equilibre prática e técnica)',
+    executivo:    'executivos e diretores do agronegócio (visão estratégica, ROI, governança)',
+    investidor:   'investidores e analistas do setor (dados de mercado, tendências macro)',
   };
-  const aud = audienceMap[designConfig.audience] || audienceMap.misto;
+  const aud = audienceMap[cfg.audience] || audienceMap.misto;
   parts.push(`PÚBLICO-ALVO: ${aud}`);
-  const avoid = (designConfig.avoid || '').trim();
+  const avoid = (cfg.avoid || '').trim();
   if (avoid) {
     parts.push(`EVITAR:\n${avoid}`);
   }
@@ -4691,11 +5929,16 @@ function buildDesignContext() {
 }
 
 function openConfig() {
-  document.getElementById('cfgDescription').value = designConfig.description || '';
-  document.getElementById('cfgAudience').value    = designConfig.audience    || 'misto';
-  document.getElementById('cfgTone').value        = designConfig.tone        || 'casual';
-  document.getElementById('cfgAvoid').value       = designConfig.avoid       || '';
+  const cfg = getActiveDesignConfig();
+  const platform = getPlatform();
+  document.getElementById('cfgDescription').value = cfg.description || '';
+  document.getElementById('cfgAudience').value    = cfg.audience    || 'misto';
+  document.getElementById('cfgTone').value        = cfg.tone        || 'casual';
+  document.getElementById('cfgAvoid').value       = cfg.avoid       || '';
   document.getElementById('cfgStatus').textContent = '';
+  // Update modal title to indicate platform
+  const headerSpan = document.querySelector('#cfgModal .gen-modal-header > span');
+  if (headerSpan) headerSpan.textContent = platform === 'linkedin' ? 'Configurar Estilo — LinkedIn' : 'Configurar Estilo — Instagram';
   document.getElementById('cfgModal').classList.add('open');
 }
 
@@ -4706,12 +5949,17 @@ function closeConfig() {
 async function saveConfig() {
   const btn = document.getElementById('cfgSaveBtn');
   const status = document.getElementById('cfgStatus');
-  designConfig = {
+  const newCfg = {
     description: document.getElementById('cfgDescription').value.trim(),
     audience:    document.getElementById('cfgAudience').value,
     tone:        document.getElementById('cfgTone').value,
     avoid:       document.getElementById('cfgAvoid').value.trim(),
   };
+  if (getPlatform() === 'linkedin') {
+    designConfigLinkedin = newCfg;
+  } else {
+    designConfigInstagram = newCfg;
+  }
   btn.disabled = true;
   status.textContent = 'Salvando...';
   try {
@@ -4728,6 +5976,66 @@ async function saveConfig() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+  // ── TEXT TOOLBAR (floating formatting) ──────────────────────
+  (function() {
+    const toolbar = document.getElementById('textToolbar');
+    if (!toolbar) return;
+    let _ttActive = false;
+
+    function isEditableField(el) {
+      if (!el) return false;
+      const ce = el.closest('[contenteditable="true"]');
+      if (!ce) return false;
+      return ce.classList.contains('hook') || ce.classList.contains('complement');
+    }
+
+    function showToolbar() {
+      const sel = window.getSelection();
+      if (!sel || sel.isCollapsed || !sel.rangeCount) { hideToolbar(); return; }
+      const anchor = sel.anchorNode && (sel.anchorNode.nodeType === 3 ? sel.anchorNode.parentElement : sel.anchorNode);
+      if (!isEditableField(anchor)) { hideToolbar(); return; }
+      const range = sel.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      if (rect.width === 0) { hideToolbar(); return; }
+
+      document.getElementById('ttBtnHighlight').classList.toggle('active', document.queryCommandState('italic'));
+      document.getElementById('ttBtnBold').classList.toggle('active', document.queryCommandState('bold'));
+
+      toolbar.classList.add('visible');
+      _ttActive = true;
+      const tw = toolbar.offsetWidth;
+      const th = toolbar.offsetHeight;
+      let left = rect.left + rect.width / 2 - tw / 2;
+      let top = rect.top - th - 8;
+      if (left < 4) left = 4;
+      if (left + tw > window.innerWidth - 4) left = window.innerWidth - tw - 4;
+      if (top < 4) top = rect.bottom + 8;
+      toolbar.style.left = left + 'px';
+      toolbar.style.top = top + 'px';
+    }
+
+    function hideToolbar() {
+      toolbar.classList.remove('visible');
+      _ttActive = false;
+    }
+
+    document.addEventListener('selectionchange', () => {
+      requestAnimationFrame(showToolbar);
+    });
+
+    window.applyTextFormat = function(command) {
+      document.execCommand(command, false, null);
+      setTimeout(() => {
+        document.getElementById('ttBtnHighlight').classList.toggle('active', document.queryCommandState('italic'));
+        document.getElementById('ttBtnBold').classList.toggle('active', document.queryCommandState('bold'));
+      }, 10);
+      const sel = window.getSelection();
+      if (sel && sel.anchorNode) {
+        const ce = (sel.anchorNode.nodeType === 3 ? sel.anchorNode.parentElement : sel.anchorNode).closest('[contenteditable="true"]');
+        if (ce) ce.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    };
+  })();
   const fileInput = document.getElementById('genImageInput');
   if (fileInput) {
     fileInput.addEventListener('change', function(e) {
@@ -4801,6 +6109,7 @@ COMPLEMENT (texto de apoio menor):
 BULLETS (3 pontos de apoio, iconizados — aparecem abaixo do complement):
 - Exatamente 3 bullets, curtos e diretos
 - Cada "text": máximo 6 palavras, afirmação concreta (benefício, número ou fato)
+- PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
 - NÃO repita palavras ou ideias do hook/complement
 - Cada "icon": nome exato de um Material Symbol, ESCOLHER APENAS da lista abaixo
 - Escolha ícones diferentes entre si e coerentes com o texto do bullet
@@ -4832,9 +6141,9 @@ Responda APENAS em JSON válido, sem texto fora do JSON:
   "hook": "primeira linha<br><em>remate de benefício</em>",
   "complement": "texto de apoio<br><strong>com destaque</strong>",
   "bullets": [
-    {"icon": "check_circle", "text": "afirmação curta 1"},
-    {"icon": "trending_up",  "text": "afirmação curta 2"},
-    {"icon": "schedule",     "text": "afirmação curta 3"}
+    {"icon": "check_circle", "text": "Afirmação curta 1."},
+    {"icon": "trending_up",  "text": "Afirmação curta 2."},
+    {"icon": "schedule",     "text": "Afirmação curta 3."}
   ],
   "title": "título curto para sidebar (máx 50 chars)",
   "legend": "legenda completa para Instagram",
@@ -4876,18 +6185,21 @@ async function fetchGeminiWithRetry(url, init, label) {
   throw lastErr || new Error(`${label}: falhou após retries`);
 }
 
-async function callGeminiText(theme, tone, userImageBase64, userImageMime, extraDirection) {
-  const systemPrompt = buildSystemPrompt(tone);
+async function callGeminiText(theme, tone, userImageBase64, userImageMime, extraDirection, platform) {
+  const systemPrompt = platform === 'linkedin'
+    ? buildLinkedInSystemPrompt(tone)
+    : buildSystemPrompt(tone);
+  const platformLabel = platform === 'linkedin' ? 'LinkedIn' : 'Instagram';
   const directionSuffix = extraDirection && extraDirection.trim()
     ? `\n\nDireção adicional do usuário: ${extraDirection.trim()}`
     : '';
   const userParts = userImageBase64
     ? [
         { inlineData: { mimeType: userImageMime || 'image/jpeg', data: userImageBase64 } },
-        { text: `Analise esta imagem agrícola e crie um post para Instagram da Cropware sobre:\n\n${theme}${directionSuffix}` }
+        { text: `Analise esta imagem agrícola e crie um post para ${platformLabel} da Cropware sobre:\n\n${theme}${directionSuffix}` }
       ]
     : [
-        { text: `Crie um post para Instagram da Cropware sobre o seguinte tema:\n\n${theme}${directionSuffix}` }
+        { text: `Crie um post para ${platformLabel} da Cropware sobre o seguinte tema:\n\n${theme}${directionSuffix}` }
       ];
 
   const resp = await fetchGeminiWithRetry(
@@ -4924,7 +6236,7 @@ async function callGeminiImage(imagePrompt, extraDirection) {
     'All clothing, caps, shirts and uniforms must be PLAIN and UNBRANDED — no prints, no logos, no labels, no visible text.',
     'All equipment, machinery, tools and devices must be generic and unbranded — no visible brand names or labels.',
   ];
-  const avoid = (designConfig.avoid || '').trim();
+  const avoid = (getActiveDesignConfig().avoid || '').trim();
   if (avoid) {
     hardRules.push(`Additional brand restrictions to avoid: ${avoid}`);
   }
@@ -4963,9 +6275,16 @@ async function callGeminiImage(imagePrompt, extraDirection) {
   };
 }
 
+function handleGenerate() {
+  if (isCarouselMode()) generateCarousel();
+  else generatePost();
+}
+
 async function generatePost() {
   const theme     = document.getElementById('genTheme').value.trim();
-  const tone      = designConfig.tone || 'casual';
+  const platform  = getPlatform();
+  const cfg       = getActiveDesignConfig();
+  const tone      = cfg.tone || 'casual';
   const btn       = document.getElementById('genBtn');
   const needImage = !genImageBase64;
 
@@ -4976,8 +6295,10 @@ async function generatePost() {
   setGenStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">hourglass_empty</span>Passo 1/2 — Gemini criando copy e legenda...', '');
 
   try {
-    // Passo 1: Gemini texto
-    const parsed = await callGeminiText(theme, tone, genImageBase64, genImageMime);
+    // Passo 1: Gemini texto (prompt varia por plataforma)
+    const parsed = platform === 'linkedin'
+      ? await callGeminiText(theme, tone, genImageBase64, genImageMime, null, 'linkedin')
+      : await callGeminiText(theme, tone, genImageBase64, genImageMime);
 
     // Passo 2: Gemini imagem (se não houver upload)
     let finalImgBase64 = genImageBase64;
@@ -4993,18 +6314,19 @@ async function generatePost() {
 
     setGenStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">check_circle</span>Montando post...', 'success');
 
-    // Limitar histórico a MAX_POSTS: remove o gerado mais antigo se necessário
-    const oldestGenIdx = posts.findIndex(p => p.isGenerated);
-    if (oldestGenIdx >= 0 && posts.filter(p => p.isGenerated).length >= MAX_POSTS) {
-      const oldPost = posts[oldestGenIdx];
+    // Limitar histórico a MAX_POSTS por modo
+    const items = getModeItems();
+    const legendsArr = getModeLegends();
+    const oldestGenIdx = items.findIndex(p => p.isGenerated);
+    if (oldestGenIdx >= 0 && items.filter(p => p.isGenerated).length >= MAX_POSTS) {
+      const oldPost = items[oldestGenIdx];
       deletePostFromSupabase(oldPost.id);
       const oldSlide = document.getElementById(oldPost.slideId);
       if (oldSlide) oldSlide.remove();
-      posts.splice(oldestGenIdx, 1);
-      legends.splice(oldestGenIdx, 1);
+      items.splice(oldestGenIdx, 1);
+      legendsArr.splice(oldestGenIdx, 1);
     }
 
-    // Monta o slide via renderGeneratedPost()
     const timestamp = Date.now();
     const legendText = (parsed.legend || '') + (parsed.hashtags ? '\n\n' + parsed.hashtags : '');
     const postData = {
@@ -5023,6 +6345,7 @@ async function generatePost() {
       complementHTML: (parsed.complement || '').replace(/\n/g, '<br>'),
       bullets:        Array.isArray(parsed.bullets) ? parsed.bullets.slice(0, 3) : [],
     };
+    if (platform === 'linkedin') postData.type = 'linkedin-post';
     const newIdx = renderGeneratedPost(postData, legendText);
     saveSession();
 
@@ -5047,6 +6370,648 @@ async function generatePost() {
     setGenStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">error</span>Erro: ' + e.message, 'error');
     btn.disabled = false;
     btn.innerHTML = '<span class="material-symbols-outlined sz-18">auto_awesome</span>Gerar Post';
+  }
+}
+
+// ── CAROUSEL GENERATION ─────────────────────────────────────
+
+function buildCarouselSystemPrompt(tone, slideCount) {
+  const toneDirectives = {
+    casual:      'TOM: linguagem próxima e coloquial, como conversa no WhatsApp. Use "você", expressões leves do campo.',
+    tecnico:     'TOM: vocabulário preciso do agro (NDVI, talhão, IPM, manejo integrado). Cite números quando possível.',
+    inspirador:  'TOM: aspiracional, foco em transformação, futuro e empoderamento do produtor.',
+    provocativo: 'TOM: abertura que desafia o senso comum, pergunta incômoda ou afirmação direta. Pode ser até desconfortável.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.casual;
+
+  return `Você é um copywriter especialista na marca Cropware (plataforma de gestão agrícola).
+Crie um CARROSSEL para Instagram com ${slideCount} slides seguindo exatamente este padrão:
+
+ESTRUTURA DO CARROSSEL:
+- Slide 1 (CAPA): hook forte e impactante que atrai o swipe. Frase curta e provocativa.
+- Slides do meio (DESENVOLVIMENTO): cada slide aprofunda um aspecto do tema, entregando valor progressivo.
+- Último slide (CTA/CONCLUSÃO): fecha com insight final e reforça a marca Cropware.
+- Todos os slides devem ter coerência visual e narrativa.
+
+PARA CADA SLIDE:
+HOOK (texto grande, impactante):
+- 1 OU 2 linhas no total
+- A última parte OBRIGATORIAMENTE envolvida em <em>...</em> (fica verde)
+- CAPITALIZAÇÃO: só a PRIMEIRA palavra do hook começa com maiúscula
+- PONTUAÇÃO NATURAL OBRIGATÓRIA: vírgula de respiro, ponto final no fim
+- Máximo 6 palavras por linha
+
+COMPLEMENT (texto de apoio menor):
+- 1-2 linhas, máximo 36 caracteres cada
+- Use <strong> para destacar palavras-chave
+
+BULLETS (3 pontos de apoio):
+- Exatamente 3 bullets, curtos e diretos
+- Cada "text": máximo 6 palavras
+- PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
+- Cada "icon": nome exato de Material Symbol da lista permitida
+
+ICONES PERMITIDOS: check_circle, task_alt, trending_up, trending_down, schedule, bolt,
+savings, insights, analytics, agriculture, eco, grass, water_drop, sunny, landscape,
+sensors, visibility, shield, speed, psychology, hub, timeline, query_stats,
+monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturing
+
+LEGEND (UMA legenda compartilhada para todo o carrossel):
+- 3-4 frases curtas, máximo 60 palavras no total
+- Afirmação ou provocação direta
+- PROIBIDO terminar com pergunta, CTA, emoji
+- 3-5 hashtags relevantes em linha separada
+
+${toneBlock}
+${buildDesignContext()}
+
+IMAGE_PROMPT (um por slide): descrição em inglês para gerar foto fotorrealista.
+- Foco em agricultura brasileira (campo, lavoura, maquinário)
+- Iluminação natural dramática
+- Composição que deixe área escura no topo para texto
+- Sem texto ou logotipos
+- Cada slide deve ter uma imagem DIFERENTE e complementar
+
+Responda APENAS em JSON válido:
+{
+  "title": "título curto do carrossel para sidebar (máx 50 chars)",
+  "legend": "legenda compartilhada do carrossel",
+  "hashtags": "#tag1 #tag2 #tag3",
+  "slides": [
+    {
+      "hook": "texto do hook<br><em>remate verde.</em>",
+      "complement": "texto de apoio<br><strong>destaque</strong>",
+      "bullets": [
+        {"icon": "check_circle", "text": "Afirmação curta."},
+        {"icon": "trending_up", "text": "Afirmação curta."},
+        {"icon": "schedule", "text": "Afirmação curta."}
+      ],
+      "imagePrompt": "english image prompt for this slide"
+    }
+  ]
+}`;
+}
+
+// ── LINKEDIN PROMPTS ──────────────────────────────────────────
+function buildLinkedInSystemPrompt(tone) {
+  const toneDirectives = {
+    casual:      'TOM: profissional mas acessível. Evite formalismo excessivo, mas mantenha credibilidade.',
+    tecnico:     'TOM: vocabulário técnico do agro (NDVI, manejo integrado, agricultura de precisão). Cite dados, métricas e referências quando possível.',
+    inspirador:  'TOM: visão estratégica, foco em transformação do setor, liderança e inovação agrícola.',
+    provocativo: 'TOM: tese provocativa que desafia o status quo do agronegócio. Posicionamento forte e fundamentado.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
+
+  return `Você é um copywriter especialista em LinkedIn para a marca Cropware (plataforma de gestão agrícola com IA).
+Crie posts para LinkedIn seguindo exatamente este padrão visual:
+
+CONTEXTO LINKEDIN:
+- LinkedIn é uma rede profissional. O conteúdo deve transmitir autoridade, expertise e liderança de pensamento no agronegócio.
+- O público são gestores, agrônomos sêniores, executivos de agro, investidores e profissionais de tecnologia agrícola.
+- O post visual será exibido como imagem no LinkedIn (mesmo formato 1080x1350 do Instagram).
+
+HOOK (texto grande, impactante):
+- 1 OU 2 linhas no total (prefira 2; use 1 só quando a frase já fechar sozinha e for forte)
+- A última parte OBRIGATORIAMENTE envolvida em <em>...</em> (fica verde) — é o REMATE que comunica o benefício estratégico do Cropware
+- O hook inteiro é UMA frase afirmativa, lida de cima pra baixo como continuação natural
+- CAPITALIZAÇÃO: só a PRIMEIRA palavra do hook começa com maiúscula. A segunda linha começa com MINÚSCULA
+- PONTUAÇÃO NATURAL (OBRIGATÓRIA): vírgula de respiro, ponto final no fim
+- Máximo 6 palavras por linha
+- Tom consultivo e estratégico — foque em dados, eficiência, ROI, decisão baseada em evidência
+- Exemplos BONS para LinkedIn:
+  · "O custo do achismo <br><em>aparece na colheita.</em>"
+  · "Dados de 3 safras, <br><em>uma decisão em segundos.</em>"
+  · "Gestão preditiva <br><em>já não é tendência — é padrão.</em>"
+
+COMPLEMENT (texto de apoio menor):
+- 1-2 linhas, máximo 36 caracteres cada
+- Use <strong> para destacar palavras-chave
+- Complementa o hook com insight técnico ou dado de mercado
+
+BULLETS (3 pontos de apoio, iconizados):
+- Exatamente 3 bullets, curtos e diretos
+- Cada "text": máximo 6 palavras, afirmação concreta com dado ou benefício mensurável
+- PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
+- NÃO repita palavras ou ideias do hook/complement
+- Cada "icon": nome exato de um Material Symbol da lista permitida
+
+ICONES PERMITIDOS (Material Symbols — use o nome exato, snake_case):
+check_circle, task_alt, trending_up, trending_down, schedule, bolt, savings,
+insights, analytics, agriculture, eco, grass, water_drop, sunny, landscape,
+sensors, visibility, shield, speed, psychology, hub, timeline, query_stats,
+monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturing
+
+LEGEND (legenda do LinkedIn):
+- 3-5 frases com tom consultivo e profissional, máximo 80 palavras
+- Abordagem de thought leadership: insight, dado, posicionamento ou tendência
+- Pode mencionar contexto de mercado, desafios do setor, benefício estratégico
+- PROIBIDO terminar com "concordam?", "o que vocês acham?", perguntas retóricas vazias, CTAs genéricos
+- 3-5 hashtags profissionais em linha separada (ex: #AgTech #AgriculturaDePrecisao #GestaoAgricola)
+
+${toneBlock}
+${buildDesignContext('linkedin')}
+IMAGE_PROMPT: descrição em inglês para gerar foto fotorrealista de alta qualidade que ilustre o tema.
+- Foco em agricultura brasileira de escala (campo, tecnologia, operações, maquinário moderno)
+- Iluminação natural dramática (golden hour ou céu nublado)
+- Composição profissional que transmita escala e modernidade
+- Sem texto ou logotipos na imagem
+- Estilo: fotografia corporativa/documental, alta resolução
+
+Responda APENAS em JSON válido, sem texto fora do JSON:
+{
+  "hook": "primeira linha<br><em>remate estratégico.</em>",
+  "complement": "texto de apoio<br><strong>com destaque</strong>",
+  "bullets": [
+    {"icon": "analytics", "text": "Afirmação com dado."},
+    {"icon": "trending_up", "text": "Benefício mensurável."},
+    {"icon": "insights",    "text": "Insight estratégico."}
+  ],
+  "title": "título curto para sidebar (máx 50 chars)",
+  "legend": "legenda profissional para LinkedIn",
+  "hashtags": "#AgTech #AgriculturaDePrecisao #Cropware",
+  "imagePrompt": "photorealistic image prompt in english"
+}`;
+}
+
+function buildLinkedInCarouselSystemPrompt(tone, slideCount) {
+  const toneDirectives = {
+    casual:      'TOM: profissional mas acessível. Evite formalismo excessivo, mas mantenha credibilidade.',
+    tecnico:     'TOM: vocabulário técnico do agro (NDVI, manejo integrado, agricultura de precisão). Cite dados e métricas.',
+    inspirador:  'TOM: visão estratégica, foco em transformação do setor, liderança e inovação agrícola.',
+    provocativo: 'TOM: tese provocativa que desafia o status quo do agronegócio. Posicionamento forte e fundamentado.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
+
+  return `Você é um copywriter especialista em LinkedIn para a marca Cropware (plataforma de gestão agrícola com IA).
+Crie um CARROSSEL para LinkedIn com ${slideCount} slides seguindo exatamente este padrão:
+
+CONTEXTO LINKEDIN:
+- Carrosséis no LinkedIn são documentos PDF que o público desliza. Cada slide deve funcionar como uma "página" de conteúdo educativo.
+- O público são gestores, agrônomos sêniores, executivos, investidores e profissionais de agtech.
+- Foco em thought leadership, dados e raciocínio estratégico.
+
+ESTRUTURA DO CARROSSEL:
+- Slide 1 (CAPA): hook forte que gere curiosidade profissional. Tese provocativa ou dado impactante.
+- Slides do meio (DESENVOLVIMENTO): cada slide entrega um insight, dado ou argumento. Progressão lógica e consultiva.
+- Último slide (CONCLUSÃO): síntese estratégica + posicionamento da Cropware como solução.
+- Todos os slides devem ter coerência visual e narrativa profissional.
+
+PARA CADA SLIDE:
+HOOK (texto grande, impactante):
+- 1 OU 2 linhas no total
+- A última parte OBRIGATORIAMENTE envolvida em <em>...</em> (fica verde)
+- CAPITALIZAÇÃO: só a PRIMEIRA palavra começa com maiúscula
+- PONTUAÇÃO NATURAL OBRIGATÓRIA
+- Máximo 6 palavras por linha
+- Tom consultivo — dados, eficiência, ROI, decisão baseada em evidência
+
+COMPLEMENT (texto de apoio menor):
+- 1-2 linhas, máximo 36 caracteres cada
+- Use <strong> para destacar palavras-chave
+
+BULLETS (3 pontos de apoio):
+- Exatamente 3 bullets, curtos e diretos
+- Cada "text": máximo 6 palavras, com dado ou benefício mensurável
+- PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
+- Cada "icon": nome exato de Material Symbol da lista permitida
+
+ICONES PERMITIDOS: check_circle, task_alt, trending_up, trending_down, schedule, bolt,
+savings, insights, analytics, agriculture, eco, grass, water_drop, sunny, landscape,
+sensors, visibility, shield, speed, psychology, hub, timeline, query_stats,
+monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturing
+
+LEGEND (UMA legenda compartilhada para todo o carrossel):
+- 4-6 frases com tom consultivo e profissional, máximo 100 palavras
+- Thought leadership: contexto de mercado, desafio do setor, posicionamento
+- PROIBIDO "concordam?", perguntas retóricas vazias, CTAs genéricos
+- 3-5 hashtags profissionais em linha separada
+
+${toneBlock}
+${buildDesignContext('linkedin')}
+
+IMAGE_PROMPT (um por slide): descrição em inglês para gerar foto fotorrealista.
+- Foco em agricultura brasileira de escala
+- Iluminação natural dramática
+- Composição profissional
+- Sem texto ou logotipos
+- Cada slide deve ter uma imagem DIFERENTE e complementar
+
+Responda APENAS em JSON válido:
+{
+  "title": "título curto do carrossel para sidebar (máx 50 chars)",
+  "legend": "legenda profissional compartilhada do carrossel",
+  "hashtags": "#AgTech #AgriculturaDePrecisao #Cropware",
+  "slides": [
+    {
+      "hook": "texto do hook<br><em>remate estratégico.</em>",
+      "complement": "texto de apoio<br><strong>destaque</strong>",
+      "bullets": [
+        {"icon": "analytics", "text": "Afirmação com dado."},
+        {"icon": "trending_up", "text": "Benefício mensurável."},
+        {"icon": "insights", "text": "Insight estratégico."}
+      ],
+      "imagePrompt": "english image prompt for this slide"
+    }
+  ]
+}`;
+}
+
+async function callGeminiCarouselText(theme, tone, slideCount, userImageBase64, userImageMime, platform) {
+  const systemPrompt = platform === 'linkedin'
+    ? buildLinkedInCarouselSystemPrompt(tone, slideCount)
+    : buildCarouselSystemPrompt(tone, slideCount);
+  const platformLabel = platform === 'linkedin' ? 'LinkedIn' : 'Instagram';
+  const userParts = userImageBase64
+    ? [
+        { inlineData: { mimeType: userImageMime || 'image/jpeg', data: userImageBase64 } },
+        { text: `Analise esta imagem e crie um carrossel de ${slideCount} slides para ${platformLabel} da Cropware sobre:\n\n${theme}` }
+      ]
+    : [
+        { text: `Crie um carrossel de ${slideCount} slides para ${platformLabel} da Cropware sobre:\n\n${theme}` }
+      ];
+
+  const resp = await fetchGeminiWithRetry(
+    `${SUPABASE_URL}/functions/v1/gemini`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+      },
+      body: JSON.stringify({
+        model: 'gemini-2.5-flash',
+        body: {
+          contents: [{ parts: userParts }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          generationConfig: { responseMimeType: 'application/json' }
+        }
+      })
+    },
+    'Gemini texto (carrossel)'
+  );
+
+  const data = await resp.json();
+  const raw  = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const match = raw.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('Gemini texto: resposta não contém JSON válido.');
+  return JSON.parse(match[0]);
+}
+
+function stripHTML(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html || '';
+  return tmp.textContent || '';
+}
+
+function buildInsertSlideSystemPrompt(tone) {
+  const toneDirectives = {
+    casual:      'TOM: linguagem próxima e coloquial, como conversa no WhatsApp. Use "você", expressões leves do campo.',
+    tecnico:     'TOM: vocabulário preciso do agro (NDVI, talhão, IPM, manejo integrado). Cite números quando possível.',
+    inspirador:  'TOM: aspiracional, foco em transformação, futuro e empoderamento do produtor.',
+    provocativo: 'TOM: abertura que desafia o senso comum, pergunta incômoda ou afirmação direta.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.casual;
+
+  return `Você é um copywriter especialista na marca Cropware (plataforma de gestão agrícola).
+Crie UM ÚNICO slide complementar para encaixar entre slides existentes de um carrossel.
+O slide deve manter coerência narrativa e visual com os slides vizinhos fornecidos no contexto.
+
+HOOK (texto grande, impactante):
+- 1 OU 2 linhas no total
+- A última parte OBRIGATORIAMENTE envolvida em <em>...</em> (fica verde)
+- CAPITALIZAÇÃO: só a PRIMEIRA palavra do hook começa com maiúscula
+- PONTUAÇÃO NATURAL OBRIGATÓRIA: vírgula de respiro, ponto final no fim
+- Máximo 6 palavras por linha
+
+COMPLEMENT (texto de apoio menor):
+- 1-2 linhas, máximo 36 caracteres cada
+- Use <strong> para destacar palavras-chave
+
+BULLETS (3 pontos de apoio):
+- Exatamente 3 bullets, curtos e diretos
+- Cada "text": máximo 6 palavras
+- PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
+- Cada "icon": nome exato de Material Symbol da lista permitida
+
+ICONES PERMITIDOS: check_circle, task_alt, trending_up, trending_down, schedule, bolt,
+savings, insights, analytics, agriculture, eco, grass, water_drop, sunny, landscape,
+sensors, visibility, shield, speed, psychology, hub, timeline, query_stats,
+monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturing
+
+${toneBlock}
+${buildDesignContext()}
+
+IMAGE_PROMPT: descrição em inglês para gerar foto fotorrealista agrícola. Sem texto ou logotipos.
+
+Responda APENAS em JSON válido:
+{
+  "hook": "texto do hook<br><em>remate verde.</em>",
+  "complement": "texto de apoio<br><strong>destaque</strong>",
+  "bullets": [
+    {"icon": "check_circle", "text": "Afirmação curta."},
+    {"icon": "trending_up", "text": "Afirmação curta."},
+    {"icon": "schedule", "text": "Afirmação curta."}
+  ],
+  "imagePrompt": "english image prompt for this slide"
+}`;
+}
+
+async function callGeminiInsertSlideText(theme, tone, contextInfo, platform) {
+  const systemPrompt = buildInsertSlideSystemPrompt(tone);
+  const platformLabel = platform === 'linkedin' ? 'LinkedIn' : 'Instagram';
+  const userText = `Crie UM slide complementar para ${platformLabel} da Cropware sobre: ${theme}
+
+Contexto dos slides vizinhos (mantenha coerência):
+${contextInfo}`;
+
+  const resp = await fetchGeminiWithRetry(
+    `${SUPABASE_URL}/functions/v1/gemini`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+      },
+      body: JSON.stringify({
+        model: 'gemini-2.5-flash',
+        body: {
+          contents: [{ parts: [{ text: userText }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          generationConfig: { responseMimeType: 'application/json' }
+        }
+      })
+    },
+    'Gemini texto (slide único)'
+  );
+
+  const data = await resp.json();
+  const raw  = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const match = raw.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('Gemini: resposta sem JSON válido.');
+  return JSON.parse(match[0]);
+}
+
+let _insertSlidePosition = 'after';
+
+function insertSlide(position) {
+  if (!isCarouselMode()) return;
+  const items = getModeItems();
+  if (!items[getModeCurrentIdx()]) return;
+  _insertSlidePosition = position;
+  const label = position === 'before' ? 'antes' : 'depois';
+  document.querySelector('#insertSlideModal .gen-modal-header > span').textContent = `Inserir slide ${label}`;
+  document.getElementById('insertSlideDirection').value = '';
+  document.getElementById('insertSlideStatus').textContent = '';
+  document.getElementById('insertSlideBtn').disabled = false;
+  document.getElementById('insertSlideModal').classList.add('open');
+}
+
+function closeInsertSlideModal() {
+  document.getElementById('insertSlideModal').classList.remove('open');
+}
+
+async function confirmInsertSlide() {
+  const items = getModeItems();
+  const carousel = items[getModeCurrentIdx()];
+  if (!carousel) return;
+
+  const cs = getCurrentSlide();
+  const insertIdx = _insertSlidePosition === 'before' ? cs : cs + 1;
+  const direction = (document.getElementById('insertSlideDirection').value || '').trim();
+
+  const prevSlide = carousel.slides[insertIdx - 1];
+  const nextSlide = carousel.slides[insertIdx];
+  const theme = carousel.theme || '';
+  const tone  = carousel.tone  || 'casual';
+  const platform = getPlatform();
+
+  let contextParts = [];
+  if (prevSlide) {
+    contextParts.push(`Slide anterior (${insertIdx}): hook="${stripHTML(prevSlide.hookHTML)}", complement="${stripHTML(prevSlide.complementHTML)}"`);
+  }
+  if (nextSlide) {
+    contextParts.push(`Slide seguinte (${insertIdx + 1}): hook="${stripHTML(nextSlide.hookHTML)}", complement="${stripHTML(nextSlide.complementHTML)}"`);
+  }
+  if (direction) {
+    contextParts.push(`Direção do usuário: ${direction}`);
+  }
+  const context = contextParts.join('\n');
+
+  const btn = document.getElementById('insertSlideBtn');
+  const statusEl = document.getElementById('insertSlideStatus');
+  btn.disabled = true;
+  statusEl.textContent = 'Gerando texto com IA...';
+
+  try {
+    const slideText = await callGeminiInsertSlideText(theme, tone, context, platform);
+
+    statusEl.textContent = 'Gerando imagem com IA...';
+    const imgPrompt = slideText.imagePrompt || `Photorealistic agricultural photo related to: ${theme}. Golden hour, no text.`;
+    const img = await callGeminiImage(imgPrompt);
+
+    const timestamp = Date.now();
+    const ref = carousel.slides[cs];
+    const slideData = {
+      id:              `carousel-slide-${timestamp}-insert`,
+      bg:              `bg-carousel-${timestamp}-insert`,
+      slideId:         `slide-carousel-${timestamp}-insert`,
+      title:           `Slide ${insertIdx + 1}`,
+      sub:             'Carrossel',
+      filename:        `cropware_carrossel_${timestamp}_insert.jpg`,
+      isGenerated:     true,
+      bgImage:         `data:${img.mime};base64,${img.base64}`,
+      theme:           theme,
+      tone:            tone,
+      imagePrompt:     slideText.imagePrompt || '',
+      hookHTML:        (slideText.hook || '').replace(/\n/g, '<br>'),
+      complementHTML:  (slideText.complement || '').replace(/\n/g, '<br>'),
+      bullets:         Array.isArray(slideText.bullets) ? slideText.bullets.slice(0, 3) : [],
+      slideIndex:      insertIdx,
+      style:           ref.style || 'classic',
+      accent:          ref.accent || '#7AB87E',
+      layout:          ref.layout || 'top',
+      textAlign:       ref.textAlign || 'left',
+      logoPos:         ref.logoPos || 'br',
+      format:          ref.format || 'feed',
+      overlayColor:    ref.overlayColor,
+      overlayOpacity:  ref.overlayOpacity,
+      overlayDirection:ref.overlayDirection,
+      dashCardColor:   ref.dashCardColor,
+      dashCardOpacity: ref.dashCardOpacity,
+      revistaBlockColor: ref.revistaBlockColor,
+      splitBlockColor: ref.splitBlockColor,
+      revistaTextMode: ref.revistaTextMode,
+      splitTextMode:   ref.splitTextMode,
+      columnBlockColor:ref.columnBlockColor,
+      columnTextMode:  ref.columnTextMode,
+      columnSide:      ref.columnSide,
+      frameColor:      ref.frameColor,
+      frameTextMode:   ref.frameTextMode,
+      glassOpacity:    ref.glassOpacity,
+      logoEnabled:     ref.logoEnabled,
+      logoScale:       ref.logoScale,
+      siteText:        ref.siteText,
+      sitePos:         ref.sitePos,
+      siteEnabled:     ref.siteEnabled,
+      siteScale:       ref.siteScale,
+      hookScale:       ref.hookScale,
+      complementScale: ref.complementScale,
+      bulletsScale:    ref.bulletsScale,
+      bulletIconScale: ref.bulletIconScale,
+      hookVisible:     true,
+      complementVisible: true,
+      bulletsVisible:  ref.bulletsVisible,
+      bulletIconsVisible: ref.bulletIconsVisible,
+    };
+
+    const slide = document.createElement('div');
+    slide.className = 'post-slide';
+    slide.id = slideData.slideId;
+    const postEl = document.createElement('div');
+    postEl.className = 'post';
+    postEl.id = slideData.id;
+    postEl.dataset.generated = 'true';
+    postEl.style.background = '#000';
+    slide.appendChild(postEl);
+    document.getElementById('postScaler').appendChild(slide);
+    applyPostVariant(postEl, slideData);
+
+    carousel.slides.splice(insertIdx, 0, slideData);
+    carousel.slides.forEach((s, i) => { s.slideIndex = i; });
+
+    document.querySelectorAll('.post-slide').forEach(s => s.classList.remove('visible'));
+    slide.classList.add('visible');
+    setCurrentSlide(insertIdx);
+
+    document.getElementById('postSub').textContent = `Slide ${insertIdx + 1}/${carousel.slides.length}`;
+    closeInsertSlideModal();
+    updateSlideNav();
+    updateCarouselPostControls();
+    buildSidebar();
+    buildDots();
+    saveSession();
+    scalePost();
+
+  } catch (e) {
+    console.error('insertSlide error:', e);
+    statusEl.textContent = 'Erro: ' + e.message;
+    btn.disabled = false;
+  }
+}
+
+async function generateCarousel() {
+  const theme      = document.getElementById('genTheme').value.trim();
+  const platform   = getPlatform();
+  const cfg        = getActiveDesignConfig();
+  const tone       = cfg.tone || 'casual';
+  const slideCount = Number(document.getElementById('genSlideCount').value) || 4;
+  const btn        = document.getElementById('genBtn');
+  const needImage  = !genImageBase64;
+
+  if (!theme) { setGenStatus('Descreva o tema do carrossel.', 'error'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Gerando...';
+  const totalSteps = needImage ? slideCount + 1 : 1;
+  setGenStatus(`<span class="material-symbols-outlined sz-18" style="margin-right:6px">hourglass_empty</span>Passo 1/${totalSteps} — Gemini criando copy para ${slideCount} slides...`, '');
+
+  try {
+    // Step 1: Generate all text at once (prompt varia por plataforma)
+    const parsed = await callGeminiCarouselText(theme, tone, slideCount, genImageBase64, genImageMime, platform);
+    const slides = Array.isArray(parsed.slides) ? parsed.slides : [];
+    if (slides.length === 0) throw new Error('Gemini não retornou slides.');
+
+    // Step 2+: Generate images for each slide
+    const timestamp = Date.now();
+    const carouselSlides = [];
+
+    for (let i = 0; i < slides.length; i++) {
+      const s = slides[i];
+      let imgBase64 = genImageBase64;
+      let imgMime = genImageMime;
+
+      if (needImage) {
+        setGenStatus(`<span class="material-symbols-outlined sz-18" style="margin-right:6px">hourglass_empty</span>Passo ${i + 2}/${totalSteps} — Gerando imagem ${i + 1}/${slides.length}...`, '');
+        const imgPrompt = s.imagePrompt || `Photorealistic agricultural photo related to: ${theme}. Golden hour, no text.`;
+        const img = await callGeminiImage(imgPrompt);
+        imgBase64 = img.base64;
+        imgMime = img.mime;
+      }
+
+      carouselSlides.push({
+        id:       `carousel-slide-${timestamp}-${i}`,
+        bg:       `bg-carousel-${timestamp}-${i}`,
+        slideId:  `slide-carousel-${timestamp}-${i}`,
+        title:    `Slide ${i + 1}`,
+        sub:      'Carrossel',
+        filename: `cropware_carrossel_${timestamp}_${i + 1}.jpg`,
+        isGenerated:    true,
+        bgImage:        `data:${imgMime};base64,${imgBase64}`,
+        theme:          theme,
+        tone:           tone,
+        imagePrompt:    s.imagePrompt || '',
+        hookHTML:       (s.hook       || '').replace(/\n/g, '<br>'),
+        complementHTML: (s.complement || '').replace(/\n/g, '<br>'),
+        bullets:        Array.isArray(s.bullets) ? s.bullets.slice(0, 3) : [],
+        slideIndex:     i,
+      });
+    }
+
+    setGenStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">check_circle</span>Montando carrossel...', 'success');
+
+    // Limit carousels per mode
+    const items = getModeItems();
+    const legendsArr = getModeLegends();
+    const oldestIdx = items.findIndex(c => c.isGenerated);
+    if (oldestIdx >= 0 && items.filter(c => c.isGenerated).length >= MAX_POSTS) {
+      const oldCarousel = items[oldestIdx];
+      deletePostFromSupabase(oldCarousel.id);
+      oldCarousel.slides.forEach(s => {
+        const el = document.getElementById(s.slideId);
+        if (el) el.remove();
+      });
+      items.splice(oldestIdx, 1);
+      legendsArr.splice(oldestIdx, 1);
+    }
+
+    const carouselType = platform === 'linkedin' ? 'linkedin-carousel' : 'carousel';
+    const carouselData = {
+      id:          `carousel-gen-${timestamp}`,
+      type:        carouselType,
+      title:       parsed.title || 'Carrossel gerado',
+      theme:       theme,
+      tone:        tone,
+      isGenerated: true,
+      slides:      carouselSlides,
+      currentSlide: 0,
+    };
+
+    const legendText = (parsed.legend || '') + (parsed.hashtags ? '\n\n' + parsed.hashtags : '');
+    const newIdx = renderGeneratedCarousel(carouselData, legendText);
+    saveSession();
+
+    setTimeout(() => {
+      closeGenerator();
+      setCurrentSlide(0);
+      buildSidebar();
+      buildDots();
+      goTo(newIdx);
+      // reset form
+      document.getElementById('genTheme').value = '';
+      document.getElementById('genPreview').style.display = 'none';
+      document.getElementById('genPreview').src = '';
+      const inner = document.querySelector('.gen-dropzone-inner');
+      if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
+      genImageBase64 = null;
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined sz-18">auto_awesome</span>Gerar Carrossel';
+      setGenStatus('', '');
+    }, 600);
+
+  } catch(e) {
+    setGenStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">error</span>Erro: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<span class="material-symbols-outlined sz-18">auto_awesome</span>Gerar Carrossel';
   }
 }
 
@@ -5075,19 +7040,20 @@ function getRegenDirection() {
 }
 
 async function regenerateText() {
-  const post = posts[current];
+  const post = getActivePost();
   if (!post || !post.isGenerated) return;
   const direction = getRegenDirection();
   setRegenBusy(true, 'pcRegenText');
   try {
-    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction);
+    const platform = getPlatform();
+    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction, platform === 'linkedin' ? 'linkedin' : undefined);
     pushUndoSnapshot(post, {
       kind: 'text',
       hookHTML:       post.hookHTML,
       complementHTML: post.complementHTML,
       title:          post.title,
       imagePrompt:    post.imagePrompt,
-      legend:         legends[current],
+      legend:         getActiveLegend(),
       bullets:        post.bullets,
     });
     post.hookHTML       = (parsed.hook       || '').replace(/\n/g, '<br>');
@@ -5095,12 +7061,12 @@ async function regenerateText() {
     post.title          = parsed.title || post.title;
     post.imagePrompt    = parsed.imagePrompt || post.imagePrompt;
     post.bullets        = Array.isArray(parsed.bullets) ? parsed.bullets.slice(0, 3) : post.bullets;
-    legends[current]    = sanitizeLegend((parsed.legend || '') + (parsed.hashtags ? '\n\n' + parsed.hashtags : ''));
+    setActiveLegend(sanitizeLegend((parsed.legend || '') + (parsed.hashtags ? '\n\n' + parsed.hashtags : '')));
     const postEl = document.getElementById(post.id);
     if (postEl) applyPostVariant(postEl, post);
-    updateLegend(current);
+    updateLegend(getModeCurrentIdx());
     buildSidebar();
-    updatePostControls(current);
+    updatePostControls(getModeCurrentIdx());
     saveSession();
   } catch(e) {
     alert('Erro ao regenerar texto: ' + e.message);
@@ -5109,7 +7075,7 @@ async function regenerateText() {
 }
 
 async function regenerateImage() {
-  const post = posts[current];
+  const post = getActivePost();
   if (!post || !post.isGenerated) return;
   const direction = getRegenDirection();
   const imagePrompt = post.imagePrompt || `Photorealistic agricultural field photo related to: ${post.theme || ''}. Golden hour lighting, no text.`;
@@ -5120,7 +7086,7 @@ async function regenerateImage() {
     post.bgImage = `data:${img.mime};base64,${img.base64}`;
     const postEl = document.getElementById(post.id);
     if (postEl) applyPostVariant(postEl, post);
-    updatePostControls(current);
+    updatePostControls(getModeCurrentIdx());
     saveSession();
   } catch(e) {
     alert('Erro ao regenerar imagem: ' + e.message);
@@ -5129,17 +7095,17 @@ async function regenerateImage() {
 }
 
 async function regenerateLegend() {
-  const post = posts[current];
+  const post = getActivePost();
   if (!post || !post.isGenerated) return;
   const direction = getRegenDirection();
+  const platform = getPlatform();
   setRegenBusy(true, 'pcRegenLegend');
   try {
-    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction);
-    pushUndoSnapshot(post, { kind: 'legend', legend: legends[current] });
-    // Aplica apenas a legenda + hashtags, preserva hook/complement/imagem
-    legends[current] = sanitizeLegend((parsed.legend || '') + (parsed.hashtags ? '\n\n' + parsed.hashtags : ''));
-    updateLegend(current);
-    updatePostControls(current);
+    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction, platform === 'linkedin' ? 'linkedin' : undefined);
+    pushUndoSnapshot(post, { kind: 'legend', legend: getActiveLegend() });
+    setActiveLegend(sanitizeLegend((parsed.legend || '') + (parsed.hashtags ? '\n\n' + parsed.hashtags : '')));
+    updateLegend(getModeCurrentIdx());
+    updatePostControls(getModeCurrentIdx());
     saveSession();
   } catch(e) {
     alert('Erro ao regenerar legenda: ' + e.message);
@@ -5148,7 +7114,7 @@ async function regenerateLegend() {
 }
 
 function undoLastRegen() {
-  const post = posts[current];
+  const post = getActivePost();
   if (!post || !post.isGenerated) return;
   const stack = post._undoStack;
   if (!stack || stack.length === 0) return;
@@ -5159,20 +7125,20 @@ function undoLastRegen() {
     post.title          = snap.title          || post.title;
     post.imagePrompt    = snap.imagePrompt    || post.imagePrompt;
     post.bullets        = snap.bullets        || [];
-    legends[current]    = snap.legend         || '';
+    setActiveLegend(snap.legend || '');
     const postEl = document.getElementById(post.id);
     if (postEl) applyPostVariant(postEl, post);
-    updateLegend(current);
+    updateLegend(getModeCurrentIdx());
     buildSidebar();
   } else if (snap.kind === 'image') {
     post.bgImage = snap.bgImage || '';
     const postEl = document.getElementById(post.id);
     if (postEl) applyPostVariant(postEl, post);
   } else if (snap.kind === 'legend') {
-    legends[current] = snap.legend || '';
-    updateLegend(current);
+    setActiveLegend(snap.legend || '');
+    updateLegend(getModeCurrentIdx());
   }
-  updatePostControls(current);
+  updatePostControls(getModeCurrentIdx());
   saveSession();
 }
 
@@ -5210,10 +7176,40 @@ function setGenStatus(msg, type) {
         <img id="genPreview" class="gen-preview" alt="Preview" />
       </div>
 
+      <div class="gen-group" id="genSlideCountGroup" style="display:none">
+        <label>Número de Slides</label>
+        <select id="genSlideCount" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:14px;font-family:'Google Sans Flex',sans-serif;">
+          <option value="3">3 slides</option>
+          <option value="4" selected>4 slides</option>
+          <option value="5">5 slides</option>
+        </select>
+      </div>
+
       <div class="gen-status" id="genStatus"></div>
       <div class="gen-actions">
         <button class="btn btn-ghost" onclick="closeGenerator()">Cancelar</button>
-        <button class="btn btn-primary" id="genBtn" onclick="generatePost()"><span class="material-symbols-outlined sz-18">draw</span>Gerar Post</button>
+        <button class="btn btn-primary" id="genBtn" onclick="handleGenerate()"><span class="material-symbols-outlined sz-18">draw</span>Gerar Post</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INSERT SLIDE MODAL -->
+<div class="gen-modal" id="insertSlideModal">
+  <div class="gen-modal-box" style="width:440px;">
+    <div class="gen-modal-header">
+      <span>Inserir Slide</span>
+      <button class="gen-close" onclick="closeInsertSlideModal()"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="gen-body">
+      <div class="gen-group">
+        <label>Direção do novo slide <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;">(opcional — IA decide se vazio)</span></label>
+        <textarea id="insertSlideDirection" rows="2" placeholder="Ex: falar sobre redução de custos, mostrar resultado de campo..."></textarea>
+      </div>
+      <div class="gen-status" id="insertSlideStatus"></div>
+      <div class="gen-actions">
+        <button class="btn btn-ghost" onclick="closeInsertSlideModal()">Cancelar</button>
+        <button class="btn btn-primary" id="insertSlideBtn" onclick="confirmInsertSlide()"><span class="material-symbols-outlined sz-18">add</span>Gerar Slide</button>
       </div>
     </div>
   </div>
@@ -5239,9 +7235,11 @@ function setGenStatus(msg, type) {
         <select id="cfgAudience">
           <option value="produtor">Produtor rural</option>
           <option value="agronomo">Agrônomo</option>
-          <option value="gestor">Gestor agro</option>
+          <option value="gestor">Gestor agro / Líder de operações</option>
           <option value="tecnico">Técnico de campo</option>
           <option value="misto" selected>Misto (produtor + agrônomo)</option>
+          <option value="executivo">Executivos / Diretores agro</option>
+          <option value="investidor">Investidores / Analistas</option>
         </select>
       </div>
 
@@ -5278,6 +7276,19 @@ function setGenStatus(msg, type) {
 
 <!-- Dropdown do picker de ícone (bullets) -->
 <div class="pc-icon-dropdown" id="pcIconDropdown" hidden></div>
+
+<!-- Toolbar flutuante de formatação de texto -->
+<div class="text-toolbar" id="textToolbar">
+  <button class="text-toolbar-btn" id="ttBtnHighlight" onmousedown="event.preventDefault(); applyTextFormat('italic')" title="Destaque (cor accent)">
+    <span class="material-symbols-outlined sz-16">format_ink_highlighter</span>
+    <span>Destaque</span>
+  </button>
+  <div class="text-toolbar-sep"></div>
+  <button class="text-toolbar-btn" id="ttBtnBold" onmousedown="event.preventDefault(); applyTextFormat('bold')" title="Negrito">
+    <span class="material-symbols-outlined sz-16">format_bold</span>
+    <span>Negrito</span>
+  </button>
+</div>
 
 </body>
 </html>
