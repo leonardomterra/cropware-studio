@@ -2288,11 +2288,12 @@
   <div class="login-card">
     <img src="logo-cropware-pb-final.svg" alt="Cropware" class="login-logo">
     <h1 class="login-title">Studio</h1>
-    <p class="login-subtitle">Entre com seu email para continuar</p>
-    <form id="loginForm" onsubmit="handleMagicLink(event)">
+    <p class="login-subtitle">Entre com email e senha para continuar</p>
+    <form id="loginForm" onsubmit="handleLogin(event)">
       <input type="email" id="loginEmail" class="login-input" placeholder="seu@email.com" required autocomplete="email">
+      <input type="password" id="loginPassword" class="login-input" placeholder="Senha" required autocomplete="current-password">
       <button type="submit" class="login-btn" id="loginBtn">
-        <span class="material-symbols-outlined sz-18">mail</span>Enviar link de acesso
+        <span class="material-symbols-outlined sz-18">login</span>Entrar
       </button>
     </form>
     <div id="loginMsg" class="login-msg"></div>
@@ -2829,23 +2830,19 @@ function getSessionId() {
   return id;
 }
 
-async function handleMagicLink(e) {
+async function handleLogin(e) {
   e.preventDefault();
-  const email = document.getElementById('loginEmail').value.trim();
-  const btn   = document.getElementById('loginBtn');
-  const msg   = document.getElementById('loginMsg');
-  if (!email) return;
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const btn      = document.getElementById('loginBtn');
+  const msg      = document.getElementById('loginMsg');
+  if (!email || !password) return;
   btn.disabled = true;
   msg.className = 'login-msg';
-  msg.textContent = 'Enviando...';
+  msg.textContent = 'Entrando...';
   try {
-    const { error } = await sb.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.origin + window.location.pathname }
-    });
+    const { error } = await sb.auth.signInWithPassword({ email, password });
     if (error) throw error;
-    msg.className = 'login-msg success';
-    msg.textContent = 'Link enviado! Verifique seu email e clique no link para entrar.';
   } catch(err) {
     msg.className = 'login-msg error';
     msg.textContent = 'Erro: ' + (err.message || err);
