@@ -1,0 +1,26 @@
+{
+  "name": "cropware-studio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leonardomterra/cropware-studio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/leonardomterra/cropware-studio/issues"
+  },
+  "homepage": "https://github.com/leonardomterra/cropware-studio#readme",
+  "devDependencies": {
+    "vite": "^8.0.8"
+  }
+}

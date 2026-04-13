@@ -1,13 +1,13 @@
 -- ──────────────────────────────────────────────────────────────
--- Cropware Studio — schema Supabase (uso solo, sem RLS)
+-- Cropware Studio — schema Supabase (com Auth + RLS)
 --
 -- Como usar:
 --   1. Abra o projeto no Supabase
 --   2. Vá em SQL Editor → New query
 --   3. Cole TODO este arquivo e clique em "Run"
 --
--- Isso cria as 2 tabelas usadas pelo index.html e desliga RLS
--- (studio usado só por você — nada sensível nessas tabelas).
+-- Isso cria as 2 tabelas e habilita RLS para que cada
+-- usuário autenticado acesse apenas seus próprios dados.
 -- ──────────────────────────────────────────────────────────────
 
 -- Posts gerados pela IA (histórico rolante, máx 6)
@@ -30,11 +30,23 @@ create table if not exists public.cropware_design_config (
   updated_at  timestamptz not null default now()
 );
 
--- Desliga RLS: uso solo, tudo acessível via anon key do index.html
-alter table public.cropware_posts         disable row level security;
-alter table public.cropware_design_config disable row level security;
+-- Habilita RLS
+alter table public.cropware_posts         enable row level security;
+alter table public.cropware_design_config enable row level security;
 
--- Garante que o role `anon` tem acesso (default do Supabase já dá,
--- mas deixamos explícito pra não depender de default privileges).
-grant select, insert, update, delete on public.cropware_posts         to anon;
-grant select, insert, update, delete on public.cropware_design_config to anon;
+-- Policies: cada usuário acessa apenas seus dados (session_id = user id)
+drop policy if exists "Users manage own posts" on public.cropware_posts;
+create policy "Users manage own posts" on public.cropware_posts
+  for all
+  using (session_id = auth.uid()::text)
+  with check (session_id = auth.uid()::text);
+
+drop policy if exists "Users manage own config" on public.cropware_design_config;
+create policy "Users manage own config" on public.cropware_design_config
+  for all
+  using (session_id = auth.uid()::text)
+  with check (session_id = auth.uid()::text);
+
+-- Garante acesso para authenticated (RLS filtra por user)
+grant select, insert, update, delete on public.cropware_posts         to authenticated;
+grant select, insert, update, delete on public.cropware_design_config to authenticated;
