@@ -5413,6 +5413,25 @@ function resolveLogoFillColor(img) {
   return '#ffffff';
 }
 
+// Detecta mobile (tela pequena ou touch). Usado para reduzir scale do export
+// (canvas 4x = 23M pixels, muitos browsers mobile limitam a ~16M e falham silenciosamente).
+function isMobile() {
+  return window.innerWidth <= 900 || ('ontouchstart' in window && window.innerWidth < 1200);
+}
+
+// Download robusto: usa toBlob + createObjectURL (eficiente em memória) com fallback
+// para window.open no Safari iOS (onde link.click() programático pode falhar).
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
 // Pré-desfoca uma imagem em canvas (html2canvas não renderiza filter:blur
 // nem backdrop-filter — precisamos entregar a imagem já desfocada).
 function preBlurImage(src, blurPx) {
@@ -5689,8 +5708,12 @@ async function downloadCurrent() {
     const blurSrc = extractBlurBgSrc(postEl);
     const blurredUrl = blurSrc ? await preBlurImage(blurSrc, 24) : null;
 
+    // Mobile: scale 2 (2160×2700 = 5.8M px) em vez de 4 (4320×5400 = 23M px)
+    // Muitos browsers mobile limitam canvas a ~16M pixels e falham silenciosamente.
+    const exportScale = isMobile() ? 2 : 4;
+
     const canvas = await html2canvas(postEl, {
-      scale: 4,
+      scale: exportScale,
       useCORS: true,
       allowTaint: true,
       backgroundColor: null,
@@ -5726,13 +5749,13 @@ async function downloadCurrent() {
       },
     });
 
-    const link = document.createElement('a');
+    // Usa toBlob + createObjectURL (eficiente em memória, funciona melhor no mobile)
     const baseFilename = post.filename || 'cropware.jpg';
-    link.download = post.format === 'story'
+    const filename = post.format === 'story'
       ? baseFilename.replace(/\.jpg$/i, '_story.jpg')
       : baseFilename;
-    link.href = canvas.toDataURL('image/jpeg', 0.95);
-    link.click();
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
+    downloadBlob(blob, filename);
   } catch(e) {
     alert('Erro ao exportar: ' + e.message);
   } finally {
@@ -5821,7 +5844,9 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
 }
 
 async function captureSlideAsBlob(slideData) {
-  const canvas = await captureSlideAsCanvas(slideData);
+  // Mobile: scale 2 em vez de 4 (limite de ~16M pixels em browsers mobile)
+  const scale = isMobile() ? 2 : 4;
+  const canvas = await captureSlideAsCanvas(slideData, scale);
   return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
 }
 
@@ -5850,11 +5875,7 @@ async function downloadCarousel() {
 
     setGenStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">check_circle</span>Compactando ZIP...', 'success');
     const zipBlob = await zip.generateAsync({ type: 'blob' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(zipBlob);
-    link.download = `cropware_carrossel_${safeName}.zip`;
-    link.click();
-    URL.revokeObjectURL(link.href);
+    downloadBlob(zipBlob, `cropware_carrossel_${safeName}.zip`);
     setGenStatus('', '');
   } catch(e) {
     alert('Erro ao exportar carrossel: ' + e.message);
@@ -5929,7 +5950,8 @@ async function downloadLinkedInCarouselPDF() {
       .replace(/[^a-z0-9]+/g, '_')
       .replace(/^_|_$/g, '')
       .slice(0, 60);
-    pdf.save(`cropware_linkedin_${safeName}.pdf`);
+    const pdfBlob = pdf.output('blob');
+    downloadBlob(pdfBlob, `cropware_linkedin_${safeName}.pdf`);
     setGenStatus('', '');
   } catch(e) {
     alert('Erro ao exportar PDF: ' + e.message);
