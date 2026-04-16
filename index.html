@@ -7661,6 +7661,45 @@ function setPresBgStatus(msg, type) {
   el.className = 'gen-status' + (type ? ' gen-status-' + type : '');
 }
 
+// Gera um título curto (3-6 palavras) a partir do tema, via Gemini.
+// Retorna null em caso de erro — chamador deve ter fallback.
+async function suggestPresentationTitle(theme) {
+  try {
+    const systemPrompt = 'Você é um editor que cria títulos curtos e editoriais em português do Brasil para apresentações sobre agronegócio. Responda SEMPRE em JSON no formato {"title":"..."}. O título deve ter de 3 a 6 palavras, ser claro, sem aspas, sem ponto final, sem emojis, e capturar a essência do tema fornecido.';
+    const userPrompt = `Tema: ${theme}\n\nGere apenas o título editorial curto em JSON.`;
+    const resp = await fetchGeminiWithRetry(
+      `${SUPABASE_URL}/functions/v1/gemini`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_ANON}`,
+        },
+        body: JSON.stringify({
+          model: 'gemini-2.5-flash',
+          body: {
+            contents: [{ parts: [{ text: userPrompt }] }],
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+            generationConfig: { responseMimeType: 'application/json' }
+          }
+        })
+      },
+      'Título apresentação'
+    );
+    const data = await resp.json();
+    const raw  = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+    const parsed = JSON.parse(match[0]);
+    const title = (parsed.title || '').toString().trim();
+    if (!title) return null;
+    return title.length > 60 ? title.slice(0, 58) + '…' : title;
+  } catch (e) {
+    console.warn('suggestPresentationTitle failed:', e);
+    return null;
+  }
+}
+
 async function generatePresBackgrounds() {
   const theme = document.getElementById('presBgTheme').value.trim();
   if (!theme) { setPresBgStatus('Informe o tema do slide.', 'error'); return; }
@@ -7672,10 +7711,13 @@ async function generatePresBackgrounds() {
   try {
     setPresBgStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">hourglass_empty</span>Gerando imagem 16:9...', '');
     const imgPrompt = `Ultra-realistic editorial landscape 16:9 photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text, no watermarks.`;
-    const img = await callGeminiImage(imgPrompt, direction || null, '16:9');
+    const [img, suggestedTitle] = await Promise.all([
+      callGeminiImage(imgPrompt, direction || null, '16:9'),
+      suggestPresentationTitle(theme)
+    ]);
 
     const timestamp = Date.now();
-    const title = theme.length > 50 ? theme.slice(0, 48) + '…' : theme;
+    const title = suggestedTitle || (theme.length > 50 ? theme.slice(0, 48) + '…' : theme);
 
     const slideData = {
       id:          `pres-slide-${timestamp}-0`,
