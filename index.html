@@ -185,10 +185,9 @@
     font-size: 14px;
     font-weight: 600;
     color: var(--text);
-    padding: 0 16px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--border);
     font-family: 'Google Sans Flex', sans-serif;
-    height: 44px;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -267,6 +266,10 @@
   }
   .post[data-format="story"] {
     height: 1920px;
+  }
+  .post[data-format="presentation"] {
+    width: 1920px;
+    height: 1080px;
   }
 
   /* Safe zones Instagram Stories — só no preview, removidos no download */
@@ -370,7 +373,7 @@
     text-shadow: none;
   }
 
-  /* Brand mode: controle universal claro/escuro para logo + site */
+  /* Brand mode: controle claro/escuro da LOGO */
   .post[data-brand="light"] img[src*="logo-cropware"] {
     filter: brightness(0) invert(1) !important;
   }
@@ -378,7 +381,8 @@
     filter: brightness(0) invert(0.3) !important;
     opacity: 1 !important;
   }
-  .post[data-brand="dark"] .post-site {
+  /* Site mode: controle claro/escuro do SITE (independente da logo) */
+  .post[data-site-mode="dark"] .post-site {
     color: rgba(71, 85, 105, 0.70);
     text-shadow: none;
   }
@@ -389,13 +393,13 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 0 64px 72px;
+    padding: 0 64px 88px;
   }
 
   /* Content top (NDVI) */
   .content-top {
     position: absolute;
-    top: 64px;
+    top: 130px;
     left: 64px;
     max-width: 680px;
   }
@@ -406,7 +410,6 @@
     right: 64px;
   }
   .align-right { text-align: right; }
-  .align-right .accent-bar,
   .align-right .separator-short {
     margin-left: auto;
     margin-right: 0;
@@ -419,12 +422,41 @@
 
   .post { --post-accent: var(--green); }
 
-  .accent-bar {
-    width: 48px;
-    height: 3px;
+  /* ── ACCENT BAR UNIVERSAL ──────────────────────────────── */
+  .post-accent-bar {
+    position: absolute;
+    z-index: 5;
     background: var(--post-accent);
-    margin-bottom: 36px;
     border-radius: 2px;
+    pointer-events: none;
+    transition: all 0.2s ease;
+  }
+  /* Horizontal (top / bottom) */
+  .post[data-accent-bar-pos="top"] .post-accent-bar,
+  .post:not([data-accent-bar-pos]) .post-accent-bar {
+    width: 48px; height: 3px;
+    top: var(--accent-bar-offset-y, 5%);
+    left: var(--accent-bar-offset-x, 5%);
+  }
+  .post[data-accent-bar-pos="bottom"] .post-accent-bar {
+    width: 48px; height: 3px;
+    bottom: var(--accent-bar-offset-y, 5%);
+    left: var(--accent-bar-offset-x, 5%);
+  }
+  /* Vertical (left / right) */
+  .post[data-accent-bar-pos="left"] .post-accent-bar {
+    width: 3px; height: 48px;
+    left: var(--accent-bar-offset-x, 5%);
+    top: var(--accent-bar-offset-y, 5%);
+  }
+  .post[data-accent-bar-pos="right"] .post-accent-bar {
+    width: 3px; height: 48px;
+    right: var(--accent-bar-offset-x, 5%);
+    top: var(--accent-bar-offset-y, 5%);
+  }
+  /* Disabled */
+  .post[data-accent-bar-enabled="false"] .post-accent-bar {
+    display: none;
   }
 
   .hook {
@@ -436,6 +468,7 @@
     letter-spacing: -1.5px;
     margin-bottom: 28px;
     text-shadow: 0 2px 28px rgba(0,0,0,0.5);
+    min-height: 1.05em;
   }
 
   .hook em, .hook i { font-style: normal; color: var(--post-accent); }
@@ -461,6 +494,7 @@
     line-height: 1.55;
     color: rgba(255,255,255,0.80);
     max-width: 580px;
+    min-height: 1.55em;
   }
 
   .complement strong, .complement b { color: #fff; font-weight: 600; }
@@ -534,6 +568,7 @@
     outline: 2px dashed rgba(255,255,255,0.55);
     outline-offset: 8px;
   }
+  /* ── EDIÇÃO INLINE (legendText) ── */
   #legendText[contenteditable="true"] {
     cursor: text;
     border-radius: 4px;
@@ -550,8 +585,23 @@
   .brand-strip {
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    height: 6px;
+    height: var(--strip-height, 6px);
     background: linear-gradient(90deg, var(--green) 0%, var(--green-dark) 100%);
+    z-index: 10;
+  }
+  .post[data-strip-enabled="false"] .brand-strip { display: none; }
+
+  /* Posições da strip */
+  .post[data-strip-pos="top"] .brand-strip {
+    bottom: auto; top: 0;
+  }
+  .post[data-strip-pos="left"] .brand-strip {
+    bottom: 0; top: 0; right: auto; left: 0;
+    width: var(--strip-height, 6px); height: auto;
+  }
+  .post[data-strip-pos="right"] .brand-strip {
+    bottom: 0; top: 0; left: auto; right: 0;
+    width: var(--strip-height, 6px); height: auto;
   }
 
   /* Generated posts usam o accent dinâmico na strip também */
@@ -617,6 +667,25 @@
     bottom: auto;
     top: 140px;
   }
+  .dash-card[data-layout="left"] {
+    bottom: 56px;
+    top: 56px;
+    right: auto;
+    width: calc(50% - 84px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .dash-card[data-layout="right"] {
+    bottom: 56px;
+    top: 56px;
+    left: auto;
+    right: 56px;
+    width: calc(50% - 84px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
   .dash-card[data-align="right"] {
     text-align: right;
   }
@@ -637,6 +706,7 @@
     letter-spacing: -1.4px;
     margin-bottom: 28px;
     text-shadow: 0 2px 24px rgba(0,0,0,0.5);
+    min-height: 1.08em;
   }
   .dash-hook em, .dash-hook i { font-style: normal; color: var(--post-accent); }
   .dash-separator {
@@ -654,6 +724,7 @@
     line-height: 1.55;
     color: rgba(255,255,255,0.82);
     max-width: 820px;
+    min-height: 1.55em;
   }
   .dash-complement strong, .dash-complement b { color: #fff; font-weight: 600; }
 
@@ -661,14 +732,25 @@
   .revista-photo {
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 65%;
+    height: var(--revista-photo-pct, 65%);
     background-size: cover;
     background-position: center;
+    overflow: hidden;
+  }
+  .revista-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    display: none;
+  }
+  .post[data-style="revista"] .revista-overlay {
+    display: block;
   }
   .revista-block {
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    height: 35%;
+    height: calc(100% - var(--revista-photo-pct, 65%) + 1px);
     background: #f8fafc;
     padding: 44px 72px 80px 56px;
     display: flex;
@@ -707,6 +789,7 @@
     letter-spacing: -1.6px;
     margin-bottom: 18px;
     text-shadow: none;
+    min-height: 1.06em;
   }
   .revista-hook em, .revista-hook i { font-style: normal; color: var(--post-accent); }
   .revista-complement {
@@ -716,6 +799,7 @@
     line-height: 1.52;
     color: #4d4d4d;
     max-width: 880px;
+    min-height: 1.52em;
   }
   .revista-complement strong, .revista-complement b { color: #4d4d4d; font-weight: 600; }
   /* Text mode: revista */
@@ -727,42 +811,156 @@
   .revista-block.text-dark .revista-complement,
   .revista-block.text-dark .revista-complement strong,
   .revista-block.text-dark .revista-complement b { color: #4d4d4d; }
-  /* Logo da revista segue o modo de texto pro contraste funcionar */
-  .revista-block.text-light .revista-logo { filter: brightness(0) invert(1); }
   .revista-logo {
     position: absolute;
-    bottom: 44px;
-    right: 72px;
-    width: calc(210px * var(--logo-scale, 1));
+    bottom: 44px; right: 72px;
+    width: calc(300px * var(--logo-scale, 1));
     height: auto;
-    filter: brightness(0) invert(0.3);
   }
+  .post[data-logo-pos="tl"] .revista-logo { top: 44px; left: 72px; bottom: auto; right: auto; }
+  .post[data-logo-pos="tr"] .revista-logo { top: 44px; right: 72px; bottom: auto; left: auto; }
+  .post[data-logo-pos="bl"] .revista-logo { bottom: 44px; left: 72px; top: auto; right: auto; }
+  .post[data-logo-pos="br"] .revista-logo { bottom: 44px; right: 72px; top: auto; left: auto; }
+
+  /* Revista: sombra na divisa foto → bloco (mesmo padrão do split) */
+  .post[data-style="revista"] .revista-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 50%, var(--revista-block-color, #f8fafc) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .post[data-style="revista"][data-revista-layout="bottom"] .revista-photo::after {
+    background: linear-gradient(0deg, transparent 50%, var(--revista-block-color, #f8fafc) 100%);
+  }
+  .post[data-style="revista"][data-revista-layout="left"] .revista-photo::after {
+    background: linear-gradient(90deg, transparent 50%, var(--revista-block-color, #f8fafc) 100%);
+  }
+  .post[data-style="revista"][data-revista-layout="right"] .revista-photo::after {
+    background: linear-gradient(270deg, transparent 50%, var(--revista-block-color, #f8fafc) 100%);
+  }
+
+  /* Revista: orientação "bottom" — foto embaixo, bloco em cima */
+  .post[data-revista-layout="bottom"] .revista-photo {
+    top: auto; bottom: 0;
+  }
+  .post[data-revista-layout="bottom"] .revista-block {
+    bottom: auto; top: 0;
+    box-shadow: 0 30px 60px rgba(15,23,42,0.12);
+  }
+  .post[data-revista-layout="bottom"] .revista-logo {
+    top: 44px; bottom: auto;
+  }
+
+  /* Revista: orientação "left" — foto à esquerda, bloco à direita */
+  .post[data-revista-layout="left"] .revista-photo {
+    top: 0; left: 0; bottom: 0; right: auto;
+    width: var(--revista-photo-pct, 65%);
+    height: 100%;
+  }
+  .post[data-revista-layout="left"] .revista-block {
+    top: 0; right: 0; bottom: 0; left: auto;
+    width: calc(100% - var(--revista-photo-pct, 65%) + 1px);
+    height: 100%;
+    box-shadow: -30px 0 60px rgba(15,23,42,0.12);
+  }
+
+  /* Revista: orientação "right" — foto à direita, bloco à esquerda */
+  .post[data-revista-layout="right"] .revista-photo {
+    top: 0; right: 0; bottom: 0; left: auto;
+    width: var(--revista-photo-pct, 65%);
+    height: 100%;
+  }
+  .post[data-revista-layout="right"] .revista-block {
+    top: 0; left: 0; bottom: 0; right: auto;
+    width: calc(100% - var(--revista-photo-pct, 65%) + 1px);
+    height: 100%;
+    box-shadow: 30px 0 60px rgba(15,23,42,0.12);
+  }
+
 
   /* ── ESTILO: SPLIT ─────────────────────────────────────── */
   .split-photo {
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 50%;
+    height: var(--split-photo-pct, 50%);
     background-size: cover;
     background-position: center;
+    overflow: hidden;
+  }
+  .split-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    display: none;
+  }
+  .post[data-style="split"] .split-overlay {
+    display: block;
   }
   .split-photo::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, transparent 60%, rgba(15,47,31,0.65) 100%);
+    background: linear-gradient(180deg, transparent 50%, var(--split-block-color, #152F17) 100%);
     pointer-events: none;
+    z-index: 1;
+  }
+  .post[data-style="split"][data-split-shadow="off"] .split-photo::after {
+    display: none;
   }
   .split-block {
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    height: 50%;
+    height: calc(100% - var(--split-photo-pct, 50%) + 1px);
     background: linear-gradient(135deg, #061407 0%, #152F17 60%, #29522C 100%);
     padding: 52px 80px 90px 56px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     overflow: hidden;
+  }
+
+  /* Split: orientação "bottom" — foto embaixo, bloco em cima */
+  .post[data-split-layout="bottom"] .split-photo {
+    top: auto; bottom: 0;
+  }
+  .post[data-split-layout="bottom"] .split-block {
+    bottom: auto; top: 0;
+  }
+  .post[data-split-layout="bottom"] .split-photo::after {
+    background: linear-gradient(0deg, transparent 50%, var(--split-block-color, #152F17) 100%);
+  }
+
+  /* Split: orientação "left" — foto à esquerda, bloco à direita */
+  .post[data-split-layout="left"] .split-photo {
+    top: 0; left: 0; bottom: 0; right: auto;
+    width: var(--split-photo-pct, 50%);
+    height: 100%;
+  }
+  .post[data-split-layout="left"] .split-block {
+    top: 0; right: 0; bottom: 0; left: auto;
+    width: calc(100% - var(--split-photo-pct, 50%) + 1px);
+    height: 100%;
+  }
+  .post[data-split-layout="left"] .split-photo::after {
+    background: linear-gradient(90deg, transparent 50%, var(--split-block-color, #152F17) 100%);
+  }
+
+  /* Split: orientação "right" — foto à direita, bloco à esquerda */
+  .post[data-split-layout="right"] .split-photo {
+    top: 0; right: 0; bottom: 0; left: auto;
+    width: var(--split-photo-pct, 50%);
+    height: 100%;
+  }
+  .post[data-split-layout="right"] .split-block {
+    top: 0; left: 0; bottom: 0; right: auto;
+    width: calc(100% - var(--split-photo-pct, 50%) + 1px);
+    height: 100%;
+  }
+  .post[data-split-layout="right"] .split-photo::after {
+    background: linear-gradient(270deg, transparent 50%, var(--split-block-color, #152F17) 100%);
   }
   /* .split-block::before glow removido — não renderiza via html2canvas */
   .split-badge {
@@ -811,6 +1009,7 @@
     position: relative;
     z-index: 2;
     text-shadow: 0 2px 16px rgba(0,0,0,0.3);
+    min-height: 1.06em;
   }
   .split-hook em, .split-hook i { font-style: normal; color: var(--post-accent); }
   .split-complement {
@@ -822,6 +1021,7 @@
     max-width: 820px;
     position: relative;
     z-index: 2;
+    min-height: 1.55em;
   }
   .split-complement strong, .split-complement b { color: #fff; font-weight: 600; }
   /* Text mode: split */
@@ -843,19 +1043,50 @@
     filter: brightness(0) invert(1);
     z-index: 2;
   }
+  .post[data-style="split"][data-logo-pos="tl"] .split-logo { top: 44px; left: 72px; bottom: auto; right: auto; }
+  .post[data-style="split"][data-logo-pos="tr"] .split-logo { top: 44px; right: 72px; bottom: auto; left: auto; }
+  .post[data-style="split"][data-logo-pos="bl"] .split-logo { bottom: 44px; left: 72px; top: auto; right: auto; }
+  .post[data-style="split"][data-logo-pos="br"] .split-logo { bottom: 44px; right: 72px; top: auto; left: auto; }
 
   /* ── ESTILO: COLUNA ───────────────────────────────────────── */
   .coluna-photo {
     position: absolute;
     top: 0; bottom: 0;
-    width: 55%;
+    width: var(--coluna-photo-pct, 55%);
     background-size: cover;
     background-position: center;
+    overflow: hidden;
+  }
+  .coluna-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    display: none;
+  }
+  .post[data-style="coluna"] .coluna-overlay {
+    display: block;
+  }
+  .coluna-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .post[data-style="coluna"][data-coluna-shadow="off"] .coluna-photo::after {
+    display: none;
+  }
+  .post[data-style="coluna"][data-column-side="left"] .coluna-photo::after {
+    background: linear-gradient(90deg, transparent 50%, var(--coluna-block-color, #f8fafc) 100%);
+  }
+  .post[data-style="coluna"][data-column-side="right"] .coluna-photo::after {
+    background: linear-gradient(270deg, transparent 50%, var(--coluna-block-color, #f8fafc) 100%);
   }
   .coluna-block {
     position: absolute;
     top: 0; bottom: 0;
-    width: 45%;
+    width: calc(100% - var(--coluna-photo-pct, 55%) + 1px);
     background: #f8fafc;
     padding: 80px 56px 80px 56px;
     display: flex;
@@ -875,6 +1106,7 @@
     letter-spacing: -1.4px;
     margin-bottom: 22px;
     text-shadow: none;
+    min-height: 1.05em;
   }
   .coluna-hook em, .coluna-hook i { font-style: normal; color: var(--post-accent); }
   .coluna-complement {
@@ -883,6 +1115,7 @@
     font-size: calc(22px * var(--complement-scale, 1));
     line-height: 1.55;
     color: #4d4d4d;
+    min-height: 1.55em;
   }
   .coluna-complement strong, .coluna-complement b { color: #4d4d4d; font-weight: 600; }
   .coluna-logo {
@@ -918,23 +1151,20 @@
     position: absolute;
     inset: 0;
   }
-  .moldura-header {
+  .moldura-logo {
     position: absolute;
     top: 56px;
     left: 72px;
-    right: 72px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    height: 42px;
-    z-index: 2;
-  }
-  .moldura-logo {
     width: calc(190px * var(--logo-scale, 1));
     height: auto;
     filter: brightness(0) invert(1);
     opacity: 0.9;
+    z-index: 2;
   }
+  .post[data-style="moldura"][data-logo-pos="tl"] .moldura-logo { top: 56px; left: 72px; bottom: auto; right: auto; }
+  .post[data-style="moldura"][data-logo-pos="tr"] .moldura-logo { top: 56px; right: 72px; bottom: auto; left: auto; }
+  .post[data-style="moldura"][data-logo-pos="bl"] .moldura-logo { bottom: 56px; left: 72px; top: auto; right: auto; }
+  .post[data-style="moldura"][data-logo-pos="br"] .moldura-logo { bottom: 56px; right: 72px; top: auto; left: auto; }
   .moldura-glass {
     position: absolute;
     left: 36px;
@@ -1052,6 +1282,7 @@
     text-shadow: 0 2px 12px rgba(0,0,0,0.2);
     position: relative;
     z-index: 1;
+    min-height: 1.06em;
   }
   .moldura-hook em, .moldura-hook i {
     font-style: normal;
@@ -1066,6 +1297,7 @@
     color: rgba(255,255,255,0.85);
     position: relative;
     z-index: 1;
+    min-height: 1.45em;
   }
   .moldura-complement strong, .moldura-complement b { color: #ffffff; font-weight: 600; }
   .moldura-bullets {
@@ -1105,7 +1337,7 @@
   .moldura-glass.text-dark .moldura-complement strong,
   .moldura-glass.text-dark .moldura-complement b { color: #1e293b; }
   .moldura-glass.text-dark .moldura-bullet .post-bullet-text { color: rgba(30,41,59,0.75); }
-  .moldura-glass.text-dark ~ .moldura-header .moldura-logo { filter: brightness(0) invert(0.3); opacity: 1; }
+  .moldura-glass.text-dark ~ .moldura-logo { filter: brightness(0) invert(0.3); opacity: 1; }
 
   /* ── TEXT TOOLBAR (floating) ── */
   .text-toolbar {
@@ -1172,8 +1404,10 @@
   .post[data-format="story"][data-style="classic"] .post-site[data-pos="br"] { bottom: 244px; }
 
   /* DASHBOARD */
-  .post[data-format="story"][data-style="dashboard"] .dash-card                    { bottom: 300px; }
-  .post[data-format="story"][data-style="dashboard"] .dash-card[data-layout="top"] { top: 300px; bottom: auto; }
+  .post[data-format="story"][data-style="dashboard"] .dash-card                      { bottom: 300px; }
+  .post[data-format="story"][data-style="dashboard"] .dash-card[data-layout="top"]   { top: 300px; bottom: auto; }
+  .post[data-format="story"][data-style="dashboard"] .dash-card[data-layout="left"]  { top: 200px; bottom: 230px; }
+  .post[data-format="story"][data-style="dashboard"] .dash-card[data-layout="right"] { top: 200px; bottom: 230px; }
   .post[data-format="story"][data-style="dashboard"] .logo-post,
   .post[data-format="story"][data-style="dashboard"] .logo-post-tr                 { top: 216px; }
   .post[data-format="story"][data-style="dashboard"] .logo-post-bl,
@@ -1185,10 +1419,15 @@
   .post[data-format="story"][data-style="dashboard"] .post-site[data-pos="bc"],
   .post[data-format="story"][data-style="dashboard"] .post-site[data-pos="br"]     { bottom: 244px; }
 
-  /* REVISTA — foto 60% top, bloco 40% bottom; logo fica dentro do bloco */
-  .post[data-format="story"][data-style="revista"] .revista-photo { height: 60%; }
-  .post[data-format="story"][data-style="revista"] .revista-block { height: 40%; padding: 80px 72px 260px 56px; }
+  /* REVISTA — story: default 60% (se não tiver variável), logo dentro do bloco */
+  .post[data-format="story"][data-style="revista"] .revista-photo { height: var(--revista-photo-pct, 60%); }
+  .post[data-format="story"][data-style="revista"] .revista-block { height: calc(100% - var(--revista-photo-pct, 60%) + 1px); padding: 80px 72px 260px 56px; }
   .post[data-format="story"][data-style="revista"] .revista-logo  { bottom: 244px; }
+  .post[data-format="story"][data-style="revista"][data-revista-layout="bottom"] .revista-logo { bottom: auto; top: 216px; }
+  .post[data-format="story"][data-style="revista"][data-revista-layout="left"] .revista-photo,
+  .post[data-format="story"][data-style="revista"][data-revista-layout="right"] .revista-photo { height: 100%; width: var(--revista-photo-pct, 60%); }
+  .post[data-format="story"][data-style="revista"][data-revista-layout="left"] .revista-block,
+  .post[data-format="story"][data-style="revista"][data-revista-layout="right"] .revista-block { height: 100%; width: calc(100% - var(--revista-photo-pct, 60%)); padding: 80px 56px 260px; }
   .post[data-format="story"][data-style="revista"] .post-site[data-pos="tl"],
   .post[data-format="story"][data-style="revista"] .post-site[data-pos="tc"],
   .post[data-format="story"][data-style="revista"] .post-site[data-pos="tr"] { top: 216px; }
@@ -1196,9 +1435,16 @@
   .post[data-format="story"][data-style="revista"] .post-site[data-pos="bc"],
   .post[data-format="story"][data-style="revista"] .post-site[data-pos="br"] { bottom: 244px; }
 
-  /* SPLIT — 50/50, logo dentro do bloco */
+  /* SPLIT — proporção variável, logo segue logoPos */
   .post[data-format="story"][data-style="split"] .split-block { padding: 80px 80px 260px 56px; }
-  .post[data-format="story"][data-style="split"] .split-logo  { bottom: 244px; }
+  .post[data-format="story"][data-style="split"][data-split-layout="left"] .split-photo,
+  .post[data-format="story"][data-style="split"][data-split-layout="right"] .split-photo { height: 100%; width: var(--split-photo-pct, 50%); }
+  .post[data-format="story"][data-style="split"][data-split-layout="left"] .split-block,
+  .post[data-format="story"][data-style="split"][data-split-layout="right"] .split-block { height: 100%; width: calc(100% - var(--split-photo-pct, 50%)); padding: 80px 56px 260px; }
+  .post[data-format="story"][data-style="split"][data-logo-pos="tl"] .split-logo,
+  .post[data-format="story"][data-style="split"][data-logo-pos="tr"] .split-logo { top: 216px; }
+  .post[data-format="story"][data-style="split"][data-logo-pos="bl"] .split-logo,
+  .post[data-format="story"][data-style="split"][data-logo-pos="br"] .split-logo { bottom: 244px; }
   .post[data-format="story"][data-style="split"] .post-site[data-pos="tl"],
   .post[data-format="story"][data-style="split"] .post-site[data-pos="tc"],
   .post[data-format="story"][data-style="split"] .post-site[data-pos="tr"] { top: 216px; }
@@ -1220,8 +1466,11 @@
   .post[data-format="story"][data-style="coluna"] .post-site[data-pos="tr"] { top: 216px; }
 
   /* MOLDURA — header/foto/body recalculados pro canvas 1920 */
-  .post[data-format="story"][data-style="moldura"] .moldura-header { top: 216px; }
   .post[data-format="story"][data-style="moldura"] .moldura-glass  { top: 320px; bottom: 280px; }
+  .post[data-format="story"][data-style="moldura"][data-logo-pos="tl"] .moldura-logo,
+  .post[data-format="story"][data-style="moldura"][data-logo-pos="tr"] .moldura-logo { top: 216px; }
+  .post[data-format="story"][data-style="moldura"][data-logo-pos="bl"] .moldura-logo,
+  .post[data-format="story"][data-style="moldura"][data-logo-pos="br"] .moldura-logo { bottom: 244px; }
   .post[data-format="story"][data-style="moldura"] .post-site[data-pos="bl"],
   .post[data-format="story"][data-style="moldura"] .post-site[data-pos="bc"],
   .post[data-format="story"][data-style="moldura"] .post-site[data-pos="br"] { bottom: 244px; }
@@ -1231,6 +1480,109 @@
 
   /* STORY FORMAT — logo/site seguem o mesmo posicionamento do feed (cantos).
      Apenas top/bottom são ajustados pelos overrides acima (216/244). */
+
+  /* ──────────────────────────────────────────────────────────
+     PRESENTATION FORMAT — overrides 1920×1080 (16:9 landscape)
+     ────────────────────────────────────────────────────────── */
+
+  /* Logo padrão para TODOS os modelos em apresentação — 260px (igual classic) */
+  .post[data-format="presentation"] .logo-post,
+  .post[data-format="presentation"] .logo-post-tr,
+  .post[data-format="presentation"] .logo-post-bl,
+  .post[data-format="presentation"] .logo-post-br,
+  .post[data-format="presentation"] .revista-logo,
+  .post[data-format="presentation"] .split-logo,
+  .post[data-format="presentation"] .coluna-logo,
+  .post[data-format="presentation"] .moldura-logo {
+    width: calc(260px * var(--logo-scale, 1));
+  }
+
+  /* COLUNA — presentation: proporções landscape, fontes ajustadas */
+  .post[data-format="presentation"][data-style="coluna"] .coluna-photo {
+    width: 58%;
+  }
+  .post[data-format="presentation"][data-style="coluna"] .coluna-block {
+    width: 42%;
+    padding: 64px 56px;
+  }
+  .post[data-format="presentation"][data-style="coluna"] .coluna-hook {
+    font-size: calc(50px * var(--hook-scale, 1));
+    margin-bottom: 18px;
+  }
+  .post[data-format="presentation"][data-style="coluna"] .coluna-complement {
+    font-size: calc(20px * var(--complement-scale, 1));
+  }
+  /* coluna-logo: width já definido no seletor genérico de presentation */
+
+  /* REVISTA — presentation: fontes ajustadas, proporção via variável */
+  .post[data-format="presentation"][data-style="revista"] .revista-photo {
+    height: var(--revista-photo-pct, 55%);
+  }
+  .post[data-format="presentation"][data-style="revista"] .revista-block {
+    height: calc(100% - var(--revista-photo-pct, 55%));
+    padding: 44px 64px 48px 56px;
+  }
+  .post[data-format="presentation"][data-style="revista"] .revista-hook {
+    font-size: calc(50px * var(--hook-scale, 1));
+    margin-bottom: 16px;
+  }
+  .post[data-format="presentation"][data-style="revista"] .revista-complement {
+    font-size: calc(20px * var(--complement-scale, 1));
+  }
+  /* revista-logo: width já definido no seletor genérico de presentation */
+  .post[data-format="presentation"][data-style="revista"] .revista-logo {
+    bottom: 36px; right: 56px;
+  }
+  .post[data-format="presentation"][data-style="revista"][data-revista-layout="bottom"] .revista-logo {
+    bottom: auto; top: 36px;
+  }
+  .post[data-format="presentation"][data-style="revista"] .revista-block {
+    box-shadow: none;
+    height: calc(100% - var(--revista-photo-pct, 55%) + 1px);
+  }
+  .post[data-format="presentation"][data-style="revista"][data-revista-layout="bottom"] .revista-block {
+    height: calc(100% - var(--revista-photo-pct, 55%) + 1px);
+  }
+  .post[data-format="presentation"][data-style="revista"][data-revista-layout="left"] .revista-photo,
+  .post[data-format="presentation"][data-style="revista"][data-revista-layout="right"] .revista-photo {
+    height: 100%;
+    width: var(--revista-photo-pct, 55%);
+  }
+  .post[data-format="presentation"][data-style="revista"][data-revista-layout="left"] .revista-block,
+  .post[data-format="presentation"][data-style="revista"][data-revista-layout="right"] .revista-block {
+    box-shadow: none;
+    height: 100%;
+    width: calc(100% - var(--revista-photo-pct, 55%) + 1px);
+  }
+  /* Sombra desativada: esconde o ::after */
+  .post[data-revista-shadow="off"] .revista-photo::after {
+    display: none;
+  }
+
+  /* DASHBOARD — presentation: card mais compacto, fontes ajustadas */
+  .post[data-format="presentation"][data-style="dashboard"] .dash-card {
+    left: 48px; right: 48px; bottom: 48px;
+    padding: 44px 52px 40px;
+    border-radius: 22px;
+  }
+  .post[data-format="presentation"][data-style="dashboard"] .dash-card[data-layout="top"] {
+    bottom: auto; top: 48px;
+  }
+  .post[data-format="presentation"][data-style="dashboard"] .dash-card[data-layout="left"] {
+    top: 48px; bottom: 48px; right: auto;
+    width: calc(45% - 72px);
+  }
+  .post[data-format="presentation"][data-style="dashboard"] .dash-card[data-layout="right"] {
+    top: 48px; bottom: 48px; left: auto; right: 48px;
+    width: calc(45% - 72px);
+  }
+  .post[data-format="presentation"][data-style="dashboard"] .dash-hook {
+    font-size: calc(48px * var(--hook-scale, 1));
+    margin-bottom: 16px;
+  }
+  .post[data-format="presentation"][data-style="dashboard"] .dash-complement {
+    font-size: calc(22px * var(--complement-scale, 1));
+  }
 
   /* ── POST CONTROLS (sidebar de ferramentas) ── */
   #postControls {
@@ -1712,6 +2064,21 @@
   }
 
   /* Slider (opacidade do overlay, escala do hook) */
+  .pc-icon-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text);
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .pc-icon-btn:hover { background: rgba(0,0,0,0.05); }
   .pc-range {
     -webkit-appearance: none;
     appearance: none;
@@ -2378,6 +2745,7 @@
      controles) em pilha vertical de barras horizontais. Sidebar
      de posts vira tira rolável lateralmente no topo.
      ────────────────────────────────────────────────────────── */
+  /* ── PRESENTATION PLANNER MODAL ── */
   /* ── STUDIO MODE SELECTOR ── */
   .studio-tabs {
     display: none;
@@ -2500,8 +2868,7 @@
       gap: 0;
     }
     #sidebarAside .aside-label {
-      padding: 0 16px;
-      height: 44px;
+      padding: 12px 16px;
       border-bottom: 1px solid var(--border);
     }
     #sidebarAside .thumb-item {
@@ -2655,6 +3022,13 @@
         <option value="linkedin-post">LinkedIn — Post</option>
         <option value="linkedin-carousel">LinkedIn — Carrossel</option>
       </optgroup>
+      <optgroup label="LinkedIn Pessoal">
+        <option value="linkedin-pessoal-post">LinkedIn Pessoal — Post</option>
+        <option value="linkedin-pessoal-carousel">LinkedIn Pessoal — Carrossel</option>
+      </optgroup>
+      <optgroup label="Apresentação">
+        <option value="presentation">Apresentação</option>
+      </optgroup>
     </select>
   </div>
 
@@ -2783,11 +3157,17 @@
           </button>
         </div>
         <div class="pc-sub" id="pcSubTextPosition">
-          <div class="pc-label">Posição do Texto</div>
+          <div class="pc-label" id="pcTextPositionLabel">Posição do Texto</div>
           <div class="pc-toggle" id="pcLayoutToggle">
             <button data-layout="top">Em Cima</button>
             <button data-layout="bottom">Embaixo</button>
           </div>
+          <select class="pc-select" id="pcCardPositionSelect" style="display:none">
+            <option value="bottom">Embaixo</option>
+            <option value="top">Em Cima</option>
+            <option value="left">Esquerda</option>
+            <option value="right">Direita</option>
+          </select>
           <div class="pc-toggle" id="pcAlignToggle">
             <button data-align="left">Esquerda</button>
             <button data-align="right">Direita</button>
@@ -2827,7 +3207,7 @@
           <input type="range" class="pc-range" id="pcLogoScale" min="60" max="140" step="5" value="100">
         </div>
         <div class="pc-sub" id="pcSubBrandMode">
-          <div class="pc-label">Cor Logo / Site</div>
+          <div class="pc-label">Cor da Logo</div>
           <div class="pc-toggle" id="pcBrandModeToggle">
             <button data-brand="light">Claro</button>
             <button data-brand="dark">Escuro</button>
@@ -2871,6 +3251,70 @@
             <span class="pc-label-value" id="pcSiteScaleValue">100%</span>
           </div>
           <input type="range" class="pc-range" id="pcSiteScale" min="60" max="160" step="5" value="100">
+        </div>
+        <div class="pc-sub" id="pcSubSiteMode">
+          <div class="pc-label">Cor do Site</div>
+          <div class="pc-toggle" id="pcSiteModeToggle">
+            <button data-sitemode="light">Claro</button>
+            <button data-sitemode="dark">Escuro</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pc-group" id="pcGroupAccentBar" data-group="accentbar">
+      <button type="button" class="pc-group-header">
+        <span class="pc-group-header-label">Detalhe Verde</span>
+        <span class="material-symbols-outlined pc-group-header-chevron">expand_more</span>
+      </button>
+      <div class="pc-group-body">
+        <div class="pc-sub" id="pcSubAccentBarEnabled">
+          <div class="pc-label-row">
+            <span class="pc-label">Ativo</span>
+            <label class="pc-toggle-switch">
+              <input type="checkbox" id="pcAccentBarEnabled" checked>
+              <span class="pc-toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="pc-sub" id="pcSubAccentBarPos">
+          <div class="pc-label">Posição</div>
+          <select class="pc-select" id="pcAccentBarPos">
+            <option value="top">Superior</option>
+            <option value="bottom">Inferior</option>
+            <option value="left">Esquerdo</option>
+            <option value="right">Direito</option>
+          </select>
+        </div>
+        <div class="pc-sub" id="pcSubAccentBarOffsetX">
+          <div class="pc-label-row">
+            <span class="pc-label">Posição Horizontal</span>
+            <span class="pc-label-value" id="pcAccentBarOffsetXValue">5%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="pc-icon-btn" id="pcAccentBarOffsetXLeft" title="Mover para esquerda">
+              <span class="material-symbols-outlined sz-18">chevron_left</span>
+            </button>
+            <input type="range" class="pc-range" id="pcAccentBarOffsetX" min="0" max="95" step="5" value="5" style="flex:1;">
+            <button type="button" class="pc-icon-btn" id="pcAccentBarOffsetXRight" title="Mover para direita">
+              <span class="material-symbols-outlined sz-18">chevron_right</span>
+            </button>
+          </div>
+        </div>
+        <div class="pc-sub" id="pcSubAccentBarOffsetY">
+          <div class="pc-label-row">
+            <span class="pc-label">Posição Vertical</span>
+            <span class="pc-label-value" id="pcAccentBarOffsetYValue">5%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="pc-icon-btn" id="pcAccentBarOffsetYUp" title="Mover para cima">
+              <span class="material-symbols-outlined sz-18">expand_less</span>
+            </button>
+            <input type="range" class="pc-range" id="pcAccentBarOffsetY" min="0" max="95" step="5" value="5" style="flex:1;">
+            <button type="button" class="pc-icon-btn" id="pcAccentBarOffsetYDown" title="Mover para baixo">
+              <span class="material-symbols-outlined sz-18">expand_more</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -2920,6 +3364,22 @@
           </div>
           <input type="range" class="pc-range" id="pcDashCardOpacity" min="0" max="100" step="5" value="65">
         </div>
+        <div class="pc-sub" id="pcSubDashPresScale">
+          <div class="pc-label-row">
+            <span class="pc-label">Escala do Card</span>
+            <span class="pc-label-value" id="pcDashPresScaleValue">100%</span>
+          </div>
+          <input type="range" class="pc-range" id="pcDashPresScale" min="80" max="130" step="5" value="100">
+        </div>
+        <div class="pc-sub" id="pcSubDashPresPosition">
+          <div class="pc-label">Posição do Card</div>
+          <select class="pc-select" id="pcDashPresPositionSelect">
+            <option value="bottom">Embaixo</option>
+            <option value="top">Em Cima</option>
+            <option value="left">Esquerda</option>
+            <option value="right">Direita</option>
+          </select>
+        </div>
         <div class="pc-sub" id="pcSubRevistaBlockColor">
           <div class="pc-label">Cor do Bloco</div>
           <button class="pc-color-btn" id="pcRevistaBlockColorBtn" type="button" data-target="revistaBlock">
@@ -2928,6 +3388,46 @@
             <span class="material-symbols-outlined pc-color-btn-chevron">expand_more</span>
           </button>
         </div>
+        <div class="pc-sub" id="pcSubRevistaPhotoPct">
+          <div class="pc-label-row">
+            <span class="pc-label">Proporção da Foto</span>
+            <span class="pc-label-value" id="pcRevistaPhotoPctValue">65%</span>
+          </div>
+          <input type="range" class="pc-range" id="pcRevistaPhotoPct" min="10" max="90" step="5" value="65">
+        </div>
+        <div class="pc-sub" id="pcSubRevistaPhotoPos">
+          <div class="pc-label-row">
+            <span class="pc-label">Posição da Foto</span>
+            <span class="pc-label-value" id="pcRevistaPhotoPosValue">50%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="pc-icon-btn" id="pcRevistaPhotoPosLeft" title="Mover para esquerda / cima">
+              <span class="material-symbols-outlined sz-18">chevron_left</span>
+            </button>
+            <input type="range" class="pc-range" id="pcRevistaPhotoPos" min="0" max="100" step="5" value="50" style="flex:1;">
+            <button type="button" class="pc-icon-btn" id="pcRevistaPhotoPosRight" title="Mover para direita / baixo">
+              <span class="material-symbols-outlined sz-18">chevron_right</span>
+            </button>
+          </div>
+        </div>
+        <div class="pc-sub" id="pcSubRevistaLayout">
+          <div class="pc-label">Orientação da Foto</div>
+          <select class="pc-select" id="pcRevistaLayoutSelect">
+            <option value="top">Foto em Cima</option>
+            <option value="bottom">Foto Embaixo</option>
+            <option value="left">Foto à Esquerda</option>
+            <option value="right">Foto à Direita</option>
+          </select>
+        </div>
+        <div class="pc-sub" id="pcSubRevistaShadow">
+          <div class="pc-label-row">
+            <span class="pc-label">Sombra na Divisa</span>
+            <label class="pc-toggle-switch">
+              <input type="checkbox" id="pcRevistaShadow" checked>
+              <span class="pc-toggle-slider"></span>
+            </label>
+          </div>
+        </div>
         <div class="pc-sub" id="pcSubSplitBlockColor">
           <div class="pc-label">Cor do Bloco</div>
           <button class="pc-color-btn" id="pcSplitBlockColorBtn" type="button" data-target="splitBlock">
@@ -2935,6 +3435,46 @@
             <span class="pc-color-btn-label" id="pcSplitBlockColorBtnLabel">#152F17</span>
             <span class="material-symbols-outlined pc-color-btn-chevron">expand_more</span>
           </button>
+        </div>
+        <div class="pc-sub" id="pcSubSplitPhotoPct">
+          <div class="pc-label-row">
+            <span class="pc-label">Proporção da Foto</span>
+            <span class="pc-label-value" id="pcSplitPhotoPctValue">50%</span>
+          </div>
+          <input type="range" class="pc-range" id="pcSplitPhotoPct" min="10" max="90" step="5" value="50">
+        </div>
+        <div class="pc-sub" id="pcSubSplitPhotoPos">
+          <div class="pc-label-row">
+            <span class="pc-label">Posição da Foto</span>
+            <span class="pc-label-value" id="pcSplitPhotoPosValue">50%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="pc-icon-btn" id="pcSplitPhotoPosLeft" title="Mover para esquerda / cima">
+              <span class="material-symbols-outlined sz-18">chevron_left</span>
+            </button>
+            <input type="range" class="pc-range" id="pcSplitPhotoPos" min="0" max="100" step="5" value="50" style="flex:1;">
+            <button type="button" class="pc-icon-btn" id="pcSplitPhotoPosRight" title="Mover para direita / baixo">
+              <span class="material-symbols-outlined sz-18">chevron_right</span>
+            </button>
+          </div>
+        </div>
+        <div class="pc-sub" id="pcSubSplitLayout">
+          <div class="pc-label">Orientação da Foto</div>
+          <select class="pc-select" id="pcSplitLayoutSelect">
+            <option value="top">Foto em Cima</option>
+            <option value="bottom">Foto Embaixo</option>
+            <option value="left">Foto à Esquerda</option>
+            <option value="right">Foto à Direita</option>
+          </select>
+        </div>
+        <div class="pc-sub" id="pcSubSplitShadow">
+          <div class="pc-label-row">
+            <span class="pc-label">Sombra na Divisa</span>
+            <label class="pc-toggle-switch">
+              <input type="checkbox" id="pcSplitShadow" checked>
+              <span class="pc-toggle-slider"></span>
+            </label>
+          </div>
         </div>
         <div class="pc-sub" id="pcSubColunaBlockColor">
           <div class="pc-label">Cor do Bloco</div>
@@ -2949,6 +3489,37 @@
           <div class="pc-toggle" id="pcColumnSideToggle">
             <button data-side="left">Esquerda</button>
             <button data-side="right">Direita</button>
+          </div>
+        </div>
+        <div class="pc-sub" id="pcSubColunaPhotoPct">
+          <div class="pc-label-row">
+            <span class="pc-label">Proporção da Foto</span>
+            <span class="pc-label-value" id="pcColunaPhotoPctValue">55%</span>
+          </div>
+          <input type="range" class="pc-range" id="pcColunaPhotoPct" min="10" max="90" step="5" value="55">
+        </div>
+        <div class="pc-sub" id="pcSubColunaPhotoPos">
+          <div class="pc-label-row">
+            <span class="pc-label">Posição da Foto</span>
+            <span class="pc-label-value" id="pcColunaPhotoPosValue">50%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button type="button" class="pc-icon-btn" id="pcColunaPhotoPosLeft" title="Mover para esquerda">
+              <span class="material-symbols-outlined sz-18">chevron_left</span>
+            </button>
+            <input type="range" class="pc-range" id="pcColunaPhotoPos" min="0" max="100" step="5" value="50" style="flex:1;">
+            <button type="button" class="pc-icon-btn" id="pcColunaPhotoPosRight" title="Mover para direita">
+              <span class="material-symbols-outlined sz-18">chevron_right</span>
+            </button>
+          </div>
+        </div>
+        <div class="pc-sub" id="pcSubColunaShadow">
+          <div class="pc-label-row">
+            <span class="pc-label">Sombra na Divisa</span>
+            <label class="pc-toggle-switch">
+              <input type="checkbox" id="pcColunaShadow" checked>
+              <span class="pc-toggle-slider"></span>
+            </label>
           </div>
         </div>
         <div class="pc-sub" id="pcSubFrameColor">
@@ -2977,6 +3548,40 @@
           <div class="pc-label">Imagem</div>
           <label class="pc-upload-btn" for="pcBgUpload" title="Usar uma foto sua como fundo">Usar Minha Foto</label>
           <input type="file" id="pcBgUpload" accept="image/*" style="display:none">
+        </div>
+      </div>
+    </div>
+
+    <div class="pc-group" id="pcGroupStrip" data-group="strip">
+      <button type="button" class="pc-group-header">
+        <span class="pc-group-header-label">Barra de Destaque</span>
+        <span class="material-symbols-outlined pc-group-header-chevron">expand_more</span>
+      </button>
+      <div class="pc-group-body">
+        <div class="pc-sub" id="pcSubStripEnabled">
+          <div class="pc-label-row">
+            <span class="pc-label">Exibir Barra</span>
+            <label class="pc-toggle-switch">
+              <input type="checkbox" id="pcStripEnabled" checked>
+              <span class="pc-toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="pc-sub" id="pcSubStripHeight">
+          <div class="pc-label-row">
+            <span class="pc-label">Espessura</span>
+            <span class="pc-label-value" id="pcStripHeightValue">6px</span>
+          </div>
+          <input type="range" class="pc-range" id="pcStripHeight" min="2" max="20" step="1" value="6">
+        </div>
+        <div class="pc-sub" id="pcSubStripPos">
+          <div class="pc-label">Posição</div>
+          <select class="pc-select" id="pcStripPosSelect">
+            <option value="bottom">Embaixo</option>
+            <option value="top">Em Cima</option>
+            <option value="left">Esquerda</option>
+            <option value="right">Direita</option>
+          </select>
         </div>
       </div>
     </div>
@@ -3048,7 +3653,7 @@ const dotsContainer = document.getElementById('dotsContainer');
 let current = 0;
 
 // ── MODE & MULTI-PLATFORM STATE ─────────────────────────────
-// Modes: 'post' | 'carousel' | 'linkedin-post' | 'linkedin-carousel'
+// Modes: 'post' | 'carousel' | 'linkedin-post' | 'linkedin-carousel' | 'linkedin-pessoal-post' | 'linkedin-pessoal-carousel'
 let activeMode = 'post';
 
 // Instagram state
@@ -3066,52 +3671,94 @@ const linkedinCarouselLegends = [];
 let linkedinCurrentCarousel = 0;
 let linkedinCurrentSlide = 0;
 
+// LinkedIn Pessoal state
+const linkedinPessoalPosts = [];
+const linkedinPessoalLegends = [];
+let linkedinPessoalCurrentPost = 0;
+const linkedinPessoalCarousels = [];
+const linkedinPessoalCarouselLegends = [];
+let linkedinPessoalCurrentCarousel = 0;
+let linkedinPessoalCurrentSlide = 0;
+
+// Presentation state
+const presentations = [];
+const presentationLegends = [];
+let currentPresentation = 0;
+let presentationCurrentSlide = 0;
+
 // Helpers: which platform and format
 function getPlatform() {
+  if (activeMode === 'presentation') return 'presentation';
+  if (activeMode.startsWith('linkedin-pessoal')) return 'linkedin-pessoal';
   return activeMode.startsWith('linkedin') ? 'linkedin' : 'instagram';
 }
 function isCarouselMode() {
-  return activeMode === 'carousel' || activeMode === 'linkedin-carousel';
+  return activeMode === 'carousel' || activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel' || activeMode === 'presentation';
+}
+function isPresentationMode() {
+  return activeMode === 'presentation';
+}
+function getPostDimensions(format) {
+  if (format === 'presentation') return { w: 1920, h: 1080 };
+  if (format === 'story') return { w: 1080, h: 1920 };
+  return { w: 1080, h: 1350 };
 }
 
 // Returns the items array for the current mode
 function getModeItems() {
   switch (activeMode) {
-    case 'carousel':           return carousels;
-    case 'linkedin-post':      return linkedinPosts;
-    case 'linkedin-carousel':  return linkedinCarousels;
-    default:                   return posts;
+    case 'carousel':                  return carousels;
+    case 'linkedin-post':             return linkedinPosts;
+    case 'linkedin-carousel':         return linkedinCarousels;
+    case 'linkedin-pessoal-post':     return linkedinPessoalPosts;
+    case 'linkedin-pessoal-carousel': return linkedinPessoalCarousels;
+    case 'presentation':              return presentations;
+    default:                          return posts;
   }
 }
 function getModeLegends() {
   switch (activeMode) {
-    case 'carousel':           return carouselLegends;
-    case 'linkedin-post':      return linkedinLegends;
-    case 'linkedin-carousel':  return linkedinCarouselLegends;
-    default:                   return legends;
+    case 'carousel':                  return carouselLegends;
+    case 'linkedin-post':             return linkedinLegends;
+    case 'linkedin-carousel':         return linkedinCarouselLegends;
+    case 'linkedin-pessoal-post':     return linkedinPessoalLegends;
+    case 'linkedin-pessoal-carousel': return linkedinPessoalCarouselLegends;
+    case 'presentation':              return presentationLegends;
+    default:                          return legends;
   }
 }
 function getModeCurrentIdx() {
   switch (activeMode) {
-    case 'carousel':           return currentCarousel;
-    case 'linkedin-post':      return linkedinCurrentPost;
-    case 'linkedin-carousel':  return linkedinCurrentCarousel;
-    default:                   return current;
+    case 'carousel':                  return currentCarousel;
+    case 'linkedin-post':             return linkedinCurrentPost;
+    case 'linkedin-carousel':         return linkedinCurrentCarousel;
+    case 'linkedin-pessoal-post':     return linkedinPessoalCurrentPost;
+    case 'linkedin-pessoal-carousel': return linkedinPessoalCurrentCarousel;
+    case 'presentation':              return currentPresentation;
+    default:                          return current;
   }
 }
 function setModeCurrentIdx(idx) {
   switch (activeMode) {
-    case 'carousel':           currentCarousel = idx; break;
-    case 'linkedin-post':      linkedinCurrentPost = idx; break;
-    case 'linkedin-carousel':  linkedinCurrentCarousel = idx; break;
-    default:                   current = idx; break;
+    case 'carousel':                  currentCarousel = idx; break;
+    case 'linkedin-post':             linkedinCurrentPost = idx; break;
+    case 'linkedin-carousel':         linkedinCurrentCarousel = idx; break;
+    case 'linkedin-pessoal-post':     linkedinPessoalCurrentPost = idx; break;
+    case 'linkedin-pessoal-carousel': linkedinPessoalCurrentCarousel = idx; break;
+    case 'presentation':              currentPresentation = idx; break;
+    default:                          current = idx; break;
   }
 }
 function getCurrentSlide() {
-  return activeMode === 'linkedin-carousel' ? linkedinCurrentSlide : currentSlide;
+  if (activeMode === 'linkedin-carousel') return linkedinCurrentSlide;
+  if (activeMode === 'linkedin-pessoal-carousel') return linkedinPessoalCurrentSlide;
+  if (activeMode === 'presentation') return presentationCurrentSlide;
+  return currentSlide;
 }
 function setCurrentSlide(idx) {
   if (activeMode === 'linkedin-carousel') linkedinCurrentSlide = idx;
+  else if (activeMode === 'linkedin-pessoal-carousel') linkedinPessoalCurrentSlide = idx;
+  else if (activeMode === 'presentation') presentationCurrentSlide = idx;
   else currentSlide = idx;
 }
 
@@ -3122,6 +3769,10 @@ function switchMode(mode) {
   // Sync dropdown
   const sel = document.getElementById('studioModeSelect');
   if (sel) sel.value = mode;
+
+  // Legend panel: esconder no modo apresentação (só fundo de slide)
+  const legendPanel = document.querySelector('.legend-panel');
+  if (legendPanel) legendPanel.style.display = isPresentationMode() ? 'none' : '';
 
   // Hide all post slides
   document.querySelectorAll('.post-slide').forEach(s => s.classList.remove('visible'));
@@ -3137,6 +3788,7 @@ function switchMode(mode) {
       setModeCurrentIdx(Math.min(getModeCurrentIdx(), maxIdx));
       currentSlide = 0;
       linkedinCurrentSlide = 0;
+      linkedinPessoalCurrentSlide = 0;
       goTo(getModeCurrentIdx());
     } else {
       setModeCurrentIdx(Math.min(getModeCurrentIdx(), items.length - 1));
@@ -3159,36 +3811,54 @@ function buildSidebar() {
   const modeSelect = document.getElementById('studioModeSelect');
   if (modeSelect) modeSelect.remove(); // detach do DOM, mantém em memória
 
-  aside.innerHTML = `<div class="aside-label">${isCarousel ? 'Carrosséis' : 'Posts'}</div>`;
-  items.forEach((p, i) => {
-    const item = document.createElement('div');
-    item.className = 'thumb-item' + (i === currentIdx ? ' active' : '');
-    const info = document.createElement('div');
-    info.className = 'thumb-info';
-    info.style.flex = '1';
-    info.style.cursor = 'pointer';
-    info.style.minWidth = '0';
-    if (isCarousel) {
-      info.innerHTML = `<div class="thumb-title">${p.title}</div><div class="thumb-badge">${p.slides.length} slides</div>`;
-    } else {
-      info.innerHTML = `<div class="thumb-title">${p.title}</div><div class="thumb-sub">${p.sub}</div>`;
-    }
-    info.addEventListener('click', () => goTo(i));
-    const del = document.createElement('button');
-    del.className = 'thumb-delete';
-    del.title = isCarousel ? 'Deletar carrossel' : 'Deletar post';
-    del.innerHTML = '<span class="material-symbols-outlined sz-16">close</span>';
-    del.addEventListener('click', (e) => { e.stopPropagation(); deletePost(i); });
-    item.appendChild(info);
-    item.appendChild(del);
-    aside.appendChild(item);
-  });
+  const isPresentation = isPresentationMode();
+  const sidebarLabel = isPresentation ? 'Apresentações' : (isCarousel ? 'Carrosséis' : 'Posts');
+  aside.innerHTML = `<div class="aside-label">${sidebarLabel}</div>`;
+
+  {
+    items.forEach((p, i) => {
+      const item = document.createElement('div');
+      item.className = 'thumb-item' + (i === currentIdx ? ' active' : '');
+      const info = document.createElement('div');
+      info.className = 'thumb-info';
+      info.style.flex = '1';
+      info.style.cursor = 'pointer';
+      info.style.minWidth = '0';
+      if (isCarousel || isPresentation) {
+        info.innerHTML = `<div class="thumb-title">${p.title || p.theme || 'Sem título'}</div><div class="thumb-badge">${p.slides.length} slides</div>`;
+      } else {
+        info.innerHTML = `<div class="thumb-title">${p.title}</div><div class="thumb-sub">${p.sub}</div>`;
+      }
+      info.addEventListener('click', () => goTo(i));
+      const del = document.createElement('button');
+      del.className = 'thumb-delete';
+      del.title = isPresentation ? 'Deletar apresentação' : (isCarousel ? 'Deletar carrossel' : 'Deletar post');
+      del.innerHTML = '<span class="material-symbols-outlined sz-16">close</span>';
+      del.addEventListener('click', (e) => { e.stopPropagation(); deletePost(i); });
+      item.appendChild(info);
+      item.appendChild(del);
+      aside.appendChild(item);
+    });
+  }
+
   const genWrap = document.createElement('div');
   genWrap.className = 'aside-gen-wrap';
-  const genLabel = isCarousel ? 'Gerar Carrossel' : 'Gerar com IA';
-  const isLinkedinCarousel = activeMode === 'linkedin-carousel';
-  const dlLabel = isLinkedinCarousel ? 'Baixar PDF' : (isCarousel ? 'Baixar Carrossel' : 'Baixar Post');
-  const dlAction = isLinkedinCarousel ? 'downloadLinkedInCarouselPDF()' : (isCarousel ? 'downloadCarousel()' : 'downloadCurrent()');
+  const genLabel = isPresentation ? 'Gerar Slide' : (isCarousel ? 'Gerar Carrossel' : 'Gerar com IA');
+  const isLinkedinCarousel = activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel';
+  let dlLabel, dlAction;
+  if (isPresentation) {
+    dlLabel = 'Baixar Imagem';
+    dlAction = 'downloadPresentationImage()';
+  } else if (isLinkedinCarousel) {
+    dlLabel = 'Baixar PDF';
+    dlAction = 'downloadLinkedInCarouselPDF()';
+  } else if (isCarousel) {
+    dlLabel = 'Baixar Carrossel';
+    dlAction = 'downloadCarousel()';
+  } else {
+    dlLabel = 'Baixar Post';
+    dlAction = 'downloadCurrent()';
+  }
   // Re-anexa o seletor de modo (salvo antes do innerHTML wipe)
   if (modeSelect) genWrap.appendChild(modeSelect);
   genWrap.insertAdjacentHTML('beforeend',
@@ -3229,7 +3899,11 @@ function updateEmptyStateVisibility() {
     const titleEl = emptyEl.querySelector('.empty-state-title');
     const subEl = emptyEl.querySelector('.empty-state-sub');
     const btnEl = emptyEl.querySelector('.empty-state-btn');
-    if (isCarouselMode()) {
+    if (isPresentationMode()) {
+      if (titleEl) titleEl.textContent = 'Nenhum Slide Ainda';
+      if (subEl) subEl.textContent = 'Gere slides 16:9 com IA — texto e imagem prontos para apresentações.';
+      if (btnEl) btnEl.textContent = 'Gerar Primeiro Slide';
+    } else if (isCarouselMode()) {
       if (titleEl) titleEl.textContent = 'Nenhum Carrossel Ainda';
       if (subEl) subEl.textContent = 'Gere seu primeiro carrossel com a IA. Os últimos 6 ficam salvos aqui automaticamente.';
       if (btnEl) btnEl.textContent = 'Gerar Primeiro Carrossel';
@@ -3411,6 +4085,10 @@ function goToSlide(slideIdx) {
   document.getElementById('postSub').textContent = `Slide ${getCurrentSlide() + 1}/${carousel.slides.length}`;
   updateSlideNav();
   updateCarouselPostControls();
+  if (isPresentationMode()) {
+    updateLegend();
+    buildSidebar();
+  }
   scalePost();
 }
 
@@ -3535,22 +4213,47 @@ function scalePost() {
   const scaler  = document.getElementById('postScaler');
   const post    = getActivePost();
   const format  = (post && post.format) || 'feed';
-  const postH   = format === 'story' ? 1920 : 1350;
+  const dims    = getPostDimensions(format);
   const aw      = area.clientWidth  - 40;
   const ah      = area.clientHeight - 40;
-  const scale   = Math.min(aw / 1080, ah / postH, 1);
+  const scale   = Math.min(aw / dims.w, ah / dims.h, 1);
   scaler.style.transform = `scale(${scale})`;
-  scaler.style.width     = '1080px';
-  scaler.style.height    = `${postH * scale}px`;
+  scaler.style.width     = `${dims.w}px`;
+  scaler.style.height    = `${dims.h * scale}px`;
 }
 
 // ── SUPABASE + AUTH + PERSISTÊNCIA ──────────────────────────
 const SESSION_KEY       = 'cropware_session_v1';           // fallback offline (legado)
+const R2_WORKER_URL     = 'https://cropware-r2-worker.leonardoterra-comercial.workers.dev';
 const SUPABASE_URL      = 'https://tzsmxhwvtobwkqffgsxo.supabase.co';
 const SUPABASE_ANON     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6c214aHd2dG9id2txZmZnc3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMTg3ODIsImV4cCI6MjA3ODc5NDc4Mn0.VQjoMrKXIyqRwVgJe_ttvu7SsXYD4YZF28bm4RC3TIA';
 const MAX_POSTS         = 6;
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ── R2 IMAGE STORAGE ────────────────────────────────────────
+// Upload base64 para R2 e retorna URL pública. Key = images/{id}.jpg
+async function uploadImageToR2(base64DataUri, imageId) {
+  try {
+    const [header, b64] = base64DataUri.split(',');
+    const mime = header.match(/:(.*?);/)?.[1] || 'image/jpeg';
+    const ext = mime.includes('png') ? 'png' : 'jpg';
+    const key = `images/${imageId}.${ext}`;
+    const binary = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+
+    const resp = await fetch(`${R2_WORKER_URL}/${key}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': mime },
+      body: binary,
+    });
+    if (!resp.ok) throw new Error(`R2 upload failed: ${resp.status}`);
+    return `${R2_WORKER_URL}/${key}`;
+  } catch(e) {
+    console.warn('R2 upload failed (keeping base64):', e.message);
+    return null; // fallback: mantém base64
+  }
+}
+
 
 // ── AUTH ─────────────────────────────────────────────────────
 let currentUser = null;
@@ -3624,6 +4327,34 @@ function showPersistError(msg) {
 
 // ── SALVAR / CARREGAR / DELETAR ──────────────────────────────
 let _saveTimer = null;
+
+// Cria clone do post com imagens base64 → R2 URLs (NÃO modifica o objeto original)
+async function _cloneWithR2Images(postData) {
+  const clone = JSON.parse(JSON.stringify(postData));
+  const uploads = [];
+
+  // Post simples
+  if (clone.bgImage && clone.bgImage.startsWith('data:')) {
+    uploads.push(
+      uploadImageToR2(clone.bgImage, clone.id || `post-${Date.now()}`)
+        .then(url => { if (url) clone.bgImage = url; else clone.bgImage = ''; })
+    );
+  }
+  // Carrossel / apresentação — slides[]
+  if (Array.isArray(clone.slides)) {
+    clone.slides.forEach(s => {
+      if (s.bgImage && s.bgImage.startsWith('data:')) {
+        uploads.push(
+          uploadImageToR2(s.bgImage, s.id || s.slideId || `slide-${Date.now()}`)
+            .then(url => { if (url) s.bgImage = url; else s.bgImage = ''; })
+        );
+      }
+    });
+  }
+  await Promise.all(uploads);
+  return clone;
+}
+
 const _saveSessionCore = async function() {
   const generated = posts
     .map((p, i) => ({ post: p, legend: legends[i] || '' }))
@@ -3641,31 +4372,41 @@ const _saveSessionCore = async function() {
     .map((c, i) => ({ post: c, legend: linkedinCarouselLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
-  const allRows = [...generated, ...generatedCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels];
+  const generatedLinkedinPessoalPosts = linkedinPessoalPosts
+    .map((p, i) => ({ post: p, legend: linkedinPessoalLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
+  const generatedLinkedinPessoalCarousels = linkedinPessoalCarousels
+    .map((c, i) => ({ post: c, legend: linkedinPessoalCarouselLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
+  const generatedPresentations = presentations
+    .map((p, i) => ({ post: p, legend: presentationLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
+  const allRows = [...generated, ...generatedCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
   if (!allRows.length) return;
   const sid = getSessionId();
   const now = new Date().toISOString();
 
-  // Salva 1 row por vez para evitar timeout no Supabase
-  // (carrosséis têm múltiplas imagens base64 no jsonb e ficam enormes)
+  // Salva no Supabase: clone com R2 URLs (dados em memória ficam intactos com base64)
   for (const x of allRows) {
     try {
+      const lightPost = await _cloneWithR2Images(x.post);
       const { error } = await sb.from('cropware_posts').upsert(
-        { id: x.post.id, session_id: sid, post_data: x.post, legend: x.legend, updated_at: now },
+        { id: lightPost.id, session_id: sid, post_data: lightPost, legend: x.legend, updated_at: now },
         { onConflict: 'id' }
       );
-      if (error) throw error;
+      if (error) console.warn('Supabase save:', error.message);
     } catch(e) {
-      console.error('saveSession error:', e);
-      showPersistError('Falha ao salvar no Supabase: ' + (e.message || e));
-      return;
+      console.warn('Supabase save error:', e.message || e);
     }
   }
 };
 // Debounce: agrupa saves rápidos (blur, style change) em 1 só
 function saveSession() {
   clearTimeout(_saveTimer);
-  _saveTimer = setTimeout(_saveSessionCore, 800);
+  _saveTimer = setTimeout(_saveSessionCore, 1500);
 }
 
 async function deletePostFromSupabase(postId) {
@@ -3679,6 +4420,7 @@ async function deletePostFromSupabase(postId) {
 }
 
 async function loadSession() {
+  // Supabase = fonte principal (imagens são URLs R2, payload leve)
   try {
     const { data, error } = await sb.from('cropware_posts')
       .select('post_data, legend')
@@ -3687,20 +4429,30 @@ async function loadSession() {
     if (error) throw error;
     if (data && data.length) {
       data.forEach(row => {
-        const type = row.post_data && row.post_data.type;
-        if (type === 'carousel' || type === 'linkedin-carousel') {
-          renderGeneratedCarousel(row.post_data, row.legend || '');
+        const postData = row.post_data;
+        // Ignora posts com imagens strippadas (legado, sem R2)
+        if (postData.bgImage === '__stripped__') postData.bgImage = '';
+        if (Array.isArray(postData.slides)) {
+          postData.slides.forEach(s => {
+            if (s.bgImage === '__stripped__') s.bgImage = '';
+          });
+        }
+        const type = postData.type;
+        if (type === 'presentation') {
+          renderGeneratedPresentation(postData, row.legend || '');
+        } else if (type === 'carousel' || type === 'linkedin-carousel' || type === 'linkedin-pessoal-carousel') {
+          renderGeneratedCarousel(postData, row.legend || '');
         } else {
-          renderGeneratedPost(row.post_data, row.legend || '');
+          renderGeneratedPost(postData, row.legend || '');
         }
       });
       return;
     }
   } catch(e) {
     console.error('loadSession Supabase error:', e);
-    showPersistError('Falha ao carregar do Supabase: ' + (e.message || e));
   }
-  // Fallback: tenta localStorage (migração de sessões antigas)
+
+  // Fallback: localStorage legado
   try {
     const raw = localStorage.getItem(SESSION_KEY);
     if (!raw) return;
@@ -3709,7 +4461,7 @@ async function loadSession() {
     session.posts.forEach((postData, i) => {
       renderGeneratedPost(postData, (session.legends && session.legends[i]) || '');
     });
-  } catch(e2) { console.error('loadSession localStorage fallback error:', e2); }
+  } catch(e2) { console.error('loadSession legacy fallback error:', e2); }
 }
 
 // Remove CTAs cliché que o Gemini insiste em colocar no final da legenda
@@ -3771,6 +4523,7 @@ function renderGeneratedPost(postData, legendText) {
   if (postData.siteEnabled == null) postData.siteEnabled = true;
   if (postData.siteScale == null)   postData.siteScale   = 1;
   if (!postData.brandMode) postData.brandMode = 'light';
+  if (!postData.siteMode) postData.siteMode = 'light';
   if (!postData.overlayColor)     postData.overlayColor     = '#000000';
   if (postData.overlayOpacity == null) postData.overlayOpacity = 55;
   if (!postData.overlayDirection) postData.overlayDirection = postData.layout === 'bottom' ? 'bottom' : 'top';
@@ -3797,9 +4550,10 @@ function renderGeneratedPost(postData, legendText) {
   if (postData.bulletIconsVisible == null) postData.bulletIconsVisible = true;
   if (postData.bulletIconScale == null)    postData.bulletIconScale    = 1;
 
+  const isLinkedinPessoal = postData.type === 'linkedin-pessoal-post';
   const isLinkedin = postData.type === 'linkedin-post';
-  const targetPosts = isLinkedin ? linkedinPosts : posts;
-  const targetLegends = isLinkedin ? linkedinLegends : legends;
+  const targetPosts = isLinkedinPessoal ? linkedinPessoalPosts : isLinkedin ? linkedinPosts : posts;
+  const targetLegends = isLinkedinPessoal ? linkedinPessoalLegends : isLinkedin ? linkedinLegends : legends;
 
   targetPosts.push(postData);
   targetLegends.push(sanitizeLegend(legendText || ''));
@@ -3837,6 +4591,7 @@ function renderGeneratedCarousel(carouselData, legendText) {
     if (slideData.siteEnabled == null) slideData.siteEnabled = true;
     if (slideData.siteScale == null)   slideData.siteScale   = 1;
     if (!slideData.brandMode) slideData.brandMode = 'light';
+    if (!slideData.siteMode) slideData.siteMode = 'light';
     if (!slideData.overlayColor)     slideData.overlayColor     = '#000000';
     if (slideData.overlayOpacity == null) slideData.overlayOpacity = 55;
     if (!slideData.overlayDirection) slideData.overlayDirection = slideData.layout === 'bottom' ? 'bottom' : 'top';
@@ -3881,13 +4636,84 @@ function renderGeneratedCarousel(carouselData, legendText) {
     applyPostVariant(postEl, slideData);
   });
 
+  const isLinkedinPessoal = carouselData.type === 'linkedin-pessoal-carousel';
   const isLinkedin = carouselData.type === 'linkedin-carousel';
-  const targetArr = isLinkedin ? linkedinCarousels : carousels;
-  const targetLeg = isLinkedin ? linkedinCarouselLegends : carouselLegends;
+  const targetArr = isLinkedinPessoal ? linkedinPessoalCarousels : isLinkedin ? linkedinCarousels : carousels;
+  const targetLeg = isLinkedinPessoal ? linkedinPessoalCarouselLegends : isLinkedin ? linkedinCarouselLegends : carouselLegends;
 
   targetArr.push(carouselData);
   targetLeg.push(sanitizeLegend(legendText || ''));
   return targetArr.length - 1;
+}
+
+// ── RENDER PRESENTATION ────────────────────────────────────
+function renderGeneratedPresentation(presentationData, legendText) {
+  if (!presentationData || !presentationData.slides) return;
+
+  presentationData.slides.forEach((slideData, i) => {
+    // Defaults — modelo visual sem texto (logo + site + layout)
+    if (!slideData.accent || ['#4aa276', '#3b9f73'].includes((slideData.accent || '').toLowerCase())) {
+      slideData.accent = '#7AB87E';
+    }
+    if (!slideData.layout)    slideData.layout    = 'top';
+    if (!slideData.textAlign) slideData.textAlign = 'left';
+    if (!slideData.logoPos)   slideData.logoPos   = 'br';
+    if (slideData.logoScale == null) slideData.logoScale = 1;
+    if (!slideData.siteText)  slideData.siteText  = 'cropware.app';
+    if (!slideData.sitePos)   slideData.sitePos   = 'bl';
+    if (slideData.siteEnabled == null) slideData.siteEnabled = true;
+    if (slideData.siteScale == null)   slideData.siteScale   = 1;
+    if (!slideData.brandMode) slideData.brandMode = 'light';
+    if (!slideData.siteMode) slideData.siteMode = 'light';
+    if (!slideData.overlayColor)     slideData.overlayColor     = '#000000';
+    if (slideData.overlayOpacity == null) slideData.overlayOpacity = 55;
+    if (!slideData.overlayDirection) slideData.overlayDirection = slideData.layout === 'bottom' ? 'bottom' : 'top';
+    if (!slideData.dashCardColor)    slideData.dashCardColor    = '#0F1E14';
+    if (slideData.dashCardOpacity == null) slideData.dashCardOpacity = 65;
+    if (!slideData.revistaBlockColor) slideData.revistaBlockColor = '#f8fafc';
+    if (!slideData.splitBlockColor)   slideData.splitBlockColor   = '#152F17';
+    if (!slideData.revistaTextMode)   slideData.revistaTextMode   = 'dark';
+    if (!slideData.splitTextMode)     slideData.splitTextMode     = 'light';
+    if (!slideData.columnBlockColor)  slideData.columnBlockColor  = '#f8fafc';
+    if (!slideData.columnTextMode)    slideData.columnTextMode    = 'dark';
+    if (!slideData.columnSide)        slideData.columnSide        = 'left';
+    if (!slideData.frameColor)        slideData.frameColor        = '#0F1E14';
+    if (!slideData.frameTextMode)     slideData.frameTextMode     = 'light';
+    if (!slideData.format)            slideData.format            = 'presentation';
+    if (slideData.hookScale == null)       slideData.hookScale       = 1;
+    if (slideData.complementScale == null) slideData.complementScale = 1;
+    if (slideData.bulletsScale == null)    slideData.bulletsScale    = 1;
+    if (!slideData.style) slideData.style = 'classic';
+    // Sem texto — usuário adiciona no PowerPoint
+    if (!slideData.hookHTML)       slideData.hookHTML       = '';
+    if (!slideData.complementHTML) slideData.complementHTML = '';
+    if (!Array.isArray(slideData.bullets)) slideData.bullets = [];
+    if (slideData.hookVisible == null)        slideData.hookVisible        = false;
+    if (slideData.complementVisible == null)  slideData.complementVisible  = false;
+    if (slideData.bulletsVisible == null)     slideData.bulletsVisible     = false;
+    if (slideData.bulletIconsVisible == null) slideData.bulletIconsVisible = false;
+    if (slideData.bulletIconScale == null)    slideData.bulletIconScale    = 1;
+    slideData.isGenerated = true;
+    slideData.slideIndex = i;
+
+    const slide = document.createElement('div');
+    slide.className = 'post-slide';
+    slide.id = slideData.slideId;
+
+    const postEl = document.createElement('div');
+    postEl.className = 'post';
+    postEl.id = slideData.id;
+    postEl.dataset.generated = 'true';
+    postEl.style.background = '#000';
+
+    slide.appendChild(postEl);
+    document.getElementById('postScaler').appendChild(slide);
+    applyPostVariant(postEl, slideData);
+  });
+
+  presentations.push(presentationData);
+  presentationLegends.push(legendText || '');
+  return presentations.length - 1;
 }
 
 // Converte hex (#rrggbb) + alpha (0..1) em string rgba()
@@ -4008,8 +4834,8 @@ function renderClassicStyle(postData) {
   return `
     <div class="bg" id="${postData.bg}" style="background-image:url('${imgSrc}');"></div>
     <div class="post-overlay" style="${overlayStyle}"></div>
+    <div class="post-accent-bar"></div>
     <div class="${contentClass}">
-      <div class="accent-bar"></div>
       ${hookBlock}
       ${complementBlock}
       ${bulletsHTML}
@@ -4034,17 +4860,17 @@ function renderDashboardStyle(postData) {
   return `
     <div class="bg" id="${postData.bg}" style="background-image:url('${imgSrc}');"></div>
     <div class="post-overlay" style="${overlayStyle}"></div>
+    <div class="post-accent-bar"></div>
     <div class="dash-card" data-layout="${layout}" data-align="${textAlign}" style="background:${dashCardBg};">
       <div class="dash-card-blur" style="background-image:url('${imgSrc}');"></div>
       <div class="dash-card-inner-overlay" style="${overlayBg ? 'background:' + overlayBg : ''}"></div>
       <div class="dash-card-tint" style="background:${dashCardBg};"></div>
-      <div class="dash-bar"></div>
       <div class="dash-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
-      <div class="dash-separator"></div>
       <div class="dash-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
     </div>
     ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
     ${renderSiteText(postData)}
+    <div class="brand-strip"></div>
   `;
 }
 
@@ -4069,7 +4895,9 @@ function buildSplitBlockBackground(color) {
 function applyRevistaBlockInline(postEl, post) {
   const block = postEl.querySelector('.revista-block');
   if (!block) return;
-  block.style.background = post.revistaBlockColor || '#f8fafc';
+  const blockColor = post.revistaBlockColor || '#f8fafc';
+  block.style.background = blockColor;
+  postEl.style.setProperty('--revista-block-color', blockColor);
   block.classList.toggle('text-light', (post.revistaTextMode || 'dark') === 'light');
   block.classList.toggle('text-dark',  (post.revistaTextMode || 'dark') === 'dark');
 }
@@ -4077,7 +4905,9 @@ function applyRevistaBlockInline(postEl, post) {
 function applySplitBlockInline(postEl, post) {
   const block = postEl.querySelector('.split-block');
   if (!block) return;
-  block.style.background = buildSplitBlockBackground(post.splitBlockColor || '#152F17');
+  const blockColor = post.splitBlockColor || '#152F17';
+  block.style.background = buildSplitBlockBackground(blockColor);
+  postEl.style.setProperty('--split-block-color', blockColor);
   block.classList.toggle('text-light', (post.splitTextMode || 'light') === 'light');
   block.classList.toggle('text-dark',  (post.splitTextMode || 'light') === 'dark');
 }
@@ -4085,7 +4915,9 @@ function applySplitBlockInline(postEl, post) {
 function applyColunaBlockInline(postEl, post) {
   const block = postEl.querySelector('.coluna-block');
   if (!block) return;
-  block.style.background = post.columnBlockColor || '#f8fafc';
+  const blockColor = post.columnBlockColor || '#f8fafc';
+  block.style.background = blockColor;
+  postEl.style.setProperty('--coluna-block-color', blockColor);
   block.classList.toggle('text-light', (post.columnTextMode || 'dark') === 'light');
   block.classList.toggle('text-dark',  (post.columnTextMode || 'dark') === 'dark');
   postEl.dataset.columnSide = post.columnSide || 'left';
@@ -4127,14 +4959,23 @@ function renderRevistaStyle(postData) {
   const textMode       = postData.revistaTextMode || 'dark';
   const siteDark       = sitePos[0] === 'b' && textMode === 'dark';
   const blockBg        = postData.revistaBlockColor || '#f8fafc';
+  const overlayBg      = buildOverlayBackground(postData.overlayColor || '#000000', postData.overlayOpacity == null ? 55 : postData.overlayOpacity, postData.overlayDirection || 'top');
+  const overlayStyle   = overlayBg ? `background:${overlayBg};` : 'display:none;';
+  const photoPos       = postData.revistaPhotoPos == null ? 50 : postData.revistaPhotoPos;
+  const layout         = postData.revistaLayout || 'top';
+  const bgPos          = (layout === 'left' || layout === 'right') ? `${photoPos}% center` : `center ${photoPos}%`;
   return `
-    <div class="revista-photo" style="background-image:url('${imgSrc}');"></div>
+    <div class="revista-photo" style="background-image:url('${imgSrc}');background-position:${bgPos};">
+      <div class="revista-overlay" style="${overlayStyle}"></div>
+    </div>
+    <div class="post-accent-bar"></div>
     <div class="revista-block text-${textMode}" style="background:${blockBg};">
       <div class="revista-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
       <div class="revista-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
-      ${postData.logoEnabled !== false ? '<img class="revista-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     </div>
+    ${postData.logoEnabled !== false ? '<img class="revista-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     ${renderSiteText(postData)}
+    <div class="brand-strip"></div>
   `;
 }
 
@@ -4144,14 +4985,23 @@ function renderSplitStyle(postData) {
   const imgSrc         = postData.bgImage        || '';
   const textMode       = postData.splitTextMode || 'light';
   const blockBg        = buildSplitBlockBackground(postData.splitBlockColor || '#152F17');
+  const overlayBg      = buildOverlayBackground(postData.overlayColor || '#000000', postData.overlayOpacity == null ? 55 : postData.overlayOpacity, postData.overlayDirection || 'top');
+  const overlayStyle   = overlayBg ? `background:${overlayBg};` : 'display:none;';
+  const photoPos       = postData.splitPhotoPos == null ? 50 : postData.splitPhotoPos;
+  const layout         = postData.splitLayout || 'top';
+  const bgPos          = (layout === 'left' || layout === 'right') ? `${photoPos}% center` : `center ${photoPos}%`;
   return `
-    <div class="split-photo" style="background-image:url('${imgSrc}');"></div>
+    <div class="split-photo" style="background-image:url('${imgSrc}');background-position:${bgPos};">
+      <div class="split-overlay" style="${overlayStyle}"></div>
+    </div>
+    <div class="post-accent-bar"></div>
     <div class="split-block text-${textMode}" style="background:${blockBg};">
       <div class="split-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
       <div class="split-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
       ${postData.logoEnabled !== false ? '<img class="split-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     </div>
     ${renderSiteText(postData)}
+    <div class="brand-strip"></div>
   `;
 }
 
@@ -4161,15 +5011,22 @@ function renderColunaStyle(postData) {
   const imgSrc         = postData.bgImage        || '';
   const textMode       = postData.columnTextMode  || 'dark';
   const blockBg        = postData.columnBlockColor || '#f8fafc';
-  const siteDark       = textMode === 'dark';
+  const overlayBg      = buildOverlayBackground(postData.overlayColor || '#000000', postData.overlayOpacity == null ? 55 : postData.overlayOpacity, postData.overlayDirection || 'top');
+  const overlayStyle   = overlayBg ? `background:${overlayBg};` : 'display:none;';
+  const photoPos       = postData.colunaPhotoPos == null ? 50 : postData.colunaPhotoPos;
+  const bgPos          = `${photoPos}% center`;
   return `
-    <div class="coluna-photo" style="background-image:url('${imgSrc}');"></div>
+    <div class="coluna-photo" style="background-image:url('${imgSrc}');background-position:${bgPos};">
+      <div class="coluna-overlay" style="${overlayStyle}"></div>
+    </div>
+    <div class="post-accent-bar"></div>
     <div class="coluna-block text-${textMode}" style="background:${blockBg};">
       ${postData.logoEnabled !== false ? '<img class="coluna-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
       <div class="coluna-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
       <div class="coluna-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
     </div>
     ${renderSiteText(postData)}
+    <div class="brand-strip"></div>
   `;
 }
 
@@ -4211,9 +5068,7 @@ function renderMolduraStyle(postData) {
   return `
     <div class="moldura-bg" style="background-image:url('${imgSrc}');"></div>
     <div class="moldura-overlay" style="${overlayBg ? 'background:' + overlayBg : 'display:none'}"></div>
-    <div class="moldura-header">
-      ${postData.logoEnabled !== false ? '<img class="moldura-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
-    </div>
+    <div class="post-accent-bar"></div>
     <div class="moldura-glass text-${textMode}" style="background:${glassBg};">
       <div class="moldura-glass-blur" style="background-image:url('${imgSrc}');"></div>
       <div class="moldura-glass-inner-overlay" style="${overlayBg ? 'background:' + overlayBg : ''}"></div>
@@ -4227,7 +5082,9 @@ function renderMolduraStyle(postData) {
       ${bulletsHTML}
       <div class="moldura-glass-line"></div>
     </div>
+    ${postData.logoEnabled !== false ? '<img class="moldura-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     ${renderSiteText(postData)}
+    <div class="brand-strip"></div>
   `;
 }
 
@@ -4254,7 +5111,48 @@ function applyPostVariant(postEl, postData) {
   postEl.dataset.style   = style;
   postEl.dataset.layout  = layout;
   postEl.dataset.logoPos = logoPos;
-  postEl.dataset.brand   = postData.brandMode || 'light';
+  postEl.dataset.brand    = postData.brandMode || 'light';
+  postEl.dataset.siteMode = postData.siteMode || 'light';
+
+  // Accent bar
+  postEl.dataset.accentBarEnabled = postData.accentBarEnabled !== false ? 'true' : 'false';
+  postEl.dataset.accentBarPos     = postData.accentBarPos || 'top';
+  postEl.style.setProperty('--accent-bar-offset-x', (postData.accentBarOffsetX == null ? 5 : postData.accentBarOffsetX) + '%');
+  postEl.style.setProperty('--accent-bar-offset-y', (postData.accentBarOffsetY == null ? 5 : postData.accentBarOffsetY) + '%');
+
+  // Brand-strip: espessura, posição, on/off
+  postEl.dataset.stripEnabled = postData.stripEnabled !== false ? 'true' : 'false';
+  postEl.dataset.stripPos = postData.stripPos || 'bottom';
+  postEl.style.setProperty('--strip-height', (postData.stripHeight || 6) + 'px');
+
+  // Revista: proporção da foto, orientação e cor do bloco (para gradiente)
+  if (postData.revistaPhotoPct) {
+    postEl.style.setProperty('--revista-photo-pct', postData.revistaPhotoPct + '%');
+  } else {
+    postEl.style.removeProperty('--revista-photo-pct');
+  }
+  postEl.style.setProperty('--revista-block-color', postData.revistaBlockColor || '#f8fafc');
+  postEl.dataset.revistaLayout = postData.revistaLayout || 'top';
+  postEl.dataset.revistaShadow = postData.revistaShadow !== false ? 'on' : 'off';
+
+  // Split: proporção da foto, orientação, cor do bloco (para gradiente da sombra)
+  if (postData.splitPhotoPct) {
+    postEl.style.setProperty('--split-photo-pct', postData.splitPhotoPct + '%');
+  } else {
+    postEl.style.removeProperty('--split-photo-pct');
+  }
+  postEl.style.setProperty('--split-block-color', postData.splitBlockColor || '#152F17');
+  postEl.dataset.splitLayout = postData.splitLayout || 'top';
+  postEl.dataset.splitShadow = postData.splitShadow !== false ? 'on' : 'off';
+
+  // Coluna: proporção da foto, cor do bloco (para gradiente da sombra)
+  if (postData.colunaPhotoPct) {
+    postEl.style.setProperty('--coluna-photo-pct', postData.colunaPhotoPct + '%');
+  } else {
+    postEl.style.removeProperty('--coluna-photo-pct');
+  }
+  postEl.style.setProperty('--coluna-block-color', postData.columnBlockColor || '#f8fafc');
+  postEl.dataset.colunaShadow = postData.colunaShadow !== false ? 'on' : 'off';
 
   let html;
   switch (style) {
@@ -4273,6 +5171,14 @@ function applyPostVariant(postEl, postData) {
 
   // Format + safe zone guides (só ficam visíveis quando data-format="story")
   postEl.dataset.format = postData.format || 'feed';
+
+  // Apresentação: desativa edição inline
+  if (postData.format === 'presentation') {
+    postEl.querySelectorAll('[contenteditable="true"]').forEach(el => {
+      el.removeAttribute('contenteditable');
+    });
+  }
+
   postEl.insertAdjacentHTML('beforeend',
     '<div class="safe-zone-guide safe-zone-top"></div>' +
     '<div class="safe-zone-guide safe-zone-bottom"></div>'
@@ -4333,43 +5239,139 @@ function updatePostControls(idx) {
 
   // Seletor de estilo
   const currentStyle = post.style || 'classic';
+  const presMode = isPresentationMode();
   document.querySelectorAll('#pcStyleGrid button').forEach(b => {
     b.classList.toggle('active', b.dataset.style === currentStyle);
+    if (b.dataset.style === 'split' || b.dataset.style === 'coluna') {
+      b.style.display = presMode ? 'none' : '';
+    }
   });
 
-  // Toggle formato (feed / story)
+  // Toggle formato (feed / story) — escondido no modo presentation (formato fixo)
   const currentFormat = post.format || 'feed';
+  const formatSub = document.getElementById('pcSubFormat');
+  if (formatSub) formatSub.style.display = isPresentationMode() ? 'none' : '';
   document.querySelectorAll('#pcFormatToggle button').forEach(b => {
     b.classList.toggle('active', b.dataset.format === currentFormat);
   });
+
+  // Apresentação: esconde texto — mas mantém estilo visível para trocar modelo
+  const isPresMode = isPresentationMode();
+  const isDash = currentStyle === 'dashboard';
+  const isDashPres = isDash && isPresMode;
+  const isRevista = currentStyle === 'revista';
+  setGroupVisible('pcGroupText',           !isPresMode || (isDash && !isDashPres));
 
   // Visibilidade por estilo (sub-seções dentro dos accordions)
   //   classic   : tudo visível
   //   dashboard : esconde "Posição do Texto"; mantém logo, fundo
   //   revista   : esconde "Posição do Texto", "Posição da Logo", "Fundo"
   //   split     : esconde "Posição do Texto", "Posição da Logo", "Fundo"
-  setSubVisible('pcSubTextPosition',       currentStyle === 'classic' || currentStyle === 'dashboard');
+  const isRevistaPres = isRevista && isPresMode;
+  setSubVisible('pcSubAccentColor',        !isRevistaPres && !isDashPres);
+  setSubVisible('pcSubHookScale',          !isRevistaPres && !isDashPres);
+  setSubVisible('pcSubComplementScale',    !isRevistaPres && !isDash);
+  // Dashboard não-apresentação: relabel "Escala do Hook" → "Escala do Card"
+  const hookScaleLabel = document.querySelector('#pcSubHookScale .pc-label');
+  if (hookScaleLabel) hookScaleLabel.textContent = isDash ? 'Escala do Card' : 'Escala do Hook';
+  setSubVisible('pcSubTextPosition',       (currentStyle === 'classic' && !isPresMode) || (isDash && !isPresMode));
+  // Novos controles no grupo Fundo — só para dashboard+apresentação
+  setSubVisible('pcSubDashPresScale',      isDashPres);
+  setSubVisible('pcSubDashPresPosition',   isDashPres);
+  // Dashboard: select com 4 posições; Classic: toggle com 2 botões
+  const posLabel = document.getElementById('pcTextPositionLabel');
+  const layoutToggle = document.getElementById('pcLayoutToggle');
+  const cardSelect = document.getElementById('pcCardPositionSelect');
+  if (posLabel) posLabel.textContent = isDash ? 'Posição do Card' : 'Posição do Texto';
+  if (layoutToggle) layoutToggle.style.display = isDash ? 'none' : '';
+  if (cardSelect) {
+    cardSelect.style.display = isDash ? '' : 'none';
+    cardSelect.value = layout;
+  }
+  // Dashboard apresentação — sync novos controles no grupo Fundo
+  const dashPresScaleR = document.getElementById('pcDashPresScale');
+  const dashPresScaleV = document.getElementById('pcDashPresScaleValue');
+  const dashPresPosS   = document.getElementById('pcDashPresPositionSelect');
+  if (dashPresScaleR) {
+    const sv = Math.round((post.hookScale == null ? 1 : post.hookScale) * 100);
+    dashPresScaleR.value = String(sv);
+    if (dashPresScaleV) dashPresScaleV.textContent = `${sv}%`;
+  }
+  if (dashPresPosS) dashPresPosS.value = layout;
   const logoOn = post.logoEnabled !== false;
-  setSubVisible('pcSubLogoPosition',       logoOn && (currentStyle === 'classic' || currentStyle === 'dashboard' || currentStyle === 'coluna'));
+  setSubVisible('pcSubLogoPosition',       logoOn);
   setSubVisible('pcSubLogoScale',          logoOn);
-  setSubVisible('pcSubBulletsEditor',      currentStyle === 'classic' || currentStyle === 'moldura');
-  setSubVisible('pcSubBulletsScale',       currentStyle === 'classic' || currentStyle === 'moldura');
-  setSubVisible('pcSubBulletIconScale',    currentStyle === 'classic' || currentStyle === 'moldura');
-  setSubVisible('pcSubVisibility',         currentStyle === 'classic' || currentStyle === 'moldura');
-  setSubVisible('pcSubVisibilityDivider',  currentStyle === 'classic' || currentStyle === 'moldura');
+  setSubVisible('pcSubBulletsEditor',      !isPresMode && (currentStyle === 'classic' || currentStyle === 'moldura'));
+  setSubVisible('pcSubBulletsScale',       !isPresMode && (currentStyle === 'classic' || currentStyle === 'moldura'));
+  setSubVisible('pcSubBulletIconScale',    !isPresMode && (currentStyle === 'classic' || currentStyle === 'moldura'));
+  setSubVisible('pcSubVisibility',         !isPresMode && (currentStyle === 'classic' || currentStyle === 'moldura'));
+  setSubVisible('pcSubVisibilityDivider',  !isPresMode && (currentStyle === 'classic' || currentStyle === 'moldura'));
+  // Accent bar — sempre visível, sub-controles dependem de estar ativo
+  setGroupVisible('pcGroupAccentBar',      true);
+  const accentBarOn = post.accentBarEnabled !== false;
+  setSubVisible('pcSubAccentBarPos',       accentBarOn);
+  setSubVisible('pcSubAccentBarOffsetX',   accentBarOn);
+  setSubVisible('pcSubAccentBarOffsetY',   accentBarOn);
   setGroupVisible('pcGroupBackground',     true);
-  setSubVisible('pcSubOverlayColor',       currentStyle === 'classic' || currentStyle === 'moldura');
-  setSubVisible('pcSubOverlayOpacity',     currentStyle === 'classic' || currentStyle === 'moldura');
-  setSubVisible('pcSubOverlayDirection',   currentStyle === 'classic' || currentStyle === 'moldura');
-  setSubVisible('pcSubDashCardColor',      currentStyle === 'dashboard');
-  setSubVisible('pcSubDashCardOpacity',    currentStyle === 'dashboard');
+  const isSplit  = currentStyle === 'split';
+  const isColuna = currentStyle === 'coluna';
+  setSubVisible('pcSubOverlayColor',       currentStyle === 'classic' || currentStyle === 'moldura' || isDash || isRevista || isSplit || isColuna);
+  setSubVisible('pcSubOverlayOpacity',     currentStyle === 'classic' || currentStyle === 'moldura' || isDash || isRevista || isSplit || isColuna);
+  setSubVisible('pcSubOverlayDirection',   currentStyle === 'classic' || currentStyle === 'moldura' || isDash || isRevista || isSplit || isColuna);
+  setSubVisible('pcSubDashCardColor',      isDash);
+  setSubVisible('pcSubDashCardOpacity',    isDash);
   setSubVisible('pcSubRevistaBlockColor',  currentStyle === 'revista');
-  setSubVisible('pcSubSplitBlockColor',    currentStyle === 'split');
-  setSubVisible('pcSubColunaBlockColor',   currentStyle === 'coluna');
-  setSubVisible('pcSubColunaSide',         currentStyle === 'coluna');
+  setSubVisible('pcSubRevistaPhotoPct',   currentStyle === 'revista');
+  setSubVisible('pcSubRevistaLayout',     currentStyle === 'revista');
+  setSubVisible('pcSubRevistaPhotoPos',  currentStyle === 'revista');
+  setSubVisible('pcSubRevistaShadow',    currentStyle === 'revista');
+  setSubVisible('pcSubSplitBlockColor',    isSplit);
+  setSubVisible('pcSubSplitPhotoPct',     isSplit);
+  setSubVisible('pcSubSplitLayout',       isSplit);
+  setSubVisible('pcSubSplitPhotoPos',    isSplit);
+  setSubVisible('pcSubSplitShadow',      isSplit);
+  setSubVisible('pcSubColunaBlockColor',   isColuna);
+  setSubVisible('pcSubColunaSide',         isColuna);
+  setSubVisible('pcSubColunaPhotoPct',    isColuna);
+  setSubVisible('pcSubColunaPhotoPos',   isColuna);
+  setSubVisible('pcSubColunaShadow',     isColuna);
   setSubVisible('pcSubFrameColor',         currentStyle === 'moldura');
   setSubVisible('pcSubGlassOpacity',       currentStyle === 'moldura');
-  setSubVisible('pcSubBlockTextMode',      currentStyle === 'revista' || currentStyle === 'split' || currentStyle === 'coluna' || currentStyle === 'moldura');
+  setSubVisible('pcSubBlockTextMode',      currentStyle === 'revista' || (!isPresMode && (currentStyle === 'split' || currentStyle === 'coluna' || currentStyle === 'moldura')));
+  // Sync accent bar controls
+  const abEnabledCb = document.getElementById('pcAccentBarEnabled');
+  if (abEnabledCb) abEnabledCb.checked = accentBarOn;
+  const abPosS = document.getElementById('pcAccentBarPos');
+  if (abPosS) abPosS.value = post.accentBarPos || 'top';
+  const abOx = post.accentBarOffsetX == null ? 5 : post.accentBarOffsetX;
+  const abOy = post.accentBarOffsetY == null ? 5 : post.accentBarOffsetY;
+  const abOxR = document.getElementById('pcAccentBarOffsetX');
+  const abOxV = document.getElementById('pcAccentBarOffsetXValue');
+  if (abOxR) abOxR.value = String(abOx);
+  if (abOxV) abOxV.textContent = `${abOx}%`;
+  const abOyR = document.getElementById('pcAccentBarOffsetY');
+  const abOyV = document.getElementById('pcAccentBarOffsetYValue');
+  if (abOyR) abOyR.value = String(abOy);
+  if (abOyV) abOyV.textContent = `${abOy}%`;
+
+  // Brand-strip: seção própria, visível em todos os modos e modelos
+  const stripOn = post.stripEnabled !== false;
+  setSubVisible('pcSubStripHeight',        stripOn);
+  setSubVisible('pcSubStripPos',           stripOn);
+  // Sync strip controls
+  const stripEnabledCb = document.getElementById('pcStripEnabled');
+  if (stripEnabledCb) stripEnabledCb.checked = stripOn;
+  const stripHeightR = document.getElementById('pcStripHeight');
+  const stripHeightV = document.getElementById('pcStripHeightValue');
+  const stripH = post.stripHeight || 6;
+  if (stripHeightR) stripHeightR.value = String(stripH);
+  if (stripHeightV) stripHeightV.textContent = `${stripH}px`;
+  const stripPosS = document.getElementById('pcStripPosSelect');
+  if (stripPosS) stripPosS.value = post.stripPos || 'bottom';
+  // Mostra botões esquerda/direita no layout toggle apenas para dashboard
+  document.querySelectorAll('#pcLayoutToggle button[data-layout="left"], #pcLayoutToggle button[data-layout="right"]').forEach(b => {
+    b.style.display = isDash ? '' : 'none';
+  });
 
   // Visibility toggles (hook / complement / bullets / bulletIcons / site)
   const visState = {
@@ -4406,6 +5408,10 @@ function updatePostControls(idx) {
   const brandMode = post.brandMode || 'light';
   document.querySelectorAll('#pcBrandModeToggle button').forEach(b => {
     b.classList.toggle('active', b.dataset.brand === brandMode);
+  });
+  const siteMode = post.siteMode || 'light';
+  document.querySelectorAll('#pcSiteModeToggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.sitemode === siteMode);
   });
 
   // Sliders de escala (hook / complement / bullets)
@@ -4485,11 +5491,63 @@ function updatePostControls(idx) {
   if (glassOpRange) glassOpRange.value = String(glassOpacity);
   if (glassOpValue) glassOpValue.textContent = `${glassOpacity}%`;
 
+  // Revista — proporção da foto + orientação
+  const revPct = post.revistaPhotoPct || (post.format === 'story' ? 60 : post.format === 'presentation' ? 55 : 65);
+  const revPctR = document.getElementById('pcRevistaPhotoPct');
+  const revPctV = document.getElementById('pcRevistaPhotoPctValue');
+  if (revPctR) revPctR.value = String(revPct);
+  if (revPctV) revPctV.textContent = `${revPct}%`;
+  const revLaySel = document.getElementById('pcRevistaLayoutSelect');
+  if (revLaySel) revLaySel.value = post.revistaLayout || 'top';
+  const revShadowCk = document.getElementById('pcRevistaShadow');
+  if (revShadowCk) revShadowCk.checked = post.revistaShadow !== false;
+
+  // Revista — posição da foto (background-position)
+  const revPhotoPos = post.revistaPhotoPos == null ? 50 : post.revistaPhotoPos;
+  const revPosR = document.getElementById('pcRevistaPhotoPos');
+  const revPosV = document.getElementById('pcRevistaPhotoPosValue');
+  if (revPosR) revPosR.value = String(revPhotoPos);
+  if (revPosV) revPosV.textContent = `${revPhotoPos}%`;
+
+  // Split — proporção da foto + orientação
+  const splitPct = post.splitPhotoPct || 50;
+  const splitPctR = document.getElementById('pcSplitPhotoPct');
+  const splitPctV = document.getElementById('pcSplitPhotoPctValue');
+  if (splitPctR) splitPctR.value = String(splitPct);
+  if (splitPctV) splitPctV.textContent = `${splitPct}%`;
+  const splitLaySel = document.getElementById('pcSplitLayoutSelect');
+  if (splitLaySel) splitLaySel.value = post.splitLayout || 'top';
+  const splitShadowCk = document.getElementById('pcSplitShadow');
+  if (splitShadowCk) splitShadowCk.checked = post.splitShadow !== false;
+
+  // Split — posição da foto (background-position)
+  const splitPhotoPos = post.splitPhotoPos == null ? 50 : post.splitPhotoPos;
+  const splitPosR = document.getElementById('pcSplitPhotoPos');
+  const splitPosV = document.getElementById('pcSplitPhotoPosValue');
+  if (splitPosR) splitPosR.value = String(splitPhotoPos);
+  if (splitPosV) splitPosV.textContent = `${splitPhotoPos}%`;
+
   // Column — lado da foto
   const columnSide = post.columnSide || 'left';
   document.querySelectorAll('#pcColumnSideToggle button').forEach(b => {
     b.classList.toggle('active', b.dataset.side === columnSide);
   });
+
+  // Coluna — proporção da foto
+  const colPct = post.colunaPhotoPct || 55;
+  const colPctR = document.getElementById('pcColunaPhotoPct');
+  const colPctV = document.getElementById('pcColunaPhotoPctValue');
+  if (colPctR) colPctR.value = String(colPct);
+  if (colPctV) colPctV.textContent = `${colPct}%`;
+  const colShadowCk = document.getElementById('pcColunaShadow');
+  if (colShadowCk) colShadowCk.checked = post.colunaShadow !== false;
+
+  // Coluna — posição da foto (background-position horizontal)
+  const colPhotoPos = post.colunaPhotoPos == null ? 50 : post.colunaPhotoPos;
+  const colPosR = document.getElementById('pcColunaPhotoPos');
+  const colPosV = document.getElementById('pcColunaPhotoPosValue');
+  if (colPosR) colPosR.value = String(colPhotoPos);
+  if (colPosV) colPosV.textContent = `${colPhotoPos}%`;
 
   // Text mode (revista / split / coluna / moldura)
   const currentTextMode =
@@ -4537,6 +5595,24 @@ function applyOverlayInline(postEl, post) {
   if (overlay) {
     if (bg) { overlay.style.display = ''; overlay.style.background = bg; }
     else    { overlay.style.display = 'none'; }
+  }
+  // Sincroniza overlay da revista (dentro de .revista-photo)
+  const revistaOverlay = postEl.querySelector('.revista-overlay');
+  if (revistaOverlay) {
+    if (bg) { revistaOverlay.style.display = ''; revistaOverlay.style.background = bg; }
+    else    { revistaOverlay.style.display = 'none'; }
+  }
+  // Sincroniza overlay do split (dentro de .split-photo)
+  const splitOverlay = postEl.querySelector('.split-overlay');
+  if (splitOverlay) {
+    if (bg) { splitOverlay.style.display = ''; splitOverlay.style.background = bg; }
+    else    { splitOverlay.style.display = 'none'; }
+  }
+  // Sincroniza overlay da coluna (dentro de .coluna-photo)
+  const colunaOverlay = postEl.querySelector('.coluna-overlay');
+  if (colunaOverlay) {
+    if (bg) { colunaOverlay.style.display = ''; colunaOverlay.style.background = bg; }
+    else    { colunaOverlay.style.display = 'none'; }
   }
   // Sincroniza overlay interno do glass (dash-card / moldura)
   const innerOverlay = postEl.querySelector('.dash-card-inner-overlay');
@@ -4929,7 +6005,7 @@ function initPostControls() {
       openColorDropdown('accent', accentBtn);
     });
   }
-  // Toggle layout (texto)
+  // Toggle layout (texto — classic)
   document.querySelectorAll('#pcLayoutToggle button').forEach(btn => {
     btn.addEventListener('click', () => {
       const post = getActivePost();
@@ -4941,6 +6017,51 @@ function initPostControls() {
       saveSession();
     });
   });
+  // Select posição do card (dashboard — 4 direções)
+  const cardPosSelect = document.getElementById('pcCardPositionSelect');
+  if (cardPosSelect) {
+    cardPosSelect.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.layout = cardPosSelect.value;
+      const postEl = document.getElementById(post.id);
+      if (postEl) applyPostVariant(postEl, post);
+      updatePostControls(current);
+      saveSession();
+    });
+  }
+  // Dashboard apresentação — Escala do Card (no grupo Fundo)
+  const dashPresScaleRange = document.getElementById('pcDashPresScale');
+  if (dashPresScaleRange) {
+    dashPresScaleRange.addEventListener('input', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      const val = Number(dashPresScaleRange.value) / 100;
+      post.hookScale = val;
+      post.complementScale = val;
+      const postEl = document.getElementById(post.id);
+      if (postEl) {
+        postEl.style.setProperty('--hook-scale', val);
+        postEl.style.setProperty('--complement-scale', val);
+      }
+      const lbl = document.getElementById('pcDashPresScaleValue');
+      if (lbl) lbl.textContent = `${dashPresScaleRange.value}%`;
+    });
+    dashPresScaleRange.addEventListener('change', () => saveSession());
+  }
+  // Dashboard apresentação — Posição do Card (no grupo Fundo)
+  const dashPresPosSelect = document.getElementById('pcDashPresPositionSelect');
+  if (dashPresPosSelect) {
+    dashPresPosSelect.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.layout = dashPresPosSelect.value;
+      const postEl = document.getElementById(post.id);
+      if (postEl) applyPostVariant(postEl, post);
+      updatePostControls();
+      saveSession();
+    });
+  }
   // Toggle alinhamento horizontal (esquerda/direita)
   document.querySelectorAll('#pcAlignToggle button').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -4965,7 +6086,7 @@ function initPostControls() {
       saveSession();
     });
   });
-  // Toggle brand mode (claro/escuro) logo + site
+  // Toggle brand mode (claro/escuro) logo
   document.querySelectorAll('#pcBrandModeToggle button').forEach(btn => {
     btn.addEventListener('click', () => {
       const post = getActivePost();
@@ -4975,6 +6096,20 @@ function initPostControls() {
       if (postEl) postEl.dataset.brand = post.brandMode;
       document.querySelectorAll('#pcBrandModeToggle button').forEach(b => {
         b.classList.toggle('active', b.dataset.brand === post.brandMode);
+      });
+      saveSession();
+    });
+  });
+  // Toggle site mode (claro/escuro) site — independente da logo
+  document.querySelectorAll('#pcSiteModeToggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.siteMode = btn.dataset.sitemode;
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.dataset.siteMode = post.siteMode;
+      document.querySelectorAll('#pcSiteModeToggle button').forEach(b => {
+        b.classList.toggle('active', b.dataset.sitemode === post.siteMode);
       });
       saveSession();
     });
@@ -4995,6 +6130,17 @@ function initPostControls() {
     range.addEventListener('change', () => saveSession());
   };
   wireScaleSlider('pcHookScale',       'pcHookScaleValue',       '--hook-scale',       'hookScale');
+  // Dashboard: hookScale ("Escala do Card") sincroniza complementScale junto
+  const hookScaleRange = document.getElementById('pcHookScale');
+  if (hookScaleRange) {
+    hookScaleRange.addEventListener('input', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated || post.style !== 'dashboard') return;
+      post.complementScale = post.hookScale;
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.style.setProperty('--complement-scale', post.complementScale);
+    });
+  }
   wireScaleSlider('pcComplementScale', 'pcComplementScaleValue', '--complement-scale', 'complementScale');
   wireScaleSlider('pcBulletsScale',    'pcBulletsScaleValue',    '--bullets-scale',    'bulletsScale');
   wireScaleSlider('pcBulletIconScale', 'pcBulletIconScaleValue', '--bullet-icon-scale','bulletIconScale');
@@ -5103,6 +6249,384 @@ function initPostControls() {
       saveSession();
     });
   });
+  // Revista — proporção da foto
+  const revPctRange = document.getElementById('pcRevistaPhotoPct');
+  if (revPctRange) {
+    revPctRange.addEventListener('input', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.revistaPhotoPct = Number(revPctRange.value);
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.style.setProperty('--revista-photo-pct', post.revistaPhotoPct + '%');
+      const lbl = document.getElementById('pcRevistaPhotoPctValue');
+      if (lbl) lbl.textContent = `${post.revistaPhotoPct}%`;
+    });
+    revPctRange.addEventListener('change', () => saveSession());
+  }
+  // Revista — orientação (foto em cima / embaixo)
+  const revLayoutSelect = document.getElementById('pcRevistaLayoutSelect');
+  if (revLayoutSelect) {
+    revLayoutSelect.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.revistaLayout = revLayoutSelect.value;
+      post.revistaPhotoPos = 50;
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.dataset.revistaLayout = post.revistaLayout;
+      applyRevistaPhotoPos(post);
+      updatePostControls();
+      saveSession();
+    });
+  }
+  // Revista — sombra na divisa (toggle)
+  const revShadowCheck = document.getElementById('pcRevistaShadow');
+  if (revShadowCheck) {
+    revShadowCheck.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.revistaShadow = revShadowCheck.checked;
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.dataset.revistaShadow = post.revistaShadow ? 'on' : 'off';
+      saveSession();
+    });
+  }
+  // Revista — posição da foto (background-position)
+  function applyRevistaPhotoPos(post) {
+    const postEl = document.getElementById(post.id);
+    if (!postEl) return;
+    const photo = postEl.querySelector('.revista-photo');
+    if (!photo) return;
+    const pos = post.revistaPhotoPos == null ? 50 : post.revistaPhotoPos;
+    const layout = post.revistaLayout || 'top';
+    photo.style.backgroundPosition = (layout === 'left' || layout === 'right') ? `${pos}% center` : `center ${pos}%`;
+    const lbl = document.getElementById('pcRevistaPhotoPosValue');
+    if (lbl) lbl.textContent = `${pos}%`;
+    const range = document.getElementById('pcRevistaPhotoPos');
+    if (range && range.value !== String(pos)) range.value = String(pos);
+  }
+  const revPosRange = document.getElementById('pcRevistaPhotoPos');
+  if (revPosRange) {
+    revPosRange.addEventListener('input', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.revistaPhotoPos = Number(revPosRange.value);
+      applyRevistaPhotoPos(post);
+    });
+    revPosRange.addEventListener('change', () => saveSession());
+  }
+  const revPosLeft = document.getElementById('pcRevistaPhotoPosLeft');
+  if (revPosLeft) {
+    revPosLeft.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.revistaPhotoPos = Math.max(0, (post.revistaPhotoPos == null ? 50 : post.revistaPhotoPos) - 5);
+      applyRevistaPhotoPos(post);
+      saveSession();
+    });
+  }
+  const revPosRight = document.getElementById('pcRevistaPhotoPosRight');
+  if (revPosRight) {
+    revPosRight.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.revistaPhotoPos = Math.min(100, (post.revistaPhotoPos == null ? 50 : post.revistaPhotoPos) + 5);
+      applyRevistaPhotoPos(post);
+      saveSession();
+    });
+  }
+  // Split — proporção da foto
+  const splitPctRange = document.getElementById('pcSplitPhotoPct');
+  if (splitPctRange) {
+    splitPctRange.addEventListener('input', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.splitPhotoPct = Number(splitPctRange.value);
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.style.setProperty('--split-photo-pct', post.splitPhotoPct + '%');
+      const lbl = document.getElementById('pcSplitPhotoPctValue');
+      if (lbl) lbl.textContent = `${post.splitPhotoPct}%`;
+    });
+    splitPctRange.addEventListener('change', () => saveSession());
+  }
+  // Split — orientação
+  const splitLayoutSelect = document.getElementById('pcSplitLayoutSelect');
+  if (splitLayoutSelect) {
+    splitLayoutSelect.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.splitLayout = splitLayoutSelect.value;
+      post.splitPhotoPos = 50;
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.dataset.splitLayout = post.splitLayout;
+      applySplitPhotoPos(post);
+      updatePostControls();
+      saveSession();
+    });
+  }
+  // Split — sombra na divisa
+  const splitShadowCheck = document.getElementById('pcSplitShadow');
+  if (splitShadowCheck) {
+    splitShadowCheck.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.splitShadow = splitShadowCheck.checked;
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.dataset.splitShadow = post.splitShadow ? 'on' : 'off';
+      saveSession();
+    });
+  }
+  // Split — posição da foto (background-position)
+  function applySplitPhotoPos(post) {
+    const postEl = document.getElementById(post.id);
+    if (!postEl) return;
+    const photo = postEl.querySelector('.split-photo');
+    if (!photo) return;
+    const pos = post.splitPhotoPos == null ? 50 : post.splitPhotoPos;
+    const layout = post.splitLayout || 'top';
+    photo.style.backgroundPosition = (layout === 'left' || layout === 'right') ? `${pos}% center` : `center ${pos}%`;
+    const lbl = document.getElementById('pcSplitPhotoPosValue');
+    if (lbl) lbl.textContent = `${pos}%`;
+    const range = document.getElementById('pcSplitPhotoPos');
+    if (range && range.value !== String(pos)) range.value = String(pos);
+  }
+  const splitPosRange = document.getElementById('pcSplitPhotoPos');
+  if (splitPosRange) {
+    splitPosRange.addEventListener('input', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.splitPhotoPos = Number(splitPosRange.value);
+      applySplitPhotoPos(post);
+    });
+    splitPosRange.addEventListener('change', () => saveSession());
+  }
+  const splitPosLeft = document.getElementById('pcSplitPhotoPosLeft');
+  if (splitPosLeft) {
+    splitPosLeft.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.splitPhotoPos = Math.max(0, (post.splitPhotoPos == null ? 50 : post.splitPhotoPos) - 5);
+      applySplitPhotoPos(post);
+      saveSession();
+    });
+  }
+  const splitPosRight = document.getElementById('pcSplitPhotoPosRight');
+  if (splitPosRight) {
+    splitPosRight.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.splitPhotoPos = Math.min(100, (post.splitPhotoPos == null ? 50 : post.splitPhotoPos) + 5);
+      applySplitPhotoPos(post);
+      saveSession();
+    });
+  }
+  // Coluna — proporção da foto
+  const colPctRange = document.getElementById('pcColunaPhotoPct');
+  if (colPctRange) {
+    colPctRange.addEventListener('input', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.colunaPhotoPct = Number(colPctRange.value);
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.style.setProperty('--coluna-photo-pct', post.colunaPhotoPct + '%');
+      const lbl = document.getElementById('pcColunaPhotoPctValue');
+      if (lbl) lbl.textContent = `${post.colunaPhotoPct}%`;
+    });
+    colPctRange.addEventListener('change', () => saveSession());
+  }
+  // Coluna — sombra na divisa
+  const colShadowCheck = document.getElementById('pcColunaShadow');
+  if (colShadowCheck) {
+    colShadowCheck.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.colunaShadow = colShadowCheck.checked;
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.dataset.colunaShadow = post.colunaShadow ? 'on' : 'off';
+      saveSession();
+    });
+  }
+  // Coluna — posição da foto (background-position horizontal)
+  function applyColunaPhotoPos(post) {
+    const postEl = document.getElementById(post.id);
+    if (!postEl) return;
+    const photo = postEl.querySelector('.coluna-photo');
+    if (!photo) return;
+    const pos = post.colunaPhotoPos == null ? 50 : post.colunaPhotoPos;
+    photo.style.backgroundPosition = `${pos}% center`;
+    const lbl = document.getElementById('pcColunaPhotoPosValue');
+    if (lbl) lbl.textContent = `${pos}%`;
+    const range = document.getElementById('pcColunaPhotoPos');
+    if (range && range.value !== String(pos)) range.value = String(pos);
+  }
+  const colPosRange = document.getElementById('pcColunaPhotoPos');
+  if (colPosRange) {
+    colPosRange.addEventListener('input', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.colunaPhotoPos = Number(colPosRange.value);
+      applyColunaPhotoPos(post);
+    });
+    colPosRange.addEventListener('change', () => saveSession());
+  }
+  const colPosLeft = document.getElementById('pcColunaPhotoPosLeft');
+  if (colPosLeft) {
+    colPosLeft.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.colunaPhotoPos = Math.max(0, (post.colunaPhotoPos == null ? 50 : post.colunaPhotoPos) - 5);
+      applyColunaPhotoPos(post);
+      saveSession();
+    });
+  }
+  const colPosRight = document.getElementById('pcColunaPhotoPosRight');
+  if (colPosRight) {
+    colPosRight.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.colunaPhotoPos = Math.min(100, (post.colunaPhotoPos == null ? 50 : post.colunaPhotoPos) + 5);
+      applyColunaPhotoPos(post);
+      saveSession();
+    });
+  }
+  // ── Accent bar controls ──
+  function applyAccentBarInline(post) {
+    const postEl = document.getElementById(post.id);
+    if (!postEl) return;
+    postEl.dataset.accentBarEnabled = post.accentBarEnabled !== false ? 'true' : 'false';
+    postEl.dataset.accentBarPos     = post.accentBarPos || 'top';
+    postEl.style.setProperty('--accent-bar-offset-x', (post.accentBarOffsetX == null ? 5 : post.accentBarOffsetX) + '%');
+    postEl.style.setProperty('--accent-bar-offset-y', (post.accentBarOffsetY == null ? 5 : post.accentBarOffsetY) + '%');
+  }
+  const abEnabledCheck = document.getElementById('pcAccentBarEnabled');
+  if (abEnabledCheck) {
+    abEnabledCheck.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.accentBarEnabled = abEnabledCheck.checked;
+      applyAccentBarInline(post);
+      updatePostControls();
+      saveSession();
+    });
+  }
+  const abPosSelect = document.getElementById('pcAccentBarPos');
+  if (abPosSelect) {
+    abPosSelect.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.accentBarPos = abPosSelect.value;
+      applyAccentBarInline(post);
+      saveSession();
+    });
+  }
+  // Offset X
+  const abOffsetXRange = document.getElementById('pcAccentBarOffsetX');
+  if (abOffsetXRange) {
+    abOffsetXRange.addEventListener('input', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.accentBarOffsetX = Number(abOffsetXRange.value);
+      applyAccentBarInline(post);
+      const lbl = document.getElementById('pcAccentBarOffsetXValue');
+      if (lbl) lbl.textContent = `${post.accentBarOffsetX}%`;
+    });
+    abOffsetXRange.addEventListener('change', () => saveSession());
+  }
+  const abOxLeft = document.getElementById('pcAccentBarOffsetXLeft');
+  if (abOxLeft) {
+    abOxLeft.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.accentBarOffsetX = Math.max(0, (post.accentBarOffsetX == null ? 5 : post.accentBarOffsetX) - 5);
+      applyAccentBarInline(post);
+      updatePostControls();
+      saveSession();
+    });
+  }
+  const abOxRight = document.getElementById('pcAccentBarOffsetXRight');
+  if (abOxRight) {
+    abOxRight.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.accentBarOffsetX = Math.min(95, (post.accentBarOffsetX == null ? 5 : post.accentBarOffsetX) + 5);
+      applyAccentBarInline(post);
+      updatePostControls();
+      saveSession();
+    });
+  }
+  // Offset Y
+  const abOffsetYRange = document.getElementById('pcAccentBarOffsetY');
+  if (abOffsetYRange) {
+    abOffsetYRange.addEventListener('input', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.accentBarOffsetY = Number(abOffsetYRange.value);
+      applyAccentBarInline(post);
+      const lbl = document.getElementById('pcAccentBarOffsetYValue');
+      if (lbl) lbl.textContent = `${post.accentBarOffsetY}%`;
+    });
+    abOffsetYRange.addEventListener('change', () => saveSession());
+  }
+  const abOyUp = document.getElementById('pcAccentBarOffsetYUp');
+  if (abOyUp) {
+    abOyUp.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.accentBarOffsetY = Math.max(0, (post.accentBarOffsetY == null ? 5 : post.accentBarOffsetY) - 5);
+      applyAccentBarInline(post);
+      updatePostControls();
+      saveSession();
+    });
+  }
+  const abOyDown = document.getElementById('pcAccentBarOffsetYDown');
+  if (abOyDown) {
+    abOyDown.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.accentBarOffsetY = Math.min(95, (post.accentBarOffsetY == null ? 5 : post.accentBarOffsetY) + 5);
+      applyAccentBarInline(post);
+      updatePostControls();
+      saveSession();
+    });
+  }
+  // Brand-strip — on/off
+  const stripEnabledCheck = document.getElementById('pcStripEnabled');
+  if (stripEnabledCheck) {
+    stripEnabledCheck.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.stripEnabled = stripEnabledCheck.checked;
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.dataset.stripEnabled = post.stripEnabled ? 'true' : 'false';
+      updatePostControls();
+      saveSession();
+    });
+  }
+  // Brand-strip — espessura
+  const stripHeightRange = document.getElementById('pcStripHeight');
+  if (stripHeightRange) {
+    stripHeightRange.addEventListener('input', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.stripHeight = Number(stripHeightRange.value);
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.style.setProperty('--strip-height', post.stripHeight + 'px');
+      const lbl = document.getElementById('pcStripHeightValue');
+      if (lbl) lbl.textContent = `${post.stripHeight}px`;
+    });
+    stripHeightRange.addEventListener('change', () => saveSession());
+  }
+  // Brand-strip — posição
+  const stripPosSelect = document.getElementById('pcStripPosSelect');
+  if (stripPosSelect) {
+    stripPosSelect.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.stripPos = stripPosSelect.value;
+      const postEl = document.getElementById(post.id);
+      if (postEl) postEl.dataset.stripPos = post.stripPos;
+      saveSession();
+    });
+  }
   // Dash card — opacidade
   const dashOpRange = document.getElementById('pcDashCardOpacity');
   if (dashOpRange) {
@@ -5214,9 +6738,23 @@ function resetPostStyle() {
   post.dashCardColor     = '#0F1E14';
   post.dashCardOpacity   = 65;
   post.revistaBlockColor = '#f8fafc';
+  delete post.revistaPhotoPct;
+  delete post.revistaPhotoPos;
+  delete post.revistaLayout;
   post.splitBlockColor   = '#152F17';
+  delete post.splitPhotoPct;
+  delete post.splitPhotoPos;
+  delete post.splitLayout;
+  post.splitShadow       = true;
+  delete post.colunaPhotoPct;
+  delete post.colunaPhotoPos;
+  post.colunaShadow      = true;
   post.revistaTextMode   = 'dark';
   post.splitTextMode     = 'light';
+  post.accentBarEnabled  = true;
+  post.accentBarPos      = 'top';
+  post.accentBarOffsetX  = 5;
+  post.accentBarOffsetY  = 5;
   post.hookScale          = 1;
   post.complementScale    = 1;
   post.bulletsScale       = 1;
@@ -5230,6 +6768,9 @@ function resetPostStyle() {
   post.complementVisible  = true;
   post.bulletsVisible     = true;
   post.bulletIconsVisible = true;
+  post.stripEnabled       = true;
+  post.stripHeight        = 6;
+  post.stripPos           = 'bottom';
   const postEl = document.getElementById(post.id);
   if (postEl) applyPostVariant(postEl, post);
   updatePostControls(current);
@@ -5284,6 +6825,16 @@ function findPostDataById(elementId) {
     const s = c.slides.find(s => s.id === elementId);
     if (s) return s;
   }
+  const lpp = linkedinPessoalPosts.find(p => p.id === elementId);
+  if (lpp) return lpp;
+  for (const c of linkedinPessoalCarousels) {
+    const s = c.slides.find(s => s.id === elementId);
+    if (s) return s;
+  }
+  for (const c of presentations) {
+    const s = c.slides.find(s => s.id === elementId);
+    if (s) return s;
+  }
   return null;
 }
 
@@ -5328,7 +6879,9 @@ document.addEventListener('blur', function(e) {
 
   // Legenda do painel lateral
   if (target.id === 'legendText' && target.isContentEditable) {
-    if (isCarouselMode()) {
+    if (isPresentationMode()) {
+      // Apresentação não tem legenda editável
+    } else if (isCarouselMode()) {
       getModeLegends()[getModeCurrentIdx()] = target.innerText;
     } else {
       const items = getModeItems();
@@ -5355,27 +6908,12 @@ async function ensureLogoSvgMarkup() {
 
 // Decide cor do fill pra substituir a logo no clone de download.
 // Classic/dashboard/split (default) → branco. Revista → cinza escuro.
-// Quando text-light/text-dark forçam a cor, honra o modo.
+// data-brand no .post é a fonte de verdade (CSS usa !important),
+// então sempre respeita ele para decidir a cor do fill no export.
 function resolveLogoFillColor(img) {
-  const cls = img.className || '';
-  if (cls.includes('revista-logo')) {
-    const block = img.closest('.revista-block');
-    return block && block.classList.contains('text-light') ? '#ffffff' : '#4d4d4d';
-  }
-  if (cls.includes('split-logo')) {
-    const block = img.closest('.split-block');
-    return block && block.classList.contains('text-dark') ? '#4d4d4d' : '#ffffff';
-  }
-  if (cls.includes('coluna-logo')) {
-    const block = img.closest('.coluna-block');
-    return block && block.classList.contains('text-light') ? '#ffffff' : '#4d4d4d';
-  }
-  if (cls.includes('moldura-logo')) {
-    const post = img.closest('.post');
-    const glass = post && post.querySelector('.moldura-glass');
-    return glass && glass.classList.contains('text-dark') ? '#4d4d4d' : '#ffffff';
-  }
-  return '#ffffff';
+  const post = img.closest('.post');
+  const brand = post && post.dataset.brand;
+  return brand === 'dark' ? '#4d4d4d' : '#ffffff';
 }
 
 // Detecta mobile (tela pequena ou touch). Usado para reduzir scale do export
@@ -5627,6 +7165,45 @@ async function ensureFontsReady() {
   await document.fonts.ready;
 }
 
+// ── Helpers para export híbrido (Canvas 2D + html2canvas) ──
+// html2canvas 1.4.1 falha silenciosamente com CSS background-image (data URIs grandes + CORS).
+// Solução: desenhar a foto de fundo manualmente no Canvas 2D e usar html2canvas apenas para overlay/texto/logo.
+
+// Converte qualquer src de imagem (data URI ou URL externa) para blob URL same-origin.
+// Blob URLs evitam dois bugs do html2canvas 1.4.1:
+//   - Data URIs muito grandes em background-image (issue #2754)
+//   - CORS cross-origin em background-image (issue #3020)
+async function toBlobUrl(src) {
+  if (!src) return null;
+  if (src.startsWith('blob:')) return src;
+  const resp = await fetch(src, src.startsWith('data:') ? {} : { cache: 'no-store' });
+  const blob = await resp.blob();
+  return URL.createObjectURL(blob);
+}
+
+// Troca background-image dos containers de foto PRINCIPAIS para blob URL same-origin
+// no DOM real ANTES do html2canvas clonar. Retorna .restore() para reverter.
+// NÃO inclui .dash-card-blur / .moldura-glass-blur — esses são tratados por activateGlassLayers no onclone.
+async function swapBgsToBlobUrl(postEl, bgImage) {
+  if (!bgImage) return { restore: () => {} };
+  const blobUrl = await toBlobUrl(bgImage);
+  const blobBg = `url('${blobUrl}')`;
+  const selectors = '.bg, .revista-photo, .split-photo, .coluna-photo, .moldura-bg';
+  const saved = [];
+  postEl.querySelectorAll(selectors).forEach(el => {
+    if (el.style.backgroundImage && el.style.backgroundImage !== 'none') {
+      saved.push({ el, orig: el.style.backgroundImage });
+      el.style.backgroundImage = blobBg;
+    }
+  });
+  return {
+    restore: () => {
+      saved.forEach(s => { s.el.style.backgroundImage = s.orig; });
+      URL.revokeObjectURL(blobUrl);
+    }
+  };
+}
+
 // Download
 async function downloadCurrent() {
   const post = getActivePost();
@@ -5638,7 +7215,9 @@ async function downloadCurrent() {
   const postEl  = document.getElementById(post.id);
   const slideId = post.id;
   const scaler  = document.getElementById('postScaler');
-  const postH   = post.format === 'story' ? 1920 : 1350;
+  const dims    = getPostDimensions(post.format || 'feed');
+  const postW   = dims.w;
+  const postH   = dims.h;
 
   // Salva estilos originais do scaler para restaurar depois
   const savedTransform = scaler.style.transform;
@@ -5647,74 +7226,80 @@ async function downloadCurrent() {
   const savedVisibility = scaler.style.visibility;
 
   try {
-    // 1) Aguarda todos os pesos/variantes da Google Sans Flex ficarem prontos
     await ensureFontsReady();
-    // Carrega o SVG markup da logo pra poder injetar inline no clone
-    // (html2canvas não renderiza <img src=...svg> com filtros CSS)
     await ensureLogoSvgMarkup();
 
-    // 2) Remove a escala do postScaler temporariamente para que o
-    //    html2canvas capture o post em seu tamanho nativo 1080x1350.
-    //    Esconde visualmente para evitar "flash" de zoom na tela.
     scaler.style.visibility = 'hidden';
     scaler.style.transform  = 'none';
-    scaler.style.width      = '1080px';
+    scaler.style.width      = `${postW}px`;
     scaler.style.height     = `${postH}px`;
 
-    // 3) Pequeno buffer para o layout finalizar após a mudança
     await new Promise(r => setTimeout(r, 80));
 
-    // 4) Captura dimensões reais das logos ANTES do html2canvas clonar —
-    //    dentro do onclone, getBoundingClientRect do clone pode retornar 0.
     const logoDims = captureLogoDims(postEl);
 
-    // 5) Pré-desfoca a imagem de fundo (html2canvas não renderiza
-    //    filter:blur nem backdrop-filter — entregamos a imagem já blurred)
     const blurSrc = extractBlurBgSrc(postEl);
-    const blurredUrl = blurSrc ? await preBlurImage(blurSrc, 24) : null;
+    let blurredUrl = null;
+    if (blurSrc) {
+      // Converte para blob URL antes de desfocar (evita CORS com R2 URLs)
+      const blurBlobUrl = await toBlobUrl(blurSrc);
+      blurredUrl = await preBlurImage(blurBlobUrl, 24);
+      URL.revokeObjectURL(blurBlobUrl);
+    }
 
-    // Mobile: scale 2 (2160×2700 = 5.8M px) em vez de 4 (4320×5400 = 23M px)
-    // Muitos browsers mobile limitam canvas a ~16M pixels e falham silenciosamente.
+    // Mobile: scale 2 em vez de 4 (limite de ~16M pixels em browsers mobile)
     const exportScale = isMobile() ? 2 : 4;
 
-    const canvas = await html2canvas(postEl, {
-      scale: exportScale,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: null,
-      width:  1080,
-      height: postH,
-      logging: false,
-      onclone: (clonedDoc) => {
-        // Garante que o slide alvo esteja visível no DOM clonado
-        const cloneScaler = clonedDoc.getElementById('postScaler');
-        if (cloneScaler) {
-          cloneScaler.style.visibility = 'visible';
-          cloneScaler.style.transform  = 'none';
-          cloneScaler.style.width      = '1080px';
-          cloneScaler.style.height     = `${postH}px`;
-        }
-        const cloneEl = clonedDoc.getElementById(slideId);
-        if (cloneEl) {
-          const slide = cloneEl.closest('.post-slide');
-          if (slide) {
-            slide.style.display = 'block';
-            slide.style.visibility = 'visible';
-          }
-          cloneEl.querySelectorAll('.hook').forEach(h => {
-            h.style.paddingRight = '6px';
-          });
-          // Remove os safe zone guides antes da captura
-          cloneEl.querySelectorAll('.safe-zone-guide').forEach(g => g.remove());
-          // Substitui <img> da logo por <svg> inline com fill fixo
-          inlineLogosForCapture(cloneEl, clonedDoc, logoDims);
-          // Ativa camadas de glass alinhadas com o fundo (backdrop-filter não funciona no html2canvas)
-          activateGlassLayers(cloneEl, blurredUrl, 1080, postH);
-        }
-      },
+    // Converte bgImage para blob URL same-origin no DOM real ANTES do html2canvas clonar.
+    // Blob URLs evitam os bugs do html2canvas com data URIs grandes e CORS cross-origin.
+    const bgSwap = await swapBgsToBlobUrl(postEl, post.bgImage);
+
+    // Pré-configura blur divs no DOM real com a imagem pré-desfocada (same-origin data URL)
+    // para que html2canvas pré-carregue corretamente ao clonar.
+    const blurSaved = [];
+    postEl.querySelectorAll('.dash-card-blur, .moldura-glass-blur').forEach(el => {
+      blurSaved.push({ el, orig: el.style.backgroundImage });
+      el.style.backgroundImage = blurredUrl ? `url('${blurredUrl}')` : 'none';
     });
 
-    // Usa toBlob + createObjectURL (eficiente em memória, funciona melhor no mobile)
+    let canvas;
+    try {
+      canvas = await html2canvas(postEl, {
+        scale: exportScale,
+        useCORS: true,
+        width:  postW,
+        height: postH,
+        logging: false,
+        onclone: (clonedDoc) => {
+          const cloneScaler = clonedDoc.getElementById('postScaler');
+          if (cloneScaler) {
+            cloneScaler.style.visibility = 'visible';
+            cloneScaler.style.transform  = 'none';
+            cloneScaler.style.width      = `${postW}px`;
+            cloneScaler.style.height     = `${postH}px`;
+          }
+          const cloneEl = clonedDoc.getElementById(slideId);
+          if (cloneEl) {
+            const slide = cloneEl.closest('.post-slide');
+            if (slide) {
+              slide.style.display = 'block';
+              slide.style.visibility = 'visible';
+            }
+            cloneEl.querySelectorAll('.hook').forEach(h => {
+              h.style.paddingRight = '6px';
+            });
+            cloneEl.querySelectorAll('.safe-zone-guide').forEach(g => g.remove());
+            inlineLogosForCapture(cloneEl, clonedDoc, logoDims);
+            activateGlassLayers(cloneEl, blurredUrl, postW, postH);
+          }
+        },
+      });
+    } finally {
+      bgSwap.restore();
+      blurSaved.forEach(s => { s.el.style.backgroundImage = s.orig; });
+    }
+
+    // Exporta JPEG
     const baseFilename = post.filename || 'cropware.jpg';
     const filename = post.format === 'story'
       ? baseFilename.replace(/\.jpg$/i, '_story.jpg')
@@ -5743,7 +7328,9 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
   const postEl = document.getElementById(slideData.id);
   if (!postEl) throw new Error('Slide element not found');
   const scaler = document.getElementById('postScaler');
-  const postH = slideData.format === 'story' ? 1920 : 1350;
+  const dims = getPostDimensions(slideData.format || 'feed');
+  const postW = dims.w;
+  const postH = dims.h;
 
   const slideWrapper = document.getElementById(slideData.slideId);
   const wasVisible = slideWrapper && slideWrapper.classList.contains('visible');
@@ -5760,7 +7347,7 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
 
     scaler.style.visibility = 'hidden';
     scaler.style.transform = 'none';
-    scaler.style.width = '1080px';
+    scaler.style.width = `${postW}px`;
     scaler.style.height = `${postH}px`;
 
     await new Promise(r => setTimeout(r, 80));
@@ -5769,36 +7356,56 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
 
     // Pré-desfoca a imagem de fundo para o export
     const blurSrc = extractBlurBgSrc(postEl);
-    const blurredUrl = blurSrc ? await preBlurImage(blurSrc, 24) : null;
+    let blurredUrl = null;
+    if (blurSrc) {
+      const blurBlobUrl = await toBlobUrl(blurSrc);
+      blurredUrl = await preBlurImage(blurBlobUrl, 24);
+      URL.revokeObjectURL(blurBlobUrl);
+    }
 
-    return await html2canvas(postEl, {
-      scale: scale,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: null,
-      width: 1080,
-      height: postH,
-      logging: false,
-      onclone: (clonedDoc) => {
-        const cloneScaler = clonedDoc.getElementById('postScaler');
-        if (cloneScaler) {
-          cloneScaler.style.visibility = 'visible';
-          cloneScaler.style.transform = 'none';
-          cloneScaler.style.width = '1080px';
-          cloneScaler.style.height = `${postH}px`;
-        }
-        const cloneEl = clonedDoc.getElementById(slideData.id);
-        if (cloneEl) {
-          const slide = cloneEl.closest('.post-slide');
-          if (slide) { slide.style.display = 'block'; slide.style.visibility = 'visible'; }
-          cloneEl.querySelectorAll('.hook').forEach(h => { h.style.paddingRight = '6px'; });
-          cloneEl.querySelectorAll('.safe-zone-guide').forEach(g => g.remove());
-          inlineLogosForCapture(cloneEl, clonedDoc, logoDims);
-          // Ativa camadas de glass alinhadas com o fundo (backdrop-filter não funciona no html2canvas)
-          activateGlassLayers(cloneEl, blurredUrl, 1080, postH);
-        }
-      },
+    // Converte bgImage para blob URL same-origin no DOM real ANTES do html2canvas clonar.
+    const bgSwap = await swapBgsToBlobUrl(postEl, slideData.bgImage);
+
+    // Pré-configura blur divs no DOM real com a imagem pré-desfocada (same-origin data URL)
+    const blurSaved = [];
+    postEl.querySelectorAll('.dash-card-blur, .moldura-glass-blur').forEach(el => {
+      blurSaved.push({ el, orig: el.style.backgroundImage });
+      el.style.backgroundImage = blurredUrl ? `url('${blurredUrl}')` : 'none';
     });
+
+    let canvas;
+    try {
+      canvas = await html2canvas(postEl, {
+        scale: scale,
+        useCORS: true,
+        width: postW,
+        height: postH,
+        logging: false,
+        onclone: (clonedDoc) => {
+          const cloneScaler = clonedDoc.getElementById('postScaler');
+          if (cloneScaler) {
+            cloneScaler.style.visibility = 'visible';
+            cloneScaler.style.transform = 'none';
+            cloneScaler.style.width = `${postW}px`;
+            cloneScaler.style.height = `${postH}px`;
+          }
+          const cloneEl = clonedDoc.getElementById(slideData.id);
+          if (cloneEl) {
+            const slide = cloneEl.closest('.post-slide');
+            if (slide) { slide.style.display = 'block'; slide.style.visibility = 'visible'; }
+            cloneEl.querySelectorAll('.hook').forEach(h => { h.style.paddingRight = '6px'; });
+            cloneEl.querySelectorAll('.safe-zone-guide').forEach(g => g.remove());
+            inlineLogosForCapture(cloneEl, clonedDoc, logoDims);
+            activateGlassLayers(cloneEl, blurredUrl, postW, postH);
+          }
+        },
+      });
+    } finally {
+      bgSwap.restore();
+      blurSaved.forEach(s => { s.el.style.backgroundImage = s.orig; });
+    }
+
+    return canvas;
   } finally {
     scaler.style.transform = savedTransform;
     scaler.style.width = savedWidth;
@@ -5809,8 +7416,9 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
 }
 
 async function captureSlideAsBlob(slideData) {
-  // Mobile: scale 2 em vez de 4 (limite de ~16M pixels em browsers mobile)
-  const scale = isMobile() ? 2 : 4;
+  // Mobile: scale 2; Presentation (1920×1080) scale 2 → 3840×2160 4K; Feed/story: scale 4
+  const isPres = slideData.format === 'presentation';
+  const scale = (isMobile() || isPres) ? 2 : 4;
   const canvas = await captureSlideAsCanvas(slideData, scale);
   return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
 }
@@ -5916,7 +7524,8 @@ async function downloadLinkedInCarouselPDF() {
       .replace(/^_|_$/g, '')
       .slice(0, 60);
     const pdfBlob = pdf.output('blob');
-    downloadBlob(pdfBlob, `cropware_linkedin_${safeName}.pdf`);
+    const pdfPrefix = getPlatform() === 'linkedin-pessoal' ? 'linkedin_pessoal' : 'cropware_linkedin';
+    downloadBlob(pdfBlob, `${pdfPrefix}_${safeName}.pdf`);
     setGenStatus('', '');
   } catch(e) {
     alert('Erro ao exportar PDF: ' + e.message);
@@ -5927,12 +7536,55 @@ async function downloadLinkedInCarouselPDF() {
   btn.style.opacity = '';
 }
 
+// ── EXPORT PDF APRESENTAÇÃO (landscape 1920×1080) ──────────
+async function downloadPresentationImage() {
+  const items = getModeItems();
+  if (items.length === 0 || !items[getModeCurrentIdx()]) return;
+  const presentation = items[getModeCurrentIdx()];
+  const slide = presentation.slides[getCurrentSlide()] || presentation.slides[0];
+  if (!slide) return;
+
+  const btn = document.getElementById('downloadBtn');
+  btn.disabled = true;
+  btn.style.opacity = '0.5';
+
+  try {
+    setGenStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">hourglass_empty</span>Exportando imagem...', '');
+
+    const safeName = (presentation.theme || presentation.title || 'slide')
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_|_$/g, '')
+      .slice(0, 60);
+
+    // Captura o slide completo (modelo + logo + site) via html2canvas
+    const blob = await captureSlideAsBlob(slide);
+    downloadBlob(blob, `cropware_slide_${safeName}.jpg`);
+    setGenStatus('', '');
+  } catch(e) {
+    alert('Erro ao baixar imagem: ' + e.message);
+    setGenStatus('', '');
+  }
+
+  btn.disabled = false;
+  btn.style.opacity = '';
+}
+
 function updateLegend(idx) {
   const el = document.getElementById('legendText');
-  if (isCarouselMode()) {
+  const legendLabel = document.querySelector('.legend-label');
+
+  if (isPresentationMode()) {
+    if (legendLabel) legendLabel.textContent = 'Fundo de Slide';
+    el.textContent = '';
+    el.contentEditable = 'false';
+  } else if (isCarouselMode()) {
+    if (legendLabel) legendLabel.textContent = 'Legenda';
     el.textContent = getModeLegends()[getModeCurrentIdx()] || '';
     el.contentEditable = 'true';
   } else {
+    if (legendLabel) legendLabel.textContent = 'Legenda';
     const items = getModeItems();
     const currentIdx = getModeCurrentIdx();
     el.textContent = getModeLegends()[currentIdx] || '';
@@ -5964,12 +7616,16 @@ let genImageBase64 = null;
 let genImageMime = 'image/jpeg';
 
 function openGenerator() {
+  if (isPresentationMode()) {
+    openPresBgGenerator();
+    return;
+  }
   const isCarousel = isCarouselMode();
   const platform = getPlatform();
   document.getElementById('genModal').classList.add('open');
   const headerSpan = document.querySelector('#genModal .gen-modal-header > span');
   if (headerSpan) {
-    const prefix = platform === 'linkedin' ? 'LinkedIn — ' : '';
+    const prefix = platform === 'linkedin-pessoal' ? 'LinkedIn Pessoal — ' : platform === 'linkedin' ? 'LinkedIn — ' : '';
     headerSpan.textContent = isCarousel ? `${prefix}Gerar Carrossel com IA` : `${prefix}Gerar Post com IA`;
   }
   const genBtn = document.getElementById('genBtn');
@@ -5984,13 +7640,106 @@ function closeGenerator() {
   document.getElementById('genModal').classList.remove('open');
 }
 
+// ── PRESENTATION BACKGROUNDS GENERATOR ────────────────────
+
+function openPresBgGenerator() {
+  document.getElementById('presBgTheme').value = '';
+  document.getElementById('presBgDirection').value = '';
+  document.getElementById('presBgStatus').innerHTML = '';
+  const btn = document.getElementById('presBgBtn');
+  btn.disabled = false;
+  document.getElementById('presBgModal').classList.add('open');
+}
+
+function closePresBgGenerator() {
+  document.getElementById('presBgModal').classList.remove('open');
+}
+
+function setPresBgStatus(msg, type) {
+  const el = document.getElementById('presBgStatus');
+  el.innerHTML = msg;
+  el.className = 'gen-status' + (type ? ' gen-status-' + type : '');
+}
+
+async function generatePresBackgrounds() {
+  const theme = document.getElementById('presBgTheme').value.trim();
+  if (!theme) { setPresBgStatus('Informe o tema do slide.', 'error'); return; }
+
+  const direction = document.getElementById('presBgDirection').value.trim();
+  const btn = document.getElementById('presBgBtn');
+  btn.disabled = true;
+
+  try {
+    setPresBgStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">hourglass_empty</span>Gerando imagem 16:9...', '');
+    const imgPrompt = `Ultra-realistic editorial landscape 16:9 photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text, no watermarks.`;
+    const img = await callGeminiImage(imgPrompt, direction || null, '16:9');
+
+    const timestamp = Date.now();
+    const title = theme.length > 50 ? theme.slice(0, 48) + '…' : theme;
+
+    const slideData = {
+      id:          `pres-slide-${timestamp}-0`,
+      bg:          `bg-pres-${timestamp}-0`,
+      slideId:     `slide-pres-${timestamp}-0`,
+      title:       title,
+      sub:         'Fundo gerado',
+      isGenerated: true,
+      bgImage:     `data:${img.mime};base64,${img.base64}`,
+      theme:       theme,
+      imagePrompt: imgPrompt,
+      format:      'presentation',
+      slideIndex:  0,
+    };
+
+    // Limitar apresentações
+    if (presentations.filter(p => p.isGenerated).length >= MAX_POSTS) {
+      const oldP = presentations[0];
+      deletePostFromSupabase(oldP.id);
+      oldP.slides.forEach(s => {
+        const el = document.getElementById(s.slideId);
+        if (el) el.remove();
+      });
+      presentations.splice(0, 1);
+      presentationLegends.splice(0, 1);
+    }
+
+    const presentationData = {
+      id:           `presentation-gen-${timestamp}`,
+      type:         'presentation',
+      title:        title,
+      theme:        theme,
+      isGenerated:  true,
+      slides:       [slideData],
+      currentSlide: 0,
+    };
+
+    const newIdx = renderGeneratedPresentation(presentationData, '');
+    saveSession();
+
+    setTimeout(() => {
+      closePresBgGenerator();
+      setCurrentSlide(0);
+      buildSidebar();
+      buildDots();
+      goTo(newIdx);
+      btn.disabled = false;
+      setPresBgStatus('', '');
+    }, 600);
+
+  } catch (e) {
+    console.error('Presentation slide error:', e);
+    setPresBgStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">error</span>Erro: ' + e.message, 'error');
+    btn.disabled = false;
+  }
+}
+
 // ── DESIGN CONFIG (diretriz de marca/voz injetada no prompt) ──
 const DESIGN_CFG_LOCAL_KEY = 'cropware_design_config_v1';
 const DEFAULT_DESIGN_CONFIG = {
-  description: '',
+  description: 'Cropware é uma agtech que conversa com produtores e agrônomos. Linguagem direta, confiante, apoiada em dado de campo. Evita jargão vazio e clichês motivacionais. Tom próximo mas com autoridade técnica — como um agrônomo experiente explicando para um colega.',
   audience:    'misto',
   tone:        'casual',
-  avoid:       '',
+  avoid:       'Emojis excessivos, clichês como "o segredo do sucesso", frases genéricas sem valor técnico, números inventados, linguagem corporativa fria.',
 };
 const DEFAULT_LINKEDIN_CONFIG = {
   description: 'Cropware é uma agtech que usa dados de campo e inteligência artificial para apoiar decisões agronômicas com precisão. No LinkedIn, a comunicação é técnica, consultiva e orientada a resultados — voltada para profissionais do agronegócio, líderes de operações agrícolas e tomadores de decisão. Evitar linguagem informal ou de rede social. Preferir dados, tendências e raciocínio estratégico.',
@@ -6002,7 +7751,8 @@ let designConfigInstagram = { ...DEFAULT_DESIGN_CONFIG };
 let designConfigLinkedin  = { ...DEFAULT_LINKEDIN_CONFIG };
 
 function getActiveDesignConfig() {
-  return getPlatform() === 'linkedin' ? designConfigLinkedin : designConfigInstagram;
+  const p = getPlatform();
+  return (p === 'linkedin' || p === 'linkedin-pessoal') ? designConfigLinkedin : designConfigInstagram;
 }
 
 async function loadDesignConfig() {
@@ -6054,7 +7804,8 @@ async function persistDesignConfig() {
 }
 
 function buildDesignContext(platform) {
-  const cfg = (platform || getPlatform()) === 'linkedin' ? designConfigLinkedin : designConfigInstagram;
+  const p = platform || getPlatform();
+  const cfg = (p === 'linkedin' || p === 'linkedin-pessoal' || p === 'presentation') ? designConfigLinkedin : designConfigInstagram;
   const parts = [];
   const d = (cfg.description || '').trim();
   if (d) {
@@ -6088,7 +7839,7 @@ function openConfig() {
   document.getElementById('cfgStatus').textContent = '';
   // Update modal title to indicate platform
   const headerSpan = document.querySelector('#cfgModal .gen-modal-header > span');
-  if (headerSpan) headerSpan.textContent = platform === 'linkedin' ? 'Configurar Estilo — LinkedIn' : 'Configurar Estilo — Instagram';
+  if (headerSpan) headerSpan.textContent = platform === 'linkedin-pessoal' ? 'Configurar Estilo — LinkedIn Pessoal' : platform === 'linkedin' ? 'Configurar Estilo — LinkedIn' : 'Configurar Estilo — Instagram';
   document.getElementById('cfgModal').classList.add('open');
 }
 
@@ -6105,7 +7856,8 @@ async function saveConfig() {
     tone:        document.getElementById('cfgTone').value,
     avoid:       document.getElementById('cfgAvoid').value.trim(),
   };
-  if (getPlatform() === 'linkedin') {
+  const cfgPlatform = getPlatform();
+  if (cfgPlatform === 'linkedin' || cfgPlatform === 'linkedin-pessoal') {
     designConfigLinkedin = newCfg;
   } else {
     designConfigInstagram = newCfg;
@@ -6284,12 +8036,15 @@ LEGEND (legenda do Instagram):
 
 ${toneBlock}
 ${buildDesignContext()}
-IMAGE_PROMPT: descrição em inglês para gerar foto fotorrealista de alta qualidade que ilustre o tema.
-- Foco em agricultura brasileira (campo, lavoura, maquinário, produtor, agrônomo)
-- Iluminação natural dramática (golden hour ou céu nublado)
-- Composição que deixe área escura no topo para o texto do post
-- Sem texto ou logotipos na imagem
-- Estilo: fotografia documental profissional, Fujifilm, 50mm
+IMAGE_PROMPT: descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
+- Estilo: fotografia documental/editorial profissional, estética Fujifilm, 50mm, profundidade de campo cinematográfica
+- Contexto brasileiro: lavouras bem manejadas (soja, milho, algodão), fazendas organizadas, agrônomos com boa postura e vestimenta neutra
+- Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
+- Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
+- Composição limpa e aberta, com espaço negativo para texto overlay, sem cobrir o topo
+- NÃO adicionar faixas escuras, gradientes, vinhetas ou escurecimento artificial
+- Sem texto, logotipos ou marcas visíveis
+- Variar personagens: homem/mulher, jovem/sênior, campo/gestão
 
 Responda APENAS em JSON válido, sem texto fora do JSON:
 {
@@ -6341,20 +8096,23 @@ async function fetchGeminiWithRetry(url, init, label) {
 }
 
 async function callGeminiText(theme, tone, userImageBase64, userImageMime, extraDirection, platform) {
-  const systemPrompt = platform === 'linkedin'
+  const systemPrompt = platform === 'linkedin-pessoal'
+    ? buildLinkedInPessoalSystemPrompt(tone)
+    : platform === 'linkedin'
     ? buildLinkedInSystemPrompt(tone)
     : buildSystemPrompt(tone);
-  const platformLabel = platform === 'linkedin' ? 'LinkedIn' : 'Instagram';
+  const platformLabel = platform === 'linkedin-pessoal' ? 'LinkedIn' : platform === 'linkedin' ? 'LinkedIn' : 'Instagram';
+  const brandLabel = platform === 'linkedin-pessoal' ? '' : ' da Cropware';
   const directionSuffix = extraDirection && extraDirection.trim()
     ? `\n\nDireção adicional do usuário: ${extraDirection.trim()}`
     : '';
   const userParts = userImageBase64
     ? [
         { inlineData: { mimeType: userImageMime || 'image/jpeg', data: userImageBase64 } },
-        { text: `Analise esta imagem agrícola e crie um post para ${platformLabel} da Cropware sobre:\n\n${theme}${directionSuffix}` }
+        { text: `Analise esta imagem agrícola e crie um post para ${platformLabel}${brandLabel} sobre:\n\n${theme}${directionSuffix}` }
       ]
     : [
-        { text: `Crie um post para ${platformLabel} da Cropware sobre o seguinte tema:\n\n${theme}${directionSuffix}` }
+        { text: `Crie um post para ${platformLabel}${brandLabel} sobre o seguinte tema:\n\n${theme}${directionSuffix}` }
       ];
 
   const resp = await fetchGeminiWithRetry(
@@ -6385,11 +8143,19 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
 }
 
 // Chama o Gemini imagem (3.1 Flash Image Preview) e retorna { base64, mime }.
-async function callGeminiImage(imagePrompt, extraDirection) {
+// aspectRatio: '4:5' (default), '16:9' (presentation), '9:16' (story)
+async function callGeminiImage(imagePrompt, extraDirection, aspectRatio) {
   const hardRules = [
     'Strict rule: absolutely NO text, NO watermarks, NO logos, NO brand marks, NO writing anywhere in the image.',
     'All clothing, caps, shirts and uniforms must be PLAIN and UNBRANDED — no prints, no logos, no labels, no visible text.',
     'All equipment, machinery, tools and devices must be generic and unbranded — no visible brand names or labels.',
+    'DO NOT add any dark bands, dark gradients, vignettes, dark overlays or artificial darkening to the image. The image must be clean and evenly lit — text overlays are added separately by the app.',
+    'Visual style: ultra-realistic photography, premium editorial quality (Apple/Stripe aesthetic meets agriculture). No artificial, plastic, or overly AI-generated look — real textures on leaves, soil, clothing, and light.',
+    'Brazilian agriculture context: well-managed crop fields (soybean, corn, cotton), clean and organized farming environment, realistic soil and plant spacing, defined planting rows. No failed crops, abandoned or messy scenes.',
+    'Characters (when present): Brazilian appearance with regional diversity, professional agronomist look, neutral clean clothing (gray, soft green, beige), NO logos or brands, confident and focused expression. Vary between men/women, young (25-30) and senior (40-55).',
+    'Color palette: natural greens with emphasis on #44AA7B tones, balanced with whites and soft grays. No oversaturation, no neon greens.',
+    'Lighting: golden hour preferred, soft diffuse light, subtle warm glow. Add subtle lens flare and cinematic depth of field (background slightly blurred). No exaggerated HDR, no fake lighting.',
+    'Composition: professional documentary/editorial photography style, Fujifilm aesthetic, 50mm lens feel. Use crop row lines as leading lines, natural perspective, clear subject focus, negative space for text overlay.',
   ];
   const avoid = (getActiveDesignConfig().avoid || '').trim();
   if (avoid) {
@@ -6413,7 +8179,7 @@ async function callGeminiImage(imagePrompt, extraDirection) {
           contents: [{ parts: [{ text: finalPrompt }] }],
           generationConfig: {
             responseModalities: ['TEXT', 'IMAGE'],
-            imageConfig: { aspectRatio: '4:5' }
+            imageConfig: { aspectRatio: aspectRatio || '4:5' }
           }
         }
       })
@@ -6451,8 +8217,8 @@ async function generatePost() {
 
   try {
     // Passo 1: Gemini texto (prompt varia por plataforma)
-    const parsed = platform === 'linkedin'
-      ? await callGeminiText(theme, tone, genImageBase64, genImageMime, null, 'linkedin')
+    const parsed = (platform === 'linkedin' || platform === 'linkedin-pessoal')
+      ? await callGeminiText(theme, tone, genImageBase64, genImageMime, null, platform)
       : await callGeminiText(theme, tone, genImageBase64, genImageMime);
 
     // Passo 2: Gemini imagem (se não houver upload)
@@ -6461,7 +8227,7 @@ async function generatePost() {
 
     if (needImage) {
       setGenStatus('<span class="material-symbols-outlined sz-18" style="margin-right:6px">hourglass_empty</span>Passo 2/2 — Nano Banana gerando imagem...', '');
-      const imgPrompt = parsed.imagePrompt || `Photorealistic agricultural field photo related to: ${theme}. Golden hour lighting, no text.`;
+      const imgPrompt = parsed.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
       const img = await callGeminiImage(imgPrompt);
       finalImgBase64 = img.base64;
       finalImgMime   = img.mime;
@@ -6501,6 +8267,7 @@ async function generatePost() {
       bullets:        Array.isArray(parsed.bullets) ? parsed.bullets.slice(0, 3) : [],
     };
     if (platform === 'linkedin') postData.type = 'linkedin-post';
+    else if (platform === 'linkedin-pessoal') postData.type = 'linkedin-pessoal-post';
     const newIdx = renderGeneratedPost(postData, legendText);
     saveSession();
 
@@ -6583,11 +8350,15 @@ LEGEND (UMA legenda compartilhada para todo o carrossel):
 ${toneBlock}
 ${buildDesignContext()}
 
-IMAGE_PROMPT (um por slide): descrição em inglês para gerar foto fotorrealista.
-- Foco em agricultura brasileira (campo, lavoura, maquinário)
-- Iluminação natural dramática
-- Composição que deixe área escura no topo para texto
-- Sem texto ou logotipos
+IMAGE_PROMPT (um por slide): descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
+- Estilo: fotografia documental/editorial profissional, estética Fujifilm, 50mm, profundidade de campo cinematográfica
+- Contexto brasileiro: lavouras bem manejadas (soja, milho, algodão), fazendas organizadas, agrônomos com boa postura e vestimenta neutra
+- Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
+- Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
+- Composição limpa e aberta, com espaço negativo para texto overlay, sem cobrir o topo
+- NÃO adicionar faixas escuras, gradientes, vinhetas ou escurecimento artificial
+- Sem texto, logotipos ou marcas visíveis
+- Variar personagens: homem/mulher, jovem/sênior, campo/gestão
 - Cada slide deve ter uma imagem DIFERENTE e complementar
 
 Responda APENAS em JSON válido:
@@ -6668,12 +8439,15 @@ LEGEND (legenda do LinkedIn):
 
 ${toneBlock}
 ${buildDesignContext('linkedin')}
-IMAGE_PROMPT: descrição em inglês para gerar foto fotorrealista de alta qualidade que ilustre o tema.
-- Foco em agricultura brasileira de escala (campo, tecnologia, operações, maquinário moderno)
-- Iluminação natural dramática (golden hour ou céu nublado)
-- Composição profissional que transmita escala e modernidade
-- Sem texto ou logotipos na imagem
-- Estilo: fotografia corporativa/documental, alta resolução
+IMAGE_PROMPT: descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
+- Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo cinematográfica
+- Contexto brasileiro de escala: lavouras bem manejadas, fazendas organizadas, tecnologia e maquinário moderno, agrônomos com boa postura e vestimenta neutra
+- Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
+- Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
+- Composição profissional que transmita escala e modernidade, com espaço negativo para texto overlay
+- NÃO adicionar faixas escuras, gradientes, vinhetas ou escurecimento artificial
+- Sem texto, logotipos ou marcas visíveis
+- Variar personagens: homem/mulher, jovem/sênior, campo/gestão
 
 Responda APENAS em JSON válido, sem texto fora do JSON:
 {
@@ -6747,11 +8521,15 @@ LEGEND (UMA legenda compartilhada para todo o carrossel):
 ${toneBlock}
 ${buildDesignContext('linkedin')}
 
-IMAGE_PROMPT (um por slide): descrição em inglês para gerar foto fotorrealista.
-- Foco em agricultura brasileira de escala
-- Iluminação natural dramática
-- Composição profissional
-- Sem texto ou logotipos
+IMAGE_PROMPT (um por slide): descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
+- Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo cinematográfica
+- Contexto brasileiro de escala: lavouras bem manejadas, fazendas organizadas, tecnologia e maquinário moderno, agrônomos com boa postura e vestimenta neutra
+- Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
+- Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
+- Composição profissional que transmita escala e modernidade
+- NÃO adicionar faixas escuras, gradientes, vinhetas ou escurecimento artificial
+- Sem texto, logotipos ou marcas visíveis
+- Variar personagens: homem/mulher, jovem/sênior, campo/gestão
 - Cada slide deve ter uma imagem DIFERENTE e complementar
 
 Responda APENAS em JSON válido:
@@ -6774,18 +8552,232 @@ Responda APENAS em JSON válido:
 }`;
 }
 
+// ── LINKEDIN PESSOAL (post) ──
+function buildLinkedInPessoalSystemPrompt(tone) {
+  const toneDirectives = {
+    casual:      'TOM: próximo e acessível, como conversa entre colegas de profissão. Linguagem direta sem ser informal demais.',
+    tecnico:     'TOM: vocabulário técnico do agro (NDVI, manejo integrado, agricultura de precisão). Linguagem de quem domina o assunto e quer elevar a conversa.',
+    inspirador:  'TOM: visão de futuro, reflexão sobre tendências do setor, liderança de pensamento.',
+    provocativo: 'TOM: tese provocativa que desafia o status quo do agronegócio. Posicionamento forte e fundamentado.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
+
+  return `Você é um ghostwriter que escreve para o perfil PESSOAL de um profissional do agronegócio no LinkedIn.
+O autor é um técnico ou gestor que entende de tecnologia agrícola, dados de campo e IA. O objetivo NÃO é falar sobre si mesmo — é trazer INSIGHTS TÉCNICOS E ESTRATÉGICOS que agreguem valor à rede. O autor é o veículo, não o assunto.
+
+REGRA DE OURO — FOCO NO CONTEÚDO, NÃO NO AUTOR:
+- O post deve entregar um INSIGHT, uma PROVOCAÇÃO ou um CONHECIMENTO TÉCNICO útil para quem lê.
+- PROIBIDO centralizar no autor: evite "eu aprendi", "na minha jornada", "minha experiência me ensinou", "eu percebi", "venho observando na minha operação". Isso transforma o post em diário pessoal.
+- A primeira pessoa pode aparecer de forma LEVE e pontual na legenda (1x no máximo), NUNCA no hook, complement ou bullets.
+- O hook e os bullets devem soar como CONTEÚDO TÉCNICO EDITORIAL — como se fosse um artigo curto de uma revista do setor, não um relato pessoal.
+- Pense: "o que o leitor ganha ao ler isso?" — se a resposta for "saber algo sobre o autor", está errado. Se for "entender algo novo sobre o agro", está certo.
+
+REGRAS FUNDAMENTAIS:
+- NUNCA mencione "Cropware", nenhuma marca ou produto específico. O post é pessoal, não institucional.
+- NUNCA invente números, porcentagens, estatísticas ou dados quantitativos.
+- Pode citar conceitos como "agricultura de precisão", "dados de campo", "IA aplicada", "monitoramento por satélite" — como ferramentas genéricas, nunca como produto.
+
+CONTEXTO LINKEDIN:
+- LinkedIn é uma rede profissional. O conteúdo deve transmitir autoridade técnica e liderança de pensamento.
+- O público são profissionais do agro: gestores, agrônomos, técnicos, executivos, investidores.
+- O post deve parecer conteúdo de valor, não desabafo ou storytelling pessoal.
+
+HOOK (texto grande, impactante):
+- 1 OU 2 linhas no total (prefira 2; use 1 só quando a frase já fechar sozinha e for forte)
+- A última parte OBRIGATORIAMENTE envolvida em <em>...</em> (fica verde) — é o REMATE que comunica o insight técnico
+- O hook inteiro é UMA frase afirmativa, lida de cima pra baixo como continuação natural
+- CAPITALIZAÇÃO: só a PRIMEIRA palavra do hook começa com maiúscula. A segunda linha começa com MINÚSCULA
+- PONTUAÇÃO NATURAL (OBRIGATÓRIA): vírgula de respiro, ponto final no fim
+- Máximo 6 palavras por linha
+- Tom de CONTEÚDO TÉCNICO — foque em insights do setor, tendências, provocações estratégicas
+- PROIBIDO primeira pessoa no hook
+- Exemplos BONS:
+  · "O dado que ninguém olha <br><em>decide a próxima safra.</em>"
+  · "Gestão por intuição <br><em>tem prazo de validade.</em>"
+  · "Monitoramento sem ação <br><em>é só paisagem no mapa.</em>"
+  · "O talhão já fala, <br><em>a questão é quem escuta.</em>"
+- Exemplos RUINS (centralizados no autor):
+  · "O que aprendi em 3 safras..." (diário pessoal)
+  · "Minha operação mudou quando..." (foco no eu)
+  · "Venho observando que..." (narrador em 1ª pessoa)
+
+COMPLEMENT (texto de apoio menor):
+- 1-2 linhas, máximo 36 caracteres cada
+- Use <strong> para destacar palavras-chave
+- Complementa o hook com um dado qualitativo, uma consequência prática ou um desdobramento técnico
+- PROIBIDO primeira pessoa
+
+BULLETS (3 pontos de apoio, iconizados):
+- Exatamente 3 bullets, curtos e diretos
+- Cada "text": máximo 6 palavras, afirmação técnica ou insight prático
+- PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
+- NÃO repita palavras ou ideias do hook/complement
+- PROIBIDO primeira pessoa nos bullets
+- Cada "icon": nome exato de um Material Symbol da lista permitida
+
+ICONES PERMITIDOS (Material Symbols — use o nome exato, snake_case):
+check_circle, task_alt, trending_up, trending_down, schedule, bolt, savings,
+insights, analytics, agriculture, eco, grass, water_drop, sunny, landscape,
+sensors, visibility, shield, speed, psychology, hub, timeline, query_stats,
+monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturing
+
+LEGEND (legenda do LinkedIn):
+- 3-5 frases, tom consultivo e profissional, máximo 80 palavras
+- Desenvolva o insight do hook com raciocínio técnico, contexto de mercado ou reflexão estratégica
+- A primeira pessoa pode aparecer NO MÁXIMO 1 vez, de forma sutil ("tenho visto", "vale observar que"), nunca como protagonista
+- O foco da legenda é ENTREGAR VALOR ao leitor, não contar a história do autor
+- PROIBIDO terminar com "concordam?", "o que vocês acham?", perguntas retóricas vazias, CTAs genéricos
+- PROIBIDO citar qualquer marca ou produto
+- 3-5 hashtags profissionais em linha separada (ex: #Agro #AgriculturaDePrecisao #GestaoAgricola #DadosNoCampo)
+
+${toneBlock}
+${buildDesignContext('linkedin')}
+IMAGE_PROMPT: descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
+- Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo cinematográfica
+- Contexto brasileiro de escala: lavouras bem manejadas, fazendas organizadas, tecnologia e maquinário moderno, agrônomos com boa postura e vestimenta neutra
+- Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
+- Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
+- Composição profissional que transmita escala e modernidade, com espaço negativo para texto overlay
+- NÃO adicionar faixas escuras, gradientes, vinhetas ou escurecimento artificial
+- Sem texto, logotipos ou marcas visíveis
+- Variar personagens: homem/mulher, jovem/sênior, campo/gestão
+
+Responda APENAS em JSON válido, sem texto fora do JSON:
+{
+  "hook": "afirmação técnica<br><em>insight de valor.</em>",
+  "complement": "desdobramento prático<br><strong>com destaque</strong>",
+  "bullets": [
+    {"icon": "analytics", "text": "Insight técnico direto."},
+    {"icon": "trending_up", "text": "Tendência do setor."},
+    {"icon": "insights",    "text": "Provocação estratégica."}
+  ],
+  "title": "título curto para sidebar (máx 50 chars)",
+  "legend": "legenda consultiva com valor para o leitor",
+  "hashtags": "#Agro #AgriculturaDePrecisao #DadosNoCampo",
+  "imagePrompt": "photorealistic image prompt in english"
+}`;
+}
+
+// ── LINKEDIN PESSOAL (carrossel) ──
+function buildLinkedInPessoalCarouselSystemPrompt(tone, slideCount) {
+  const toneDirectives = {
+    casual:      'TOM: próximo e acessível, como conversa entre colegas de profissão.',
+    tecnico:     'TOM: vocabulário técnico do agro (NDVI, manejo integrado, agricultura de precisão). Linguagem de quem domina o assunto.',
+    inspirador:  'TOM: visão de futuro, reflexão sobre tendências do setor, liderança de pensamento.',
+    provocativo: 'TOM: tese provocativa que desafia o status quo. Posicionamento forte e fundamentado.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
+
+  return `Você é um ghostwriter que escreve para o perfil PESSOAL de um profissional do agronegócio no LinkedIn.
+Crie um CARROSSEL com ${slideCount} slides.
+
+O objetivo NÃO é falar sobre o autor — é trazer CONTEÚDO TÉCNICO E ESTRATÉGICO que agregue valor à rede. O autor é o veículo, não o assunto. Pense em cada slide como uma página de conteúdo editorial de uma revista do setor.
+
+REGRA DE OURO — FOCO NO CONTEÚDO, NÃO NO AUTOR:
+- Cada slide deve entregar um INSIGHT, uma PROVOCAÇÃO ou um CONHECIMENTO TÉCNICO útil.
+- PROIBIDO centralizar no autor: evite "eu aprendi", "na minha jornada", "minha experiência me ensinou", "eu percebi". Isso transforma o carrossel em diário pessoal.
+- A primeira pessoa pode aparecer de forma LEVE e pontual na legenda (1x no máximo), NUNCA nos hooks, complements ou bullets.
+- Os slides devem soar como CONTEÚDO TÉCNICO EDITORIAL, não relato pessoal.
+
+REGRAS FUNDAMENTAIS:
+- NUNCA mencione "Cropware", nenhuma marca ou produto específico.
+- NUNCA invente números, porcentagens ou estatísticas.
+- Pode citar conceitos genéricos: "agricultura de precisão", "dados de campo", "IA aplicada".
+
+CONTEXTO LINKEDIN:
+- Carrosséis no LinkedIn são documentos PDF que o público desliza. Cada slide é uma "página" de conteúdo educativo.
+- O público são profissionais do agro: gestores, agrônomos, técnicos, executivos.
+- Foco em thought leadership técnico, insights de mercado e raciocínio estratégico.
+
+ESTRUTURA DO CARROSSEL:
+- Slide 1 (CAPA): hook forte com provocação técnica ou tese estratégica. Ex: "Por que dados históricos valem mais que previsão."
+- Slides do meio (DESENVOLVIMENTO): cada slide entrega um insight técnico, uma tendência ou um argumento. Progressão lógica e consultiva.
+- Último slide (CONCLUSÃO): síntese estratégica + reflexão de fechamento (sem CTA comercial, sem menção a marcas).
+- Todos os slides devem ter coerência visual e narrativa técnica.
+
+PARA CADA SLIDE:
+HOOK (texto grande, impactante):
+- 1 OU 2 linhas no total
+- A última parte OBRIGATORIAMENTE envolvida em <em>...</em> (fica verde)
+- CAPITALIZAÇÃO: só a PRIMEIRA palavra começa com maiúscula
+- PONTUAÇÃO NATURAL OBRIGATÓRIA
+- Máximo 6 palavras por linha
+- Tom de CONTEÚDO TÉCNICO — insights do setor, tendências, provocações estratégicas
+- PROIBIDO primeira pessoa nos hooks
+
+COMPLEMENT (texto de apoio menor):
+- 1-2 linhas, máximo 36 caracteres cada
+- Use <strong> para destacar palavras-chave
+- PROIBIDO primeira pessoa
+
+BULLETS (3 pontos de apoio):
+- Exatamente 3 bullets, curtos e diretos
+- Cada "text": máximo 6 palavras, insight técnico ou prático
+- PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
+- PROIBIDO primeira pessoa nos bullets
+- Cada "icon": nome exato de Material Symbol da lista permitida
+
+ICONES PERMITIDOS: check_circle, task_alt, trending_up, trending_down, schedule, bolt,
+savings, insights, analytics, agriculture, eco, grass, water_drop, sunny, landscape,
+sensors, visibility, shield, speed, psychology, hub, timeline, query_stats,
+monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturing
+
+LEGEND (UMA legenda compartilhada para todo o carrossel):
+- 4-6 frases, tom consultivo e profissional, máximo 100 palavras
+- Desenvolva o tema com raciocínio técnico, contexto de mercado ou reflexão estratégica
+- A primeira pessoa pode aparecer NO MÁXIMO 1 vez, de forma sutil, nunca como protagonista
+- PROIBIDO "concordam?", perguntas retóricas vazias, CTAs genéricos, menção a marcas
+- 3-5 hashtags profissionais em linha separada
+
+${toneBlock}
+${buildDesignContext('linkedin')}
+
+IMAGE_PROMPT (um por slide): descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
+- Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo cinematográfica
+- Contexto brasileiro de escala: lavouras bem manejadas, fazendas organizadas, tecnologia e maquinário moderno
+- Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
+- Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves
+- Composição profissional que transmita escala e modernidade
+- NÃO adicionar faixas escuras, gradientes, vinhetas ou escurecimento artificial
+- Sem texto, logotipos ou marcas visíveis
+- Variar personagens: homem/mulher, jovem/sênior, campo/gestão
+- Cada slide deve ter uma imagem DIFERENTE e complementar
+
+Responda APENAS em JSON válido:
+{
+  "title": "título curto do carrossel para sidebar (máx 50 chars)",
+  "legend": "legenda consultiva com valor para o leitor",
+  "hashtags": "#Agro #AgriculturaDePrecisao #DadosNoCampo",
+  "slides": [
+    {
+      "hook": "afirmação técnica<br><em>insight de valor.</em>",
+      "complement": "desdobramento prático<br><strong>destaque</strong>",
+      "bullets": [
+        {"icon": "analytics", "text": "Insight técnico direto."},
+        {"icon": "trending_up", "text": "Tendência do setor."},
+        {"icon": "insights", "text": "Provocação estratégica."}
+      ],
+      "imagePrompt": "english image prompt for this slide"
+    }
+  ]
+}`;
+}
+
 async function callGeminiCarouselText(theme, tone, slideCount, userImageBase64, userImageMime, platform) {
-  const systemPrompt = platform === 'linkedin'
+  const systemPrompt = platform === 'linkedin-pessoal'
+    ? buildLinkedInPessoalCarouselSystemPrompt(tone, slideCount)
+    : platform === 'linkedin'
     ? buildLinkedInCarouselSystemPrompt(tone, slideCount)
     : buildCarouselSystemPrompt(tone, slideCount);
-  const platformLabel = platform === 'linkedin' ? 'LinkedIn' : 'Instagram';
+  const platformLabel = (platform === 'linkedin' || platform === 'linkedin-pessoal') ? 'LinkedIn' : 'Instagram';
+  const brandLabel = platform === 'linkedin-pessoal' ? '' : ' da Cropware';
   const userParts = userImageBase64
     ? [
         { inlineData: { mimeType: userImageMime || 'image/jpeg', data: userImageBase64 } },
-        { text: `Analise esta imagem e crie um carrossel de ${slideCount} slides para ${platformLabel} da Cropware sobre:\n\n${theme}` }
+        { text: `Analise esta imagem e crie um carrossel de ${slideCount} slides para ${platformLabel}${brandLabel} sobre:\n\n${theme}` }
       ]
     : [
-        { text: `Crie um carrossel de ${slideCount} slides para ${platformLabel} da Cropware sobre:\n\n${theme}` }
+        { text: `Crie um carrossel de ${slideCount} slides para ${platformLabel}${brandLabel} sobre:\n\n${theme}` }
       ];
 
   const resp = await fetchGeminiWithRetry(
@@ -6862,7 +8854,12 @@ monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturi
 ${toneBlock}
 ${buildDesignContext()}
 
-IMAGE_PROMPT: descrição em inglês para gerar foto fotorrealista agrícola. Sem texto ou logotipos.
+IMAGE_PROMPT: descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
+- Estilo: fotografia documental/editorial, Fujifilm, 50mm, profundidade de campo cinematográfica
+- Contexto brasileiro: lavouras bem manejadas, agrônomos com boa postura e vestimenta neutra
+- Iluminação: golden hour, lens flare sutil, glow natural
+- Paleta: tons verdes naturais (#44AA7B), brancos e cinzas suaves
+- Sem texto, logotipos ou marcas visíveis
 
 Responda APENAS em JSON válido:
 {
@@ -6879,8 +8876,9 @@ Responda APENAS em JSON válido:
 
 async function callGeminiInsertSlideText(theme, tone, contextInfo, platform) {
   const systemPrompt = buildInsertSlideSystemPrompt(tone);
-  const platformLabel = platform === 'linkedin' ? 'LinkedIn' : 'Instagram';
-  const userText = `Crie UM slide complementar para ${platformLabel} da Cropware sobre: ${theme}
+  const platformLabel = (platform === 'linkedin' || platform === 'linkedin-pessoal') ? 'LinkedIn' : 'Instagram';
+  const brandLabel = platform === 'linkedin-pessoal' ? '' : ' da Cropware';
+  const userText = `Crie UM slide complementar para ${platformLabel}${brandLabel} sobre: ${theme}
 
 Contexto dos slides vizinhos (mantenha coerência):
 ${contextInfo}`;
@@ -6967,7 +8965,7 @@ async function confirmInsertSlide() {
     const slideText = await callGeminiInsertSlideText(theme, tone, context, platform);
 
     statusEl.textContent = 'Gerando imagem com IA...';
-    const imgPrompt = slideText.imagePrompt || `Photorealistic agricultural photo related to: ${theme}. Golden hour, no text.`;
+    const imgPrompt = slideText.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
     const img = await callGeminiImage(imgPrompt);
 
     const timestamp = Date.now();
@@ -7000,18 +8998,33 @@ async function confirmInsertSlide() {
       dashCardColor:   ref.dashCardColor,
       dashCardOpacity: ref.dashCardOpacity,
       revistaBlockColor: ref.revistaBlockColor,
+      revistaPhotoPct: ref.revistaPhotoPct,
+      revistaPhotoPos: ref.revistaPhotoPos,
+      revistaLayout:   ref.revistaLayout,
       splitBlockColor: ref.splitBlockColor,
+      splitPhotoPct:   ref.splitPhotoPct,
+      splitPhotoPos:   ref.splitPhotoPos,
+      splitLayout:     ref.splitLayout,
+      splitShadow:     ref.splitShadow,
       revistaTextMode: ref.revistaTextMode,
       splitTextMode:   ref.splitTextMode,
       columnBlockColor:ref.columnBlockColor,
       columnTextMode:  ref.columnTextMode,
       columnSide:      ref.columnSide,
+      colunaPhotoPct:  ref.colunaPhotoPct,
+      colunaPhotoPos:  ref.colunaPhotoPos,
+      colunaShadow:    ref.colunaShadow,
       frameColor:      ref.frameColor,
       frameTextMode:   ref.frameTextMode,
       glassOpacity:    ref.glassOpacity,
+      accentBarEnabled: ref.accentBarEnabled,
+      accentBarPos:     ref.accentBarPos,
+      accentBarOffsetX: ref.accentBarOffsetX,
+      accentBarOffsetY: ref.accentBarOffsetY,
       logoEnabled:     ref.logoEnabled,
       logoScale:       ref.logoScale,
       brandMode:       ref.brandMode,
+      siteMode:        ref.siteMode,
       siteText:        ref.siteText,
       sitePos:         ref.sitePos,
       siteEnabled:     ref.siteEnabled,
@@ -7094,7 +9107,7 @@ async function generateCarousel() {
 
       if (needImage) {
         setGenStatus(`<span class="material-symbols-outlined sz-18" style="margin-right:6px">hourglass_empty</span>Passo ${i + 2}/${totalSteps} — Gerando imagem ${i + 1}/${slides.length}...`, '');
-        const imgPrompt = s.imagePrompt || `Photorealistic agricultural photo related to: ${theme}. Golden hour, no text.`;
+        const imgPrompt = s.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
         const img = await callGeminiImage(imgPrompt);
         imgBase64 = img.base64;
         imgMime = img.mime;
@@ -7136,7 +9149,7 @@ async function generateCarousel() {
       legendsArr.splice(oldestIdx, 1);
     }
 
-    const carouselType = platform === 'linkedin' ? 'linkedin-carousel' : 'carousel';
+    const carouselType = platform === 'linkedin-pessoal' ? 'linkedin-pessoal-carousel' : platform === 'linkedin' ? 'linkedin-carousel' : 'carousel';
     const carouselData = {
       id:          `carousel-gen-${timestamp}`,
       type:        carouselType,
@@ -7211,7 +9224,7 @@ async function regenerateText() {
   setRegenBusy(true, 'pcRegenText');
   try {
     const platform = getPlatform();
-    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction, platform === 'linkedin' ? 'linkedin' : undefined);
+    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction, (platform === 'linkedin' || platform === 'linkedin-pessoal') ? platform : undefined);
     pushUndoSnapshot(post, {
       kind: 'text',
       hookHTML:       post.hookHTML,
@@ -7243,13 +9256,16 @@ async function regenerateImage() {
   const post = getActivePost();
   if (!post || !post.isGenerated) return;
   const direction = getRegenDirection();
-  // Se o usuário deu direção, ela vira o prompt principal da imagem
+  // Prompt base = o original da geração (ou reconstruído do tema)
+  const basePrompt = post.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${post.theme || ''}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
+  // Direção do usuário complementa o prompt original (não substitui)
   const imagePrompt = direction
-    ? `Photorealistic high-quality agricultural photo: ${direction}. Style: documentary photography, Fujifilm, 50mm, natural dramatic lighting. No text, no logos, no watermarks.`
-    : (post.imagePrompt || `Photorealistic agricultural field photo related to: ${post.theme || ''}. Golden hour lighting, no text.`);
+    ? `${basePrompt}\n\nAdditional direction (keep everything else the same): ${direction}`
+    : basePrompt;
   setRegenBusy(true, 'pcRegenImage');
   try {
-    const img = await callGeminiImage(imagePrompt, '');
+    const aspectRatio = post.format === 'presentation' ? '16:9' : (post.format === 'story' ? '9:16' : '4:5');
+    const img = await callGeminiImage(imagePrompt, '', aspectRatio);
     pushUndoSnapshot(post, { kind: 'image', bgImage: post.bgImage });
     post.bgImage = `data:${img.mime};base64,${img.base64}`;
     const postEl = document.getElementById(post.id);
@@ -7269,7 +9285,7 @@ async function regenerateLegend() {
   const platform = getPlatform();
   setRegenBusy(true, 'pcRegenLegend');
   try {
-    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction, platform === 'linkedin' ? 'linkedin' : undefined);
+    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction, (platform === 'linkedin' || platform === 'linkedin-pessoal') ? platform : undefined);
     pushUndoSnapshot(post, { kind: 'legend', legend: getActiveLegend() });
     setActiveLegend(sanitizeLegend((parsed.legend || '') + (parsed.hashtags ? '\n\n' + parsed.hashtags : '')));
     updateLegend(getModeCurrentIdx());
@@ -7378,6 +9394,33 @@ function setGenStatus(msg, type) {
       <div class="gen-actions">
         <button class="btn btn-ghost" onclick="closeInsertSlideModal()">Cancelar</button>
         <button class="btn btn-primary" id="insertSlideBtn" onclick="confirmInsertSlide()"><span class="material-symbols-outlined sz-18">add</span>Gerar Slide</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRESENTATION BACKGROUNDS MODAL -->
+<div class="gen-modal" id="presBgModal">
+  <div class="gen-modal-box">
+    <div class="gen-modal-header">
+      <span>Gerar Slide</span>
+      <button class="gen-close" onclick="closePresBgGenerator()"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="gen-body">
+      <div class="gen-group">
+        <label>Tema</label>
+        <textarea id="presBgTheme" rows="3" placeholder="Ex: Agricultura de precisão, tecnologia no campo, sustentabilidade agrícola"></textarea>
+      </div>
+      <div class="gen-group">
+        <label>Direção extra (opcional)</label>
+        <textarea id="presBgDirection" rows="2" placeholder="Ex: Fotos aéreas de lavouras, tons quentes, por do sol, maquinário moderno"></textarea>
+      </div>
+      <div class="gen-status" id="presBgStatus"></div>
+      <div class="gen-actions">
+        <button class="btn btn-ghost" onclick="closePresBgGenerator()">Cancelar</button>
+        <button class="btn btn-primary" id="presBgBtn" onclick="generatePresBackgrounds()">
+          Gerar Slide
+        </button>
       </div>
     </div>
   </div>
