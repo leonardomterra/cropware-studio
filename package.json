@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "migrate:r2": "node scripts/migrate-posts-to-r2.mjs",
     "preview": "vite preview"
   },
   "repository": {

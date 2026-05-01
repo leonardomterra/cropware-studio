@@ -23,18 +23,36 @@
   .login-screen.hidden { display: none; }
   .login-card {
     background: #fff;
-    border-radius: 16px;
-    padding: 48px 40px;
+    border-radius: 10px;
+    padding: 48px 40px 28px;
     width: 380px;
     max-width: 90vw;
     box-shadow: 0 4px 24px rgba(0,0,0,0.08);
     text-align: center;
   }
-  .login-logo { width: 160px; margin-bottom: 8px; }
+  .login-logo {
+    display: block;
+    width: 160px;
+    height: 22px;
+    margin: 0 auto 14px;
+    background: #475569;
+    -webkit-mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
+    mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
+  }
+  .login-divider {
+    width: 132px;
+    height: 1px;
+    margin: 0 auto 12px;
+    background: linear-gradient(90deg, rgba(203,213,225,0), #94a3b8 50%, rgba(203,213,225,0));
+  }
   .login-title {
-    font-family: 'Inter Tight', sans-serif;
-    font-size: 22px; font-weight: 700; color: #0f172a;
-    margin-bottom: 4px;
+    font-family: 'Alumni Sans', 'Inter', 'Inter Tight', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #0f172a;
+    margin-bottom: 28px;
   }
   .login-subtitle {
     font-family: 'Inter Tight', sans-serif;
@@ -48,17 +66,44 @@
     outline: none; transition: border-color 0.2s;
     margin-bottom: 14px;
   }
-  .login-input:focus { border-color: #7AB87E; }
+  .login-input::placeholder { color: #94a3b8; }
+  .login-input:focus {
+    border-color: #64748b;
+    background: #f8fafc;
+  }
   .login-btn {
     width: 100%; padding: 12px;
-    background: var(--green); color: #fff; border: none; border-radius: 6px;
+    background: #475569; color: #fff; border: none; border-radius: 6px;
     font-size: 14px; font-weight: 400; cursor: pointer;
     font-family: 'Inter Tight', sans-serif;
     display: flex; align-items: center; justify-content: center; gap: 6px;
     transition: background 0.2s;
   }
-  .login-btn:hover { background: var(--green-dark); }
+  .login-btn:hover { background: #334155; }
   .login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .login-manage-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: #fff;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Inter Tight', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .login-manage-btn:hover {
+    background: #f8fafc;
+    border-color: #f1f5f9;
+    color: #334155;
+  }
   .login-msg {
     margin-top: 16px; font-size: 13px;
     font-family: 'Inter Tight', sans-serif;
@@ -80,7 +125,7 @@
   }
   .logout-email {
     font-size: 13px;
-    color: #64748b;
+    color: #475569;
     font-family: 'Inter Tight', sans-serif;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -118,6 +163,7 @@
     --border: rgba(0,0,0,0.08);
     --text: #0f172a;
     --muted: rgba(15,23,42,0.62);
+    --side-panel-width: 290px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -142,6 +188,8 @@
     background: var(--bg);
     color: var(--text);
     font-family: 'Inter Tight', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
     height: 100vh;
     margin: 0;
     overflow: hidden;
@@ -163,10 +211,91 @@
     min-height: 0;
     overflow: hidden;
   }
+  .editor-area {
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .editor-main {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .app-header {
+    height: 48px;
+    flex-shrink: 0;
+    background: #334155;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    font-family: 'Inter Tight', sans-serif;
+    position: sticky;
+    top: 0;
+    z-index: 80;
+  }
+  .app-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .app-logo {
+    display: block;
+    width: 142px;
+    height: 20px;
+    background: #fff;
+    -webkit-mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
+    mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
+    flex-shrink: 0;
+  }
+  .app-header-divider {
+    width: 1px;
+    height: 22px;
+    background: rgba(255,255,255,0.28);
+    flex-shrink: 0;
+  }
+  .app-user-email {
+    color: rgba(255,255,255,0.78);
+    font-size: 13px;
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .app-logout-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 7px 12px;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 6px;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background 140ms, border-color 140ms;
+  }
+  .app-logout-btn:hover {
+    background: rgba(255,255,255,0.14);
+    border-color: rgba(255,255,255,0.30);
+  }
 
   /* ── SIDEBAR ── */
   aside {
-    width: 280px;
+    order: 1;
+    width: var(--side-panel-width);
     flex-shrink: 0;
     background: var(--surface);
     /* sem border-right — corpo e header têm bordas próprias */
@@ -188,6 +317,28 @@
   .aside-list::-webkit-scrollbar { width: 6px; }
   .aside-list::-webkit-scrollbar-track { background: transparent; }
   .aside-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .aside-empty {
+    padding: 22px 16px;
+    color: #64748b;
+    font-family: 'Inter Tight', sans-serif;
+  }
+  .aside-empty-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #334155;
+    margin-bottom: 4px;
+  }
+  .aside-empty-sub {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .aside-mode-wrap {
+    flex-shrink: 0;
+    padding: 10px 12px;
+    border-right: 1px solid rgba(0,0,0,0.08);
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+  }
 
   /* Cabeçalho unificado das 3 sidebars (Posts / Legenda / Estilo) */
   .sidebar-header {
@@ -221,6 +372,11 @@
     align-items: center;
     height: 44px;
   }
+  .sidebar-header,
+  .aside-label,
+  .canvas-header {
+    display: none;
+  }
 
   .thumb-item {
     display: flex;
@@ -234,7 +390,7 @@
 
   .thumb-item:hover { background: rgba(0,0,0,0.04); }
   .thumb-item.active {
-    border-left-color: var(--green);
+    border-left-color: #475569;
     background: rgba(74,162,118,0.08);
   }
 
@@ -268,6 +424,7 @@
 
   /* ── CANVAS AREA (header + stage + slide-nav bar) ── */
   .canvas-area {
+    order: 3;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -290,6 +447,16 @@
     align-items: center;
     height: 44px;
     box-sizing: border-box;
+  }
+  .canvas-header {
+    display: none;
+  }
+  .canvas-workspace {
+    flex: 1;
+    display: flex;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
   }
   .canvas-stage {
     flex: 1;
@@ -578,7 +745,7 @@
   }
 
   .hook {
-    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-family: 'Familjen Grotesk', 'Inter', 'Inter Tight', sans-serif;
     font-weight: 700;
     font-stretch: 92%;
     font-size: calc(72px * var(--hook-scale, 1));
@@ -817,7 +984,7 @@
   }
   .dash-card[data-align="right"] .dash-bar { margin-left: auto; }
   .dash-hook {
-    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-family: 'Familjen Grotesk', 'Inter', 'Inter Tight', sans-serif;
     font-weight: 700;
     font-stretch: 92%;
     font-size: calc(74px * var(--hook-scale, 1));
@@ -901,7 +1068,7 @@
     background: #7AB87E;
   }
   .revista-hook {
-    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-family: 'Familjen Grotesk', 'Inter', 'Inter Tight', sans-serif;
     font-weight: 700;
     font-stretch: 92%;
     font-size: calc(62px * var(--hook-scale, 1));
@@ -1121,7 +1288,7 @@
     z-index: 2;
   }
   .split-hook {
-    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-family: 'Familjen Grotesk', 'Inter', 'Inter Tight', sans-serif;
     font-weight: 700;
     font-stretch: 92%;
     font-size: calc(68px * var(--hook-scale, 1));
@@ -1224,7 +1391,7 @@
   .post[data-style="coluna"][data-column-side="right"] .coluna-photo { right: 0; }
   .post[data-style="coluna"][data-column-side="right"] .coluna-block { left: 0; }
   .coluna-hook {
-    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-family: 'Familjen Grotesk', 'Inter', 'Inter Tight', sans-serif;
     font-weight: 700;
     font-stretch: 92%;
     font-size: calc(58px * var(--hook-scale, 1));
@@ -1403,7 +1570,7 @@
     font-size: inherit;
   }
   .moldura-hook {
-    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-family: 'Familjen Grotesk', 'Inter', 'Inter Tight', sans-serif;
     font-weight: 700;
     font-stretch: 92%;
     font-size: calc(56px * var(--hook-scale, 1));
@@ -1604,7 +1771,7 @@
       0 12px 32px rgba(0,0,0,0.22);
   }
   .spotlight-hook {
-    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-family: 'Familjen Grotesk', 'Inter', 'Inter Tight', sans-serif;
     font-stretch: 92%;
     font-size: calc(78px * var(--hook-scale, 1));
     font-weight: 700;
@@ -1673,7 +1840,7 @@
     margin-bottom: auto;
   }
   .signal-hook {
-    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-family: 'Familjen Grotesk', 'Inter', 'Inter Tight', sans-serif;
     font-stretch: 92%;
     font-size: calc(63px * var(--hook-scale, 1));
     font-weight: 700;
@@ -2226,7 +2393,7 @@
 
   /* Texto (hook + complement) no mockup */
   .mockup-text .mockup-hook {
-    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-family: 'Familjen Grotesk', 'Inter', 'Inter Tight', sans-serif;
     font-stretch: 92%;
     font-size: calc(68px * var(--hook-scale, 1));
     font-weight: 700;
@@ -2792,7 +2959,8 @@
 
   /* ── POST CONTROLS (sidebar de ferramentas) ── */
   #postControls {
-    width: 300px;
+    order: 2;
+    width: var(--side-panel-width);
     flex-shrink: 0;
     background: var(--surface);
     /* sem border-right — corpo e header têm bordas próprias */
@@ -2803,6 +2971,25 @@
     min-height: 0;
   }
   #postControls.visible { display: flex; }
+  #postControls.pc-section-mode .pc-group {
+    display: none;
+  }
+  #postControls.pc-section-mode .pc-group.active-section {
+    display: block;
+  }
+  #postControls.pc-section-mode .pc-group.active-section.hidden {
+    display: none;
+  }
+  #postControls.pc-section-mode #pcGroupMockup:not(.active-section) {
+    display: none !important;
+  }
+  #postControls.pc-section-mode .pc-group-header {
+    display: none;
+  }
+  #postControls.pc-section-mode .pc-group-body {
+    display: flex;
+    padding-top: 4px;
+  }
   /* ── VISIBILIDADE DECLARATIVA POR MODELO (painel Fundo) ──
      Padrão: TODOS os subs específicos do Fundo escondidos.
      Cada modelo libera APENAS o que precisa via .style-{modelo}.
@@ -2910,9 +3097,9 @@
   .pc-body::-webkit-scrollbar-track { background: transparent; }
   .pc-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   .pc-group {
-    border: 1px solid var(--border);
+    border: 1px solid #eef2f7;
     border-radius: 5px;
-    background: white;
+    background: #fff;
     overflow: hidden;
     flex-shrink: 0;
   }
@@ -2923,17 +3110,15 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px 12px;
-    background: #334155;
-    color: #fff;
+    background: #fff;
+    color: #0f172a;
     border: none;
     cursor: pointer;
     font-family: inherit;
     transition: background 120ms;
   }
-  .pc-group-header:hover { background: #475569; }
-  .pc-group.open > .pc-group-header { border-bottom: 1px solid #475569; }
-  /* Borda dos grupos — slate para combinar com o header escuro */
-  .pc-group { border-color: #cbd5e1; }
+  .pc-group-header:hover { background: #f8fafc; }
+  .pc-group.open > .pc-group-header { border-bottom: 1px solid #eef2f7; }
   /* Espaço do header até o primeiro sub */
   #pcGroupSignature > .pc-group-body { padding-top: 8px; gap: 0; }
   .pc-group-header-actions {
@@ -2949,24 +3134,24 @@
     width: 24px;
     height: 24px;
     border-radius: 5px;
-    color: #cbd5e1;
+    color: #64748b;
     cursor: pointer;
     transition: all 140ms;
   }
   .pc-group-header-toggle-all:hover {
-    background: rgba(255,255,255,0.12);
-    color: #fff;
+    background: #f8fafc;
+    color: #334155;
   }
   .pc-group-header-toggle-all .ph { font-size: 18px; }
   .pc-group-header-label {
     font-size: 14px;
     font-weight: 600;
-    color: #fff;
+    color: #0f172a;
     letter-spacing: 0;
   }
   .pc-group-header-chevron {
     font-size: 18px !important;
-    color: #cbd5e1;
+    color: #64748b;
     transition: transform 180ms;
   }
   .pc-group.open .pc-group-header-chevron {
@@ -2977,14 +3162,28 @@
     padding: 4px 12px 14px;
     flex-direction: column;
     gap: 10px;
+    background: #fff;
   }
   .pc-group.open .pc-group-body {
     display: flex;
+  }
+  .pc-direct-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 0 0 6px;
+    flex-shrink: 0;
+  }
+  .pc-section-picker {
+    padding: 10px 0 6px;
+    border-top: 1px solid #e2e8f0;
+    flex-shrink: 0;
   }
   .pc-sub {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    min-width: 0;
   }
   .pc-sub.hidden { display: none; }
   .pc-sub-divider {
@@ -3027,8 +3226,8 @@
     transition: all 140ms;
   }
   .pc-style-grid button:hover {
-    border-color: var(--green);
-    color: var(--green);
+    border-color: #64748b;
+    color: #475569;
   }
   .pc-style-grid button.active {
     background: var(--green);
@@ -3062,8 +3261,8 @@
   }
   .pc-logo-grid button .ph { font-size: 20px; }
   .pc-logo-grid button:hover {
-    border-color: var(--green);
-    color: var(--green);
+    border-color: #64748b;
+    color: #475569;
   }
   .pc-logo-grid button.active {
     background: var(--green);
@@ -3146,7 +3345,7 @@
   }
   .pc-sig-reset:hover {
     background: #e2e8f0;
-    border-color: #94a3b8;
+    border-color: #f1f5f9;
     color: #334155;
   }
   .pc-sig-reset .ph { font-size: 14px; }
@@ -3172,6 +3371,59 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .pc-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .pc-value-pill {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: #64748b;
+    font-variant-numeric: tabular-nums;
+  }
+  .pc-range {
+    width: 100%;
+    accent-color: #475569;
+    cursor: pointer;
+  }
+  .pc-segment-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .pc-segment-grid button {
+    border: none;
+    background: #e2e8f0;
+    color: #475569;
+    border-radius: 6px;
+    min-height: 34px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background 140ms, color 140ms;
+  }
+  .pc-segment-grid button:hover {
+    background: #cbd5e1;
+    color: #0f172a;
+  }
+  .pc-segment-grid button.active {
+    background: #475569;
+    color: #fff;
+  }
+  .pc-segment-grid button[hidden] {
+    display: none;
+  }
+  .pc-hidden-control {
+    display: none !important;
+  }
   /* Stepper: [−] valor [+] — substitui o input number puro */
   .pc-stepper {
     display: flex;
@@ -3183,7 +3435,7 @@
     overflow: hidden;
     transition: border-color 140ms;
   }
-  .pc-stepper:focus-within { border-color: var(--green); }
+  .pc-stepper:focus-within { border-color: #64748b; }
   .pc-stepper-btn {
     flex: 0 0 30px;
     border: none;
@@ -3244,11 +3496,11 @@
     color: var(--text);
     transition: border-color 120ms, box-shadow 120ms;
   }
-  .pc-color-btn:hover { border-color: var(--green); }
+  .pc-color-btn:hover { border-color: #64748b; }
   .pc-color-btn:focus-visible {
     outline: none;
-    border-color: var(--green);
-    box-shadow: 0 0 0 3px rgba(122,184,126,0.18);
+    border-color: #64748b;
+    box-shadow: 0 0 0 3px rgba(100,116,139,0.16);
   }
   .pc-color-btn-swatch {
     width: 20px;
@@ -3272,6 +3524,9 @@
   }
   .pc-select {
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     padding: 8px 32px 8px 10px;
     background: white;
     border: 1px solid var(--border);
@@ -3288,11 +3543,11 @@
     background-position: right 8px center;
     transition: border-color 120ms, box-shadow 120ms;
   }
-  .pc-select:hover { border-color: var(--green); }
+  .pc-select:hover { border-color: #cbd5e1; }
   .pc-select:focus-visible {
     outline: none;
-    border-color: var(--green);
-    box-shadow: 0 0 0 3px rgba(122,184,126,0.18);
+    border-color: #94a3b8;
+    box-shadow: none;
   }
 
   .pc-color-dropdown {
@@ -3364,8 +3619,8 @@
     transition: background 120ms, border-color 120ms;
   }
   .pc-icon-cell:hover {
-    background: rgba(122,184,126,0.12);
-    border-color: var(--green);
+    background: #f1f5f9;
+    border-color: #64748b;
   }
   .pc-icon-cell.active {
     background: var(--green);
@@ -3423,6 +3678,7 @@
     transition: left 180ms;
   }
   .pc-vis-btn.active .pc-vis-switch { background: var(--green); }
+  #pcSubVisibility .pc-vis-btn.active .pc-vis-switch { background: #475569; }
   .pc-vis-btn.active .pc-vis-switch::after { left: 15px; }
 
   /* Editor de bullets */
@@ -3440,7 +3696,7 @@
     border-radius: 4px;
     padding: 4px 5px 4px 4px;
   }
-  .pc-bullet-row:focus-within { border-color: var(--green); }
+  .pc-bullet-row:focus-within { border-color: #64748b; }
   .pc-bullet-icon-btn {
     flex-shrink: 0;
     width: 28px;
@@ -3457,7 +3713,7 @@
     font-family: inherit;
     transition: all 140ms;
   }
-  .pc-bullet-icon-btn:hover { border-color: var(--green); color: var(--green); }
+  .pc-bullet-icon-btn:hover { border-color: #64748b; color: #475569; }
   .pc-bullet-icon-btn .ph { font-size: 16px; }
   .pc-bullet-text-input {
     flex: 1;
@@ -3503,7 +3759,7 @@
     transition: all 140ms;
     justify-content: center;
   }
-  .pc-bullet-add:hover { border-color: var(--green); color: var(--green); border-style: solid; }
+  .pc-bullet-add:hover { border-color: #64748b; color: #475569; border-style: solid; }
   .pc-bullet-add:disabled { opacity: 0.4; cursor: not-allowed; }
   .pc-bullet-add .ph { font-size: 16px; }
 
@@ -3541,7 +3797,55 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    margin-top: 6px;
+  }
+  .pc-regen-launch {
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #334155;
+    cursor: pointer;
+    border-radius: 6px;
+    font-family: inherit;
+    transition: background-color 140ms, border-color 140ms, color 140ms;
+    width: 100%;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .pc-regen-launch:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+    color: #0f172a;
+  }
+  .pc-regen-dialog .gen-modal-box { width: 420px; }
+  .pc-regen-dialog .gen-body { gap: 12px; }
+  .pc-footer-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    flex-shrink: 0;
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+    border-right: 1px solid rgba(0,0,0,0.08);
+    background: #fff;
+  }
+  .pc-footer-actions .pc-regen-launch,
+  .pc-footer-actions .pc-reset-btn {
+    border: none;
+    background: #e2e8f0;
+    color: #475569;
+    font-weight: 400;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .pc-footer-actions .pc-regen-launch:hover,
+  .pc-footer-actions .pc-reset-btn:hover {
+    background: #cbd5e1;
+    color: #0f172a;
   }
   .pc-regen-row {
     display: flex;
@@ -3665,7 +3969,7 @@
     transition: border-color 140ms;
     box-sizing: border-box;
   }
-  .pc-text-input:focus { border-color: var(--green); }
+  .pc-text-input:focus { border-color: #64748b; }
   .pc-upload-btn {
     border: 1px solid var(--border);
     background: rgba(15, 23, 42, 0.02);
@@ -3683,9 +3987,9 @@
     transition: all 140ms;
   }
   .pc-upload-btn:hover {
-    border-color: var(--green);
-    color: var(--green);
-    background: rgba(74, 162, 118, 0.04);
+    border-color: #64748b;
+    color: #475569;
+    background: #f8fafc;
   }
   .pc-regen-prompt {
     width: 100%;
@@ -3702,7 +4006,7 @@
     transition: border-color 140ms;
     box-sizing: border-box;
   }
-  .pc-regen-prompt:focus { border-color: var(--green); }
+  .pc-regen-prompt:focus { border-color: #64748b; }
   .pc-regen-prompt::placeholder { color: #94a3b8; }
   .pc-undo-btn {
     border: 1px solid var(--border);
@@ -3831,45 +4135,91 @@
   .post-slide { display: none; }
   .post-slide.visible { display: block; }
 
-  /* ── LEGEND PANEL (sidebar lateral) ── */
-  .legend-panel {
-    width: 300px;
+  /* ── LEGEND DIALOG ── */
+  .legend-open-row {
     flex-shrink: 0;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    background: #fff;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .legend-open-row.hidden {
+    display: none;
+  }
+  .legend-open-btn {
+    border: none;
+    background: #e2e8f0;
+    color: #475569;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: background 140ms, color 140ms;
+    width: 100%;
+  }
+  .legend-open-btn:hover {
+    background: #cbd5e1;
+    color: #0f172a;
+  }
+  .legend-open-row .btn-download {
+    width: 100%;
+    padding: 8px 14px;
+    background: #e2e8f0;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 400;
+    border-radius: 6px;
+  }
+  .legend-open-row .btn-download:hover {
+    background: #cbd5e1;
+    color: #0f172a;
+  }
+  .legend-modal .gen-modal-box { width: 640px; }
+  .legend-modal .gen-body {
+    padding: 18px;
+    max-height: 62vh;
+    overflow-y: auto;
+  }
+  .legend-panel {
     background: var(--surface);
-    /* sem border-right — corpo e header têm bordas próprias */
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    min-height: 0;
+    min-height: 220px;
+    position: relative;
   }
 
   .legend-header {
-    padding: 0 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    border-right: 1px solid rgba(0,0,0,0.35);
-    background: #1e293b;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     flex-shrink: 0;
-    height: 44px;
-    box-sizing: border-box;
+    min-height: 34px;
   }
 
   .legend-label {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
-    color: #fff;
+    color: #0f172a;
     font-family: 'Inter Tight', sans-serif;
+    letter-spacing: 0;
+    text-transform: none;
   }
 
   .copy-btn {
-    display: flex;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.2);
-    color: rgba(255,255,255,0.7);
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
     font-family: 'Inter Tight', sans-serif;
     font-size: 12px;
     font-weight: 500;
@@ -3879,15 +4229,14 @@
     transition: all 0.15s;
     letter-spacing: 0.2px;
   }
-  .copy-btn:hover { color: #fff; border-color: rgba(255,255,255,0.45); }
+  .copy-btn:hover { color: #334155; border-color: #94a3b8; background: #f8fafc; }
   .copy-btn.copied { color: var(--green); border-color: var(--green); }
 
 
   .legend-body {
     flex: 1;
     overflow-y: auto;
-    padding: 12px 16px 16px;
-    border-right: 1px solid rgba(0,0,0,0.08);
+    padding: 12px 0 0;
     scrollbar-width: thin;
     scrollbar-color: var(--border) transparent;
     min-height: 0;
@@ -3898,12 +4247,13 @@
   .legend-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
   .legend-text {
-    font-size: 14px;
-    line-height: 1.75;
+    font-size: 13px;
+    line-height: 1.55;
     color: var(--muted);
     white-space: pre-wrap;
     font-weight: 400;
     font-family: 'Inter Tight', sans-serif;
+    max-width: 1100px;
   }
 
   .legend-text strong {
@@ -3924,7 +4274,7 @@
 
   .hashtag {
     background: rgba(74,162,118,0.12);
-    color: var(--green);
+    color: #475569;
     font-size: 11px;
     font-weight: 600;
     padding: 4px 10px;
@@ -3958,22 +4308,23 @@
     padding: 10px 12px;
     border-top: 1px solid var(--border);
     border-right: 1px solid rgba(0,0,0,0.08);
+    background: #fff;
     margin-top: auto;
     flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
   .btn-gen-ai {
     width: 100%;
-    padding: 10px 12px;
-    background: #334155;
-    color: #fff;
+    padding: 8px 14px;
+    background: #e2e8f0;
+    color: #475569;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     font-family: 'Inter Tight', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 400;
     cursor: pointer;
     transition: background 0.15s;
     display: inline-flex;
@@ -3981,17 +4332,20 @@
     justify-content: center;
     gap: 7px;
   }
-  .btn-gen-ai:hover { background: #1e293b; }
+  .btn-gen-ai:hover {
+    background: #cbd5e1;
+    color: #0f172a;
+  }
   .btn-cfg {
     width: 100%;
     padding: 8px 12px;
-    background: #64748b;
-    color: #fff;
-    border: 1px solid #64748b;
-    border-radius: 4px;
+    background: #e2e8f0;
+    color: #475569;
+    border: none;
+    border-radius: 6px;
     font-family: 'Inter Tight', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 400;
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
     display: inline-flex;
@@ -3999,7 +4353,10 @@
     justify-content: center;
     gap: 7px;
   }
-  .btn-cfg:hover { background: #475569; border-color: #475569; }
+  .btn-cfg:hover {
+    background: #cbd5e1;
+    color: #0f172a;
+  }
   .btn-download {
     width: 100%;
     padding: 10px 12px;
@@ -4134,7 +4491,7 @@
     padding-right: 36px;
   }
   .gen-group input:focus, .gen-group textarea:focus, .gen-group select:focus {
-    border-color: var(--green);
+    border-color: #94a3b8;
     background: #fff;
   }
   .gen-group small {
@@ -4304,30 +4661,31 @@
     outline: none;
     transition: border-color 0.15s;
   }
-  .studio-mode-select:focus { border-color: var(--green); }
+  .studio-mode-select:focus { border-color: #f1f5f9; }
   .studio-mode-select optgroup { font-weight: 600; color: var(--text); }
   .studio-mode-select option { font-weight: 400; color: var(--text); }
 
-  /* ── SLIDE NAV (barra inferior do canvas) ── */
+  /* ── SLIDE NAV (barra lateral do canvas) ── */
   .slide-nav {
     display: none;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    flex-direction: column;
     gap: 8px;
-    padding: 14px 16px;
+    width: 58px;
+    padding: 12px 10px;
     background: #fff;
-    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
     flex-shrink: 0;
-    min-height: 64px;
     box-sizing: border-box;
   }
   .slide-nav.visible { display: flex; }
-  .slide-nav.empty > * { display: none; }
+  .slide-nav.visible.empty { display: none; }
   .slide-nav-sep {
-    width: 1px;
-    height: 22px;
+    width: 100%;
+    height: 1px;
     background: #cbd5e1;
-    margin: 0 4px;
+    margin: 2px 0;
   }
   .slide-nav-btn {
     background: transparent;
@@ -4345,15 +4703,16 @@
   }
   .slide-nav-btn:hover:not(:disabled) {
     background: #f1f5f9;
-    border-color: var(--green);
-    color: var(--green);
+    border-color: #64748b;
+    color: #475569;
   }
   .slide-nav-btn:disabled { opacity: 0.35; cursor: default; }
   .slide-nav-dots {
     display: flex;
+    flex-direction: column;
     gap: 8px;
     align-items: center;
-    padding: 0 6px;
+    padding: 2px 0;
   }
   .slide-nav-dot {
     width: 10px;
@@ -4373,8 +4732,8 @@
     font-size: 13px;
     font-weight: 500;
     color: #64748b;
-    margin: 0 6px;
-    min-width: 32px;
+    margin: 0;
+    min-width: 0;
     text-align: center;
   }
   .slide-nav.disabled { opacity: 0.45; pointer-events: none; }
@@ -4390,7 +4749,7 @@
     white-space: nowrap;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 560px) {
     body {
       height: auto;
       overflow: auto;
@@ -4401,15 +4760,36 @@
       min-height: 100vh;
       overflow: visible;
     }
+    .app-header {
+      height: 48px;
+      padding: 0 12px;
+      gap: 10px;
+    }
+    .app-header-left {
+      gap: 10px;
+      flex: 1;
+    }
+    .app-logo {
+      width: 118px;
+      height: 18px;
+    }
+    .app-user-email {
+      font-size: 12px;
+    }
+    .app-logout-btn {
+      padding: 7px 10px;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
     .main-columns {
       flex-direction: column;
       overflow: visible;
     }
-
-    /* Header menor no mobile */
-    header { padding: 8px 12px; }
-    header .logo-main img,
-    header .logo-main svg { max-height: 28px; }
+    .editor-area,
+    .editor-main {
+      flex-direction: column;
+      overflow: visible;
+    }
 
     /* Sidebar de posts: lista vertical no mobile */
     #sidebarAside {
@@ -4438,24 +4818,26 @@
       gap: 10px;
     }
     #sidebarAside .thumb-item.active {
-      border-left-color: var(--green);
+      border-left-color: #475569;
       border-bottom-color: transparent;
     }
     #sidebarAside .thumb-info { width: auto; flex: 1; min-width: 0; }
     #sidebarAside .thumb-delete { opacity: 1; }
+    #sidebarAside .aside-mode-wrap {
+      padding: 10px 16px;
+      border-right: none;
+    }
     #sidebarAside .aside-gen-wrap {
-      flex-direction: column;
       margin-top: 0;
       padding: 10px 16px;
       border-top: 1px solid var(--border);
       border-left: none;
-      gap: 6px;
+      gap: 8px;
     }
     #sidebarAside .aside-gen-wrap .btn-gen-ai,
-    #sidebarAside .aside-gen-wrap .btn-cfg,
-    #sidebarAside .aside-gen-wrap .btn-download {
+    #sidebarAside .aside-gen-wrap .btn-cfg {
       width: 100%;
-      padding: 10px 14px;
+      padding: 8px 14px;
       font-size: 13px;
     }
     #sidebarAside .aside-gen-wrap .logout-row {
@@ -4473,27 +4855,14 @@
       box-sizing: border-box;
     }
     .canvas-stage { padding: 24px 16px; }
-    .slide-nav { padding: 10px 12px; }
-
-    /* Legenda: barra horizontal abaixo do canvas, largura total */
-    .legend-panel {
-      width: 100% !important;
-      max-width: 100vw;
-      max-height: 220px;
-      flex-shrink: 0;
-      border-right: none;
-      border-left: none;
-      border-top: 1px solid var(--border);
-      overflow-y: auto;
-      box-sizing: border-box;
+    .slide-nav {
+      width: 50px;
+      padding: 10px 6px;
+      gap: 6px;
     }
-    .legend-header {
-      padding: 0 16px;
-      height: 48px;
-    }
-    .legend-body {
-      max-height: none;
-      padding: 12px 16px 16px;
+    .slide-nav-btn {
+      width: 34px;
+      height: 34px;
     }
 
     /* Controles de post: largura total, groups abrem todos por padrão,
@@ -4545,6 +4914,12 @@
       flex-wrap: wrap;
       gap: 8px;
     }
+    #postControls .pc-direct-controls {
+      grid-template-columns: 1fr;
+    }
+    #postControls .pc-section-picker {
+      padding-bottom: 6px;
+    }
 
     /* Download btn no mobile herda estilo de .btn-cfg */
   }
@@ -4556,14 +4931,17 @@
 <!-- LOGIN SCREEN -->
 <div id="loginScreen" class="login-screen">
   <div class="login-card">
-    <img src="logo-cropware-pb-final.svg" alt="Cropware" class="login-logo">
+    <span class="login-logo" role="img" aria-label="Cropware"></span>
+    <div class="login-divider" aria-hidden="true"></div>
     <h1 class="login-title">Studio</h1>
-    <p class="login-subtitle">Entre com email e senha para continuar</p>
     <form id="loginForm" onsubmit="handleLogin(event)">
-      <input type="email" id="loginEmail" class="login-input" placeholder="seu@email.com" required autocomplete="email">
+      <input type="email" id="loginEmail" class="login-input" placeholder="Email" required autocomplete="email">
       <input type="password" id="loginPassword" class="login-input" placeholder="Senha" required autocomplete="current-password">
       <button type="submit" class="login-btn" id="loginBtn">
         <i class="ph ph-sign-in sz-18"></i>Entrar
+      </button>
+      <button type="button" class="login-manage-btn" id="loginManageBtn">
+        <i class="ph ph-gear-six sz-18"></i>Gestão
       </button>
     </form>
     <div id="loginMsg" class="login-msg"></div>
@@ -4572,6 +4950,16 @@
 
 <!-- MAIN -->
 <main style="display:none">
+  <div class="app-header">
+    <div class="app-header-left">
+      <span class="app-logo" role="img" aria-label="Cropware"></span>
+      <span class="app-header-divider" aria-hidden="true"></span>
+      <span class="app-user-email" id="userEmail"></span>
+    </div>
+    <button type="button" class="app-logout-btn" onclick="handleLogout()">
+      <i class="ph ph-sign-out sz-18"></i>Sair
+    </button>
+  </div>
 
   <!-- MODE SELECTOR -->
   <div class="studio-tabs">
@@ -4603,57 +4991,53 @@
     <div class="aside-label">Posts</div>
   </aside>
 
-  <!-- COLUNA 2: Legenda -->
-  <div class="legend-panel">
-    <div class="legend-header">
-      <span class="legend-label">Legenda</span>
-      <button class="copy-btn" id="copyBtn" onclick="copyLegend()">
-        <i class="ph ph-copy sz-16"></i>Copiar
-      </button>
-    </div>
-    <div class="legend-body">
-      <div class="legend-text" id="legendText"></div>
-      <div class="hashtags" id="hashtagsContainer"></div>
-    </div>
-  </div>
+  <div class="editor-area">
+  <div class="editor-main">
 
-  <!-- COLUNA 3: Ferramentas de edição -->
+  <!-- COLUNA 2: Ferramentas de edição -->
   <div id="postControls">
     <div class="sidebar-header">Estilo</div>
     <div class="pc-body">
-    <div class="pc-group" id="pcGroupStyle" data-group="style">
-      <button type="button" class="pc-group-header">
-        <span class="pc-group-header-label">Modelo</span>
-        <i class="ph ph-caret-down pc-group-header-chevron"></i>
-      </button>
-      <div class="pc-group-body">
-        <div class="pc-sub" id="pcSubFormat">
-          <div class="pc-label">Formato</div>
-          <select class="pc-select" id="pcFormatSelect">
-            <option value="feed">Feed</option>
-            <option value="story">Story</option>
-            <option value="square" id="pcFormatSquareOption" style="display:none">Quadrado (1:1)</option>
-          </select>
-        </div>
-        <div class="pc-sub" id="pcSubStyle">
-          <div class="pc-label">Modelo</div>
-          <select class="pc-select" id="pcStyleSelect">
-            <optgroup label="Essenciais">
-              <option value="classic">Padrão</option>
-              <option value="dashboard">Dashboard</option>
-              <option value="revista">Revista</option>
-              <option value="split">Split</option>
-              <option value="coluna">Coluna</option>
-              <option value="moldura">Especial</option>
-            </optgroup>
-            <optgroup label="Premium Comercial" id="pcStylePremiumGroup">
-              <option value="spotlight">Spotlight</option>
-              <option value="signal">Highlights</option>
-              <option value="sidelight">Sidelight</option>
-              <option value="mockup">Mockup</option>
-            </optgroup>
-          </select>
-        </div>
+    <div class="pc-direct-controls" id="pcGroupStyle">
+      <div class="pc-sub" id="pcSubFormat">
+        <div class="pc-label">Formato</div>
+        <select class="pc-select" id="pcFormatSelect">
+          <option value="feed">Feed</option>
+          <option value="story">Story</option>
+          <option value="square" id="pcFormatSquareOption" style="display:none">Quadrado (1:1)</option>
+        </select>
+      </div>
+      <div class="pc-sub" id="pcSubStyle">
+        <div class="pc-label">Modelo</div>
+        <select class="pc-select" id="pcStyleSelect">
+          <optgroup label="Essenciais">
+            <option value="classic">Padrão</option>
+            <option value="dashboard">Dashboard</option>
+            <option value="revista">Revista</option>
+            <option value="split">Split</option>
+            <option value="coluna">Coluna</option>
+            <option value="moldura">Especial</option>
+          </optgroup>
+          <optgroup label="Premium Comercial" id="pcStylePremiumGroup">
+            <option value="spotlight">Spotlight</option>
+            <option value="signal">Highlights</option>
+            <option value="sidelight">Sidelight</option>
+            <option value="mockup">Mockup</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+
+    <div class="pc-section-picker">
+      <div class="pc-sub">
+        <div class="pc-label">Seção</div>
+        <select class="pc-select" id="pcSectionSelect" onchange="selectStyleSection(this.value)">
+          <option value="pcGroupText">Texto</option>
+          <option value="pcGroupBullets">Bullets</option>
+          <option value="pcGroupSignature">Assinatura</option>
+          <option value="pcGroupBackground">Fundo</option>
+          <option value="pcGroupMockup">Mockup</option>
+        </select>
       </div>
     </div>
 
@@ -4686,12 +5070,18 @@
         </div>
         <div class="pc-sub pc-scale-stack" id="pcSubTextScales">
           <div class="pc-offset-field" id="pcSubHookScale">
-            <span class="pc-label">Escala do Hook</span>
-            <input type="number" id="pcHookScale" min="30" max="300" step="5" value="100">
+            <div class="pc-label-row">
+              <span class="pc-label">Escala do Hook</span>
+              <span class="pc-value-pill" id="pcHookScaleValue">100%</span>
+            </div>
+            <input type="range" class="pc-range" id="pcHookScale" min="30" max="300" step="5" value="100" data-value-label="pcHookScaleValue">
           </div>
           <div class="pc-offset-field" id="pcSubComplementScale">
-            <span class="pc-label">Escala do Complemento</span>
-            <input type="number" id="pcComplementScale" min="30" max="300" step="5" value="100">
+            <div class="pc-label-row">
+              <span class="pc-label">Escala do Complemento</span>
+              <span class="pc-value-pill" id="pcComplementScaleValue">100%</span>
+            </div>
+            <input type="range" class="pc-range" id="pcComplementScale" min="30" max="300" step="5" value="100" data-value-label="pcComplementScaleValue">
           </div>
         </div>
         <div class="pc-sub" id="pcSubTextScalesReset" style="display:none">
@@ -5276,67 +5666,61 @@
       </div>
     </div>
 
-    <div class="pc-group" id="pcGroupRegen" data-group="regen">
-      <button type="button" class="pc-group-header">
-        <span class="pc-group-header-label">Regerar com IA</span>
-        <i class="ph ph-caret-down pc-group-header-chevron"></i>
-      </button>
-      <div class="pc-group-body">
-        <div class="pc-sub">
-          <div class="pc-regen">
-            <div class="pc-regen-row" data-regen-kind="text">
-              <button id="pcRegenText" class="pc-regen-btn"><i class="ph ph-text-aa"></i><span class="pc-btn-label">Texto</span></button>
-              <button class="pc-regen-undo" data-undo-for="text" title="Desfazer regeração"><i class="ph ph-arrow-counter-clockwise"></i></button>
-            </div>
-            <div class="pc-regen-row" data-regen-kind="image">
-              <button id="pcRegenImage" class="pc-regen-btn"><i class="ph ph-image"></i><span class="pc-btn-label">Imagem</span></button>
-              <button class="pc-regen-undo" data-undo-for="image" title="Desfazer regeração"><i class="ph ph-arrow-counter-clockwise"></i></button>
-            </div>
-            <div class="pc-regen-row" data-regen-kind="legend">
-              <button id="pcRegenLegend" class="pc-regen-btn"><i class="ph ph-chat-text"></i><span class="pc-btn-label">Legenda</span></button>
-              <button class="pc-regen-undo" data-undo-for="legend" title="Desfazer regeração"><i class="ph ph-arrow-counter-clockwise"></i></button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <button class="pc-reset-btn" id="pcResetBtn" title="Volta as configurações visuais ao padrão (não altera texto nem imagem)"><i class="ph ph-arrow-clockwise"></i>Reiniciar Estilo</button>
     </div><!-- /pc-body -->
+
+    <div class="pc-footer-actions">
+      <button type="button" class="pc-regen-launch" id="pcRegenLaunch" onclick="openRegenActions()">
+        <i class="ph ph-magic-wand"></i>Regerar
+      </button>
+      <button class="pc-reset-btn" id="pcResetBtn" title="Volta as configurações visuais ao padrão (não altera texto nem imagem)"><i class="ph ph-arrow-clockwise"></i>Reiniciar</button>
+    </div>
   </div>
 
-  <!-- COLUNA 4: Imagem (canvas) -->
+  <!-- COLUNA 3: Imagem (canvas) -->
   <div class="canvas-area" id="canvasArea">
     <div class="canvas-header" id="canvasHeader">Pré-visualização</div>
 
-    <div class="canvas-stage" id="canvasStage">
-      <div class="post-scaler" id="postScaler">
-      </div><!-- /post-scaler -->
+    <div class="canvas-workspace">
+      <div class="canvas-stage" id="canvasStage">
+        <div class="post-scaler" id="postScaler">
+        </div><!-- /post-scaler -->
 
-      <div class="empty-state" id="emptyState">
-        <div class="empty-state-title">Nenhum Post Ainda</div>
-        <div class="empty-state-sub">Gere seu primeiro post com a IA. Os últimos 6 ficam salvos aqui automaticamente.</div>
-        <button class="empty-state-btn" onclick="openGenerator()">Gerar Primeiro Post</button>
+        <div class="empty-state" id="emptyState">
+          <div class="empty-state-title">Nenhum Post Ainda</div>
+          <div class="empty-state-sub">Gere seu primeiro post com a IA. Os últimos 6 ficam salvos aqui automaticamente.</div>
+          <button class="empty-state-btn" onclick="openGenerator()">Gerar Primeiro Post</button>
+        </div>
+      </div><!-- /canvas-stage -->
+
+      <!-- Slide nav (carrossel) -->
+      <div class="slide-nav visible empty" id="slideNav">
+        <button class="slide-nav-btn slide-nav-add" id="slideAddBefore" onclick="insertSlide('before')" title="Inserir slide antes"><i class="ph ph-plus sz-18"></i></button>
+        <div class="slide-nav-sep"></div>
+        <button class="slide-nav-btn slide-nav-reorder" id="slideMovePrev" onclick="moveSlide(-1)" title="Mover slide para cima"><i class="ph ph-caret-double-up sz-18"></i></button>
+        <button class="slide-nav-btn" id="slidePrev" onclick="goToSlide(getCurrentSlide() - 1)" title="Slide anterior"><i class="ph ph-caret-up sz-18"></i></button>
+        <div class="slide-nav-dots" id="slideNavDots"></div>
+        <span class="slide-nav-label" id="slideNavLabel"></span>
+        <button class="slide-nav-btn" id="slideNext" onclick="goToSlide(getCurrentSlide() + 1)" title="Próximo slide"><i class="ph ph-caret-down sz-18"></i></button>
+        <button class="slide-nav-btn slide-nav-reorder" id="slideMoveNext" onclick="moveSlide(1)" title="Mover slide para baixo"><i class="ph ph-caret-double-down sz-18"></i></button>
+        <div class="slide-nav-sep"></div>
+        <button class="slide-nav-btn slide-nav-add" id="slideAddAfter" onclick="insertSlide('after')" title="Inserir slide depois"><i class="ph ph-plus sz-18"></i></button>
+        <div class="slide-nav-sep"></div>
+        <button class="slide-nav-btn slide-nav-reorder" id="slideResetOrder" onclick="resetSlideOrder()" title="Voltar à ordem original"><i class="ph ph-arrow-clockwise sz-18"></i></button>
       </div>
-    </div><!-- /canvas-stage -->
+    </div><!-- /canvas-workspace -->
 
-    <!-- Slide nav (carrossel) -->
-    <div class="slide-nav visible empty" id="slideNav">
-      <button class="slide-nav-btn slide-nav-add" id="slideAddBefore" onclick="insertSlide('before')" title="Inserir slide antes"><i class="ph ph-plus sz-18"></i></button>
-      <div class="slide-nav-sep"></div>
-      <button class="slide-nav-btn slide-nav-reorder" id="slideMovePrev" onclick="moveSlide(-1)" title="Mover slide para esquerda"><i class="ph ph-caret-double-left sz-18"></i></button>
-      <button class="slide-nav-btn" id="slidePrev" onclick="goToSlide(getCurrentSlide() - 1)"><i class="ph ph-caret-left sz-18"></i></button>
-      <div class="slide-nav-dots" id="slideNavDots"></div>
-      <span class="slide-nav-label" id="slideNavLabel"></span>
-      <button class="slide-nav-btn" id="slideNext" onclick="goToSlide(getCurrentSlide() + 1)"><i class="ph ph-caret-right sz-18"></i></button>
-      <button class="slide-nav-btn slide-nav-reorder" id="slideMoveNext" onclick="moveSlide(1)" title="Mover slide para direita"><i class="ph ph-caret-double-right sz-18"></i></button>
-      <div class="slide-nav-sep"></div>
-      <button class="slide-nav-btn slide-nav-add" id="slideAddAfter" onclick="insertSlide('after')" title="Inserir slide depois"><i class="ph ph-plus sz-18"></i></button>
-      <div class="slide-nav-sep"></div>
-      <button class="slide-nav-btn slide-nav-reorder" id="slideResetOrder" onclick="resetSlideOrder()" title="Voltar à ordem original"><i class="ph ph-arrow-clockwise sz-18"></i></button>
+    <div class="legend-open-row" id="legendOpenRow">
+      <button type="button" class="legend-open-btn" onclick="openLegendDialog()">
+        <i class="ph ph-chat-text"></i>Legenda
+      </button>
+      <button class="btn-download" id="downloadBtn" onclick="downloadCurrent()" style="display:none"><i class="ph ph-download-simple"></i>Baixar</button>
     </div>
 
   </div><!-- /canvas-area -->
+
+  </div><!-- /editor-main -->
+
+  </div><!-- /editor-area -->
 
   </div><!-- /main-columns -->
 </main>
@@ -5438,9 +5822,7 @@ function getDownloadButtonLabel() {
   return isCarouselMode() ? 'Baixar Carrossel' : 'Baixar Post';
 }
 function getCanvasHeaderLabel() {
-  if (isPresentationMode()) return 'Slide';
-  if (isInstagramAdsMode()) return 'Anúncio';
-  return isCarouselMode() ? 'Slide do Carrossel' : 'Post';
+  return 'Pré-visualização';
 }
 function updateCanvasHeader() {
   const el = document.getElementById('canvasHeader');
@@ -5642,8 +6024,19 @@ function buildSidebar() {
   const asideLabel = aside.querySelector('.aside-label');
   if (asideLabel) asideLabel.textContent = getSidebarCollectionLabel();
   const asideList = aside.querySelector('.aside-list');
+  if (modeSelect) {
+    const modeWrap = document.createElement('div');
+    modeWrap.className = 'aside-mode-wrap';
+    modeWrap.appendChild(modeSelect);
+    aside.insertBefore(modeWrap, asideList);
+  }
 
-  {
+  if (items.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'aside-empty';
+    empty.innerHTML = `<div class="aside-empty-title">Nenhum item ainda</div><div class="aside-empty-sub">Clique em Novo para criar o primeiro conteúdo deste tipo.</div>`;
+    asideList.appendChild(empty);
+  } else {
     items.forEach((p, i) => {
       const item = document.createElement('div');
       item.className = 'thumb-item' + (i === currentIdx ? ' active' : '');
@@ -5689,20 +6082,21 @@ function buildSidebar() {
     dlAction = 'downloadCurrent()';
   }
   if (!isLinkedinCarousel) dlLabel = getDownloadButtonLabel();
-  // Re-anexa o seletor de modo (salvo antes do innerHTML wipe)
-  if (modeSelect) genWrap.appendChild(modeSelect);
   genWrap.insertAdjacentHTML('beforeend',
-    '<button class="btn-cfg" onclick="openConfig()">Configurar Estilo</button>' +
-    `<button class="btn-gen-ai" onclick="openGenerator()">${genLabelText || genLabel}</button>` +
-    `<button class="btn-download" id="downloadBtn" onclick="${dlAction}" style="display:none">${dlLabel}</button>` +
-    '<div class="logout-row"><span class="logout-email" id="userEmail"></span><button class="logout-btn" onclick="handleLogout()"><i class="ph ph-sign-out sz-18"></i>Sair</button></div>');
+    '<button class="btn-cfg" onclick="openConfig()" title="Configurar Estilo"><i class="ph ph-sliders-horizontal"></i>Estilo</button>' +
+    `<button class="btn-gen-ai" onclick="openGenerator()" title="${genLabelText || genLabel}"><i class="ph ph-plus"></i>Novo</button>`);
   aside.appendChild(genWrap);
   // Restaura email do usuário (o rebuild da sidebar apaga o conteúdo)
   const emailEl = document.getElementById('userEmail');
   if (emailEl && currentUser && currentUser.email) emailEl.textContent = currentUser.email;
   // Restaura visibilidade do botão download (o rebuild recria com display:none)
   const dlBtn = document.getElementById('downloadBtn');
-  if (dlBtn && items.length > 0) dlBtn.style.display = 'flex';
+  if (dlBtn) {
+    dlBtn.innerHTML = '<i class="ph ph-download-simple"></i>Baixar';
+    dlBtn.title = dlLabel;
+    dlBtn.setAttribute('onclick', dlAction);
+    dlBtn.style.display = items.length > 0 ? 'inline-flex' : 'none';
+  }
 }
 
 function buildDots() {
@@ -6084,12 +6478,16 @@ function updateCarouselLegend() {
     if (lbl) lbl.textContent = getCopyPanelButtonLabel();
     else regenBtn.textContent = getCopyPanelButtonLabel();
   }
+  if (!el) return;
   el.textContent = getModeLegends()[getModeCurrentIdx()] || '';
   el.contentEditable = 'true';
-  document.getElementById('hashtagsContainer').innerHTML = '';
+  const hashtagsContainer = document.getElementById('hashtagsContainer');
+  if (hashtagsContainer) hashtagsContainer.innerHTML = '';
   const btn = document.getElementById('copyBtn');
-  btn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
-  btn.classList.remove('copied');
+  if (btn) {
+    btn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
+    btn.classList.remove('copied');
+  }
 }
 
 function updateCarouselPostControls() {
@@ -6129,36 +6527,98 @@ const R2_WORKER_URL     = 'https://cropware-r2-worker.leonardoterra-comercial.wo
 const SUPABASE_URL      = 'https://tzsmxhwvtobwkqffgsxo.supabase.co';
 const SUPABASE_ANON     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6c214aHd2dG9id2txZmZnc3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMTg3ODIsImV4cCI6MjA3ODc5NDc4Mn0.VQjoMrKXIyqRwVgJe_ttvu7SsXYD4YZF28bm4RC3TIA';
 const MAX_POSTS         = 6;
+const AUTH_TIMEOUT_MS   = 12000;
+const R2_UPLOAD_TIMEOUT_MS = 30000;
+const DATA_IMAGE_URI_RE = /^data:(image\/[\w.+-]+);base64,(.+)$/i;
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 // ── R2 IMAGE STORAGE ────────────────────────────────────────
-// Upload base64 para R2 e retorna URL pública. Key = images/{id}.jpg
-async function uploadImageToR2(base64DataUri, imageId) {
+function withTimeout(promise, ms, message) {
+  let timer = null;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(message)), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => {
+    if (timer) clearTimeout(timer);
+  });
+}
 
-  try {
-    const [header, b64] = base64DataUri.split(',');
-    const mime = header.match(/:(.*?);/)?.[1] || 'image/jpeg';
-    const ext = mime.includes('png') ? 'png' : 'jpg';
-    const key = `images/${imageId}.${ext}`;
-    const binary = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+function isNetworkAuthError(err) {
+  const text = (err && err.message) ? err.message : String(err || '');
+  return /failed to fetch|network|timeout|tempo esgotado|conectar/i.test(text);
+}
 
-    const resp = await fetch(`${R2_WORKER_URL}/${key}`, {
+function safeStoragePart(value, fallback = 'item') {
+  const cleaned = String(value || fallback)
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+  return cleaned || fallback;
+}
+
+function imageExtFromMime(mime) {
+  if (/png/i.test(mime)) return 'png';
+  if (/webp/i.test(mime)) return 'webp';
+  if (/gif/i.test(mime)) return 'gif';
+  return 'jpg';
+}
+
+// Upload base64 para R2 e retorna URL pública. O banco recebe URL, nunca data URI.
+async function uploadImageToR2(base64DataUri, { userId, postId, fieldPath, index } = {}) {
+  const match = String(base64DataUri || '').match(DATA_IMAGE_URI_RE);
+  if (!match) throw new Error('Imagem base64 inválida para upload.');
+
+  const [, mime, b64] = match;
+  const ext = imageExtFromMime(mime);
+  const safeUser = safeStoragePart(userId || getSessionId(), 'user');
+  const safePost = safeStoragePart(postId || `post-${Date.now()}`, 'post');
+  const safeField = safeStoragePart(fieldPath || 'image', 'image');
+  const suffix = `${Date.now()}-${String(index || 1).padStart(2, '0')}`;
+  const key = `images/studio/posts/${safeUser}/${safePost}/${safeField}-${suffix}.${ext}`;
+  const binary = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+
+  const resp = await withTimeout(
+    fetch(`${R2_WORKER_URL}/${key}`, {
       method: 'PUT',
       headers: { 'Content-Type': mime },
       body: binary,
-    });
-    if (!resp.ok) throw new Error(`R2 upload failed: ${resp.status}`);
-    return `${R2_WORKER_URL}/${key}`;
-  } catch(e) {
-    console.warn('R2 upload failed (keeping base64):', e.message);
-    return null; // fallback: mantém base64
-  }
+    }),
+    R2_UPLOAD_TIMEOUT_MS,
+    'Tempo esgotado ao enviar imagem para o R2.'
+  );
+  if (!resp.ok) throw new Error(`R2 upload failed: ${resp.status}`);
+  return `${R2_WORKER_URL}/${key}`;
 }
 
 
 // ── AUTH ─────────────────────────────────────────────────────
 let currentUser = null;
+let _studioBootPromise = null;
+
+function clearSupabaseAuthCache() {
+  try {
+    Object.keys(localStorage).forEach(key => {
+      const isProjectAuth = key.startsWith('sb-tzsmxhwvtobwkqffgsxo-auth-token');
+      const isAnySupabaseAuth = key.startsWith('sb-') && key.includes('auth-token');
+      if (isProjectAuth || isAnySupabaseAuth || key.includes('supabase.auth')) {
+        localStorage.removeItem(key);
+      }
+    });
+  } catch (_) {}
+}
+
+function startStudioBoot() {
+  if (!_studioBootPromise) {
+    _studioBootPromise = bootStudio().catch(e => {
+      console.error('bootStudio failed:', e);
+      _studioBootPromise = null;
+      showPersistError('Falha ao montar o Studio: ' + (e.message || e));
+    });
+  }
+  return _studioBootPromise;
+}
 
 function getSessionId() {
   if (currentUser) return currentUser.id;
@@ -6179,18 +6639,48 @@ async function handleLogin(e) {
   msg.className = 'login-msg';
   msg.textContent = 'Entrando...';
   try {
-    const { error } = await sb.auth.signInWithPassword({ email, password });
+    let { data, error } = await withTimeout(
+      sb.auth.signInWithPassword({ email, password }),
+      AUTH_TIMEOUT_MS,
+      'Tempo esgotado ao conectar ao Supabase.'
+    );
+
+    if (error && isNetworkAuthError(error)) {
+      clearSupabaseAuthCache();
+      ({ data, error } = await withTimeout(
+        sb.auth.signInWithPassword({ email, password }),
+        AUTH_TIMEOUT_MS,
+        'Tempo esgotado ao conectar ao Supabase.'
+      ));
+    }
+
     if (error) throw error;
+
+    const user = data?.user || data?.session?.user;
+    if (!user) {
+      btn.disabled = false;
+      msg.className = 'login-msg error';
+      msg.textContent = 'Erro: login concluído sem sessão ativa. Tente novamente.';
+      return;
+    }
+
+    msg.textContent = '';
+    showApp(user);
   } catch(err) {
     msg.className = 'login-msg error';
-    msg.textContent = 'Erro: ' + (err.message || err);
+    const text = err.message || String(err);
+    msg.textContent = isNetworkAuthError(text)
+      ? 'Erro: não foi possível conectar ao Supabase. Tente novamente.'
+      : 'Erro: ' + text;
     btn.disabled = false;
   }
 }
 
 async function handleLogout() {
-  await sb.auth.signOut();
+  try { await sb.auth.signOut(); } catch (_) {}
+  clearSupabaseAuthCache();
   currentUser = null;
+  _studioBootPromise = null;
   document.getElementById('loginScreen').classList.remove('hidden');
   document.querySelector('main').style.display = 'none';
 }
@@ -6201,6 +6691,7 @@ function showApp(user) {
   document.querySelector('main').style.display = '';
   const emailEl = document.getElementById('userEmail');
   if (emailEl && user.email) emailEl.textContent = user.email;
+  startStudioBoot();
 }
 
 // Exibe um toast vermelho no canto superior direito quando algo da
@@ -6230,30 +6721,58 @@ function showPersistError(msg) {
 // ── SALVAR / CARREGAR / DELETAR ──────────────────────────────
 let _saveTimer = null;
 
-// Cria clone do post com imagens base64 → R2 URLs (NÃO modifica o objeto original)
-async function _cloneWithR2Images(postData) {
-  const clone = JSON.parse(JSON.stringify(postData));
-  const uploads = [];
-
-  // Post simples
-  if (clone.bgImage && clone.bgImage.startsWith('data:')) {
-    uploads.push(
-      uploadImageToR2(clone.bgImage, clone.id || `post-${Date.now()}`)
-        .then(url => { if (url) clone.bgImage = url; else clone.bgImage = ''; })
-    );
-  }
-  // Carrossel / apresentação — slides[]
-  if (Array.isArray(clone.slides)) {
-    clone.slides.forEach(s => {
-      if (s.bgImage && s.bgImage.startsWith('data:')) {
-        uploads.push(
-          uploadImageToR2(s.bgImage, s.id || s.slideId || `slide-${Date.now()}`)
-            .then(url => { if (url) s.bgImage = url; else s.bgImage = ''; })
-        );
-      }
+async function replaceDataImagesWithR2Urls(value, ctx, path = []) {
+  if (typeof value === 'string') {
+    if (!DATA_IMAGE_URI_RE.test(value)) return value;
+    ctx.counter.n += 1;
+    return uploadImageToR2(value, {
+      userId: ctx.userId,
+      postId: ctx.postId,
+      fieldPath: path.join('-') || 'image',
+      index: ctx.counter.n,
     });
   }
-  await Promise.all(uploads);
+
+  if (Array.isArray(value)) {
+    for (let i = 0; i < value.length; i++) {
+      value[i] = await replaceDataImagesWithR2Urls(value[i], ctx, [...path, String(i)]);
+    }
+    return value;
+  }
+
+  if (value && typeof value === 'object') {
+    for (const key of Object.keys(value)) {
+      value[key] = await replaceDataImagesWithR2Urls(value[key], ctx, [...path, key]);
+    }
+  }
+
+  return value;
+}
+
+function stripTransientPostData(value) {
+  if (Array.isArray(value)) {
+    value.forEach(stripTransientPostData);
+    return value;
+  }
+
+  if (value && typeof value === 'object') {
+    delete value._undoStack;
+    for (const child of Object.values(value)) stripTransientPostData(child);
+  }
+
+  return value;
+}
+
+// Cria clone do post com imagens base64 → R2 URLs (NÃO modifica o objeto original).
+// Se o R2 falhar, o upsert é cancelado para o Supabase nunca voltar a receber blobs base64.
+async function _cloneWithR2Images(postData, sessionId) {
+  const clone = JSON.parse(JSON.stringify(postData));
+  stripTransientPostData(clone);
+  await replaceDataImagesWithR2Urls(clone, {
+    userId: sessionId || getSessionId(),
+    postId: clone.id || `post-${Date.now()}`,
+    counter: { n: 0 },
+  });
   return clone;
 }
 
@@ -6302,7 +6821,7 @@ const _saveSessionCore = async function() {
   // Salva no Supabase: clone com R2 URLs (dados em memória ficam intactos com base64)
   for (const x of allRows) {
     try {
-      const lightPost = await _cloneWithR2Images(x.post);
+      const lightPost = await _cloneWithR2Images(x.post, sid);
       const { error } = await sb.from('cropware_posts').upsert(
         { id: lightPost.id, session_id: sid, post_data: lightPost, legend: x.legend, updated_at: now },
         { onConflict: 'id' }
@@ -6310,6 +6829,7 @@ const _saveSessionCore = async function() {
       if (error) console.warn('Supabase save:', error.message);
     } catch(e) {
       console.warn('Supabase save error:', e.message || e);
+      showPersistError('Falha ao salvar post sem base64: ' + (e.message || e));
     }
   }
 };
@@ -7690,9 +8210,19 @@ function updatePostControls(idx) {
 
   // Escalas (hook / complement / bullets) — campos numéricos
   const hookScaleInput = document.getElementById('pcHookScale');
-  if (hookScaleInput) hookScaleInput.value = String(Math.round(hookScale * 100));
+  if (hookScaleInput) {
+    const v = Math.round(hookScale * 100);
+    hookScaleInput.value = String(v);
+    const valueEl = document.getElementById('pcHookScaleValue');
+    if (valueEl) valueEl.textContent = v + '%';
+  }
   const complementScaleInput = document.getElementById('pcComplementScale');
-  if (complementScaleInput) complementScaleInput.value = String(Math.round(complementScale * 100));
+  if (complementScaleInput) {
+    const v = Math.round(complementScale * 100);
+    complementScaleInput.value = String(v);
+    const valueEl = document.getElementById('pcComplementScaleValue');
+    if (valueEl) valueEl.textContent = v + '%';
+  }
   // Escalas dos bullets — campos numéricos
   const bulletsScaleInput = document.getElementById('pcBulletsScale');
   if (bulletsScaleInput) bulletsScaleInput.value = String(Math.round(bulletsScale * 100));
@@ -7915,9 +8445,10 @@ function updatePostControls(idx) {
   const stack = post._undoStack || [];
   const top = stack[stack.length - 1];
   const activeKind = top ? top.kind : null;
-  document.querySelectorAll('#pcGroupRegen .pc-regen-row').forEach(row => {
+  document.querySelectorAll('#regenActionsModal .pc-regen-row').forEach(row => {
     row.classList.toggle('has-undo', row.dataset.regenKind === activeKind);
   });
+  updateStyleSectionPicker();
 }
 
 // Mostra/esconde um pc-group da toolbar (usado pela per-style visibility)
@@ -7932,6 +8463,47 @@ function setSubVisible(id, visible) {
   const el = document.getElementById(id);
   if (!el) return;
   el.classList.toggle('hidden', !visible);
+}
+
+function isStyleSectionAvailable(id) {
+  const group = document.getElementById(id);
+  if (!group) return false;
+  if (group.classList.contains('hidden')) return false;
+  if (group.style.display === 'none') return false;
+  return true;
+}
+
+function updateStyleSectionPicker() {
+  const panel = document.getElementById('postControls');
+  const select = document.getElementById('pcSectionSelect');
+  if (!panel || !select) return;
+
+  panel.classList.add('pc-section-mode');
+
+  const options = Array.from(select.options);
+  options.forEach(opt => {
+    const available = isStyleSectionAvailable(opt.value);
+    opt.hidden = !available;
+    opt.disabled = !available;
+  });
+
+  let selected = select.value;
+  if (!isStyleSectionAvailable(selected)) {
+    const first = options.find(opt => !opt.disabled);
+    selected = first ? first.value : '';
+    if (selected) select.value = selected;
+  }
+
+  document.querySelectorAll('#postControls .pc-group').forEach(group => {
+    group.classList.toggle('active-section', group.id === selected);
+    group.classList.toggle('open', group.id === selected);
+  });
+}
+
+function selectStyleSection(id) {
+  const select = document.getElementById('pcSectionSelect');
+  if (select && id) select.value = id;
+  updateStyleSectionPicker();
 }
 
 // Aplica mudança de overlay no DOM sem destruir o innerHTML (evita perder edição inline)
@@ -8627,6 +9199,8 @@ function initPostControls() {
       if (isNaN(v)) v = 100;
       v = Math.max(min, Math.min(max, v));
       input.value = String(v);
+      const valueLabel = input.dataset.valueLabel ? document.getElementById(input.dataset.valueLabel) : null;
+      if (valueLabel) valueLabel.textContent = v + '%';
       post[postField] = v / 100;
       const postEl = document.getElementById(post.id);
       if (postEl) {
@@ -9761,19 +10335,32 @@ function inlineLogosForCapture(rootEl, doc, dims) {
 
 window.addEventListener('load', async () => {
   // ── Auth check ──
-  const { data: { session } } = await sb.auth.getSession();
-  if (session?.user) {
-    showApp(session.user);
-    await bootStudio();
+  let session = null;
+  try {
+    ({ data: { session } } = await withTimeout(
+      sb.auth.getSession(),
+      AUTH_TIMEOUT_MS,
+      'Tempo esgotado ao restaurar sessão.'
+    ));
+  } catch (e) {
+    console.warn('getSession failed:', e);
+    clearSupabaseAuthCache();
+    currentUser = null;
+    _studioBootPromise = null;
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.querySelector('main').style.display = 'none';
   }
-  // Escuta mudanças de auth (magic link callback, logout, etc.)
+  if (session?.user) showApp(session.user);
+
+  // Sincronização extra de auth. O login bem-sucedido chama showApp diretamente.
   sb.auth.onAuthStateChange(async (event, session) => {
-    if (session?.user && !currentUser) {
+    if (session?.user) {
       showApp(session.user);
-      await bootStudio();
+      return;
     }
     if (event === 'SIGNED_OUT') {
       currentUser = null;
+      _studioBootPromise = null;
       document.getElementById('loginScreen').classList.remove('hidden');
       document.querySelector('main').style.display = 'none';
     }
@@ -9781,22 +10368,45 @@ window.addEventListener('load', async () => {
 });
 
 async function bootStudio() {
-  await loadSession();       // rehidrata posts do Supabase ANTES de montar sidebar/dots
-  await loadDesignConfig();  // carrega diretriz de marca/voz do Supabase
-  ensureLogoSvgMarkup();     // pré-carrega SVG markup (pro html2canvas inline)
+  // Monta a UI imediatamente. Se Supabase/config demorarem ou falharem,
+  // o usuário ainda vê sidebar, ações e estado vazio em vez de uma tela branca.
+  const main = document.querySelector('main');
+  if (main) main.style.display = '';
   buildSidebar();
   const emailEl = document.getElementById('userEmail');
   if (emailEl && currentUser && currentUser.email) emailEl.textContent = currentUser.email;
   buildDots();
   initPostControls();  // wire up swatches, toggles e botões de regen
-  if (posts.length > 0) {
-    goTo(0);
+  updateEmptyStateVisibility();
+  updateSlideNav();
+  scalePost();
+  ensureFontsReady();
+
+  try {
+    await loadSession();       // rehidrata posts do Supabase/localStorage
+  } catch (e) {
+    console.error('bootStudio loadSession failed:', e);
+    showPersistError('Falha ao carregar posts salvos: ' + (e.message || e));
+  }
+
+  try {
+    await loadDesignConfig();  // carrega diretriz de marca/voz do Supabase
+  } catch (e) {
+    console.error('bootStudio loadDesignConfig failed:', e);
+  }
+
+  ensureLogoSvgMarkup();       // pré-carrega SVG markup (pro html2canvas inline)
+  buildSidebar();
+  buildDots();
+  const items = getModeItems();
+  if (items.length > 0) {
+    setModeCurrentIdx(Math.min(getModeCurrentIdx(), items.length - 1));
+    goTo(getModeCurrentIdx());
   } else {
     updateEmptyStateVisibility();
   }
   updateSlideNav();
   scalePost();
-  ensureFontsReady();
 }
 
 async function ensureFontsReady() {
@@ -10281,7 +10891,10 @@ function updateLegend(idx) {
   const el = document.getElementById('legendText');
   const legendLabel = document.querySelector('.legend-label');
   const regenBtn = document.getElementById('pcRegenLegend');
+  const legendOpenRow = document.getElementById('legendOpenRow');
+  if (legendOpenRow) legendOpenRow.classList.toggle('hidden', isPresentationMode());
 
+  if (!el) return;
   if (isPresentationMode()) {
     if (legendLabel) legendLabel.textContent = 'Fundo de Slide';
     el.textContent = '';
@@ -10303,10 +10916,13 @@ function updateLegend(idx) {
     if (lbl) lbl.textContent = getCopyPanelButtonLabel();
     else regenBtn.textContent = getCopyPanelButtonLabel();
   }
-  document.getElementById('hashtagsContainer').innerHTML = '';
+  const hashtagsContainer = document.getElementById('hashtagsContainer');
+  if (hashtagsContainer) hashtagsContainer.innerHTML = '';
   const btn = document.getElementById('copyBtn');
-  btn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
-  btn.classList.remove('copied');
+  if (btn) {
+    btn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
+    btn.classList.remove('copied');
+  }
 }
 
 function copyLegend() {
@@ -10377,6 +10993,27 @@ function openPresBgGenerator() {
 
 function closePresBgGenerator() {
   document.getElementById('presBgModal').classList.remove('open');
+}
+
+function openLegendDialog() {
+  updateLegend(getModeCurrentIdx());
+  const modal = document.getElementById('legendModal');
+  if (modal) modal.classList.add('open');
+}
+
+function closeLegendDialog() {
+  const modal = document.getElementById('legendModal');
+  if (modal) modal.classList.remove('open');
+}
+
+function openRegenActions() {
+  const modal = document.getElementById('regenActionsModal');
+  if (modal) modal.classList.add('open');
+}
+
+function closeRegenActions() {
+  const modal = document.getElementById('regenActionsModal');
+  if (modal) modal.classList.remove('open');
 }
 
 function setPresBgStatus(msg, type) {
@@ -10730,6 +11367,18 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cfgModal').addEventListener('click', function(e) {
     if (e.target === this) closeConfig();
   });
+  const regenActionsModal = document.getElementById('regenActionsModal');
+  if (regenActionsModal) {
+    regenActionsModal.addEventListener('click', function(e) {
+      if (e.target === this) closeRegenActions();
+    });
+  }
+  const legendModal = document.getElementById('legendModal');
+  if (legendModal) {
+    legendModal.addEventListener('click', function(e) {
+      if (e.target === this) closeLegendDialog();
+    });
+  }
   const regenDirModal = document.getElementById('regenDirModal');
   if (regenDirModal) {
     regenDirModal.addEventListener('click', function(e) {
@@ -12417,6 +13066,30 @@ function setGenStatus(msg, type) {
 
 </script>
 
+<!-- LEGEND MODAL -->
+<div class="gen-modal legend-modal" id="legendModal">
+  <div class="gen-modal-box">
+    <div class="gen-modal-header">
+      <span>Legenda</span>
+      <button class="gen-close" onclick="closeLegendDialog()"><i class="ph ph-x"></i></button>
+    </div>
+    <div class="gen-body">
+      <div class="legend-panel">
+        <div class="legend-header">
+          <span class="legend-label">Legenda</span>
+          <button class="copy-btn" id="copyBtn" onclick="copyLegend()">
+            <i class="ph ph-copy sz-16"></i>Copiar
+          </button>
+        </div>
+        <div class="legend-body">
+          <div class="legend-text" id="legendText"></div>
+          <div class="hashtags" id="hashtagsContainer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- GENERATOR MODAL -->
 <div class="gen-modal" id="genModal">
   <div class="gen-modal-box">
@@ -12425,7 +13098,6 @@ function setGenStatus(msg, type) {
       <button class="gen-close" onclick="closeGenerator()"><i class="ph ph-x"></i></button>
     </div>
     <div class="gen-body">
-
       <div class="gen-group">
         <label>Tema / Contexto do Post</label>
         <textarea id="genTheme" rows="3" placeholder="Ex: colheita de soja com variação por talhão, foco em decisão baseada em dado..."></textarea>
@@ -12534,6 +13206,32 @@ function setGenStatus(msg, type) {
   </div>
 </div>
 
+<!-- REGEN ACTIONS MODAL -->
+<div class="gen-modal pc-regen-dialog" id="regenActionsModal">
+  <div class="gen-modal-box">
+    <div class="gen-modal-header">
+      <span>Regerar com IA</span>
+      <button class="gen-close" onclick="closeRegenActions()"><i class="ph ph-x"></i></button>
+    </div>
+    <div class="gen-body">
+      <div class="pc-regen">
+        <div class="pc-regen-row" data-regen-kind="text">
+          <button id="pcRegenText" class="pc-regen-btn" onclick="closeRegenActions()"><i class="ph ph-text-aa"></i><span class="pc-btn-label">Texto</span></button>
+          <button class="pc-regen-undo" data-undo-for="text" title="Desfazer regeração" onclick="closeRegenActions()"><i class="ph ph-arrow-counter-clockwise"></i></button>
+        </div>
+        <div class="pc-regen-row" data-regen-kind="image">
+          <button id="pcRegenImage" class="pc-regen-btn" onclick="closeRegenActions()"><i class="ph ph-image"></i><span class="pc-btn-label">Imagem</span></button>
+          <button class="pc-regen-undo" data-undo-for="image" title="Desfazer regeração" onclick="closeRegenActions()"><i class="ph ph-arrow-counter-clockwise"></i></button>
+        </div>
+        <div class="pc-regen-row" data-regen-kind="legend">
+          <button id="pcRegenLegend" class="pc-regen-btn" onclick="closeRegenActions()"><i class="ph ph-chat-text"></i><span class="pc-btn-label">Legenda</span></button>
+          <button class="pc-regen-undo" data-undo-for="legend" title="Desfazer regeração" onclick="closeRegenActions()"><i class="ph ph-arrow-counter-clockwise"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- REGEN DIRECTION MODAL -->
 <div class="gen-modal" id="regenDirModal">
   <div class="gen-modal-box" style="width:460px;">
@@ -12632,4 +13330,3 @@ function setGenStatus(msg, type) {
 
 </body>
 </html>
-
