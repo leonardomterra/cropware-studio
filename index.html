@@ -769,11 +769,11 @@
   .separator-short {
     width: 280px;
     height: 2px;
-    background: color-mix(in srgb, var(--post-accent) 28%, transparent);
+    background: rgba(122,184,126,0.28);
     margin: 24px 0;
   }
   .align-right .separator-short {
-    background: color-mix(in srgb, var(--post-accent) 28%, transparent);
+    background: rgba(122,184,126,0.28);
   }
 
   .complement {
@@ -1556,7 +1556,7 @@
   .moldura-divider {
     width: 280px;
     height: 2px;
-    background: color-mix(in srgb, var(--post-accent) 28%, transparent);
+    background: rgba(122,184,126,0.28);
     margin: 24px 0;
     position: relative;
     z-index: 1;
@@ -1862,7 +1862,7 @@
     height: 2px;
     width: 280px;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--post-accent) 28%, transparent);
+    background: rgba(122,184,126,0.28);
     position: relative;
   }
   .post[data-style="signal"][data-signal-align="center"] .signal-divider { margin-left: auto; margin-right: auto; }
@@ -4769,6 +4769,90 @@
     font-size: 11px;
     color: #94a3b8;
   }
+  .news-tools {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .news-tools select {
+    min-width: 0;
+  }
+  .news-search-btn {
+    border: none;
+    border-radius: 8px;
+    background: #1e293b;
+    color: #fff;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 0 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    white-space: nowrap;
+  }
+  .news-search-btn:hover { background: #0f172a; }
+  .news-search-btn:disabled { opacity: 0.55; cursor: wait; }
+  .news-cards {
+    display: grid;
+    gap: 8px;
+    max-height: 310px;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  .news-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fff;
+    padding: 12px;
+    display: grid;
+    gap: 8px;
+  }
+  .news-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.25;
+  }
+  .news-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 11px;
+    color: #64748b;
+  }
+  .news-card-pill {
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    padding: 3px 8px;
+    background: #f8fafc;
+  }
+  .news-card-insight {
+    font-size: 13px;
+    line-height: 1.38;
+    color: #475569;
+  }
+  .news-card-action {
+    justify-self: start;
+    border: none;
+    border-radius: 7px;
+    background: #e2e8f0;
+    color: #334155;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 13px;
+    padding: 7px 10px;
+    cursor: pointer;
+  }
+  .news-card-action:hover { background: #cbd5e1; color: #0f172a; }
+  .news-empty {
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.4;
+    padding: 4px 0;
+  }
   .gen-dropzone {
     border: 1px solid #e2e8f0;
     border-radius: 4px;
@@ -5237,6 +5321,7 @@
       <optgroup label="Instagram">
         <option value="post" selected>Instagram — Post</option>
         <option value="carousel">Instagram — Carrossel</option>
+        <option value="news-post">Post Notícia</option>
         <option value="instagram-ads-post">Instagram Ads — Post</option>
         <option value="instagram-ads-carousel">Instagram Ads — Carrossel</option>
       </optgroup>
@@ -6080,7 +6165,7 @@ const dotsContainer = document.getElementById('dotsContainer');
 let current = 0;
 
 // ── MODE & MULTI-PLATFORM STATE ─────────────────────────────
-// Modes: 'post' | 'carousel' | 'instagram-ads-post' | 'linkedin-post' | 'linkedin-carousel' | 'linkedin-pessoal-post' | 'linkedin-pessoal-carousel'
+// Modes: 'post' | 'carousel' | 'news-post' | 'instagram-ads-post' | 'linkedin-post' | 'linkedin-carousel' | 'linkedin-pessoal-post' | 'linkedin-pessoal-carousel'
 let activeMode = 'post';
 
 // Instagram state
@@ -6095,6 +6180,9 @@ const instagramAdsCarousels = [];
 const instagramAdsCarouselLegends = [];
 let instagramAdsCurrentCarousel = 0;
 let instagramAdsCurrentSlide = 0;
+const newsPosts = [];
+const newsLegends = [];
+let newsCurrentPost = 0;
 
 // LinkedIn state
 const linkedinPosts = [];
@@ -6123,9 +6211,13 @@ let presentationCurrentSlide = 0;
 // Helpers: which platform and format
 function getPlatform() {
   if (activeMode === 'presentation') return 'presentation';
+  if (activeMode === 'news-post') return 'news';
   if (activeMode === 'instagram-ads-post' || activeMode === 'instagram-ads-carousel') return 'instagram-ads';
   if (activeMode.startsWith('linkedin-pessoal')) return 'linkedin-pessoal';
   return activeMode.startsWith('linkedin') ? 'linkedin' : 'instagram';
+}
+function isNewsMode(mode) {
+  return (mode || activeMode) === 'news-post';
 }
 function isInstagramAdsMode(mode) {
   const m = mode || activeMode;
@@ -6144,11 +6236,13 @@ function getSidePanelLabel() {
 }
 function getSidebarCollectionLabel() {
   if (isPresentationMode()) return 'Apresentacoes';
+  if (isNewsMode()) return 'Pautas';
   if (isInstagramAdsMode()) return 'Anuncios';
   return isCarouselMode() ? 'Carrosseis' : 'Posts';
 }
 function getGenerateButtonLabel() {
   if (isPresentationMode()) return 'Gerar Slide';
+  if (isNewsMode()) return 'Post Noticia';
   if (isInstagramAdsMode()) return 'Gerar Anuncio';
   return isCarouselMode() ? 'Gerar Carrossel' : 'Gerar Novo';
 }
@@ -6183,6 +6277,15 @@ function getEmptyStateCopy() {
       headerSub: 'Gere o primeiro com a IA',
     };
   }
+  if (isNewsMode()) {
+    return {
+      title: 'Nenhuma Pauta Ainda',
+      subtitle: 'Transforme notícias e temas quentes do agro em posts técnicos e estratégicos.',
+      button: 'Gerar Post Notícia',
+      headerTitle: 'Nenhuma Pauta Ainda',
+      headerSub: 'Busque tendências ou informe um tema',
+    };
+  }
   if (isCarouselMode()) {
     return {
       title: 'Nenhum Carrossel Ainda',
@@ -6201,6 +6304,7 @@ function getEmptyStateCopy() {
   };
 }
 function getPlatformDisplayName(platform) {
+  if (platform === 'news') return 'Post Notícia';
   if (platform === 'instagram-ads') return 'Instagram Ads';
   if (platform === 'linkedin-pessoal') return 'LinkedIn Pessoal';
   if (platform === 'linkedin') return 'LinkedIn';
@@ -6240,6 +6344,7 @@ function applyScaleVars(postEl, postData) {
 function getModeItems() {
   switch (activeMode) {
     case 'carousel':                  return carousels;
+    case 'news-post':                 return newsPosts;
     case 'instagram-ads-post':        return instagramAdsPosts;
     case 'instagram-ads-carousel':    return instagramAdsCarousels;
     case 'linkedin-post':             return linkedinPosts;
@@ -6253,6 +6358,7 @@ function getModeItems() {
 function getModeLegends() {
   switch (activeMode) {
     case 'carousel':                  return carouselLegends;
+    case 'news-post':                 return newsLegends;
     case 'instagram-ads-post':        return instagramAdsLegends;
     case 'instagram-ads-carousel':    return instagramAdsCarouselLegends;
     case 'linkedin-post':             return linkedinLegends;
@@ -6266,6 +6372,7 @@ function getModeLegends() {
 function getModeCurrentIdx() {
   switch (activeMode) {
     case 'carousel':                  return currentCarousel;
+    case 'news-post':                 return newsCurrentPost;
     case 'instagram-ads-post':        return instagramAdsCurrentPost;
     case 'instagram-ads-carousel':    return instagramAdsCurrentCarousel;
     case 'linkedin-post':             return linkedinCurrentPost;
@@ -6279,6 +6386,7 @@ function getModeCurrentIdx() {
 function setModeCurrentIdx(idx) {
   switch (activeMode) {
     case 'carousel':                  currentCarousel = idx; break;
+    case 'news-post':                 newsCurrentPost = idx; break;
     case 'instagram-ads-post':        instagramAdsCurrentPost = idx; break;
     case 'instagram-ads-carousel':    instagramAdsCurrentCarousel = idx; break;
     case 'linkedin-post':             linkedinCurrentPost = idx; break;
@@ -7171,6 +7279,10 @@ const _saveSessionCore = async function() {
     .map((c, i) => ({ post: c, legend: instagramAdsCarouselLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
+  const generatedNewsPosts = newsPosts
+    .map((p, i) => ({ post: p, legend: newsLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
   const generatedLinkedinPosts = linkedinPosts
     .map((p, i) => ({ post: p, legend: linkedinLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
@@ -7191,7 +7303,7 @@ const _saveSessionCore = async function() {
     .map((p, i) => ({ post: p, legend: presentationLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
-  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
+  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedNewsPosts, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
   if (!allRows.length) return;
   const sid = getSessionId();
   const now = new Date().toISOString();
@@ -7428,10 +7540,11 @@ function renderGeneratedPost(postData, legendText) {
   if (postData.signalCardHeight == null)   postData.signalCardHeight   = 1;
 
   const isInstagramAds = postData.type === 'instagram-ads-post';
+  const isNews = postData.type === 'news-post';
   const isLinkedinPessoal = postData.type === 'linkedin-pessoal-post';
   const isLinkedin = postData.type === 'linkedin-post';
-  const targetPosts = isInstagramAds ? instagramAdsPosts : isLinkedinPessoal ? linkedinPessoalPosts : isLinkedin ? linkedinPosts : posts;
-  const targetLegends = isInstagramAds ? instagramAdsLegends : isLinkedinPessoal ? linkedinPessoalLegends : isLinkedin ? linkedinLegends : legends;
+  const targetPosts = isInstagramAds ? instagramAdsPosts : isNews ? newsPosts : isLinkedinPessoal ? linkedinPessoalPosts : isLinkedin ? linkedinPosts : posts;
+  const targetLegends = isInstagramAds ? instagramAdsLegends : isNews ? newsLegends : isLinkedinPessoal ? linkedinPessoalLegends : isLinkedin ? linkedinLegends : legends;
 
   targetPosts.push(postData);
   targetLegends.push(normalizePanelText(legendText || '', postData.type));
@@ -8708,9 +8821,9 @@ function updatePostControls(idx) {
   syncNudgeValue('pcSiteNudgeValue', siteOffsetX, siteOffsetY, 'px');
   // Mockup — sync device select, escala, ajuste fino
   const mockupDeviceSelSync = document.getElementById('pcMockupDeviceSelect');
-  if (mockupDeviceSelSync) mockupDeviceSelSync.value = post.mockupDevice || 'phone';
+  if (mockupDeviceSelSync && isMockup) mockupDeviceSelSync.value = post.mockupDevice || 'phone';
   const mockupPosSelSync = document.getElementById('pcMockupPosSelect');
-  if (mockupPosSelSync) {
+  if (mockupPosSelSync && isMockup) {
     const _device = post.mockupDevice || 'phone';
     // Cache a lista completa de options uma única vez
     if (!mockupPosSelSync._allOptions) {
@@ -8751,8 +8864,8 @@ function updatePostControls(idx) {
   const _device = post.mockupDevice || 'phone';
   const subPhone   = document.getElementById('pcSubMockupScreenPhone');
   const subDesktop = document.getElementById('pcSubMockupScreenDesktop');
-  if (subPhone)   subPhone.style.display   = (_device === 'phone'   || _device === 'both') ? '' : 'none';
-  if (subDesktop) subDesktop.style.display = (_device === 'desktop' || _device === 'both') ? '' : 'none';
+  if (subPhone)   subPhone.style.display   = isMockup && (_device === 'phone'   || _device === 'both') ? '' : 'none';
+  if (subDesktop) subDesktop.style.display = isMockup && (_device === 'desktop' || _device === 'both') ? '' : 'none';
   const mockupScaleR = document.getElementById('pcMockupScale');
   if (mockupScaleR) syncPercentControl('pcMockupScale', 'pcMockupScaleValue', post.mockupScale == null ? 1 : post.mockupScale);
   syncNudgeValue(
@@ -9522,7 +9635,7 @@ function initPostControls() {
                   : key === 'accentBar' ? 'accentBarEnabled'
                   : key === 'strip' ? 'stripEnabled'
                   : 'bulletsVisible';
-      post[field] = !post[field];
+      post[field] = !(post[field] !== false);
       const postEl = document.getElementById(post.id);
       if (postEl) applyPostVariant(postEl, post);
       updatePostControls(current);
@@ -11541,6 +11654,8 @@ function copyLegend() {
 // ── GENERATOR ──────────────────────────────────────────────
 let genImageBase64 = null;
 let genImageMime = 'image/jpeg';
+let newsPautaResults = [];
+let selectedNewsPauta = null;
 
 function openGenerator() {
   if (isPresentationMode()) {
@@ -11550,6 +11665,7 @@ function openGenerator() {
   const isCarousel = isCarouselMode();
   const platform = getPlatform();
   const isAds = isInstagramAdsMode();
+  const isNews = isNewsMode();
   document.getElementById('genModal').classList.add('open');
   const headerSpan = document.querySelector('#genModal .gen-modal-header > span');
   if (headerSpan) {
@@ -11558,14 +11674,28 @@ function openGenerator() {
   }
   if (isAds && isCarousel) headerSpan.textContent = 'Instagram Ads — Gerar Carrossel com IA';
   else if (isAds) headerSpan.textContent = 'Instagram Ads — Gerar Anuncio com IA';
+  else if (isNews && headerSpan) headerSpan.textContent = 'Post Notícia — Buscar notícia ou tema';
   const genBtn = document.getElementById('genBtn');
   if (genBtn) genBtn.innerHTML = isCarousel
     ? '<i class="ph ph-pen sz-18"></i>Gerar Carrossel'
     : '<i class="ph ph-pen sz-18"></i>Gerar Post';
   if (genBtn && isAds && !isCarousel) genBtn.innerHTML = '<i class="ph ph-pen sz-18"></i>Gerar Anuncio';
   if (genBtn && isAds && isCarousel) genBtn.innerHTML = '<i class="ph ph-pen sz-18"></i>Gerar Carrossel de Anuncios';
+  if (genBtn && isNews) genBtn.innerHTML = '<i class="ph ph-pen sz-18"></i>Gerar Post Notícia';
+  const themeLabel = document.getElementById('genThemeLabel');
+  const themeHelp = document.getElementById('genThemeHelp');
+  const themeInput = document.getElementById('genTheme');
+  if (themeLabel) themeLabel.textContent = isNews ? 'Buscar notícia ou tema' : 'Tema / Contexto do Post';
+  if (themeHelp) themeHelp.textContent = isNews
+    ? 'Digite um tema manualmente ou busque pautas recentes para usar no fluxo atual.'
+    : 'Descreva o tema, dor ou contexto que deve virar post.';
+  if (themeInput) themeInput.placeholder = isNews
+    ? 'Ex: soja, milho, biológicos, fertilidade, exportação, defensivos, clima...'
+    : 'Ex: colheita de soja com variação por talhão, foco em decisão baseada em dado...';
   const slideCountGroup = document.getElementById('genSlideCountGroup');
   if (slideCountGroup) slideCountGroup.style.display = isCarousel ? '' : 'none';
+  const newsGroup = document.getElementById('genNewsGroup');
+  if (newsGroup) newsGroup.style.display = isNews ? '' : 'none';
   const adsObjectiveGroup = document.getElementById('genAdsObjectiveGroup');
   const adsAudienceGroup = document.getElementById('genAdsAudienceGroup');
   const adsCTAGroup = document.getElementById('genAdsCTAGroup');
@@ -11576,6 +11706,200 @@ function openGenerator() {
 
 function closeGenerator() {
   document.getElementById('genModal').classList.remove('open');
+}
+
+function resetNewsPautas() {
+  newsPautaResults = [];
+  selectedNewsPauta = null;
+  const cards = document.getElementById('genNewsCards');
+  if (cards) cards.innerHTML = '<div class="news-empty">Digite um tema ou busque tendências recentes do agro para transformar em conteúdo estratégico.</div>';
+}
+
+function formatNewsDate(value) {
+  const d = value ? new Date(value) : null;
+  if (!d || Number.isNaN(d.getTime())) return value || 'Recente';
+  const diffHours = Math.round((Date.now() - d.getTime()) / 36e5);
+  if (diffHours >= 0 && diffHours < 24) return diffHours <= 1 ? 'Hoje' : `${diffHours}h atrás`;
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+}
+
+function normalizeNewsItem(item, fallbackSource) {
+  return {
+    title: (item.title || '').trim(),
+    source: (item.source || fallbackSource || 'Radar agro').trim(),
+    category: (item.category || 'Agro').trim(),
+    published: (item.published || item.publishedAt || 'Recente').toString().trim(),
+    summary: (item.summary || item.description || '').trim(),
+    insight: (item.insight || item.suggestedInsight || '').trim(),
+    theme: (item.theme || item.pauta || '').trim(),
+    link: (item.link || '').trim(),
+  };
+}
+
+function renderNewsCards(items) {
+  const cards = document.getElementById('genNewsCards');
+  if (!cards) return;
+  newsPautaResults = (items || []).map(item => normalizeNewsItem(item)).filter(item => item.title);
+  selectedNewsPauta = null;
+  if (!newsPautaResults.length) {
+    cards.innerHTML = '<div class="news-empty">Não encontrei pautas boas agora. Tente outro termo ou gere a partir do tema digitado.</div>';
+    return;
+  }
+  cards.innerHTML = newsPautaResults.map((item, idx) => `
+    <div class="news-card">
+      <div class="news-card-title">${escapeHTML(item.title)}</div>
+      <div class="news-card-meta">
+        <span class="news-card-pill">${escapeHTML(item.source || 'Fonte')}</span>
+        <span class="news-card-pill">${escapeHTML(item.category || 'Agro')}</span>
+        <span class="news-card-pill">${escapeHTML(item.published || 'Recente')}</span>
+      </div>
+      <div class="news-card-insight">${escapeHTML(item.insight || item.summary || 'Transformar em leitura técnica para desenvolvimento de mercado.')}</div>
+      <button type="button" class="news-card-action" onclick="useNewsPauta(${idx})">Usar esta pauta</button>
+    </div>
+  `).join('');
+}
+
+function buildNewsThemeText(item) {
+  const parts = [
+    `Notícia/pauta: ${item.title}`,
+    `Fonte: ${item.source || 'Não informada'}`,
+    `Publicado: ${item.published || 'Recente'}`,
+    `Categoria: ${item.category || 'Agro'}`,
+  ];
+  if (item.summary) parts.push(`Resumo: ${item.summary}`);
+  if (item.insight) parts.push(`Insight sugerido: ${item.insight}`);
+  if (item.link) parts.push(`Link de referência: ${item.link}`);
+  return parts.join('\n');
+}
+
+function useNewsPauta(index) {
+  const item = newsPautaResults[index];
+  if (!item) return;
+  selectedNewsPauta = item;
+  const themeInput = document.getElementById('genTheme');
+  if (themeInput) themeInput.value = buildNewsThemeText(item);
+  setGenStatus('<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>Pauta selecionada. Agora é só gerar o post.', 'success');
+}
+
+async function fetchNewsCandidates(topic, rangeDays) {
+  const term = topic || 'agronegócio OR agro OR soja OR milho OR biológicos OR fertilizantes OR defensivos OR clima agrícola';
+  const query = `${term} when:${rangeDays || 7}d`;
+  const feedUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=pt-BR&gl=BR&ceid=BR:pt-419`;
+  const proxiedUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(feedUrl)}`;
+  const resp = await fetch(proxiedUrl);
+  if (!resp.ok) throw new Error(`RSS notícias: HTTP ${resp.status}`);
+  const xmlText = await resp.text();
+  const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+  const items = Array.from(doc.querySelectorAll('item')).slice(0, 12);
+  return items.map(item => {
+    const titleRaw = item.querySelector('title')?.textContent || '';
+    const source = item.querySelector('source')?.textContent || '';
+    const title = titleRaw.replace(/\s+-\s+[^-]+$/, '').trim();
+    return {
+      title,
+      source,
+      publishedAt: item.querySelector('pubDate')?.textContent || '',
+      published: formatNewsDate(item.querySelector('pubDate')?.textContent || ''),
+      summary: (item.querySelector('description')?.textContent || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(),
+      link: item.querySelector('link')?.textContent || '',
+    };
+  }).filter(item => item.title);
+}
+
+function buildNewsCurationPrompt(rawItems, topic, rangeDays, fallbackOnly) {
+  const sourceBlock = rawItems && rawItems.length
+    ? rawItems.map((item, idx) => `${idx + 1}. ${item.title}\nFonte: ${item.source || 'não informada'}\nPublicado: ${item.published || item.publishedAt || 'recente'}\nResumo: ${item.summary || 'sem resumo'}\nLink: ${item.link || ''}`).join('\n\n')
+    : 'Nenhuma manchete externa disponível.';
+  return `Você é editor estratégico da Cropware para agronegócio.
+
+Objetivo: transformar notícias recentes e temas quentes do agro em pautas de conteúdo para quem constrói mercado no campo.
+
+Tema buscado: ${topic || 'agro em geral'}
+Janela: últimos ${rangeDays || 7} dia(s)
+
+${fallbackOnly ? 'IMPORTANTE: a busca externa falhou. Gere temas quentes plausíveis e marque source como "Radar IA", sem afirmar que são notícias verificadas.' : 'Use as manchetes abaixo como referência, sem copiar texto jornalístico.'}
+
+Manchetes/resumos:
+${sourceBlock}
+
+Curadoria obrigatória:
+- Remova ruído e priorize agro brasileiro.
+- Prefira pautas úteis para geração de demanda, desenvolvimento de mercado, consultoria técnica e promotoria técnica.
+- Não copie manchetes; sintetize.
+- O insight deve responder: por que isso importa para quem constrói mercado no campo?
+- Categorias curtas: Clima, Mercado, Tecnologia, Biológicos, Defensivos, Fertilidade, Exportação, Safra, Gestão.
+
+Responda APENAS em JSON válido:
+{
+  "items": [
+    {
+      "title": "título curto e editorial da pauta",
+      "source": "fonte original ou Radar IA",
+      "category": "categoria curta",
+      "published": "Hoje, 2h atrás, data curta ou Recente",
+      "summary": "síntese em 1 frase",
+      "insight": "insight estratégico em 1 frase",
+      "theme": "texto enriquecido para virar post"
+    }
+  ]
+}`;
+}
+
+async function curateNewsCandidates(rawItems, topic, rangeDays, fallbackOnly) {
+  const userPrompt = buildNewsCurationPrompt(rawItems, topic, rangeDays, fallbackOnly);
+  const resp = await fetchGeminiWithRetry(
+    `${SUPABASE_URL}/functions/v1/gemini`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+      },
+      body: JSON.stringify({
+        model: 'gemini-2.5-flash',
+        body: {
+          contents: [{ parts: [{ text: userPrompt }] }],
+          systemInstruction: { parts: [{ text: 'Você faz curadoria editorial técnica para o agro. Retorne somente JSON válido, sem markdown.' }] },
+          generationConfig: { responseMimeType: 'application/json' }
+        }
+      })
+    },
+    'Curadoria de notícias'
+  );
+  const data = await resp.json();
+  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const match = raw.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('Curadoria: resposta não contém JSON válido.');
+  const parsed = JSON.parse(match[0]);
+  return Array.isArray(parsed.items) ? parsed.items.slice(0, 5) : [];
+}
+
+async function handleNewsSearch() {
+  const topic = (document.getElementById('genTheme') || {}).value?.trim() || '';
+  const range = (document.getElementById('genNewsRange') || {}).value || '7';
+  const btn = document.getElementById('genNewsSearchBtn');
+  const cards = document.getElementById('genNewsCards');
+  if (btn) btn.disabled = true;
+  if (cards) cards.innerHTML = '<div class="news-empty">Buscando e curando pautas recentes...</div>';
+  try {
+    let rawItems = [];
+    let fallbackOnly = false;
+    try {
+      rawItems = await fetchNewsCandidates(topic, range);
+    } catch (rssError) {
+      console.warn('news RSS search failed:', rssError);
+      fallbackOnly = true;
+    }
+    const curated = await curateNewsCandidates(rawItems, topic, range, fallbackOnly || !rawItems.length);
+    renderNewsCards(curated);
+    setGenStatus(fallbackOnly ? 'Busca externa indisponível; sugeri pautas estratégicas com IA.' : 'Pautas recentes curadas.', fallbackOnly ? 'warn' : 'success');
+  } catch (e) {
+    console.error('handleNewsSearch failed:', e);
+    if (cards) cards.innerHTML = '<div class="news-empty">Não consegui buscar pautas agora. Você ainda pode digitar um tema e gerar normalmente.</div>';
+    setGenStatus('Erro ao buscar tendências: ' + (e.message || e), 'error');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
 }
 
 // ── PRESENTATION BACKGROUNDS GENERATOR ────────────────────
@@ -11941,6 +12265,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   })();
   const fileInput = document.getElementById('genImageInput');
+  const themeInput = document.getElementById('genTheme');
+  if (themeInput) {
+    themeInput.addEventListener('input', () => {
+      if (isNewsMode()) selectedNewsPauta = null;
+    });
+  }
   if (fileInput) {
     fileInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
@@ -12183,6 +12513,89 @@ Responda APENAS em JSON valido:
 }`;
 }
 
+function buildNewsPostSystemPrompt(tone) {
+  const toneDirectives = {
+    casual:      'TOM: direto, claro e profissional, com linguagem acessivel para agro.',
+    tecnico:     'TOM: tecnico e consultivo, com vocabulario real do agro e raciocinio de mercado.',
+    inspirador:  'TOM: estrategico e confiante, mostrando oportunidade sem exagero.',
+    provocativo: 'TOM: tese forte, leitura de mercado e implicacao pratica clara.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
+
+  return `Você é editor estratégico da Cropware, plataforma para quem constrói mercado no campo.
+
+Sua função é transformar uma notícia recente ou tema quente do agronegócio em conteúdo visual estratégico.
+Não escreva como portal de notícias. Não copie manchetes. Não resuma apenas o fato.
+
+Pergunta central obrigatória:
+"Por que isso importa para quem constrói mercado no campo?"
+
+REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos. Se a pauta trouxer fonte/data, use apenas como contexto e não amplie além do informado.
+
+${buildCropwarePositioningContext('instagram')}
+
+OBJETIVO DO POST NOTÍCIA:
+- Gerar autoridade, relevância e timing.
+- Conectar a notícia com boas práticas de campo, inteligência de mercado, desenvolvimento de mercado, geração de demanda, consultoria técnica ou promotoria técnica.
+- Mostrar oportunidade prática ou reflexão estratégica.
+- Soar como interpretação profissional, não notícia crua.
+
+HOOK (texto grande):
+- 1 ou 2 linhas no total
+- A última parte OBRIGATORIAMENTE envolvida em <em>...</em>
+- Frase afirmativa, editorial e estratégica
+- Máximo 6 palavras por linha
+- Sempre terminar com ponto final
+- Não repetir a manchete literalmente
+
+COMPLEMENT:
+- 1-2 linhas, máximo 38 caracteres cada
+- Use <strong> para destacar uma expressão-chave
+- Deve interpretar o impacto da pauta para campo, mercado ou tomada de decisão
+
+BULLETS:
+- Exatamente 3 bullets
+- Cada text com máximo 6 palavras e ponto final
+- Cada bullet deve apontar uma implicação prática: campo, mercado, demanda, equipe, posicionamento, dados ou decisão
+- Ícones permitidos:
+check_circle, task_alt, trending_up, trending_down, schedule, bolt, savings,
+insights, analytics, agriculture, eco, grass, water_drop, sunny, landscape,
+sensors, visibility, shield, speed, psychology, hub, timeline, query_stats,
+monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturing
+
+LEGENDA:
+- 2-4 frases curtas, máximo 65 palavras no total
+- Contextualize a pauta sem parecer jornal
+- Priorize leitura profissional, técnica e estratégica
+- Não use primeira pessoa ("eu vi", "tenho notado", "na minha experiência")
+- Não termine com pergunta genérica, CTA, emoji ou "comenta aí"
+- 3 hashtags relevantes em linha separada
+
+${toneBlock}
+${buildDesignContext('instagram')}
+
+IMAGE_PROMPT:
+- Foto ultra-realista editorial premium do agro brasileiro conectada à pauta
+- Sem texto, logos, marcas ou manchetes na imagem
+- Composição limpa com espaço negativo para texto overlay
+- Visual de campo, equipe técnica, lavoura, mercado ou tecnologia conforme o tema
+
+Responda APENAS em JSON válido:
+{
+  "hook": "primeira linha<br><em>remate estratégico.</em>",
+  "complement": "apoio curto<br><strong>com destaque</strong>",
+  "bullets": [
+    {"icon": "radar", "text": "Sinal de mercado."},
+    {"icon": "insights", "text": "Decisão mais clara."},
+    {"icon": "agriculture", "text": "Campo mais preparado."}
+  ],
+  "title": "título curto para sidebar",
+  "legend": "legenda completa",
+  "hashtags": "#tag1 #tag2 #tag3",
+  "imagePrompt": "photorealistic image prompt in english"
+}`;
+}
+
 // Retorna o system prompt com diretiva de tom injetada (fase 5).
 function buildSystemPrompt(tone) {
   const toneDirectives = {
@@ -12318,20 +12731,30 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
     ? buildLinkedInPessoalSystemPrompt(tone)
     : platform === 'linkedin'
     ? buildLinkedInSystemPrompt(tone)
+    : platform === 'news'
+    ? buildNewsPostSystemPrompt(tone)
     : buildSystemPrompt(tone);
-  const platformLabel = platform === 'linkedin-pessoal' ? 'LinkedIn' : platform === 'linkedin' ? 'LinkedIn' : 'Instagram';
+  const platformLabel = platform === 'linkedin-pessoal' ? 'LinkedIn' : platform === 'linkedin' ? 'LinkedIn' : platform === 'news' ? 'Post Notícia' : 'Instagram';
   const brandLabel = platform === 'linkedin-pessoal' ? '' : ' da Cropware';
   const directionSuffix = extraDirection && extraDirection.trim()
     ? `\n\nDireção adicional do usuário: ${extraDirection.trim()}`
     : '';
   const adContext = (options && options.adContext) || null;
+  const newsContext = (options && options.newsContext) || null;
+  const newsSuffix = newsContext
+    ? `\n\nContexto estruturado da pauta selecionada:\nTítulo: ${newsContext.title || ''}\nFonte: ${newsContext.source || ''}\nCategoria: ${newsContext.category || ''}\nPublicado: ${newsContext.published || ''}\nResumo: ${newsContext.summary || ''}\nInsight sugerido: ${newsContext.insight || ''}\nLink: ${newsContext.link || ''}`
+    : '';
   const userParts = userImageBase64
     ? [
         { inlineData: { mimeType: userImageMime || 'image/jpeg', data: userImageBase64 } },
-        { text: `Analise esta imagem agrícola e crie um post para ${platformLabel}${brandLabel} sobre:\n\n${theme}${directionSuffix}` }
+        { text: platform === 'news'
+          ? `Analise esta imagem agrícola e transforme a pauta abaixo em Post Notícia estratégico para a Cropware:\n\n${theme}${newsSuffix}${directionSuffix}`
+          : `Analise esta imagem agrícola e crie um post para ${platformLabel}${brandLabel} sobre:\n\n${theme}${directionSuffix}` }
       ]
     : [
-        { text: `Crie um post para ${platformLabel}${brandLabel} sobre o seguinte tema:\n\n${theme}${directionSuffix}` }
+        { text: platform === 'news'
+          ? `Transforme a pauta abaixo em Post Notícia estratégico para a Cropware:\n\n${theme}${newsSuffix}${directionSuffix}`
+          : `Crie um post para ${platformLabel}${brandLabel} sobre o seguinte tema:\n\n${theme}${directionSuffix}` }
       ];
 
   const platformLabelResolved = platform === 'instagram-ads' ? 'Instagram Ads' : platformLabel;
@@ -12442,6 +12865,7 @@ async function generatePost() {
   const theme     = document.getElementById('genTheme').value.trim();
   const platform  = getPlatform();
   const isAds     = platform === 'instagram-ads';
+  const isNews    = platform === 'news';
   const cfg       = getActiveDesignConfig();
   const tone      = cfg.tone || 'casual';
   const btn       = document.getElementById('genBtn');
@@ -12452,7 +12876,7 @@ async function generatePost() {
     cta:       (document.getElementById('genAdsCTA') || {}).value || 'Saiba mais',
   } : null;
 
-  if (!theme)     { setGenStatus('Descreva o tema do post.', 'error'); return; }
+  if (!theme)     { setGenStatus(isNews ? 'Busque ou descreva uma notícia/tema.' : 'Descreva o tema do post.', 'error'); return; }
 
   btn.disabled = true;
   btn.textContent = 'Gerando...';
@@ -12462,7 +12886,7 @@ async function generatePost() {
 
   try {
     // Passo 1: Gemini texto (prompt varia por plataforma)
-    const parsed = await callGeminiText(theme, tone, genImageBase64, genImageMime, null, platform, { adContext });
+    const parsed = await callGeminiText(theme, tone, genImageBase64, genImageMime, null, platform, { adContext, newsContext: selectedNewsPauta });
 
     // Passo 2: Gemini imagem (se não houver upload)
     let finalImgBase64 = genImageBase64;
@@ -12497,9 +12921,9 @@ async function generatePost() {
       id:       `post-gen-${timestamp}`,
       bg:       `bg-gen-${timestamp}`,
       slideId:  `slide-gen-${timestamp}`,
-      title:    parsed.title || (isAds ? 'Anuncio gerado' : 'Post gerado'),
-      sub:      isAds ? 'Instagram Ads' : 'Gerado por IA',
-      filename: isAds ? `cropware_ad_${timestamp}.jpg` : `cropware_gerado_${timestamp}.jpg`,
+      title:    parsed.title || (isAds ? 'Anuncio gerado' : isNews ? 'Post Notícia gerado' : 'Post gerado'),
+      sub:      isAds ? 'Instagram Ads' : isNews ? 'Post Notícia' : 'Gerado por IA',
+      filename: isAds ? `cropware_ad_${timestamp}.jpg` : isNews ? `cropware_noticia_${timestamp}.jpg` : `cropware_gerado_${timestamp}.jpg`,
       isGenerated:    true,
       bgImage:        `data:${finalImgMime};base64,${finalImgBase64}`,
       theme:          theme,
@@ -12510,6 +12934,10 @@ async function generatePost() {
       bullets:        Array.isArray(parsed.bullets) ? parsed.bullets.slice(0, 3) : [],
     };
     if (platform === 'instagram-ads') postData.type = 'instagram-ads-post';
+    else if (platform === 'news') {
+      postData.type = 'news-post';
+      postData.newsPauta = selectedNewsPauta ? { ...selectedNewsPauta } : null;
+    }
     else if (platform === 'linkedin') postData.type = 'linkedin-post';
     else if (platform === 'linkedin-pessoal') postData.type = 'linkedin-pessoal-post';
     applyInstagramAdsFields(postData, parsed, adContext);
@@ -12529,20 +12957,21 @@ async function generatePost() {
       if (adsObjectiveEl) adsObjectiveEl.value = 'trafego';
       const adsCTAEl = document.getElementById('genAdsCTA');
       if (adsCTAEl) adsCTAEl.value = 'Saiba mais';
+      if (isNews) resetNewsPautas();
       document.getElementById('genPreview').style.display = 'none';
       document.getElementById('genPreview').src = '';
       const inner = document.querySelector('.gen-dropzone-inner');
       if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
       genImageBase64 = null;
       btn.disabled = false;
-      btn.innerHTML = `<i class="ph ph-sparkle sz-18"></i>${isAds ? 'Gerar Anuncio' : 'Gerar Post'}`;
+      btn.innerHTML = `<i class="ph ph-sparkle sz-18"></i>${isAds ? 'Gerar Anuncio' : isNews ? 'Gerar Post Notícia' : 'Gerar Post'}`;
       setGenStatus('', '');
     }, 600);
 
   } catch(e) {
     setGenStatus('<i class="ph ph-warning-octagon sz-18" style="margin-right:6px"></i>Erro: ' + e.message, 'error');
     btn.disabled = false;
-    btn.innerHTML = `<i class="ph ph-sparkle sz-18"></i>${isAds ? 'Gerar Anuncio' : 'Gerar Post'}`;
+    btn.innerHTML = `<i class="ph ph-sparkle sz-18"></i>${isAds ? 'Gerar Anuncio' : isNews ? 'Gerar Post Notícia' : 'Gerar Post'}`;
   }
 }
 
@@ -13783,8 +14212,26 @@ function setGenStatus(msg, type) {
     </div>
     <div class="gen-body">
       <div class="gen-group">
-        <label>Tema / Contexto do Post</label>
+        <label id="genThemeLabel">Tema / Contexto do Post</label>
         <textarea id="genTheme" rows="3" placeholder="Ex: colheita de soja com variação por talhão, foco em decisão baseada em dado..."></textarea>
+        <small id="genThemeHelp">Descreva o tema, dor ou contexto que deve virar post.</small>
+      </div>
+
+      <div class="gen-group" id="genNewsGroup" style="display:none">
+        <label>Radar de Pautas</label>
+        <div class="news-tools">
+          <select id="genNewsRange">
+            <option value="1">Últimas 24h</option>
+            <option value="7" selected>Últimos 7 dias</option>
+            <option value="30">Últimos 30 dias</option>
+          </select>
+          <button class="news-search-btn" id="genNewsSearchBtn" type="button" onclick="handleNewsSearch()">
+            <i class="ph ph-radar sz-16"></i>Buscar tendências
+          </button>
+        </div>
+        <div class="news-cards" id="genNewsCards">
+          <div class="news-empty">Digite um tema ou busque tendências recentes do agro para transformar em conteúdo estratégico.</div>
+        </div>
       </div>
 
       <div class="gen-group">
