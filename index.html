@@ -86,7 +86,7 @@
     padding: 12px;
     margin-top: 10px;
     background: #fff;
-    color: #475569;
+    color: #f8fafc;
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     font-size: 14px;
@@ -100,7 +100,7 @@
     transition: background 0.2s, border-color 0.2s, color 0.2s;
   }
   .login-manage-btn:hover {
-    background: #f8fafc;
+    background: #334155;
     border-color: #f1f5f9;
     color: #334155;
   }
@@ -125,7 +125,7 @@
   }
   .logout-email {
     font-size: 13px;
-    color: #475569;
+    color: #f8fafc;
     font-family: 'Inter Tight', sans-serif;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -629,7 +629,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 0 64px 88px;
+    padding: 0 56px 136px;
   }
   .content-spread-bottom {
     padding-bottom: 160px;
@@ -639,14 +639,14 @@
   .content-top {
     position: absolute;
     top: 130px;
-    left: 64px;
+    left: 56px;
     max-width: 680px;
   }
 
   /* Alinhamento horizontal do conteúdo (classic) */
   .content-top.align-right {
     left: auto;
-    right: 64px;
+    right: 56px;
   }
   .content-bottom.align-right {
     text-align: right;
@@ -655,12 +655,12 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    left: 64px;
+    left: 56px;
     max-width: 680px;
   }
   .content-center.align-right {
     left: auto;
-    right: 64px;
+    right: 56px;
   }
   .align-right { text-align: right; }
   .align-right .separator-short {
@@ -767,16 +767,19 @@
   }
 
   .separator-short {
-    width: 260px;
-    height: 1px;
-    background: rgba(255,255,255,0.18);
+    width: 280px;
+    height: 2px;
+    background: color-mix(in srgb, var(--post-accent) 28%, transparent);
     margin: 24px 0;
+  }
+  .align-right .separator-short {
+    background: color-mix(in srgb, var(--post-accent) 28%, transparent);
   }
 
   .complement {
     font-family: 'Inter Tight', sans-serif;
     font-weight: 400;
-    font-size: calc(34px * var(--complement-scale, 1));
+    font-size: calc(38px * var(--complement-scale, 1));
     line-height: 1.55;
     color: rgba(255,255,255,0.80);
     max-width: 580px;
@@ -909,8 +912,8 @@
   /* ── ESTILO: DASHBOARD ─────────────────────────────────── */
   .dash-card {
     position: absolute;
-    left: 56px;
-    right: 56px;
+    left: 48px;
+    right: 48px;
     bottom: 110px;
     padding: 60px 64px 58px;
     border-radius: 28px;
@@ -954,20 +957,20 @@
     top: 140px;
   }
   .dash-card[data-layout="left"] {
-    bottom: 56px;
-    top: 56px;
+    bottom: 170px;
+    top: 170px;
     right: auto;
-    width: calc(50% - 84px);
+    width: calc(58% - 72px);
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
   .dash-card[data-layout="right"] {
-    bottom: 56px;
-    top: 56px;
+    bottom: 170px;
+    top: 170px;
     left: auto;
-    right: 56px;
-    width: calc(50% - 84px);
+    right: 48px;
+    width: calc(58% - 72px);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -987,7 +990,7 @@
     font-family: 'Familjen Grotesk', 'Inter', 'Inter Tight', sans-serif;
     font-weight: 700;
     font-stretch: 92%;
-    font-size: calc(74px * var(--hook-scale, 1));
+    font-size: calc(68px * var(--hook-scale, 1));
     line-height: 1.08;
     color: #fff;
     letter-spacing: -1.4px;
@@ -1007,7 +1010,7 @@
   .dash-complement {
     font-family: 'Inter Tight', sans-serif;
     font-weight: 400;
-    font-size: calc(28px * var(--complement-scale, 1));
+    font-size: calc(36px * var(--complement-scale, 1));
     line-height: 1.55;
     color: rgba(255,255,255,0.82);
     max-width: 820px;
@@ -1038,12 +1041,16 @@
     position: absolute;
     bottom: 0; left: 0; right: 0;
     height: calc(100% - var(--revista-photo-pct, 65%) + 1px);
-    background: #f8fafc;
+    background: #2B452D;
     padding: 44px 72px 80px 56px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     box-shadow: 0 -30px 60px rgba(15,23,42,0.12);
+  }
+  .post[data-revista-layout="top"] .revista-block {
+    padding-top: 36px;
+    padding-bottom: 92px;
   }
   .revista-badge {
     display: inline-flex;
@@ -1071,19 +1078,26 @@
     font-family: 'Familjen Grotesk', 'Inter', 'Inter Tight', sans-serif;
     font-weight: 700;
     font-stretch: 92%;
-    font-size: calc(62px * var(--hook-scale, 1));
+    font-size: calc(68px * var(--hook-scale, 1));
     line-height: 1.06;
     color: #4d4d4d;
     letter-spacing: -1.6px;
-    margin-bottom: 18px;
+    margin-bottom: 28px;
     text-shadow: none;
     min-height: 1.06em;
   }
   .revista-hook em, .revista-hook i { font-style: normal; color: var(--post-accent); }
+  .revista-separator {
+    width: 260px;
+    height: 2px;
+    margin: 0 0 24px;
+    background: var(--post-accent);
+    border-radius: 999px;
+  }
   .revista-complement {
     font-family: 'Inter Tight', sans-serif;
     font-weight: 400;
-    font-size: calc(24px * var(--complement-scale, 1));
+    font-size: calc(38px * var(--complement-scale, 1));
     line-height: 1.52;
     color: #4d4d4d;
     max-width: 880px;
@@ -1117,18 +1131,18 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, transparent 50%, var(--revista-block-color, #f8fafc) 100%);
+    background: linear-gradient(180deg, transparent 50%, var(--revista-block-color, #2B452D) 100%);
     pointer-events: none;
     z-index: 1;
   }
   .post[data-style="revista"][data-revista-layout="bottom"] .revista-photo::after {
-    background: linear-gradient(0deg, transparent 50%, var(--revista-block-color, #f8fafc) 100%);
+    background: linear-gradient(0deg, transparent 50%, var(--revista-block-color, #2B452D) 100%);
   }
   .post[data-style="revista"][data-revista-layout="left"] .revista-photo::after {
-    background: linear-gradient(90deg, transparent 50%, var(--revista-block-color, #f8fafc) 100%);
+    background: linear-gradient(90deg, transparent 50%, var(--revista-block-color, #2B452D) 100%);
   }
   .post[data-style="revista"][data-revista-layout="right"] .revista-photo::after {
-    background: linear-gradient(270deg, transparent 50%, var(--revista-block-color, #f8fafc) 100%);
+    background: linear-gradient(270deg, transparent 50%, var(--revista-block-color, #2B452D) 100%);
   }
 
   /* Revista: orientação "bottom" — foto embaixo, bloco em cima */
@@ -1137,6 +1151,8 @@
   }
   .post[data-revista-layout="bottom"] .revista-block {
     bottom: auto; top: 0;
+    padding-top: 92px;
+    padding-bottom: 44px;
     box-shadow: 0 30px 60px rgba(15,23,42,0.12);
   }
   .post[data-revista-layout="bottom"] .revista-logo {
@@ -1146,12 +1162,12 @@
   /* Revista: orientação "left" — foto à esquerda, bloco à direita */
   .post[data-revista-layout="left"] .revista-photo {
     top: 0; left: 0; bottom: 0; right: auto;
-    width: var(--revista-photo-pct, 65%);
+    width: var(--revista-photo-pct, 52%);
     height: 100%;
   }
   .post[data-revista-layout="left"] .revista-block {
     top: 0; right: 0; bottom: 0; left: auto;
-    width: calc(100% - var(--revista-photo-pct, 65%) + 1px);
+    width: calc(100% - var(--revista-photo-pct, 52%) + 1px);
     height: 100%;
     box-shadow: -30px 0 60px rgba(15,23,42,0.12);
   }
@@ -1159,12 +1175,12 @@
   /* Revista: orientação "right" — foto à direita, bloco à esquerda */
   .post[data-revista-layout="right"] .revista-photo {
     top: 0; right: 0; bottom: 0; left: auto;
-    width: var(--revista-photo-pct, 65%);
+    width: var(--revista-photo-pct, 52%);
     height: 100%;
   }
   .post[data-revista-layout="right"] .revista-block {
     top: 0; left: 0; bottom: 0; right: auto;
-    width: calc(100% - var(--revista-photo-pct, 65%) + 1px);
+    width: calc(100% - var(--revista-photo-pct, 52%) + 1px);
     height: 100%;
     box-shadow: 30px 0 60px rgba(15,23,42,0.12);
   }
@@ -1451,7 +1467,7 @@
     position: absolute;
     top: calc(56px + var(--logo-offset-y, 0px));
     left: calc(72px + var(--logo-offset-x, 0px));
-    width: calc(190px * var(--logo-scale, 1));
+    width: calc(260px * var(--logo-scale, 1));
     height: auto;
     filter: brightness(0) invert(1);
     opacity: 0.9;
@@ -1483,6 +1499,21 @@
       0 8px 32px rgba(0,0,0,0.28),
       0 2px 8px rgba(0,0,0,0.12);
   }
+  .moldura-glass[data-align="right"] {
+    text-align: right;
+  }
+  .moldura-glass[data-align="right"] .moldura-divider {
+    margin-left: auto;
+  }
+  .moldura-glass[data-align="right"] .moldura-complement {
+    margin-left: auto;
+  }
+  .moldura-glass[data-align="right"] .moldura-bullet {
+    flex-direction: row-reverse;
+  }
+  .moldura-glass[data-align="right"] .moldura-bullet .post-bullet-text {
+    text-align: right;
+  }
   .moldura-glass > * { position: relative; z-index: 3; }
   .moldura-glass-blur {
     position: absolute !important;
@@ -1511,60 +1542,24 @@
     display: none;
   }
   .moldura-glass-accent {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 50%;
-    height: 50%;
-    border-radius: 0 28px 0 0;
-    background: radial-gradient(ellipse at top right, var(--post-accent), transparent 70%);
-    opacity: 0.12;
-    pointer-events: none;
-    z-index: 3;
+    display: none;
   }
   .moldura-glass-line {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, var(--post-accent), transparent);
-    opacity: 0.6;
-    border-radius: 0 0 28px 28px;
-    z-index: 2;
+    display: none;
   }
   .moldura-glass-line-top {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent 10%, var(--post-accent) 50%, transparent 90%);
-    opacity: 0.35;
-    border-radius: 28px 28px 0 0;
-    z-index: 2;
+    display: none;
   }
   .moldura-glass-sidebar {
-    position: absolute;
-    left: 0;
-    top: 40px;
-    bottom: 40px;
-    width: 3px;
-    background: linear-gradient(180deg, transparent, var(--post-accent) 30%, var(--post-accent) 70%, transparent);
-    opacity: 0.5;
-    border-radius: 0 2px 2px 0;
-    z-index: 2;
+    display: none;
   }
   .moldura-divider {
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15) 20%, rgba(255,255,255,0.15) 80%, transparent);
-    margin: 24px 0 4px;
+    width: 280px;
+    height: 2px;
+    background: color-mix(in srgb, var(--post-accent) 28%, transparent);
+    margin: 24px 0;
     position: relative;
-    z-index: 3;
-  }
-  .moldura-glass.text-dark .moldura-divider {
-    background: linear-gradient(90deg, transparent, rgba(30,41,59,0.12) 20%, rgba(30,41,59,0.12) 80%, transparent);
+    z-index: 1;
   }
   .moldura-bullet-icon .ph {
     font-size: inherit;
@@ -1577,7 +1572,7 @@
     line-height: 1.06;
     color: #ffffff;
     letter-spacing: -1.4px;
-    margin-bottom: 18px;
+    margin-bottom: 0;
     text-shadow: 0 2px 12px rgba(0,0,0,0.2);
     position: relative;
     z-index: 1;
@@ -1591,7 +1586,7 @@
   .moldura-complement {
     font-family: 'Inter Tight', sans-serif;
     font-weight: 400;
-    font-size: calc(29px * var(--complement-scale, 1));
+    font-size: calc(34px * var(--complement-scale, 1));
     line-height: 1.45;
     color: rgba(255,255,255,0.85);
     position: relative;
@@ -1600,7 +1595,7 @@
   }
   .moldura-complement strong, .moldura-complement b { color: #ffffff; font-weight: 600; }
   .moldura-bullets {
-    margin-top: 20px;
+    margin-top: 0;
     display: flex;
     flex-direction: column;
     gap: 18px;
@@ -1624,7 +1619,7 @@
   }
   .moldura-bullet .post-bullet-text {
     font-family: 'Inter Tight', sans-serif;
-    font-size: calc(28px * var(--bullets-scale, 1));
+    font-size: calc(32px * var(--bullets-scale, 1));
     color: rgba(255,255,255,0.8);
     line-height: 1.4;
   }
@@ -1865,17 +1860,13 @@
   }
   .signal-divider {
     height: 2px;
-    width: 100%;
-    border-radius: 2px;
-    background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(255,255,255,0.20) 12%,
-      var(--post-accent) 50%,
-      rgba(255,255,255,0.20) 88%,
-      transparent 100%);
-    box-shadow: 0 0 18px rgba(122,184,126,0.35);
+    width: 280px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--post-accent) 28%, transparent);
     position: relative;
   }
+  .post[data-style="signal"][data-signal-align="center"] .signal-divider { margin-left: auto; margin-right: auto; }
+  .post[data-style="signal"][data-signal-align="right"] .signal-divider { margin-left: auto; }
   .signal-cards {
     display: flex;
     flex-direction: column;
@@ -1929,8 +1920,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: calc(68px * var(--bullet-icon-scale, 1));
-    height: calc(68px * var(--bullet-icon-scale, 1));
+    width: calc(78px * var(--bullet-icon-scale, 1));
+    height: calc(78px * var(--bullet-icon-scale, 1));
     border-radius: calc(18px * var(--bullet-icon-scale, 1));
     background: var(--signal-icon-tint, transparent);
     border: 1px solid rgba(255,255,255,0.18);
@@ -1939,7 +1930,7 @@
     cursor: pointer;
   }
   .signal-card-icon .ph {
-    font-size: calc(36px * var(--bullet-icon-scale, 1));
+    font-size: calc(42px * var(--bullet-icon-scale, 1));
     text-shadow: 0 0 14px rgba(122,184,126,0.45);
   }
   .signal-card-text {
@@ -2065,6 +2056,9 @@
   .mockup-stage[data-device="desktop"][data-layout="bottom"] .mockup-desktop {
     width: calc(1100px * var(--mockup-scale, 1));
   }
+  .mockup-stage[data-layout="bottom"] {
+    padding-bottom: 152px;
+  }
 
   /* Layouts ZOOM — phone amplificado e transbordando as bordas do post */
   .mockup-stage[data-layout="zoom-bottom"],
@@ -2104,7 +2098,7 @@
      corta só embaixo (quando sobra). Texto escondido — o phone é protagonista. */
   .mockup-stage[data-layout="zoom-right"] .mockup-device {
     right: 6%;
-    top: 24%;
+    top: 42%;
     transform: translate(var(--mockup-offset-x, 0px), var(--mockup-offset-y, 0px));
   }
   .mockup-stage[data-layout="zoom-right"] .mockup-phone {
@@ -2115,7 +2109,7 @@
   .mockup-stage[data-device="desktop"][data-layout="zoom-right"] .mockup-device {
     right: auto;
     left: -1%;
-    top: 22%;
+    top: 40%;
   }
   .mockup-stage[data-device="desktop"][data-layout="zoom-right"] .mockup-desktop {
     width: calc(1320px * var(--mockup-scale, 1));
@@ -2146,7 +2140,7 @@
   /* Transborda Esquerda — espelho */
   .mockup-stage[data-layout="zoom-left"] .mockup-device {
     left: 6%;
-    top: 24%;
+    top: 42%;
     transform: translate(var(--mockup-offset-x, 0px), var(--mockup-offset-y, 0px));
   }
   .mockup-stage[data-layout="zoom-left"] .mockup-phone {
@@ -2169,7 +2163,7 @@
   .mockup-stage[data-device="desktop"][data-layout="zoom-left"] .mockup-device {
     left: auto;
     right: -1%;
-    top: 22%;
+    top: 40%;
   }
   .mockup-stage[data-device="desktop"][data-layout="zoom-left"] .mockup-desktop {
     width: calc(1320px * var(--mockup-scale, 1));
@@ -2416,11 +2410,44 @@
   }
   .mockup-text .mockup-complement em, .mockup-text .mockup-complement i { font-style: normal; color: var(--post-accent); }
   .mockup-text .mockup-complement strong, .mockup-text .mockup-complement b { color: #fff; font-weight: 600; }
+  .post[data-format="feed"][data-style="mockup"] .mockup-text .mockup-complement,
+  .post[data-format="story"][data-style="mockup"] .mockup-text .mockup-complement {
+    font-size: calc(38px * var(--complement-scale, 1));
+  }
 
   /* Story (9:16) — respeita safe zones, reduz escala */
   .post[data-format="story"][data-style="mockup"] .mockup-stage {
     padding: 300px 64px;
     gap: 36px;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-layout="bottom"] {
+    padding-bottom: 380px;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="desktop"][data-layout="bottom"] {
+    padding-bottom: 300px;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-layout="zoom-bottom"] .mockup-device {
+    top: 46%;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-layout="zoom-bottom"] .mockup-text {
+    top: 220px;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="desktop"][data-layout="zoom-bottom"] .mockup-device {
+    top: 32%;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="desktop"][data-layout="zoom-bottom"] .mockup-desktop {
+    width: calc(1360px * var(--mockup-scale, 1));
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="desktop"][data-layout="zoom-bottom"] .mockup-text {
+    top: 360px;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="desktop"][data-layout="zoom-right"] .mockup-device,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="desktop"][data-layout="zoom-left"] .mockup-device {
+    top: 34%;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="desktop"][data-layout="zoom-right"] .mockup-text,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="desktop"][data-layout="zoom-left"] .mockup-text {
+    top: 220px;
   }
   /* Presentation (16:9) — padding lateral maior */
   .post[data-format="presentation"][data-style="mockup"] .mockup-stage {
@@ -2504,7 +2531,7 @@
   /* Combo ZOOM-RIGHT — desktop transborda à esquerda, phone proeminente à direita, leve sobreposição */
   .mockup-stage[data-device="both"][data-layout="zoom-right"] .mockup-desktop-wrap {
     left: -6%;
-    top: 48%;
+    top: 62%;
     transform: translate(var(--mockup-offset-x, 0px), var(--mockup-offset-y, 0px));
   }
   .mockup-stage[data-device="both"][data-layout="zoom-right"] .mockup-desktop {
@@ -2512,7 +2539,7 @@
   }
   .mockup-stage[data-device="both"][data-layout="zoom-right"] .mockup-phone-wrap {
     right: 3%;
-    top: 34%;
+    top: 52%;
   }
   .mockup-stage[data-device="both"][data-layout="zoom-right"] .mockup-phone {
     transform: scale(1.3);
@@ -2534,7 +2561,7 @@
   /* Combo ZOOM-LEFT — espelho de zoom-right (phone à esquerda, desktop à direita, texto alinhado à direita) */
   .mockup-stage[data-device="both"][data-layout="zoom-left"] .mockup-desktop-wrap {
     right: -6%;
-    top: 48%;
+    top: 62%;
     transform: translate(var(--mockup-offset-x, 0px), var(--mockup-offset-y, 0px));
   }
   .mockup-stage[data-device="both"][data-layout="zoom-left"] .mockup-desktop {
@@ -2542,7 +2569,7 @@
   }
   .mockup-stage[data-device="both"][data-layout="zoom-left"] .mockup-phone-wrap {
     left: 3%;
-    top: 34%;
+    top: 52%;
   }
   .mockup-stage[data-device="both"][data-layout="zoom-left"] .mockup-phone {
     transform: scale(1.3);
@@ -2623,6 +2650,68 @@
     text-align: right;
   }
 
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="center"] .mockup-desktop-wrap,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="left"] .mockup-desktop-wrap,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="right"] .mockup-desktop-wrap {
+    left: 33%;
+    top: 62%;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="center"] .mockup-desktop,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="left"] .mockup-desktop,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="right"] .mockup-desktop {
+    width: calc(1080px * var(--mockup-scale, 1));
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="center"] .mockup-phone-wrap,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="left"] .mockup-phone-wrap,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="right"] .mockup-phone-wrap {
+    bottom: 12%;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="center"] .mockup-text,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="left"] .mockup-text,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="right"] .mockup-text {
+    top: 420px;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-right"] .mockup-desktop-wrap {
+    left: -9%;
+    top: 56%;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-left"] .mockup-desktop-wrap {
+    right: -9%;
+    top: 56%;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-right"] .mockup-desktop,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-left"] .mockup-desktop {
+    width: calc(880px * var(--mockup-scale, 1));
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-right"] .mockup-phone-wrap,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-left"] .mockup-phone-wrap {
+    top: 50%;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-right"] .mockup-text,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-left"] .mockup-text {
+    top: 480px;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-right-pc"] .mockup-desktop-wrap {
+    left: -10%;
+    top: 66%;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-left-pc"] .mockup-desktop-wrap {
+    right: -10%;
+    top: 66%;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-right-pc"] .mockup-desktop,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-left-pc"] .mockup-desktop {
+    width: calc(1260px * var(--mockup-scale, 1));
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-right-pc"] .mockup-phone-wrap,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-left-pc"] .mockup-phone-wrap {
+    bottom: 26%;
+  }
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-right-pc"] .mockup-text,
+  .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="both"][data-layout="zoom-left-pc"] .mockup-text {
+    top: 300px;
+  }
+
   /* ── TEXT TOOLBAR (floating) ── */
   .text-toolbar {
     position: fixed;
@@ -2676,6 +2765,15 @@
   /* CLASSIC */
   .post[data-format="story"][data-style="classic"] .content-top    { top: 220px; max-width: 880px; }
   .post[data-format="story"][data-style="classic"] .content-bottom { padding: 0 64px 260px; }
+  .post[data-format="story"][data-style="classic"][data-layout="bottom"] .content-bottom {
+    padding-bottom: 360px;
+  }
+  .post[data-format="story"][data-style="classic"][data-layout="spread"] .content-spread-bottom .post-bullets {
+    transform: translateY(-88px);
+  }
+  .post[data-format="story"][data-style="classic"][data-layout="spread-inverted"] .content-spread-bottom .hook {
+    transform: translateY(-88px);
+  }
   .post[data-format="story"][data-style="classic"] .logo-post,
   .post[data-format="story"][data-style="classic"] .logo-post-tc,
   .post[data-format="story"][data-style="classic"] .logo-post-tr   { top: calc(216px + var(--logo-offset-y, 0px)); }
@@ -2692,8 +2790,8 @@
   /* DASHBOARD */
   .post[data-format="story"][data-style="dashboard"] .dash-card                      { bottom: 300px; }
   .post[data-format="story"][data-style="dashboard"] .dash-card[data-layout="top"]   { top: 300px; bottom: auto; }
-  .post[data-format="story"][data-style="dashboard"] .dash-card[data-layout="left"]  { top: 200px; bottom: 230px; }
-  .post[data-format="story"][data-style="dashboard"] .dash-card[data-layout="right"] { top: 200px; bottom: 230px; }
+  .post[data-format="story"][data-style="dashboard"] .dash-card[data-layout="left"]  { top: 200px; bottom: 340px; }
+  .post[data-format="story"][data-style="dashboard"] .dash-card[data-layout="right"] { top: 200px; bottom: 340px; }
   .post[data-format="story"][data-style="dashboard"] .logo-post,
   .post[data-format="story"][data-style="dashboard"] .logo-post-tc,
   .post[data-format="story"][data-style="dashboard"] .logo-post-tr                 { top: calc(216px + var(--logo-offset-y, 0px)); }
@@ -2710,12 +2808,22 @@
   /* REVISTA — story: default 60% (se não tiver variável), logo dentro do bloco */
   .post[data-format="story"][data-style="revista"] .revista-photo { height: var(--revista-photo-pct, 60%); }
   .post[data-format="story"][data-style="revista"] .revista-block { height: calc(100% - var(--revista-photo-pct, 60%) + 1px); padding: 80px 72px 260px 56px; }
+  .post[data-format="story"][data-style="revista"][data-revista-layout="top"] .revista-hook,
+  .post[data-format="story"][data-style="revista"][data-revista-layout="top"] .revista-separator,
+  .post[data-format="story"][data-style="revista"][data-revista-layout="top"] .revista-complement {
+    transform: translateY(-56px);
+  }
+  .post[data-format="story"][data-style="revista"][data-revista-layout="bottom"] .revista-hook,
+  .post[data-format="story"][data-style="revista"][data-revista-layout="bottom"] .revista-separator,
+  .post[data-format="story"][data-style="revista"][data-revista-layout="bottom"] .revista-complement {
+    transform: translateY(180px);
+  }
   .post[data-format="story"][data-style="revista"] .revista-logo  { bottom: calc(244px + var(--logo-offset-y, 0px)); }
   .post[data-format="story"][data-style="revista"][data-revista-layout="bottom"] .revista-logo { bottom: auto; top: calc(216px + var(--logo-offset-y, 0px)); }
   .post[data-format="story"][data-style="revista"][data-revista-layout="left"] .revista-photo,
-  .post[data-format="story"][data-style="revista"][data-revista-layout="right"] .revista-photo { height: 100%; width: var(--revista-photo-pct, 60%); }
+  .post[data-format="story"][data-style="revista"][data-revista-layout="right"] .revista-photo { height: 100%; width: var(--revista-photo-pct, 52%); }
   .post[data-format="story"][data-style="revista"][data-revista-layout="left"] .revista-block,
-  .post[data-format="story"][data-style="revista"][data-revista-layout="right"] .revista-block { height: 100%; width: calc(100% - var(--revista-photo-pct, 60%)); padding: 80px 56px 260px; }
+  .post[data-format="story"][data-style="revista"][data-revista-layout="right"] .revista-block { height: 100%; width: calc(100% - var(--revista-photo-pct, 52%)); padding: 80px 56px 260px; }
   .post[data-format="story"][data-style="revista"] .post-site[data-pos="tl"],
   .post[data-format="story"][data-style="revista"] .post-site[data-pos="tc"],
   .post[data-format="story"][data-style="revista"] .post-site[data-pos="tr"] { top: calc(216px + var(--site-offset-y, 0px)); }
@@ -2758,7 +2866,7 @@
   .post[data-format="story"][data-style="coluna"] .post-site[data-pos="tr"] { top: calc(216px + var(--site-offset-y, 0px)); }
 
   /* MOLDURA — header/foto/body recalculados pro canvas 1920 */
-  .post[data-format="story"][data-style="moldura"] .moldura-glass  { top: 320px; bottom: 280px; }
+  .post[data-format="story"][data-style="moldura"] .moldura-glass  { top: 260px; bottom: 340px; }
   .post[data-format="story"][data-style="moldura"][data-logo-pos="tl"] .moldura-logo,
   .post[data-format="story"][data-style="moldura"][data-logo-pos="tc"] .moldura-logo,
   .post[data-format="story"][data-style="moldura"][data-logo-pos="tr"] .moldura-logo { top: calc(216px + var(--logo-offset-y, 0px)); }
@@ -2823,6 +2931,22 @@
     top: 286px;
     bottom: 296px;
     gap: 32px;
+  }
+  .post[data-format="story"][data-style="signal"][data-layout="bottom"] .signal-panel,
+  .post[data-format="story"][data-style="sidelight"][data-layout="bottom"] .signal-panel {
+    transform: translateY(-88px);
+  }
+  .post[data-format="story"][data-style="signal"][data-layout="spread"] .signal-cards,
+  .post[data-format="story"][data-style="sidelight"][data-layout="spread"] .signal-cards {
+    transform: translateY(-88px);
+  }
+  .post[data-format="story"][data-style="signal"][data-layout="spread-inverted"] .signal-hook,
+  .post[data-format="story"][data-style="signal"][data-layout="spread-inverted"] .signal-divider,
+  .post[data-format="story"][data-style="signal"][data-layout="spread-inverted"] .signal-complement,
+  .post[data-format="story"][data-style="sidelight"][data-layout="spread-inverted"] .signal-hook,
+  .post[data-format="story"][data-style="sidelight"][data-layout="spread-inverted"] .signal-divider,
+  .post[data-format="story"][data-style="sidelight"][data-layout="spread-inverted"] .signal-complement {
+    transform: translateY(-88px);
   }
   .post[data-format="story"][data-style="signal"] .logo-post,
   .post[data-format="story"][data-style="signal"] .logo-post-tc,
@@ -2919,13 +3043,13 @@
   .post[data-format="presentation"][data-style="revista"][data-revista-layout="left"] .revista-photo,
   .post[data-format="presentation"][data-style="revista"][data-revista-layout="right"] .revista-photo {
     height: 100%;
-    width: var(--revista-photo-pct, 55%);
+    width: var(--revista-photo-pct, 52%);
   }
   .post[data-format="presentation"][data-style="revista"][data-revista-layout="left"] .revista-block,
   .post[data-format="presentation"][data-style="revista"][data-revista-layout="right"] .revista-block {
     box-shadow: none;
     height: 100%;
-    width: calc(100% - var(--revista-photo-pct, 55%) + 1px);
+    width: calc(100% - var(--revista-photo-pct, 52%) + 1px);
   }
   /* Sombra desativada: esconde o ::after */
   .post[data-revista-shadow="off"] .revista-photo::after {
@@ -2995,6 +3119,7 @@
      Cada modelo libera APENAS o que precisa via .style-{modelo}.
      Overlay e BgImage NÃO entram aqui — são compartilhados (todos os modelos). */
   #postControls #pcSubDashCardColor,
+  #postControls #pcSubDashCardPosition,
   #postControls #pcSubDashCardOpacity,
   #postControls #pcSubDashCardBlur,
   #postControls #pcSubDashPresScale,
@@ -3030,6 +3155,7 @@
 
   /* Dashboard libera card + (em presentation) escala/posição do card */
   #postControls.style-dashboard #pcSubDashCardColor,
+  #postControls.style-dashboard:not(.format-presentation) #pcSubDashCardPosition,
   #postControls.style-dashboard #pcSubDashCardOpacity,
   #postControls.style-dashboard #pcSubDashCardBlur { display: flex !important; }
   /* Dashboard em presentation tem ainda escala e posição do card */
@@ -3194,7 +3320,7 @@
   .pc-label {
     font-size: 14px;
     font-weight: 500;
-    color: var(--muted);
+    color: #334155;
     letter-spacing: 0;
   }
   .pc-style-grid {
@@ -3377,18 +3503,70 @@
     justify-content: space-between;
     gap: 8px;
   }
+  .pc-offset-field .pc-label-row + .pc-range {
+    margin-top: 4px;
+  }
+  .pc-offset-field .pc-label-row + .pc-nudge-control {
+    margin-top: 6px;
+  }
   .pc-value-pill {
     flex-shrink: 0;
+    min-width: 48px;
+    height: 24px;
     font-size: 12px;
     font-weight: 500;
-    color: #64748b;
+    color: #f8fafc;
     font-variant-numeric: tabular-nums;
+    line-height: 24px;
+    padding: 0 8px;
+    border: none;
+    border-radius: 4px;
+    background: #475569;
+    text-align: center;
+    box-sizing: border-box;
   }
   .pc-range {
     width: 100%;
     accent-color: #475569;
     cursor: pointer;
   }
+  .pc-nudge-control {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+  }
+  .pc-nudge-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 32px;
+    border: none;
+    border-radius: 4px;
+    background: #475569;
+    color: #f8fafc;
+    font-family: inherit;
+    font-size: 16px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 140ms, color 140ms;
+  }
+  .pc-nudge-btn:hover {
+    background: #334155;
+    color: #ffffff;
+  }
+  .pc-nudge-btn .ph { font-size: 16px; }
+  .pc-nudge-reset {
+    font-size: 15px;
+    background: #475569;
+    color: #f8fafc;
+    border: none;
+  }
+  .pc-nudge-left { order: 1; }
+  .pc-nudge-up { order: 2; }
+  .pc-nudge-reset { order: 3; }
+  .pc-nudge-down { order: 4; }
+  .pc-nudge-right { order: 5; }
   .pc-segment-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -3486,6 +3664,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    width: 100%;
     padding: 8px 10px 8px 8px;
     background: white;
     border: 1px solid var(--border);
@@ -3514,8 +3693,8 @@
     text-align: left;
     font-family: 'Inter Tight', sans-serif;
     font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.3px;
+    font-weight: 300;
+    letter-spacing: 0;
     color: var(--text);
   }
   .pc-color-btn-chevron {
@@ -3677,8 +3856,7 @@
     box-shadow: 0 1px 3px rgba(15,23,42,0.3);
     transition: left 180ms;
   }
-  .pc-vis-btn.active .pc-vis-switch { background: var(--green); }
-  #pcSubVisibility .pc-vis-btn.active .pc-vis-switch { background: #475569; }
+  .pc-vis-btn.active .pc-vis-switch { background: #475569; }
   .pc-vis-btn.active .pc-vis-switch::after { left: 15px; }
 
   /* Editor de bullets */
@@ -3931,24 +4109,57 @@
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: var(--green);
-    border: 2px solid white;
+    background: #475569;
+    border: none;
     box-shadow: 0 1px 4px rgba(15, 23, 42, 0.25);
     cursor: pointer;
+  }
+  .pc-range:hover::-webkit-slider-thumb,
+  .pc-range:focus-visible::-webkit-slider-thumb {
+    background: #334155;
   }
   .pc-range::-moz-range-thumb {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: var(--green);
-    border: 2px solid white;
+    background: #475569;
+    border: none;
     box-shadow: 0 1px 4px rgba(15, 23, 42, 0.25);
     cursor: pointer;
+  }
+  .pc-range:hover::-moz-range-thumb,
+  .pc-range:focus-visible::-moz-range-thumb {
+    background: #334155;
   }
   .pc-label-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 6px;
+  }
+  .pc-label-row .pc-label {
+    margin-right: auto;
+  }
+  .pc-range-reset {
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 4px;
+    background: #475569;
+    color: #f8fafc;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 140ms, color 140ms;
+  }
+  .pc-range-reset:hover {
+    background: #334155;
+    color: #ffffff;
+  }
+  .pc-range-reset .ph {
+    font-size: 14px;
+    color: currentColor !important;
   }
   .pc-label-value {
     font-size: 12px;
@@ -4137,13 +4348,7 @@
 
   /* ── LEGEND DIALOG ── */
   .legend-open-row {
-    flex-shrink: 0;
-    padding: 10px 16px;
-    border-top: 1px solid var(--border);
-    background: #fff;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    display: none;
   }
   .legend-open-row.hidden {
     display: none;
@@ -4311,11 +4516,12 @@
     background: #fff;
     margin-top: auto;
     flex-shrink: 0;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    display: block;
+    position: relative;
+    z-index: 30;
   }
-  .btn-gen-ai {
+  .btn-gen-ai,
+  .btn-actions-menu-trigger {
     width: 100%;
     padding: 8px 14px;
     background: #e2e8f0;
@@ -4332,9 +4538,73 @@
     justify-content: center;
     gap: 7px;
   }
-  .btn-gen-ai:hover {
+  .btn-gen-ai:hover,
+  .btn-actions-menu-trigger:hover,
+  .btn-actions-menu-trigger[aria-expanded="true"] {
     background: #cbd5e1;
     color: #0f172a;
+  }
+  .btn-actions-menu-trigger {
+    justify-content: space-between;
+  }
+  .btn-actions-menu-trigger > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+  }
+  .actions-menu {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: calc(100% + 8px);
+    padding: 6px;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    box-shadow: 0 18px 50px rgba(15,23,42,0.18);
+    display: none;
+    z-index: 80;
+  }
+  .actions-menu.open {
+    display: grid;
+    gap: 4px;
+  }
+  .actions-menu-btn {
+    width: 100%;
+    min-height: 34px;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #475569;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 9px;
+    text-align: left;
+    transition: background 140ms, color 140ms;
+  }
+  .actions-menu-btn:hover:not(:disabled) {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+  .actions-menu-btn:disabled {
+    opacity: 0.45;
+    cursor: wait;
+  }
+  .actions-menu-btn .ph {
+    font-size: 17px;
+    flex: 0 0 auto;
+  }
+  .actions-menu-divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 4px 2px;
   }
   .btn-cfg {
     width: 100%;
@@ -5010,20 +5280,12 @@
       <div class="pc-sub" id="pcSubStyle">
         <div class="pc-label">Modelo</div>
         <select class="pc-select" id="pcStyleSelect">
-          <optgroup label="Essenciais">
-            <option value="classic">Padrão</option>
-            <option value="dashboard">Dashboard</option>
-            <option value="revista">Revista</option>
-            <option value="split">Split</option>
-            <option value="coluna">Coluna</option>
-            <option value="moldura">Especial</option>
-          </optgroup>
-          <optgroup label="Premium Comercial" id="pcStylePremiumGroup">
-            <option value="spotlight">Spotlight</option>
-            <option value="signal">Highlights</option>
-            <option value="sidelight">Sidelight</option>
-            <option value="mockup">Mockup</option>
-          </optgroup>
+          <option value="classic">Padrão</option>
+          <option value="dashboard">Dashboard</option>
+          <option value="revista">Revista</option>
+          <option value="moldura">Especial</option>
+          <option value="signal">Highlights</option>
+          <option value="mockup">Mockup</option>
         </select>
       </div>
     </div>
@@ -5064,7 +5326,7 @@
           <div class="pc-label">Cor de Destaque</div>
           <button class="pc-color-btn" id="pcColorBtn" type="button" data-target="accent">
             <span class="pc-color-btn-swatch" id="pcColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcColorBtnLabel">#7AB87E</span>
+            <span class="pc-color-btn-label" id="pcColorBtnLabel">#7ab87e</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -5119,60 +5381,75 @@
         <div class="pc-sub" id="pcSubBulletsVisibility">
           <div class="pc-vis-row">
             <button type="button" class="pc-vis-btn active" data-vis="bullets">
-              <span>Mostrar Bullets</span>
+              <span>Bullets</span>
               <span class="pc-vis-switch"></span>
             </button>
-          </div>
-        </div>
-        <div class="pc-sub" id="pcSubBulletIconsVisibility">
-          <div class="pc-vis-row">
             <button type="button" class="pc-vis-btn active" data-vis="bulletIcons">
-              <span>Mostrar Ícones</span>
+              <span>Ícones</span>
               <span class="pc-vis-switch"></span>
             </button>
           </div>
         </div>
+        <div class="pc-sub-divider" id="pcSubBulletsVisibilityDivider"></div>
         <div class="pc-sub pc-scale-stack" id="pcSubBulletsScales">
           <div class="pc-offset-field" id="pcSubBulletsScale">
-            <span class="pc-label">Escala dos Bullets</span>
-            <input type="number" id="pcBulletsScale" min="30" max="300" step="5" value="100">
+            <div class="pc-label-row">
+              <span class="pc-label">Escala dos Bullets</span>
+              <span class="pc-value-pill" id="pcBulletsScaleValue">100%</span>
+            </div>
+            <input type="range" class="pc-range" id="pcBulletsScale" min="30" max="300" step="5" value="100" data-value-label="pcBulletsScaleValue">
           </div>
           <div class="pc-offset-field" id="pcSubBulletIconScale">
-            <span class="pc-label">Escala dos Ícones</span>
-            <input type="number" id="pcBulletIconScale" min="30" max="300" step="5" value="100">
+            <div class="pc-label-row">
+              <span class="pc-label">Escala dos Ícones</span>
+              <span class="pc-value-pill" id="pcBulletIconScaleValue">100%</span>
+            </div>
+            <input type="range" class="pc-range" id="pcBulletIconScale" min="30" max="300" step="5" value="100" data-value-label="pcBulletIconScaleValue">
           </div>
         </div>
         <div class="pc-sub pc-offset-field" id="pcSubSignalCardHeight">
-          <span class="pc-label">Altura dos bullets</span>
-          <input type="number" id="pcSignalCardHeight" min="60" max="160" step="5" value="100">
+          <div class="pc-label-row">
+            <span class="pc-label">Altura dos Bullets</span>
+            <span class="pc-value-pill" id="pcSignalCardHeightValue">100%</span>
+          </div>
+          <input type="range" class="pc-range" id="pcSignalCardHeight" min="60" max="160" step="5" value="100" data-value-label="pcSignalCardHeightValue">
         </div>
         <div class="pc-sub" id="pcSubSignalCardColor">
           <div class="pc-label">Tonalização dos Cards</div>
           <button class="pc-color-btn" id="pcSignalCardColorBtn" type="button" data-target="signalCard">
             <span class="pc-color-btn-swatch" id="pcSignalCardColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcSignalCardColorBtnLabel">#FFFFFF</span>
+            <span class="pc-color-btn-label" id="pcSignalCardColorBtnLabel">#2b452d</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
         <div class="pc-sub pc-offset-field" id="pcSubSignalCardOpacity">
-          <span class="pc-label">Opacidade dos Cards</span>
-          <input type="number" id="pcSignalCardOpacity" min="0" max="50" step="1" value="6">
+          <div class="pc-label-row">
+            <span class="pc-label">Opacidade dos Cards</span>
+            <span class="pc-value-pill" id="pcSignalCardOpacityValue">50%</span>
+          </div>
+          <input type="range" class="pc-range" id="pcSignalCardOpacity" min="0" max="50" step="1" value="50" data-value-label="pcSignalCardOpacityValue" data-value-unit="%">
         </div>
         <div class="pc-sub pc-offset-field" id="pcSubSignalCardBlur">
-          <span class="pc-label">Blur dos Cards</span>
-          <input type="number" id="pcSignalCardBlur" min="0" max="60" step="2" value="24">
+          <div class="pc-label-row">
+            <span class="pc-label">Blur dos Cards</span>
+            <span class="pc-value-pill" id="pcSignalCardBlurValue">24px</span>
+          </div>
+          <input type="range" class="pc-range" id="pcSignalCardBlur" min="0" max="60" step="2" value="24" data-value-label="pcSignalCardBlurValue" data-value-unit="px">
         </div>
         <div class="pc-sub" id="pcSubSignalIconColor">
           <div class="pc-label">Tonalização dos Ícones</div>
           <button class="pc-color-btn" id="pcSignalIconColorBtn" type="button" data-target="signalIcon">
             <span class="pc-color-btn-swatch" id="pcSignalIconColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcSignalIconColorBtnLabel">#081710</span>
+            <span class="pc-color-btn-label" id="pcSignalIconColorBtnLabel">#2b452d</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
         <div class="pc-sub pc-offset-field" id="pcSubSignalIconOpacity">
-          <span class="pc-label">Opacidade dos Ícones</span>
-          <input type="number" id="pcSignalIconOpacity" min="0" max="100" step="5" value="0">
+          <div class="pc-label-row">
+            <span class="pc-label">Opacidade dos Ícones</span>
+          <span class="pc-value-pill" id="pcSignalIconOpacityValue">70%</span>
+        </div>
+          <input type="range" class="pc-range" id="pcSignalIconOpacity" min="0" max="100" step="5" value="70" data-value-label="pcSignalIconOpacityValue" data-value-unit="%">
         </div>
       </div>
     </div>
@@ -5208,6 +5485,13 @@
               </button>
             </div>
           </div>
+          <div class="pc-sub" id="pcSubLogoMode">
+            <div class="pc-label">Cor da Logo</div>
+            <div class="pc-toggle" id="pcBrandModeToggle">
+              <button type="button" data-mode="light">Claro</button>
+              <button type="button" data-mode="dark">Escuro</button>
+            </div>
+          </div>
           <div class="pc-sub" id="pcSubLogoPosition">
             <div class="pc-label">Posição</div>
             <select class="pc-select" id="pcLogoPosSelect">
@@ -5220,24 +5504,23 @@
             </select>
           </div>
           <div class="pc-sub pc-offset-field" id="pcSubLogoScale">
-            <span class="pc-label">Escala</span>
-            <input type="number" id="pcLogoScale" min="60" max="140" step="5" value="100">
-          </div>
-          <div class="pc-sub" id="pcSubBrandMode">
-            <div class="pc-label">Cor da Logo</div>
-            <select class="pc-select" id="pcBrandModeSelect">
-              <option value="light">Claro</option>
-              <option value="dark">Escuro</option>
-            </select>
-          </div>
-          <div class="pc-sub pc-offset-pair" id="pcSubLogoOffsets">
-            <div class="pc-offset-field" id="pcSubLogoOffsetX">
-              <span class="pc-label">Deslocamento X</span>
-              <input type="number" id="pcLogoOffsetX" min="-60" max="60" step="5" value="0">
+            <div class="pc-label-row">
+              <span class="pc-label">Escala</span>
+              <span class="pc-value-pill" id="pcLogoScaleValue">100%</span>
             </div>
-            <div class="pc-offset-field" id="pcSubLogoOffsetY">
-              <span class="pc-label">Deslocamento Y</span>
-              <input type="number" id="pcLogoOffsetY" min="-60" max="60" step="5" value="0">
+            <input type="range" class="pc-range" id="pcLogoScale" min="60" max="140" step="5" value="100" data-value-label="pcLogoScaleValue">
+          </div>
+          <div class="pc-sub pc-offset-field" id="pcSubLogoOffsets">
+            <div class="pc-label-row">
+              <span class="pc-label">Ajuste fino</span>
+              <span class="pc-value-pill" id="pcLogoNudgeValue">0 / 0</span>
+            </div>
+            <div class="pc-nudge-control" data-nudge-target="logo" data-step="5" data-min="-60" data-max="60" data-unit="px">
+              <button type="button" class="pc-nudge-btn pc-nudge-up" data-dx="0" data-dy="-1" title="Mover para cima"><i class="ph ph-caret-up"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-left" data-dx="-1" data-dy="0" title="Mover para esquerda"><i class="ph ph-caret-left"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-reset" data-reset="true" title="Centralizar ajuste"><i class="ph ph-arrow-clockwise"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-right" data-dx="1" data-dy="0" title="Mover para direita"><i class="ph ph-caret-right"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-down" data-dx="0" data-dy="1" title="Mover para baixo"><i class="ph ph-caret-down"></i></button>
             </div>
           </div>
           </div><!-- /pc-sig-body logo -->
@@ -5263,6 +5546,13 @@
               </button>
             </div>
           </div>
+          <div class="pc-sub" id="pcSubSiteMode">
+            <div class="pc-label">Cor do Site</div>
+            <div class="pc-toggle" id="pcSiteModeToggle">
+              <button type="button" data-mode="light">Claro</button>
+              <button type="button" data-mode="dark">Escuro</button>
+            </div>
+          </div>
           <div class="pc-sub" id="pcSubSiteText">
             <div class="pc-label">Texto</div>
             <input type="text" class="pc-text-input" id="pcSiteText" value="cropware.app" spellcheck="false">
@@ -5279,24 +5569,23 @@
             </select>
           </div>
           <div class="pc-sub pc-offset-field" id="pcSubSiteScale">
-            <span class="pc-label">Escala</span>
-            <input type="number" id="pcSiteScale" min="60" max="160" step="5" value="100">
-          </div>
-          <div class="pc-sub" id="pcSubSiteMode">
-            <div class="pc-label">Cor do Site</div>
-            <select class="pc-select" id="pcSiteModeSelect">
-              <option value="light">Claro</option>
-              <option value="dark">Escuro</option>
-            </select>
-          </div>
-          <div class="pc-sub pc-offset-pair" id="pcSubSiteOffsets">
-            <div class="pc-offset-field" id="pcSubSiteOffsetX">
-              <span class="pc-label">Deslocamento X</span>
-              <input type="number" id="pcSiteOffsetX" min="-60" max="60" step="5" value="0">
+            <div class="pc-label-row">
+              <span class="pc-label">Escala</span>
+              <span class="pc-value-pill" id="pcSiteScaleValue">100%</span>
             </div>
-            <div class="pc-offset-field" id="pcSubSiteOffsetY">
-              <span class="pc-label">Deslocamento Y</span>
-              <input type="number" id="pcSiteOffsetY" min="-60" max="60" step="5" value="0">
+            <input type="range" class="pc-range" id="pcSiteScale" min="60" max="160" step="5" value="100" data-value-label="pcSiteScaleValue">
+          </div>
+          <div class="pc-sub pc-offset-field" id="pcSubSiteOffsets">
+            <div class="pc-label-row">
+              <span class="pc-label">Ajuste fino</span>
+              <span class="pc-value-pill" id="pcSiteNudgeValue">0 / 0</span>
+            </div>
+            <div class="pc-nudge-control" data-nudge-target="site" data-step="5" data-min="-60" data-max="60" data-unit="px">
+              <button type="button" class="pc-nudge-btn pc-nudge-up" data-dx="0" data-dy="-1" title="Mover para cima"><i class="ph ph-caret-up"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-left" data-dx="-1" data-dy="0" title="Mover para esquerda"><i class="ph ph-caret-left"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-reset" data-reset="true" title="Centralizar ajuste"><i class="ph ph-arrow-clockwise"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-right" data-dx="1" data-dy="0" title="Mover para direita"><i class="ph ph-caret-right"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-down" data-dx="0" data-dy="1" title="Mover para baixo"><i class="ph ph-caret-down"></i></button>
             </div>
           </div>
           </div><!-- /pc-sig-body site -->
@@ -5333,14 +5622,17 @@
               <option value="br">Inferior Direita</option>
             </select>
           </div>
-          <div class="pc-sub pc-offset-pair" id="pcSubAccentBarOffsets">
-            <div class="pc-offset-field" id="pcSubAccentBarOffsetX">
-              <span class="pc-label">Deslocamento X</span>
-              <input type="number" id="pcAccentBarOffsetX" min="-20" max="20" step="1" value="0">
+          <div class="pc-sub pc-offset-field" id="pcSubAccentBarOffsets">
+            <div class="pc-label-row">
+              <span class="pc-label">Ajuste fino</span>
+              <span class="pc-value-pill" id="pcAccentBarNudgeValue">0 / 0</span>
             </div>
-            <div class="pc-offset-field" id="pcSubAccentBarOffsetY">
-              <span class="pc-label">Deslocamento Y</span>
-              <input type="number" id="pcAccentBarOffsetY" min="-20" max="20" step="1" value="0">
+            <div class="pc-nudge-control" data-nudge-target="accentBar" data-step="1" data-min="-20" data-max="20" data-unit="%">
+              <button type="button" class="pc-nudge-btn pc-nudge-up" data-dx="0" data-dy="-1" title="Mover para cima"><i class="ph ph-caret-up"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-left" data-dx="-1" data-dy="0" title="Mover para esquerda"><i class="ph ph-caret-left"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-reset" data-reset="true" title="Centralizar ajuste"><i class="ph ph-arrow-clockwise"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-right" data-dx="1" data-dy="0" title="Mover para direita"><i class="ph ph-caret-right"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-down" data-dx="0" data-dy="1" title="Mover para baixo"><i class="ph ph-caret-down"></i></button>
             </div>
           </div>
           </div><!-- /pc-sig-body accentBar -->
@@ -5376,8 +5668,11 @@
             </select>
           </div>
           <div class="pc-sub pc-offset-field" id="pcSubStripHeight">
-            <span class="pc-label">Espessura</span>
-            <input type="number" id="pcStripHeight" min="2" max="20" step="1" value="6">
+            <div class="pc-label-row">
+              <span class="pc-label">Espessura</span>
+              <span class="pc-value-pill" id="pcStripHeightValue">6px</span>
+            </div>
+            <input type="range" class="pc-range" id="pcStripHeight" min="2" max="20" step="1" value="6" data-value-label="pcStripHeightValue">
           </div>
           </div><!-- /pc-sig-body strip -->
         </div>
@@ -5399,8 +5694,11 @@
           </button>
         </div>
         <div class="pc-sub pc-offset-field" id="pcSubOverlayOpacity">
-          <span class="pc-label">Opacidade do Overlay</span>
-          <input type="number" id="pcOverlayOpacity" min="0" max="100" step="5" value="55">
+          <div class="pc-label-row">
+            <span class="pc-label">Opacidade do Overlay</span>
+            <span class="pc-value-pill" id="pcOverlayOpacityValue">55%</span>
+          </div>
+          <input type="range" class="pc-range" id="pcOverlayOpacity" min="0" max="100" step="5" value="55" data-value-label="pcOverlayOpacityValue">
         </div>
         <div class="pc-sub" id="pcSubOverlayDirection">
           <div class="pc-label">Direção</div>
@@ -5415,21 +5713,39 @@
           <div class="pc-label">Tonalização do Card</div>
           <button class="pc-color-btn" id="pcDashCardColorBtn" type="button" data-target="dashCard">
             <span class="pc-color-btn-swatch" id="pcDashCardColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcDashCardColorBtnLabel">#0F1E14</span>
+            <span class="pc-color-btn-label" id="pcDashCardColorBtnLabel">#0f1e14</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
+        <div class="pc-sub" id="pcSubDashCardPosition">
+          <div class="pc-label">Posição do Card</div>
+          <select class="pc-select" id="pcDashCardPositionSelect">
+            <option value="bottom">Inferior</option>
+            <option value="top">Superior</option>
+            <option value="left">Esquerda</option>
+            <option value="right">Direita</option>
+          </select>
+        </div>
         <div class="pc-sub pc-offset-field" id="pcSubDashCardOpacity">
-          <span class="pc-label">Opacidade do Card</span>
-          <input type="number" id="pcDashCardOpacity" min="0" max="100" step="5" value="65">
+          <div class="pc-label-row">
+            <span class="pc-label">Opacidade do Card</span>
+            <span class="pc-value-pill" id="pcDashCardOpacityValue">65%</span>
+          </div>
+          <input type="range" class="pc-range" id="pcDashCardOpacity" min="0" max="100" step="5" value="65" data-value-label="pcDashCardOpacityValue" data-value-unit="%">
         </div>
         <div class="pc-sub pc-offset-field" id="pcSubDashCardBlur">
-          <span class="pc-label">Blur do Card</span>
-          <input type="number" id="pcDashCardBlur" min="0" max="60" step="2" value="24">
+          <div class="pc-label-row">
+            <span class="pc-label">Blur do Card</span>
+            <span class="pc-value-pill" id="pcDashCardBlurValue">24px</span>
+          </div>
+          <input type="range" class="pc-range" id="pcDashCardBlur" min="0" max="60" step="2" value="24" data-value-label="pcDashCardBlurValue" data-value-unit="px">
         </div>
         <div class="pc-sub pc-offset-field" id="pcSubDashPresScale">
-          <span class="pc-label">Escala do Card</span>
-          <input type="number" id="pcDashPresScale" min="80" max="130" step="5" value="100">
+          <div class="pc-label-row">
+            <span class="pc-label">Escala do Card</span>
+            <span class="pc-value-pill" id="pcDashPresScaleValue">100%</span>
+          </div>
+          <input type="range" class="pc-range" id="pcDashPresScale" min="80" max="130" step="5" value="100" data-value-label="pcDashPresScaleValue">
         </div>
         <div class="pc-sub" id="pcSubDashPresPosition">
           <div class="pc-label">Posição do Card</div>
@@ -5444,18 +5760,32 @@
           <div class="pc-label">Cor do Bloco</div>
           <button class="pc-color-btn" id="pcRevistaBlockColorBtn" type="button" data-target="revistaBlock">
             <span class="pc-color-btn-swatch" id="pcRevistaBlockColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcRevistaBlockColorBtnLabel">#F8FAFC</span>
+            <span class="pc-color-btn-label" id="pcRevistaBlockColorBtnLabel">#2B452D</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
+        <div class="pc-sub" id="pcSubRevistaShadow">
+          <div class="pc-vis-row">
+            <button type="button" class="pc-vis-btn" id="pcRevistaShadowToggle">
+              <span>Sombra na Divisa</span>
+              <span class="pc-vis-switch"></span>
+            </button>
+          </div>
+        </div>
         <div class="pc-sub pc-offset-pair" id="pcSubRevistaPair">
           <div class="pc-offset-field" id="pcSubRevistaPhotoPct">
-            <span class="pc-label">Proporção</span>
-            <input type="number" id="pcRevistaPhotoPct" min="10" max="90" step="5" value="65">
+            <div class="pc-label-row">
+              <span class="pc-label">Proporção</span>
+              <span class="pc-value-pill" id="pcRevistaPhotoPctValue">65%</span>
+            </div>
+            <input type="range" class="pc-range" id="pcRevistaPhotoPct" min="10" max="90" step="5" value="65" data-value-label="pcRevistaPhotoPctValue" data-value-unit="%">
           </div>
           <div class="pc-offset-field" id="pcSubRevistaPhotoPos">
-            <span class="pc-label">Posição</span>
-            <input type="number" id="pcRevistaPhotoPos" min="0" max="100" step="5" value="50">
+            <div class="pc-label-row">
+              <span class="pc-label">Posição</span>
+              <span class="pc-value-pill" id="pcRevistaPhotoPosValue">50%</span>
+            </div>
+            <input type="range" class="pc-range" id="pcRevistaPhotoPos" min="0" max="100" step="5" value="50" data-value-label="pcRevistaPhotoPosValue" data-value-unit="%">
           </div>
         </div>
         <div class="pc-sub" id="pcSubRevistaLayout">
@@ -5467,20 +5797,11 @@
             <option value="right">Foto à Direita</option>
           </select>
         </div>
-        <div class="pc-sub" id="pcSubRevistaShadow">
-          <div class="pc-label-row">
-            <span class="pc-label">Sombra na Divisa</span>
-            <label class="pc-toggle-switch">
-              <input type="checkbox" id="pcRevistaShadow" checked>
-              <span class="pc-toggle-slider"></span>
-            </label>
-          </div>
-        </div>
         <div class="pc-sub" id="pcSubSplitBlockColor">
           <div class="pc-label">Cor do Bloco</div>
           <button class="pc-color-btn" id="pcSplitBlockColorBtn" type="button" data-target="splitBlock">
             <span class="pc-color-btn-swatch" id="pcSplitBlockColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcSplitBlockColorBtnLabel">#152F17</span>
+            <span class="pc-color-btn-label" id="pcSplitBlockColorBtnLabel">#152f17</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -5516,7 +5837,7 @@
           <div class="pc-label">Cor do Bloco</div>
           <button class="pc-color-btn" id="pcColunaBlockColorBtn" type="button" data-target="columnBlock">
             <span class="pc-color-btn-swatch" id="pcColunaBlockColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcColunaBlockColorBtnLabel">#F8FAFC</span>
+            <span class="pc-color-btn-label" id="pcColunaBlockColorBtnLabel">#f8fafc</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -5550,17 +5871,23 @@
           <div class="pc-label">Cor do Vidro</div>
           <button class="pc-color-btn" id="pcFrameColorBtn" type="button" data-target="frameColor">
             <span class="pc-color-btn-swatch" id="pcFrameColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcFrameColorBtnLabel">#0F1E14</span>
+            <span class="pc-color-btn-label" id="pcFrameColorBtnLabel">#0f1e14</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
         <div class="pc-sub pc-offset-field" id="pcSubGlassOpacity">
-          <span class="pc-label">Opacidade do Vidro</span>
-          <input type="number" id="pcGlassOpacity" min="0" max="100" step="5" value="55">
+          <div class="pc-label-row">
+            <span class="pc-label">Opacidade do Vidro</span>
+            <span class="pc-value-pill" id="pcGlassOpacityValue">55%</span>
+          </div>
+          <input type="range" class="pc-range" id="pcGlassOpacity" min="0" max="100" step="5" value="55" data-value-label="pcGlassOpacityValue" data-value-unit="%">
         </div>
         <div class="pc-sub pc-offset-field" id="pcSubGlassBlur">
-          <span class="pc-label">Blur do Vidro</span>
-          <input type="number" id="pcGlassBlur" min="0" max="60" step="2" value="24">
+          <div class="pc-label-row">
+            <span class="pc-label">Blur do Vidro</span>
+            <span class="pc-value-pill" id="pcGlassBlurValue">24px</span>
+          </div>
+          <input type="range" class="pc-range" id="pcGlassBlur" min="0" max="60" step="2" value="24" data-value-label="pcGlassBlurValue" data-value-unit="px">
         </div>
         <div class="pc-sub" id="pcSubSpotlightPanelSize">
           <div class="pc-label">Spotlight: Painel</div>
@@ -5581,8 +5908,11 @@
           </select>
         </div>
         <div class="pc-sub pc-offset-field" id="pcSubSpotlightBlur">
-          <span class="pc-label">Blur do Spotlight</span>
-          <input type="number" id="pcSpotlightBlur" min="0" max="60" step="2" value="22">
+          <div class="pc-label-row">
+            <span class="pc-label">Blur do Spotlight</span>
+            <span class="pc-value-pill" id="pcSpotlightBlurValue">22px</span>
+          </div>
+          <input type="range" class="pc-range" id="pcSpotlightBlur" min="0" max="60" step="2" value="22" data-value-label="pcSpotlightBlurValue" data-value-unit="px">
         </div>
         <div class="pc-sub" id="pcSubSpotlightContrast">
           <div class="pc-label">Spotlight: Contraste</div>
@@ -5594,8 +5924,8 @@
         <div class="pc-sub" id="pcSubBlockTextMode">
           <div class="pc-label">Cor do Texto</div>
           <div class="pc-toggle" id="pcBlockTextModeToggle">
-            <button data-mode="dark">Escuro</button>
-            <button data-mode="light">Claro</button>
+            <button type="button" data-mode="dark">Escuro</button>
+            <button type="button" data-mode="light">Claro</button>
           </div>
         </div>
         <div class="pc-sub" id="pcSubBgImage">
@@ -5650,17 +5980,23 @@
           <button type="button" class="pc-upload-btn" id="pcMockupScreenDesktopClear" style="margin-top:6px">Remover</button>
         </div>
         <div class="pc-sub pc-offset-field" id="pcSubMockupScale">
-          <span class="pc-label">Escala do Dispositivo</span>
-          <input type="number" id="pcMockupScale" min="30" max="200" step="5" value="100">
-        </div>
-        <div class="pc-sub pc-offset-pair" id="pcSubMockupOffsets">
-          <div class="pc-offset-field">
-            <span class="pc-label">Deslocamento X</span>
-            <input type="number" id="pcMockupOffsetX" min="-400" max="400" step="5" value="0">
+          <div class="pc-label-row">
+            <span class="pc-label">Escala do Dispositivo</span>
+            <span class="pc-value-pill" id="pcMockupScaleValue">100%</span>
           </div>
-          <div class="pc-offset-field">
-            <span class="pc-label">Deslocamento Y</span>
-            <input type="number" id="pcMockupOffsetY" min="-400" max="400" step="5" value="0">
+          <input type="range" class="pc-range" id="pcMockupScale" min="30" max="200" step="5" value="100" data-value-label="pcMockupScaleValue">
+        </div>
+        <div class="pc-sub pc-offset-field" id="pcSubMockupOffsets">
+          <div class="pc-label-row">
+            <span class="pc-label">Ajuste fino</span>
+            <span class="pc-value-pill" id="pcMockupNudgeValue">0 / 0</span>
+          </div>
+          <div class="pc-nudge-control" data-nudge-target="mockup" data-step="5" data-min="-400" data-max="400" data-unit="px">
+            <button type="button" class="pc-nudge-btn pc-nudge-up" data-dx="0" data-dy="-1" title="Mover para cima"><i class="ph ph-caret-up"></i></button>
+            <button type="button" class="pc-nudge-btn pc-nudge-left" data-dx="-1" data-dy="0" title="Mover para esquerda"><i class="ph ph-caret-left"></i></button>
+            <button type="button" class="pc-nudge-btn pc-nudge-reset" data-reset="true" title="Centralizar ajuste"><i class="ph ph-arrow-clockwise"></i></button>
+            <button type="button" class="pc-nudge-btn pc-nudge-right" data-dx="1" data-dy="0" title="Mover para direita"><i class="ph ph-caret-right"></i></button>
+            <button type="button" class="pc-nudge-btn pc-nudge-down" data-dx="0" data-dy="1" title="Mover para baixo"><i class="ph ph-caret-down"></i></button>
           </div>
         </div>
       </div>
@@ -5668,11 +6004,11 @@
 
     </div><!-- /pc-body -->
 
-    <div class="pc-footer-actions">
-      <button type="button" class="pc-regen-launch" id="pcRegenLaunch" onclick="openRegenActions()">
+    <div class="pc-footer-actions" style="display:none">
+      <button type="button" class="pc-regen-launch" onclick="openRegenActions()">
         <i class="ph ph-magic-wand"></i>Regerar
       </button>
-      <button class="pc-reset-btn" id="pcResetBtn" title="Volta as configurações visuais ao padrão (não altera texto nem imagem)"><i class="ph ph-arrow-clockwise"></i>Reiniciar</button>
+      <button class="pc-reset-btn" title="Volta as configurações visuais ao padrão (não altera texto nem imagem)"><i class="ph ph-arrow-clockwise"></i>Reiniciar</button>
     </div>
   </div>
 
@@ -5713,7 +6049,7 @@
       <button type="button" class="legend-open-btn" onclick="openLegendDialog()">
         <i class="ph ph-chat-text"></i>Legenda
       </button>
-      <button class="btn-download" id="downloadBtn" onclick="downloadCurrent()" style="display:none"><i class="ph ph-download-simple"></i>Baixar</button>
+      <button class="btn-download" onclick="downloadCurrent()" style="display:none"><i class="ph ph-download-simple"></i>Baixar</button>
     </div>
 
   </div><!-- /canvas-area -->
@@ -6082,9 +6418,34 @@ function buildSidebar() {
     dlAction = 'downloadCurrent()';
   }
   if (!isLinkedinCarousel) dlLabel = getDownloadButtonLabel();
-  genWrap.insertAdjacentHTML('beforeend',
-    '<button class="btn-cfg" onclick="openConfig()" title="Configurar Estilo"><i class="ph ph-sliders-horizontal"></i>Estilo</button>' +
-    `<button class="btn-gen-ai" onclick="openGenerator()" title="${genLabelText || genLabel}"><i class="ph ph-plus"></i>Novo</button>`);
+  genWrap.insertAdjacentHTML('beforeend', `
+    <button class="btn-actions-menu-trigger" id="actionsMenuTrigger" type="button" onclick="toggleActionsMenu(event)" aria-expanded="false" aria-controls="actionsMenu" title="Abrir ações">
+      <span><i class="ph ph-dots-three-circle"></i>Ações</span>
+      <i class="ph ph-caret-up"></i>
+    </button>
+    <div class="actions-menu" id="actionsMenu">
+      <button class="actions-menu-btn" type="button" onclick="closeActionsMenu(); openConfig()" title="Configurar Estilo">
+        <i class="ph ph-sliders-horizontal"></i>Estilo
+      </button>
+      <button class="actions-menu-btn" type="button" onclick="closeActionsMenu(); openGenerator()" title="${genLabelText || genLabel}">
+        <i class="ph ph-plus"></i>Novo
+      </button>
+      <div class="actions-menu-divider"></div>
+      <button class="actions-menu-btn" type="button" onclick="closeActionsMenu(); openLegendDialog()" ${isPresentation ? 'style="display:none"' : ''}>
+        <i class="ph ph-chat-text"></i>${getSidePanelLabel()}
+      </button>
+      <button class="actions-menu-btn" id="downloadBtn" type="button" onclick="${dlAction}" style="display:none">
+        <i class="ph ph-download-simple"></i>Baixar
+      </button>
+      <div class="actions-menu-divider"></div>
+      <button class="actions-menu-btn" type="button" onclick="closeActionsMenu(); openRegenActions()" ${items.length > 0 && !isPresentation ? '' : 'style="display:none"'}>
+        <i class="ph ph-magic-wand"></i>Regerar
+      </button>
+      <button class="actions-menu-btn" id="pcResetBtn" type="button" onclick="closeActionsMenu(); resetPostStyle()" title="Volta as configurações visuais ao padrão (não altera texto nem imagem)" ${items.length > 0 ? '' : 'style="display:none"'}>
+        <i class="ph ph-arrow-clockwise"></i>Reiniciar
+      </button>
+    </div>
+  `);
   aside.appendChild(genWrap);
   // Restaura email do usuário (o rebuild da sidebar apaga o conteúdo)
   const emailEl = document.getElementById('userEmail');
@@ -6094,9 +6455,26 @@ function buildSidebar() {
   if (dlBtn) {
     dlBtn.innerHTML = '<i class="ph ph-download-simple"></i>Baixar';
     dlBtn.title = dlLabel;
-    dlBtn.setAttribute('onclick', dlAction);
+    dlBtn.setAttribute('onclick', `closeActionsMenu(); ${dlAction}`);
     dlBtn.style.display = items.length > 0 ? 'inline-flex' : 'none';
   }
+}
+
+function closeActionsMenu() {
+  const menu = document.getElementById('actionsMenu');
+  const trigger = document.getElementById('actionsMenuTrigger');
+  if (menu) menu.classList.remove('open');
+  if (trigger) trigger.setAttribute('aria-expanded', 'false');
+}
+
+function toggleActionsMenu(event) {
+  if (event) event.stopPropagation();
+  const menu = document.getElementById('actionsMenu');
+  const trigger = document.getElementById('actionsMenuTrigger');
+  if (!menu || !trigger) return;
+  const willOpen = !menu.classList.contains('open');
+  menu.classList.toggle('open', willOpen);
+  trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
 }
 
 function buildDots() {
@@ -6941,6 +7319,51 @@ function normalizePanelText(text, postType) {
   return sanitizeLegend(text || '');
 }
 
+function normalizePostStyle(style) {
+  const fallbacks = {
+    split: 'revista',
+    coluna: 'revista',
+    spotlight: 'dashboard',
+    sidelight: 'signal'
+  };
+  return fallbacks[style] || style || 'classic';
+}
+
+const SIGNAL_ICON_DEFAULT = '#2B452D';
+const SIGNAL_ICON_OPACITY_DEFAULT = 70;
+const SIGNAL_CARD_DEFAULT = '#2B452D';
+const SIGNAL_CARD_OPACITY_DEFAULT = 50;
+
+function ensureSignalVisualDefaults(postData) {
+  if (!postData || normalizePostStyle(postData.style) !== 'signal') return;
+  let migrated = false;
+
+  if (!postData._signalCardDefaultsMigrated) {
+    const cardColor = (postData.signalCardColor || '').toLowerCase();
+    const cardOpacity = postData.signalCardOpacity == null ? null : Number(postData.signalCardOpacity);
+    if (!cardColor || (cardColor === '#ffffff' && (cardOpacity == null || cardOpacity <= 6))) {
+      postData.signalCardColor = SIGNAL_CARD_DEFAULT;
+      postData.signalCardOpacity = SIGNAL_CARD_OPACITY_DEFAULT;
+      migrated = true;
+    }
+    postData._signalCardDefaultsMigrated = true;
+  }
+
+  if (!postData._signalVisualDefaultsMigrated) {
+    if (!postData.signalIconColor || postData.signalIconColor.toLowerCase() === '#081710') {
+      postData.signalIconColor = SIGNAL_ICON_DEFAULT;
+      migrated = true;
+    }
+    if (postData.signalIconOpacity == null || postData.signalIconOpacity === 0) {
+      postData.signalIconOpacity = SIGNAL_ICON_OPACITY_DEFAULT;
+      migrated = true;
+    }
+    postData._signalVisualDefaultsMigrated = true;
+  }
+
+  return migrated;
+}
+
 // Constrói o DOM de um post gerado e o adiciona a posts[]/legends[].
 // Usado tanto por generatePost() (novo post) quanto loadSession() (rehidratação).
 function renderGeneratedPost(postData, legendText) {
@@ -6968,21 +7391,22 @@ function renderGeneratedPost(postData, legendText) {
   if (!postData.overlayDirection) postData.overlayDirection = postData.layout === 'bottom' ? 'bottom' : 'top';
   if (!postData.dashCardColor)    postData.dashCardColor    = '#0F1E14';
   if (postData.dashCardOpacity == null) postData.dashCardOpacity = 65;
-  if (!postData.signalCardColor) postData.signalCardColor = '#FFFFFF';
-  if (postData.signalCardOpacity == null) postData.signalCardOpacity = 6;
+  if (!postData.signalCardColor) postData.signalCardColor = SIGNAL_CARD_DEFAULT;
+  if (postData.signalCardOpacity == null) postData.signalCardOpacity = SIGNAL_CARD_OPACITY_DEFAULT;
   if (postData.signalCardBlur  == null) postData.signalCardBlur  = 24;
   if (postData.dashCardBlur    == null) postData.dashCardBlur    = 24;
   if (postData.glassBlur       == null) postData.glassBlur       = 24;
   if (postData.spotlightBlur   == null) postData.spotlightBlur   = 22;
-  if (!postData.signalIconColor) postData.signalIconColor = '#081710';
-  if (postData.signalIconOpacity == null) postData.signalIconOpacity = 0;
+  if (!postData.signalIconColor) postData.signalIconColor = SIGNAL_ICON_DEFAULT;
+  if (postData.signalIconOpacity == null) postData.signalIconOpacity = SIGNAL_ICON_OPACITY_DEFAULT;
   if (!postData.mockupDevice)         postData.mockupDevice   = 'phone';
   if (postData.mockupScale    == null) postData.mockupScale    = 1;
   if (postData.mockupOffsetX  == null) postData.mockupOffsetX  = 0;
   if (postData.mockupOffsetY  == null) postData.mockupOffsetY  = 0;
-  if (!postData.revistaBlockColor) postData.revistaBlockColor = '#f8fafc';
+  if (!postData.revistaBlockColor) postData.revistaBlockColor = REVISTA_BLOCK_DEFAULT;
+  if (postData.revistaShadow == null) postData.revistaShadow = false;
   if (!postData.splitBlockColor)   postData.splitBlockColor   = '#152F17';
-  if (!postData.revistaTextMode)   postData.revistaTextMode   = 'dark';
+  if (!postData.revistaTextMode)   postData.revistaTextMode   = 'light';
   if (!postData.splitTextMode)     postData.splitTextMode     = 'light';
   if (!postData.columnBlockColor)  postData.columnBlockColor  = '#f8fafc';
   if (!postData.columnTextMode)    postData.columnTextMode    = 'dark';
@@ -6990,7 +7414,8 @@ function renderGeneratedPost(postData, legendText) {
   if (!postData.frameColor)        postData.frameColor        = '#0F1E14';
   if (!postData.frameTextMode)     postData.frameTextMode     = 'light';
   if (!postData.format)            postData.format            = 'feed';
-  if (!postData.style) postData.style = 'classic';
+  postData.style = normalizePostStyle(postData.style);
+  ensureSignalVisualDefaults(postData);
   if (postData.hookScale == null)       postData.hookScale       = 1;
   if (postData.complementScale == null) postData.complementScale = 1;
   if (postData.bulletsScale == null)    postData.bulletsScale    = 1;
@@ -7054,21 +7479,21 @@ function renderGeneratedCarousel(carouselData, legendText) {
     if (!slideData.overlayDirection) slideData.overlayDirection = slideData.layout === 'bottom' ? 'bottom' : 'top';
     if (!slideData.dashCardColor)    slideData.dashCardColor    = '#0F1E14';
     if (slideData.dashCardOpacity == null) slideData.dashCardOpacity = 65;
-    if (!slideData.signalCardColor) slideData.signalCardColor = '#FFFFFF';
-    if (slideData.signalCardOpacity == null) slideData.signalCardOpacity = 6;
+    if (!slideData.signalCardColor) slideData.signalCardColor = SIGNAL_CARD_DEFAULT;
+    if (slideData.signalCardOpacity == null) slideData.signalCardOpacity = SIGNAL_CARD_OPACITY_DEFAULT;
     if (slideData.signalCardBlur  == null) slideData.signalCardBlur  = 24;
     if (slideData.dashCardBlur    == null) slideData.dashCardBlur    = 24;
     if (slideData.glassBlur       == null) slideData.glassBlur       = 24;
     if (slideData.spotlightBlur   == null) slideData.spotlightBlur   = 22;
-    if (!slideData.signalIconColor) slideData.signalIconColor = '#081710';
+    if (!slideData.signalIconColor) slideData.signalIconColor = SIGNAL_ICON_DEFAULT;
     if (!slideData.mockupDevice)         slideData.mockupDevice   = 'phone';
     if (slideData.mockupScale    == null) slideData.mockupScale    = 1;
     if (slideData.mockupOffsetX  == null) slideData.mockupOffsetX  = 0;
     if (slideData.mockupOffsetY  == null) slideData.mockupOffsetY  = 0;
-    if (slideData.signalIconOpacity == null) slideData.signalIconOpacity = 0;
-    if (!slideData.revistaBlockColor) slideData.revistaBlockColor = '#f8fafc';
+    if (slideData.signalIconOpacity == null) slideData.signalIconOpacity = SIGNAL_ICON_OPACITY_DEFAULT;
+    if (!slideData.revistaBlockColor) slideData.revistaBlockColor = REVISTA_BLOCK_DEFAULT;
     if (!slideData.splitBlockColor)   slideData.splitBlockColor   = '#152F17';
-    if (!slideData.revistaTextMode)   slideData.revistaTextMode   = 'dark';
+    if (!slideData.revistaTextMode)   slideData.revistaTextMode   = 'light';
     if (!slideData.splitTextMode)     slideData.splitTextMode     = 'light';
     if (!slideData.columnBlockColor)  slideData.columnBlockColor  = '#f8fafc';
     if (!slideData.columnTextMode)    slideData.columnTextMode    = 'dark';
@@ -7076,7 +7501,8 @@ function renderGeneratedCarousel(carouselData, legendText) {
     if (!slideData.frameColor)        slideData.frameColor        = '#0F1E14';
     if (!slideData.frameTextMode)     slideData.frameTextMode     = 'light';
     if (!slideData.format)            slideData.format            = 'feed';
-    if (!slideData.style) slideData.style = 'classic';
+    slideData.style = normalizePostStyle(slideData.style);
+    ensureSignalVisualDefaults(slideData);
     if (slideData.hookScale == null)       slideData.hookScale       = 1;
     if (slideData.complementScale == null) slideData.complementScale = 1;
     if (slideData.bulletsScale == null)    slideData.bulletsScale    = 1;
@@ -7145,21 +7571,21 @@ function renderGeneratedPresentation(presentationData, legendText) {
     if (!slideData.overlayDirection) slideData.overlayDirection = slideData.layout === 'bottom' ? 'bottom' : 'top';
     if (!slideData.dashCardColor)    slideData.dashCardColor    = '#0F1E14';
     if (slideData.dashCardOpacity == null) slideData.dashCardOpacity = 65;
-    if (!slideData.signalCardColor) slideData.signalCardColor = '#FFFFFF';
-    if (slideData.signalCardOpacity == null) slideData.signalCardOpacity = 6;
+    if (!slideData.signalCardColor) slideData.signalCardColor = SIGNAL_CARD_DEFAULT;
+    if (slideData.signalCardOpacity == null) slideData.signalCardOpacity = SIGNAL_CARD_OPACITY_DEFAULT;
     if (slideData.signalCardBlur  == null) slideData.signalCardBlur  = 24;
     if (slideData.dashCardBlur    == null) slideData.dashCardBlur    = 24;
     if (slideData.glassBlur       == null) slideData.glassBlur       = 24;
     if (slideData.spotlightBlur   == null) slideData.spotlightBlur   = 22;
-    if (!slideData.signalIconColor) slideData.signalIconColor = '#081710';
+    if (!slideData.signalIconColor) slideData.signalIconColor = SIGNAL_ICON_DEFAULT;
     if (!slideData.mockupDevice)         slideData.mockupDevice   = 'phone';
     if (slideData.mockupScale    == null) slideData.mockupScale    = 1;
     if (slideData.mockupOffsetX  == null) slideData.mockupOffsetX  = 0;
     if (slideData.mockupOffsetY  == null) slideData.mockupOffsetY  = 0;
-    if (slideData.signalIconOpacity == null) slideData.signalIconOpacity = 0;
-    if (!slideData.revistaBlockColor) slideData.revistaBlockColor = '#f8fafc';
+    if (slideData.signalIconOpacity == null) slideData.signalIconOpacity = SIGNAL_ICON_OPACITY_DEFAULT;
+    if (!slideData.revistaBlockColor) slideData.revistaBlockColor = REVISTA_BLOCK_DEFAULT;
     if (!slideData.splitBlockColor)   slideData.splitBlockColor   = '#152F17';
-    if (!slideData.revistaTextMode)   slideData.revistaTextMode   = 'dark';
+    if (!slideData.revistaTextMode)   slideData.revistaTextMode   = 'light';
     if (!slideData.splitTextMode)     slideData.splitTextMode     = 'light';
     if (!slideData.columnBlockColor)  slideData.columnBlockColor  = '#f8fafc';
     if (!slideData.columnTextMode)    slideData.columnTextMode    = 'dark';
@@ -7170,7 +7596,8 @@ function renderGeneratedPresentation(presentationData, legendText) {
     if (slideData.hookScale == null)       slideData.hookScale       = 1;
     if (slideData.complementScale == null) slideData.complementScale = 1;
     if (slideData.bulletsScale == null)    slideData.bulletsScale    = 1;
-    if (!slideData.style) slideData.style = 'classic';
+    slideData.style = normalizePostStyle(slideData.style);
+    ensureSignalVisualDefaults(slideData);
     // Sem texto — usuário adiciona no PowerPoint
     if (!slideData.hookHTML)       slideData.hookHTML       = '';
     if (!slideData.complementHTML) slideData.complementHTML = '';
@@ -7425,11 +7852,11 @@ function buildSplitBlockBackground(color) {
 function applyRevistaBlockInline(postEl, post) {
   const block = postEl.querySelector('.revista-block');
   if (!block) return;
-  const blockColor = post.revistaBlockColor || '#f8fafc';
+  const blockColor = post.revistaBlockColor || REVISTA_BLOCK_DEFAULT;
   block.style.background = blockColor;
   postEl.style.setProperty('--revista-block-color', blockColor);
-  block.classList.toggle('text-light', (post.revistaTextMode || 'dark') === 'light');
-  block.classList.toggle('text-dark',  (post.revistaTextMode || 'dark') === 'dark');
+  block.classList.toggle('text-light', (post.revistaTextMode || 'light') === 'light');
+  block.classList.toggle('text-dark',  (post.revistaTextMode || 'light') === 'dark');
 }
 
 function applySplitBlockInline(postEl, post) {
@@ -7493,9 +7920,9 @@ function renderRevistaStyle(postData) {
   const complementHTML = postData.complementHTML || '';
   const imgSrc         = postData.bgImage        || '';
   const sitePos        = postData.sitePos || 'bl';
-  const textMode       = postData.revistaTextMode || 'dark';
+  const textMode       = postData.revistaTextMode || 'light';
   const siteDark       = sitePos[0] === 'b' && textMode === 'dark';
-  const blockBg        = postData.revistaBlockColor || '#f8fafc';
+  const blockBg        = postData.revistaBlockColor || REVISTA_BLOCK_DEFAULT;
   const overlayBg      = buildOverlayBackground(postData.overlayColor || '#000000', postData.overlayOpacity == null ? 55 : postData.overlayOpacity, postData.overlayDirection || 'top');
   const overlayStyle   = buildPostOverlayStyle(postData.overlayColor || '#000000', postData.overlayOpacity == null ? 55 : postData.overlayOpacity, postData.overlayDirection || 'top');
   const photoPos       = postData.revistaPhotoPos == null ? 50 : postData.revistaPhotoPos;
@@ -7508,6 +7935,7 @@ function renderRevistaStyle(postData) {
     <div class="post-accent-bar"></div>
     <div class="revista-block text-${textMode}" style="background:${blockBg};">
       <div class="revista-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
+      <div class="revista-separator"></div>
       <div class="revista-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
     </div>
     ${postData.logoEnabled !== false ? '<img class="revista-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
@@ -7572,6 +8000,7 @@ function renderMolduraStyle(postData) {
   const complementHTML = postData.complementHTML || '';
   const imgSrc         = postData.bgImage        || '';
   const textMode       = postData.frameTextMode  || 'light';
+  const align          = postData.signalAlign === 'right' ? 'right' : 'left';
 
   const showHook        = postData.hookVisible        !== false;
   const showComplement  = postData.complementVisible  !== false;
@@ -7606,7 +8035,7 @@ function renderMolduraStyle(postData) {
     <div class="moldura-bg" style="background-image:url('${imgSrc}');"></div>
     <div class="moldura-overlay" style="${overlayBg ? 'background:' + overlayBg : 'display:none'}"></div>
     <div class="post-accent-bar"></div>
-    <div class="moldura-glass text-${textMode}" style="background:${glassBg};">
+    <div class="moldura-glass text-${textMode}" data-align="${align}" style="background:${glassBg};">
       <div class="moldura-glass-blur" style="background-image:url('${imgSrc}');"></div>
       <div class="moldura-glass-inner-overlay" style="${overlayBg ? 'background:' + overlayBg : ''}"></div>
       <div class="moldura-glass-tint" style="background:${glassBg};"></div>
@@ -7614,6 +8043,7 @@ function renderMolduraStyle(postData) {
       <div class="moldura-glass-line-top"></div>
       <div class="moldura-glass-sidebar"></div>
       ${hookBlock}
+      ${(showHook && showComplement) ? '<div class="moldura-divider"></div>' : ''}
       ${complementBlock}
       ${(showBullets && bullets.length && (showHook || showComplement)) ? '<div class="moldura-divider"></div>' : ''}
       ${bulletsHTML}
@@ -7677,7 +8107,7 @@ function renderSignalStyle(postData) {
   const showComplement = postData.complementVisible !== false;
   const showBullets = postData.bulletsVisible !== false;
   const showBulletIcons = postData.bulletIconsVisible !== false;
-  const signalCardTint = hexToRgba(postData.signalCardColor || '#FFFFFF', (postData.signalCardOpacity == null ? 6 : postData.signalCardOpacity) / 100);
+  const signalCardTint = hexToRgba(postData.signalCardColor || SIGNAL_CARD_DEFAULT, (postData.signalCardOpacity == null ? SIGNAL_CARD_OPACITY_DEFAULT : postData.signalCardOpacity) / 100);
   const isSidelight = postData.style === 'sidelight';
   const cardExtraClass = isSidelight ? ' sidelight-card' : '';
   const iconExtraClass = isSidelight ? ' sidelight-card-icon' : '';
@@ -7778,7 +8208,9 @@ function renderMockupStyle(postData) {
 
 // Aplica estilo, accent, layout e logo no DOM do post. Dispatch por post.style.
 function applyPostVariant(postEl, postData) {
-  const style   = postData.style   || 'classic';
+  postData.style = normalizePostStyle(postData.style);
+  ensureSignalVisualDefaults(postData);
+  const style   = postData.style;
   const accent  = postData.accent  || '#7AB87E';
   const layout  = postData.layout  || 'top';
   const logoPos = postData.logoPos || 'br';
@@ -7819,8 +8251,8 @@ function applyPostVariant(postEl, postData) {
   postEl.dataset.spotlightContrast = postData.spotlightContrast || 'forte';
   postEl.dataset.signalAlign = postData.signalAlign || 'left';
   // Tints do Highlights — card (glass tint) e ícone (pastilha escura)
-  const signalCardTintRgba = hexToRgba(postData.signalCardColor || '#FFFFFF', (postData.signalCardOpacity == null ? 6 : postData.signalCardOpacity) / 100);
-  const signalIconTintRgba = hexToRgba(postData.signalIconColor || '#081710', (postData.signalIconOpacity == null ? 0 : postData.signalIconOpacity) / 100);
+  const signalCardTintRgba = hexToRgba(postData.signalCardColor || SIGNAL_CARD_DEFAULT, (postData.signalCardOpacity == null ? SIGNAL_CARD_OPACITY_DEFAULT : postData.signalCardOpacity) / 100);
+  const signalIconTintRgba = hexToRgba(postData.signalIconColor || SIGNAL_ICON_DEFAULT, (postData.signalIconOpacity == null ? SIGNAL_ICON_OPACITY_DEFAULT : postData.signalIconOpacity) / 100);
   postEl.style.setProperty('--signal-card-tint', signalCardTintRgba);
   postEl.style.setProperty('--signal-icon-tint', signalIconTintRgba);
   postEl.style.setProperty('--signal-card-blur',  (postData.signalCardBlur  == null ? 24 : postData.signalCardBlur)  + 'px');
@@ -7859,9 +8291,9 @@ function applyPostVariant(postEl, postData) {
   } else {
     postEl.style.removeProperty('--revista-photo-pct');
   }
-  postEl.style.setProperty('--revista-block-color', postData.revistaBlockColor || '#f8fafc');
+  postEl.style.setProperty('--revista-block-color', postData.revistaBlockColor || REVISTA_BLOCK_DEFAULT);
   postEl.dataset.revistaLayout = postData.revistaLayout || 'top';
-  postEl.dataset.revistaShadow = postData.revistaShadow !== false ? 'on' : 'off';
+  postEl.dataset.revistaShadow = postData.revistaShadow === true ? 'on' : 'off';
 
   // Split: proporção da foto, orientação, cor do bloco (para gradiente da sombra)
   if (postData.splitPhotoPct) {
@@ -7886,8 +8318,6 @@ function applyPostVariant(postEl, postData) {
   switch (style) {
     case 'dashboard': html = renderDashboardStyle(postData); break;
     case 'revista':   html = renderRevistaStyle(postData);   break;
-    case 'split':     html = renderSplitStyle(postData);     break;
-    case 'coluna':    html = renderColunaStyle(postData);    break;
     case 'moldura':   html = renderMolduraStyle(postData);   break;
     case 'spotlight': html = renderSpotlightStyle(postData); break;
     case 'signal':    html = renderSignalStyle(postData);    break;
@@ -7936,6 +8366,25 @@ function getActivePostEl() {
   return p ? document.getElementById(p.id) : null;
 }
 
+function formatNudgeValue(value, unit) {
+  const n = Number(value) || 0;
+  return `${n > 0 ? '+' : ''}${n}${unit}`;
+}
+
+function syncNudgeValue(labelId, x, y, unit) {
+  const label = document.getElementById(labelId);
+  if (!label) return;
+  label.textContent = `${formatNudgeValue(x, unit)} / ${formatNudgeValue(y, unit)}`;
+}
+
+function syncRangeValue(inputId, value, unit = '%') {
+  const input = document.getElementById(inputId);
+  if (input) input.value = String(value);
+  const labelId = input ? input.dataset.valueLabel : null;
+  const label = labelId ? document.getElementById(labelId) : null;
+  if (label) label.textContent = value + unit;
+}
+
 function getActiveLegend() {
   return getModeLegends()[getModeCurrentIdx()] || '';
 }
@@ -7953,7 +8402,8 @@ function updatePostControls(idx) {
   }
   panel.classList.add('visible');
   // Sinaliza estilo atual e formato no panel pra CSS condicional (visibilidade declarativa do Fundo)
-  const STYLES_LIST = ['classic','dashboard','revista','split','coluna','moldura','spotlight','signal','sidelight','mockup'];
+  post.style = normalizePostStyle(post.style);
+  const STYLES_LIST = ['classic','dashboard','revista','moldura','signal','mockup'];
   STYLES_LIST.forEach(s => panel.classList.toggle(`style-${s}`, post.style === s));
   const FORMATS_LIST = ['feed','story','square','presentation'];
   FORMATS_LIST.forEach(f => panel.classList.toggle(`format-${f}`, post.format === f));
@@ -7988,13 +8438,11 @@ function updatePostControls(idx) {
   if (styleSelect) {
     styleSelect.value = currentStyle;
     styleSelect.querySelectorAll('option').forEach(opt => {
-      if (['split', 'coluna', 'spotlight', 'signal', 'sidelight'].includes(opt.value)) {
+      if (['signal'].includes(opt.value)) {
         opt.hidden = presMode;
         opt.disabled = presMode;
       }
     });
-    const premiumGroup = document.getElementById('pcStylePremiumGroup');
-    if (premiumGroup) premiumGroup.hidden = presMode;
   }
 
   // Select de formato (feed / story / square) — escondido no modo presentation (formato fixo)
@@ -8025,12 +8473,12 @@ function updatePostControls(idx) {
   setSubVisible('pcSubHookScale',          !isRevistaPres && !isDashPres);
   setSubVisible('pcSubComplementScale',    !isRevistaPres && !isDash);
   setSubVisible('pcSubTextScalesReset',    !isRevistaPres && !isDashPres);
-  // Dashboard não-apresentação: relabel "Escala do Hook" → "Escala do Card"
   const hookScaleLabel = document.querySelector('#pcSubHookScale .pc-label');
-  if (hookScaleLabel) hookScaleLabel.textContent = isDash ? 'Escala do Card' : 'Escala do Hook';
-  setSubVisible('pcSubTextPosition',       !isPresMode && (currentStyle === 'classic' || isDash || currentStyle === 'signal' || currentStyle === 'sidelight'));
+  if (hookScaleLabel) hookScaleLabel.textContent = 'Escala do Hook';
+  setSubVisible('pcSubTextPosition',       !isPresMode && (currentStyle === 'classic' || currentStyle === 'signal' || currentStyle === 'sidelight'));
   setSubVisible('pcSubMockupPosition',     currentStyle === 'mockup');
   // Novos controles no grupo Fundo — só para dashboard+apresentação
+  setSubVisible('pcSubDashCardPosition',   isDash && !isDashPres);
   setSubVisible('pcSubDashPresScale',      isDashPres);
   setSubVisible('pcSubDashPresPosition',   isDashPres);
   // Posição do Texto — select único; Dashboard ganha left/right, Highlights ganha center/spread/spread-inverted
@@ -8063,8 +8511,12 @@ function updatePostControls(idx) {
   if (dashPresScaleR) {
     const sv = Math.round((post.hookScale == null ? 1 : post.hookScale) * 100);
     dashPresScaleR.value = String(sv);
+    const valueEl = document.getElementById('pcDashPresScaleValue');
+    if (valueEl) valueEl.textContent = sv + '%';
   }
   if (dashPresPosS) dashPresPosS.value = layout;
+  const dashCardPosS = document.getElementById('pcDashCardPositionSelect');
+  if (dashCardPosS) dashCardPosS.value = layout;
   const logoOn = post.logoEnabled !== false;
   setSubVisible('pcSubLogoPosition',       logoOn);
   setSubVisible('pcSubLogoScale',          logoOn);
@@ -8132,7 +8584,7 @@ function updatePostControls(idx) {
   setSubVisible('pcSubSpotlightAnchor',    isSpotlight);
   setSubVisible('pcSubSpotlightBlur',      isSpotlight);
   setSubVisible('pcSubSpotlightContrast',  isSpotlight);
-  setSubVisible('pcSubSignalAlign',        isSignal || currentStyle === 'classic');
+  setSubVisible('pcSubSignalAlign',        isSignal || currentStyle === 'classic' || isDash || currentStyle === 'moldura');
   setSubVisible('pcSubSignalCardHeight',   isSignal);
   setSubVisible('pcSubSignalCardColor',    isSignal);
   setSubVisible('pcSubSignalCardOpacity',  isSignal);
@@ -8161,10 +8613,7 @@ function updatePostControls(idx) {
   // Seletor de 6 posições
   const abPosSelect = document.getElementById('pcAccentBarPosSelect');
   if (abPosSelect) abPosSelect.value = abPos;
-  const abOxR = document.getElementById('pcAccentBarOffsetX');
-  if (abOxR) abOxR.value = String(abOx);
-  const abOyR = document.getElementById('pcAccentBarOffsetY');
-  if (abOyR) abOyR.value = String(abOy);
+  syncNudgeValue('pcAccentBarNudgeValue', abOx, abOy, '%');
 
   // Brand-strip: dentro do grupo Assinatura
   const stripOn = post.stripEnabled !== false;
@@ -8174,6 +8623,8 @@ function updatePostControls(idx) {
   const stripHeightR = document.getElementById('pcStripHeight');
   const stripH = post.stripHeight || 6;
   if (stripHeightR) stripHeightR.value = String(stripH);
+  const stripHeightValue = document.getElementById('pcStripHeightValue');
+  if (stripHeightValue) stripHeightValue.textContent = stripH + 'px';
   // Seletor de 4 posições
   const stripPosS = document.getElementById('pcStripPosSelect');
   if (stripPosS) stripPosS.value = post.stripPos || 'bottom';
@@ -8197,18 +8648,28 @@ function updatePostControls(idx) {
   const accentBtnSw = document.getElementById('pcColorBtnSwatch');
   const accentBtnLb = document.getElementById('pcColorBtnLabel');
   if (accentBtnSw) accentBtnSw.style.background = accent;
-  if (accentBtnLb) accentBtnLb.textContent = accent.toUpperCase();
+  if (accentBtnLb) accentBtnLb.textContent = accent.toLowerCase();
 
   const logoPosSelect = document.getElementById('pcLogoPosSelect');
   if (logoPosSelect) logoPosSelect.value = logoPos;
   const brandMode = post.brandMode || 'light';
-  const brandModeSelect = document.getElementById('pcBrandModeSelect');
-  if (brandModeSelect) brandModeSelect.value = brandMode;
+  document.querySelectorAll('#pcBrandModeToggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === brandMode);
+  });
   const siteMode = post.siteMode || 'light';
-  const siteModeSelect = document.getElementById('pcSiteModeSelect');
-  if (siteModeSelect) siteModeSelect.value = siteMode;
+  document.querySelectorAll('#pcSiteModeToggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === siteMode);
+  });
 
-  // Escalas (hook / complement / bullets) — campos numéricos
+  const syncPercentControl = (inputId, labelId, value) => {
+    const v = Math.round(value * 100);
+    const input = document.getElementById(inputId);
+    if (input) input.value = String(v);
+    const label = document.getElementById(labelId);
+    if (label) label.textContent = v + '%';
+  };
+
+  // Escalas — sliders com badge percentual
   const hookScaleInput = document.getElementById('pcHookScale');
   if (hookScaleInput) {
     const v = Math.round(hookScale * 100);
@@ -8223,29 +8684,29 @@ function updatePostControls(idx) {
     const valueEl = document.getElementById('pcComplementScaleValue');
     if (valueEl) valueEl.textContent = v + '%';
   }
-  // Escalas dos bullets — campos numéricos
+  // Escalas dos bullets — sliders com badge percentual
   const bulletsScaleInput = document.getElementById('pcBulletsScale');
-  if (bulletsScaleInput) bulletsScaleInput.value = String(Math.round(bulletsScale * 100));
+  if (bulletsScaleInput) {
+    const v = Math.round(bulletsScale * 100);
+    bulletsScaleInput.value = String(v);
+    const valueEl = document.getElementById('pcBulletsScaleValue');
+    if (valueEl) valueEl.textContent = v + '%';
+  }
   const bulletIconScaleInput = document.getElementById('pcBulletIconScale');
-  if (bulletIconScaleInput) bulletIconScaleInput.value = String(Math.round(bulletIconScale * 100));
+  if (bulletIconScaleInput) {
+    const v = Math.round(bulletIconScale * 100);
+    bulletIconScaleInput.value = String(v);
+    const valueEl = document.getElementById('pcBulletIconScaleValue');
+    if (valueEl) valueEl.textContent = v + '%';
+  }
   const signalCardHeightInput = document.getElementById('pcSignalCardHeight');
-  if (signalCardHeightInput) signalCardHeightInput.value = String(Math.round(signalCardHeight * 100));
-  // Logo/Site escala — campos numéricos (valor em %, armazenado ÷100)
-  const logoScaleInput = document.getElementById('pcLogoScale');
-  if (logoScaleInput) logoScaleInput.value = String(Math.round(logoScale * 100));
-  const siteScaleInput = document.getElementById('pcSiteScale');
-  if (siteScaleInput) siteScaleInput.value = String(Math.round(siteScale * 100));
+  if (signalCardHeightInput) syncPercentControl('pcSignalCardHeight', 'pcSignalCardHeightValue', signalCardHeight);
+  syncPercentControl('pcLogoScale', 'pcLogoScaleValue', logoScale);
+  syncPercentControl('pcSiteScale', 'pcSiteScaleValue', siteScale);
 
-  // Offsets logo/site (campos numéricos com setinhas)
-  const syncOffsetField = (inputId, value) => {
-    const r = document.getElementById(inputId);
-    if (r) r.value = String(value);
-  };
-  syncOffsetField('pcLogoOffsetX', logoOffsetX);
-  syncOffsetField('pcLogoOffsetY', logoOffsetY);
-  syncOffsetField('pcSiteOffsetX', siteOffsetX);
-  syncOffsetField('pcSiteOffsetY', siteOffsetY);
-  // Mockup — sync device select, escala, offsets
+  syncNudgeValue('pcLogoNudgeValue', logoOffsetX, logoOffsetY, 'px');
+  syncNudgeValue('pcSiteNudgeValue', siteOffsetX, siteOffsetY, 'px');
+  // Mockup — sync device select, escala, ajuste fino
   const mockupDeviceSelSync = document.getElementById('pcMockupDeviceSelect');
   if (mockupDeviceSelSync) mockupDeviceSelSync.value = post.mockupDevice || 'phone';
   const mockupPosSelSync = document.getElementById('pcMockupPosSelect');
@@ -8293,9 +8754,13 @@ function updatePostControls(idx) {
   if (subPhone)   subPhone.style.display   = (_device === 'phone'   || _device === 'both') ? '' : 'none';
   if (subDesktop) subDesktop.style.display = (_device === 'desktop' || _device === 'both') ? '' : 'none';
   const mockupScaleR = document.getElementById('pcMockupScale');
-  if (mockupScaleR) mockupScaleR.value = String(Math.round((post.mockupScale == null ? 1 : post.mockupScale) * 100));
-  syncOffsetField('pcMockupOffsetX', post.mockupOffsetX == null ? 0 : post.mockupOffsetX);
-  syncOffsetField('pcMockupOffsetY', post.mockupOffsetY == null ? 0 : post.mockupOffsetY);
+  if (mockupScaleR) syncPercentControl('pcMockupScale', 'pcMockupScaleValue', post.mockupScale == null ? 1 : post.mockupScale);
+  syncNudgeValue(
+    'pcMockupNudgeValue',
+    post.mockupOffsetX == null ? 0 : post.mockupOffsetX,
+    post.mockupOffsetY == null ? 0 : post.mockupOffsetY,
+    'px'
+  );
 
   // Site — texto e posição
   const siteTextEl = document.getElementById('pcSiteText');
@@ -8308,11 +8773,13 @@ function updatePostControls(idx) {
   const ovBtnSw = document.getElementById('pcOverlayColorBtnSwatch');
   const ovBtnLb = document.getElementById('pcOverlayColorBtnLabel');
   if (ovBtnSw) ovBtnSw.style.background = overlayColor;
-  if (ovBtnLb) ovBtnLb.textContent = overlayColor.toUpperCase();
+  if (ovBtnLb) ovBtnLb.textContent = overlayColor.toLowerCase();
 
   // Overlay opacity
   const opacityRange = document.getElementById('pcOverlayOpacity');
   if (opacityRange) opacityRange.value = String(overlayOpacity);
+  const opacityValue = document.getElementById('pcOverlayOpacityValue');
+  if (opacityValue) opacityValue.textContent = overlayOpacity + '%';
 
   // Overlay direction
   const dirSelectEl = document.getElementById('pcOverlayDirection');
@@ -8322,83 +8789,80 @@ function updatePostControls(idx) {
   const dashBtnSw = document.getElementById('pcDashCardColorBtnSwatch');
   const dashBtnLb = document.getElementById('pcDashCardColorBtnLabel');
   if (dashBtnSw) dashBtnSw.style.background = dashCardColor;
-  if (dashBtnLb) dashBtnLb.textContent = dashCardColor.toUpperCase();
-  const dashOpRange = document.getElementById('pcDashCardOpacity');
-  if (dashOpRange) dashOpRange.value = String(dashCardOpacity);
+  if (dashBtnLb) dashBtnLb.textContent = dashCardColor.toLowerCase();
+  syncRangeValue('pcDashCardOpacity', dashCardOpacity, '%');
 
   // Revista / Split / Coluna / Moldura — cor do bloco
-  const revistaBlockColor = post.revistaBlockColor || '#f8fafc';
+  const revistaBlockColor = post.revistaBlockColor || REVISTA_BLOCK_DEFAULT;
   const splitBlockColor   = post.splitBlockColor   || '#152F17';
   const columnBlockColor  = post.columnBlockColor  || '#f8fafc';
   const frameColor        = post.frameColor        || '#0F1E14';
   const rbSw = document.getElementById('pcRevistaBlockColorBtnSwatch');
   const rbLb = document.getElementById('pcRevistaBlockColorBtnLabel');
   if (rbSw) rbSw.style.background = revistaBlockColor;
-  if (rbLb) rbLb.textContent = revistaBlockColor.toUpperCase();
+  if (rbLb) rbLb.textContent = revistaBlockColor.toLowerCase();
   const sbSw = document.getElementById('pcSplitBlockColorBtnSwatch');
   const sbLb = document.getElementById('pcSplitBlockColorBtnLabel');
   if (sbSw) sbSw.style.background = buildSplitBlockBackground(splitBlockColor);
-  if (sbLb) sbLb.textContent = splitBlockColor.toUpperCase();
+  if (sbLb) sbLb.textContent = splitBlockColor.toLowerCase();
   const cbSw = document.getElementById('pcColunaBlockColorBtnSwatch');
   const cbLb = document.getElementById('pcColunaBlockColorBtnLabel');
   if (cbSw) cbSw.style.background = columnBlockColor;
-  if (cbLb) cbLb.textContent = columnBlockColor.toUpperCase();
+  if (cbLb) cbLb.textContent = columnBlockColor.toLowerCase();
   const fbSw = document.getElementById('pcFrameColorBtnSwatch');
   const fbLb = document.getElementById('pcFrameColorBtnLabel');
   if (fbSw) fbSw.style.background = frameColor;
-  if (fbLb) fbLb.textContent = frameColor.toUpperCase();
+  if (fbLb) fbLb.textContent = frameColor.toLowerCase();
 
   // Glass opacity
   const glassOpacity = post.glassOpacity == null ? 55 : post.glassOpacity;
-  const glassOpRange = document.getElementById('pcGlassOpacity');
-  if (glassOpRange) glassOpRange.value = String(glassOpacity);
+  syncRangeValue('pcGlassOpacity', glassOpacity, '%');
   const spotlightPanelSizeSel = document.getElementById('pcSpotlightPanelSizeSelect');
   if (spotlightPanelSizeSel) spotlightPanelSizeSel.value = post.spotlightPanelSize || 'medio';
   const spotlightAnchorSel = document.getElementById('pcSpotlightAnchorSelect');
   if (spotlightAnchorSel) spotlightAnchorSel.value = post.spotlightAnchor || 'bottom';
   const spotlightContrastSel = document.getElementById('pcSpotlightContrastSelect');
   if (spotlightContrastSel) spotlightContrastSel.value = post.spotlightContrast || 'forte';
+  const signalAlignLabel = document.querySelector('#pcSubSignalAlign .pc-label');
+  if (signalAlignLabel) signalAlignLabel.textContent = isDash ? 'Alinhamento do Texto' : 'Alinhamento';
   const signalAlignSel = document.getElementById('pcSignalAlignSelect');
-  if (signalAlignSel) signalAlignSel.value = post.signalAlign || 'left';
+  if (signalAlignSel) signalAlignSel.value = isDash ? textAlign : (post.signalAlign || 'left');
   // Sync tints do Highlights
-  const sigCardColor = post.signalCardColor || '#FFFFFF';
-  const sigCardOp = post.signalCardOpacity == null ? 6 : post.signalCardOpacity;
-  const sigIconColor = post.signalIconColor || '#081710';
-  const sigIconOp = post.signalIconOpacity == null ? 0 : post.signalIconOpacity;
+  const sigCardColor = post.signalCardColor || SIGNAL_CARD_DEFAULT;
+  const sigCardOp = post.signalCardOpacity == null ? SIGNAL_CARD_OPACITY_DEFAULT : post.signalCardOpacity;
+  const sigIconColor = post.signalIconColor || SIGNAL_ICON_DEFAULT;
+  const sigIconOp = post.signalIconOpacity == null ? SIGNAL_ICON_OPACITY_DEFAULT : post.signalIconOpacity;
   const sigCardSw = document.getElementById('pcSignalCardColorBtnSwatch');
   const sigCardLb = document.getElementById('pcSignalCardColorBtnLabel');
   if (sigCardSw) sigCardSw.style.background = sigCardColor;
-  if (sigCardLb) sigCardLb.textContent = sigCardColor.toUpperCase();
-  const sigCardOpR = document.getElementById('pcSignalCardOpacity');
-  if (sigCardOpR) sigCardOpR.value = String(sigCardOp);
-  const sigCardBlurR = document.getElementById('pcSignalCardBlur');
-  if (sigCardBlurR) sigCardBlurR.value = String(post.signalCardBlur == null ? 24 : post.signalCardBlur);
-  const dashCardBlurR = document.getElementById('pcDashCardBlur');
-  if (dashCardBlurR) dashCardBlurR.value = String(post.dashCardBlur == null ? 24 : post.dashCardBlur);
-  const glassBlurR = document.getElementById('pcGlassBlur');
-  if (glassBlurR) glassBlurR.value = String(post.glassBlur == null ? 24 : post.glassBlur);
-  const spotlightBlurR = document.getElementById('pcSpotlightBlur');
-  if (spotlightBlurR) spotlightBlurR.value = String(post.spotlightBlur == null ? 22 : post.spotlightBlur);
+  if (sigCardLb) sigCardLb.textContent = sigCardColor.toLowerCase();
+  syncRangeValue('pcSignalCardOpacity', sigCardOp, '%');
+  syncRangeValue('pcSignalCardBlur', post.signalCardBlur == null ? 24 : post.signalCardBlur, 'px');
+  syncRangeValue('pcDashCardBlur', post.dashCardBlur == null ? 24 : post.dashCardBlur, 'px');
+  syncRangeValue('pcGlassBlur', post.glassBlur == null ? 24 : post.glassBlur, 'px');
+  syncRangeValue('pcSpotlightBlur', post.spotlightBlur == null ? 22 : post.spotlightBlur, 'px');
   const sigIconSw = document.getElementById('pcSignalIconColorBtnSwatch');
   const sigIconLb = document.getElementById('pcSignalIconColorBtnLabel');
   if (sigIconSw) sigIconSw.style.background = sigIconColor;
-  if (sigIconLb) sigIconLb.textContent = sigIconColor.toUpperCase();
-  const sigIconOpR = document.getElementById('pcSignalIconOpacity');
-  if (sigIconOpR) sigIconOpR.value = String(sigIconOp);
+  if (sigIconLb) sigIconLb.textContent = sigIconColor.toLowerCase();
+  syncRangeValue('pcSignalIconOpacity', sigIconOp, '%');
 
   // Revista — proporção da foto + orientação
-  const revPct = post.revistaPhotoPct || (post.format === 'story' ? 60 : post.format === 'presentation' ? 55 : 65);
-  const revPctR = document.getElementById('pcRevistaPhotoPct');
-  if (revPctR) revPctR.value = String(revPct);
+  const revLayoutForDefault = post.revistaLayout || 'top';
+  const revPctDefault = (revLayoutForDefault === 'left' || revLayoutForDefault === 'right') ? 52
+                     : post.format === 'story' ? 60
+                     : post.format === 'presentation' ? 55
+                     : 65;
+  const revPct = post.revistaPhotoPct || revPctDefault;
+  syncRangeValue('pcRevistaPhotoPct', revPct, '%');
   const revLaySel = document.getElementById('pcRevistaLayoutSelect');
   if (revLaySel) revLaySel.value = post.revistaLayout || 'top';
-  const revShadowCk = document.getElementById('pcRevistaShadow');
-  if (revShadowCk) revShadowCk.checked = post.revistaShadow !== false;
+  const revShadowToggle = document.getElementById('pcRevistaShadowToggle');
+  if (revShadowToggle) revShadowToggle.classList.toggle('active', post.revistaShadow === true);
 
   // Revista — posição da foto (background-position)
   const revPhotoPos = post.revistaPhotoPos == null ? 50 : post.revistaPhotoPos;
-  const revPosR = document.getElementById('pcRevistaPhotoPos');
-  if (revPosR) revPosR.value = String(revPhotoPos);
+  syncRangeValue('pcRevistaPhotoPos', revPhotoPos, '%');
 
   // Split — proporção da foto + orientação
   const splitPct = post.splitPhotoPct || 50;
@@ -8436,7 +8900,7 @@ function updatePostControls(idx) {
     currentStyle === 'split'   ? (post.splitTextMode   || 'light') :
     currentStyle === 'coluna'  ? (post.columnTextMode  || 'dark')  :
     currentStyle === 'moldura' ? (post.frameTextMode   || 'light') :
-                                 (post.revistaTextMode || 'dark');
+                                 (post.revistaTextMode || 'light');
   document.querySelectorAll('#pcBlockTextModeToggle button').forEach(b => {
     b.classList.toggle('active', b.dataset.mode === currentTextMode);
   });
@@ -8983,9 +9447,41 @@ function bindStepperButtons() {
   });
 }
 
+function setupRangeResetButtons(scope) {
+  const root = scope || document;
+  root.querySelectorAll('.pc-range[data-value-label]').forEach(input => {
+    const field = input.closest('.pc-offset-field');
+    const labelRow = field ? field.querySelector('.pc-label-row') : null;
+    if (!labelRow || labelRow.querySelector(`[data-range-reset="${input.id}"]`)) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'pc-range-reset';
+    btn.dataset.rangeReset = input.id;
+    btn.title = 'Voltar ao padrão';
+    btn.setAttribute('aria-label', 'Voltar ao padrão');
+    btn.innerHTML = '<i class="ph ph-arrow-clockwise"></i>';
+    labelRow.appendChild(btn);
+  });
+}
+
 function initPostControls() {
   wrapStepperInputs(document);
+  setupRangeResetButtons(document);
   bindStepperButtons();
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.aside-gen-wrap')) closeActionsMenu();
+  });
+
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.pc-range-reset');
+    if (!btn) return;
+    const input = document.getElementById(btn.dataset.rangeReset);
+    if (!input) return;
+    input.value = input.defaultValue || input.getAttribute('value') || '100';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  });
 
   // Delegação: clique no ícone de um bullet (no próprio post) abre o icon picker
   document.addEventListener('click', e => {
@@ -9014,6 +9510,7 @@ function initPostControls() {
   // Toggles de visibilidade (hook / complemento / bullets / logo / site / accentBar)
   document.querySelectorAll('.pc-vis-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      if (!btn.dataset.vis) return;
       const post = getActivePost();
       if (!post || !post.isGenerated) return;
       const key = btn.dataset.vis;
@@ -9043,15 +9540,19 @@ function initPostControls() {
         post.hookScale       = 1;
         post.complementScale = 1;
       }
-      // Sidelight precisa de cor de ícone visível por padrão (Signal default é 0% = invisível)
-      if (post.style === 'sidelight' && (post.signalIconOpacity == null || post.signalIconOpacity < 10)) {
-        post.signalIconColor = post.signalIconColor || '#7AB87E';
-        post.signalIconOpacity = 70;
+      ensureSignalVisualDefaults(post);
+      // Revista — defaults na primeira vez que o modelo é ativado
+      if (post.style === 'revista' && !post._revistaInitialized) {
+        post.brandMode = 'light';
+        post.siteMode = 'light';
+        post.revistaBlockColor = REVISTA_BLOCK_DEFAULT;
+        post.revistaTextMode = 'light';
+        post._revistaInitialized = true;
       }
       // Mockup — defaults na primeira vez que o modelo é ativado
       if (post.style === 'mockup') {
         if (!post._mockupInitialized) {
-          post.layout = 'zoom-left';
+          post.layout = 'center';
           post.overlayDirection = 'full';
           post.sitePos = 'tr';
           post._mockupInitialized = true;
@@ -9059,7 +9560,7 @@ function initPostControls() {
           // Já configurado antes — só corrige layout incompatível (spread etc.)
           const validMockupLayouts = ['top', 'bottom', 'center', 'center-right', 'left', 'right', 'zoom-bottom', 'zoom-right', 'zoom-left', 'zoom-right-pc', 'zoom-left-pc'];
           if (!validMockupLayouts.includes(post.layout)) {
-            post.layout = 'zoom-left';
+            post.layout = 'center';
           }
         }
       }
@@ -9069,7 +9570,7 @@ function initPostControls() {
       // Marca o panel com a classe do estilo atual (sistema declarativo CSS pro painel Fundo)
       const _panel = document.getElementById('postControls');
       if (_panel) {
-        const _STYLES = ['classic','dashboard','revista','split','coluna','moldura','spotlight','signal','sidelight','mockup'];
+        const _STYLES = ['classic','dashboard','revista','moldura','signal','mockup'];
         _STYLES.forEach(s => _panel.classList.toggle(`style-${s}`, post.style === s));
       }
       // Limpa qualquer inline display que possa ter ficado de ajustes anteriores nos subs do Fundo
@@ -9114,12 +9615,37 @@ function initPostControls() {
       if (!post || !post.isGenerated) return;
       post.layout = textPosSelectEl.value;
       const postEl = document.getElementById(post.id);
+      const currentStyle = normalizePostStyle(post.style);
+      const migratedSignalVisuals = ensureSignalVisualDefaults(post);
+      if (postEl && currentStyle === 'signal') {
+        post.style = currentStyle;
+        if (migratedSignalVisuals) {
+          applyPostVariant(postEl, post);
+        } else {
+          postEl.dataset.layout = post.layout;
+          try { scalePost(); } catch (_) {}
+        }
+      } else if (postEl) {
+        applyPostVariant(postEl, post);
+      }
+      updatePostControls(current);
+      saveSession();
+    });
+  }
+  // Dashboard — Posição do Card (seção Fundo)
+  const dashCardPosSelect = document.getElementById('pcDashCardPositionSelect');
+  if (dashCardPosSelect) {
+    dashCardPosSelect.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.layout = dashCardPosSelect.value;
+      const postEl = document.getElementById(post.id);
       if (postEl) applyPostVariant(postEl, post);
       updatePostControls(current);
       saveSession();
     });
   }
-  // Dashboard apresentação — Escala do Card (campo numérico)
+  // Dashboard apresentação — Escala do Card
   const dashPresScaleRange = document.getElementById('pcDashPresScale');
   if (dashPresScaleRange) {
     const applyDashPres = () => {
@@ -9129,6 +9655,8 @@ function initPostControls() {
       if (isNaN(n)) n = 100;
       n = Math.max(80, Math.min(130, n));
       dashPresScaleRange.value = String(n);
+      const valueLabel = dashPresScaleRange.dataset.valueLabel ? document.getElementById(dashPresScaleRange.dataset.valueLabel) : null;
+      if (valueLabel) valueLabel.textContent = n + '%';
       const val = n / 100;
       post.hookScale = val;
       post.complementScale = val;
@@ -9164,30 +9692,34 @@ function initPostControls() {
       saveSession();
     });
   }
-  // Select de brand mode (claro/escuro) logo
-  const brandModeSelectEl = document.getElementById('pcBrandModeSelect');
-  if (brandModeSelectEl) {
-    brandModeSelectEl.addEventListener('change', () => {
+  // Seletor de cor da logo (claro/escuro)
+  document.querySelectorAll('#pcBrandModeToggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
       const post = getActivePost();
       if (!post || !post.isGenerated) return;
-      post.brandMode = brandModeSelectEl.value;
+      post.brandMode = btn.dataset.mode === 'dark' ? 'dark' : 'light';
+      document.querySelectorAll('#pcBrandModeToggle button').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === post.brandMode);
+      });
       const postEl = document.getElementById(post.id);
       if (postEl) postEl.dataset.brand = post.brandMode;
       saveSession();
     });
-  }
-  // Select de site mode (claro/escuro) — independente da logo
-  const siteModeSelectEl = document.getElementById('pcSiteModeSelect');
-  if (siteModeSelectEl) {
-    siteModeSelectEl.addEventListener('change', () => {
+  });
+  // Seletor de cor do site (claro/escuro) — independente da logo
+  document.querySelectorAll('#pcSiteModeToggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
       const post = getActivePost();
       if (!post || !post.isGenerated) return;
-      post.siteMode = siteModeSelectEl.value;
+      post.siteMode = btn.dataset.mode === 'dark' ? 'dark' : 'light';
+      document.querySelectorAll('#pcSiteModeToggle button').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === post.siteMode);
+      });
       const postEl = document.getElementById(post.id);
       if (postEl) postEl.dataset.siteMode = post.siteMode;
       saveSession();
     });
-  }
+  });
   // Campos numéricos de escala (valor em %, armazenado ÷100)
   const wireScaleField = (inputId, cssVar, postField, min, max, useFormatScale = false) => {
     const input = document.getElementById(inputId);
@@ -9300,6 +9832,8 @@ function initPostControls() {
       if (isNaN(v)) v = min;
       v = Math.max(min, Math.min(max, v));
       input.value = String(v);
+      const valueLabel = input.dataset.valueLabel ? document.getElementById(input.dataset.valueLabel) : null;
+      if (valueLabel) valueLabel.textContent = v + (input.dataset.valueUnit || '%');
       post[postField] = v;
       const postEl = document.getElementById(post.id);
       if (postEl) applyPostVariant(postEl, post);
@@ -9361,7 +9895,19 @@ function initPostControls() {
   bindPremiumSelect('pcSpotlightPanelSizeSelect', 'spotlightPanelSize');
   bindPremiumSelect('pcSpotlightAnchorSelect', 'spotlightAnchor');
   bindPremiumSelect('pcSpotlightContrastSelect', 'spotlightContrast');
-  bindPremiumSelect('pcSignalAlignSelect', 'signalAlign');
+  const signalAlignSelectEl = document.getElementById('pcSignalAlignSelect');
+  if (signalAlignSelectEl) {
+    signalAlignSelectEl.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      if (post.style === 'dashboard') post.textAlign = signalAlignSelectEl.value === 'right' ? 'right' : 'left';
+      else post.signalAlign = signalAlignSelectEl.value;
+      const postEl = document.getElementById(post.id);
+      if (postEl) applyPostVariant(postEl, post);
+      updatePostControls(current);
+      saveSession();
+    });
+  }
   // Select Lado da Foto (coluna)
   const columnSideSelectEl = document.getElementById('pcColumnSideSelect');
   if (columnSideSelectEl) {
@@ -9402,6 +9948,8 @@ function initPostControls() {
       if (isNaN(v)) v = 50;
       v = Math.max(min, Math.min(max, v));
       input.value = String(v);
+      const valueLabel = input.dataset.valueLabel ? document.getElementById(input.dataset.valueLabel) : null;
+      if (valueLabel) valueLabel.textContent = v + (input.dataset.valueUnit || '%');
       post[postField] = v;
       const postEl = document.getElementById(post.id);
       if (postEl) postEl.style.setProperty(cssVar, v + '%');
@@ -9417,21 +9965,28 @@ function initPostControls() {
       const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post.revistaLayout = revLayoutSelect.value;
+      if ((post.revistaLayout === 'left' || post.revistaLayout === 'right') && post.revistaPhotoPct == null) {
+        post.revistaPhotoPct = 52;
+      }
       post.revistaPhotoPos = 50;
       const postEl = document.getElementById(post.id);
-      if (postEl) postEl.dataset.revistaLayout = post.revistaLayout;
+      if (postEl) {
+        postEl.dataset.revistaLayout = post.revistaLayout;
+        if (post.revistaPhotoPct != null) postEl.style.setProperty('--revista-photo-pct', post.revistaPhotoPct + '%');
+      }
       applyRevistaPhotoPos(post);
       updatePostControls();
       saveSession();
     });
   }
   // Revista — sombra na divisa (toggle)
-  const revShadowCheck = document.getElementById('pcRevistaShadow');
-  if (revShadowCheck) {
-    revShadowCheck.addEventListener('change', () => {
+  const revShadowToggleEl = document.getElementById('pcRevistaShadowToggle');
+  if (revShadowToggleEl) {
+    revShadowToggleEl.addEventListener('click', () => {
       const post = getActivePost();
       if (!post || !post.isGenerated) return;
-      post.revistaShadow = revShadowCheck.checked;
+      post.revistaShadow = post.revistaShadow !== true;
+      revShadowToggleEl.classList.toggle('active', post.revistaShadow === true);
       const postEl = document.getElementById(post.id);
       if (postEl) postEl.dataset.revistaShadow = post.revistaShadow ? 'on' : 'off';
       saveSession();
@@ -9448,6 +10003,8 @@ function initPostControls() {
     photo.style.backgroundPosition = (layout === 'left' || layout === 'right') ? `${pos}% center` : `center ${pos}%`;
     const range = document.getElementById('pcRevistaPhotoPos');
     if (range && range.value !== String(pos)) range.value = String(pos);
+    const valueLabel = range && range.dataset.valueLabel ? document.getElementById(range.dataset.valueLabel) : null;
+    if (valueLabel) valueLabel.textContent = pos + '%';
   }
   const revPosRange = document.getElementById('pcRevistaPhotoPos');
   if (revPosRange) {
@@ -9458,6 +10015,8 @@ function initPostControls() {
       if (isNaN(v)) v = 50;
       v = Math.max(0, Math.min(100, v));
       revPosRange.value = String(v);
+      const valueLabel = revPosRange.dataset.valueLabel ? document.getElementById(revPosRange.dataset.valueLabel) : null;
+      if (valueLabel) valueLabel.textContent = v + '%';
       post.revistaPhotoPos = v;
       applyRevistaPhotoPos(post);
     };
@@ -9580,50 +10139,75 @@ function initPostControls() {
       saveSession();
     });
   }
-  // Accent bar offsets — campos numéricos (-20..+20%)
-  const wireAbOffsetField = (inputId, cssVar, postField) => {
-    const input = document.getElementById(inputId);
-    if (!input) return;
-    const apply = () => {
-      const post = getActivePost();
-      if (!post || !post.isGenerated) return;
-      let v = Number(input.value);
-      if (isNaN(v)) v = 0;
-      v = Math.max(-20, Math.min(20, v));
-      input.value = String(v);
-      post[postField] = v;
-      const postEl = document.getElementById(post.id);
-      if (postEl) postEl.style.setProperty(cssVar, v + '%');
-    };
-    input.addEventListener('input', apply);
-    input.addEventListener('change', () => { apply(); saveSession(); });
+  // Ajuste fino da assinatura: controle de setas para mover logo, site e detalhe.
+  const nudgeTargets = {
+    logo: {
+      xField: 'logoOffsetX',
+      yField: 'logoOffsetY',
+      cssX: '--logo-offset-x',
+      cssY: '--logo-offset-y',
+      labelId: 'pcLogoNudgeValue',
+    },
+    site: {
+      xField: 'siteOffsetX',
+      yField: 'siteOffsetY',
+      cssX: '--site-offset-x',
+      cssY: '--site-offset-y',
+      labelId: 'pcSiteNudgeValue',
+    },
+    accentBar: {
+      xField: 'accentBarOffsetX',
+      yField: 'accentBarOffsetY',
+      cssX: '--accent-bar-offset-x',
+      cssY: '--accent-bar-offset-y',
+      labelId: 'pcAccentBarNudgeValue',
+    },
+    mockup: {
+      xField: 'mockupOffsetX',
+      yField: 'mockupOffsetY',
+      cssX: '--mockup-offset-x',
+      cssY: '--mockup-offset-y',
+      labelId: 'pcMockupNudgeValue',
+    },
   };
-  wireAbOffsetField('pcAccentBarOffsetX', '--accent-bar-offset-x', 'accentBarOffsetX');
-  wireAbOffsetField('pcAccentBarOffsetY', '--accent-bar-offset-y', 'accentBarOffsetY');
-  // Offset fields logo/site (campos numéricos com setinhas, px, -60..+60)
-  const wireOffsetField = (inputId, cssVar, postField, min, max) => {
-    const input = document.getElementById(inputId);
-    if (!input) return;
-    const apply = () => {
+  document.querySelectorAll('.pc-nudge-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const control = btn.closest('.pc-nudge-control');
+      const target = control ? nudgeTargets[control.dataset.nudgeTarget] : null;
       const post = getActivePost();
-      if (!post || !post.isGenerated) return;
-      let v = Number(input.value);
-      if (isNaN(v)) v = 0;
-      v = Math.max(min, Math.min(max, v));
-      input.value = String(v);
-      post[postField] = v;
+      if (!control || !target || !post || !post.isGenerated) return;
+      const step = Number(control.dataset.step) || 1;
+      const min = Number(control.dataset.min);
+      const max = Number(control.dataset.max);
+      const unit = control.dataset.unit || 'px';
+      let x = Number(post[target.xField]) || 0;
+      let y = Number(post[target.yField]) || 0;
+      if (btn.dataset.reset === 'true') {
+        x = 0;
+        y = 0;
+      } else {
+        x += (Number(btn.dataset.dx) || 0) * step;
+        y += (Number(btn.dataset.dy) || 0) * step;
+      }
+      if (!Number.isNaN(min)) {
+        x = Math.max(min, x);
+        y = Math.max(min, y);
+      }
+      if (!Number.isNaN(max)) {
+        x = Math.min(max, x);
+        y = Math.min(max, y);
+      }
+      post[target.xField] = x;
+      post[target.yField] = y;
       const postEl = document.getElementById(post.id);
-      if (postEl) postEl.style.setProperty(cssVar, v + 'px');
-    };
-    input.addEventListener('input', apply);
-    input.addEventListener('change', () => { apply(); saveSession(); });
-  };
-  wireOffsetField('pcLogoOffsetX', '--logo-offset-x', 'logoOffsetX', -60, 60);
-  wireOffsetField('pcLogoOffsetY', '--logo-offset-y', 'logoOffsetY', -60, 60);
-  wireOffsetField('pcSiteOffsetX', '--site-offset-x', 'siteOffsetX', -60, 60);
-  wireOffsetField('pcSiteOffsetY', '--site-offset-y', 'siteOffsetY', -60, 60);
-  wireOffsetField('pcMockupOffsetX', '--mockup-offset-x', 'mockupOffsetX', -400, 400);
-  wireOffsetField('pcMockupOffsetY', '--mockup-offset-y', 'mockupOffsetY', -400, 400);
+      if (postEl) {
+        postEl.style.setProperty(target.cssX, x + unit);
+        postEl.style.setProperty(target.cssY, y + unit);
+      }
+      syncNudgeValue(target.labelId, x, y, unit);
+      saveSession();
+    });
+  });
   // Sig block accordions (Logo / Site / Detalhe / Barra)
   document.querySelectorAll('.pc-sig-block > .pc-sig-label').forEach(label => {
     label.addEventListener('click', (e) => {
@@ -9677,7 +10261,7 @@ function initPostControls() {
       saveSession();
     });
   });
-  // Brand-strip — espessura (campo numérico 2..20px)
+  // Brand-strip — espessura (slider 2..20px)
   const stripHeightInput = document.getElementById('pcStripHeight');
   if (stripHeightInput) {
     const applyStripH = () => {
@@ -9687,6 +10271,8 @@ function initPostControls() {
       if (isNaN(v)) v = 6;
       v = Math.max(2, Math.min(20, v));
       stripHeightInput.value = String(v);
+      const valueEl = document.getElementById('pcStripHeightValue');
+      if (valueEl) valueEl.textContent = v + 'px';
       post.stripHeight = v;
       const postEl = document.getElementById(post.id);
       if (postEl) postEl.style.setProperty('--strip-height', v + 'px');
@@ -9716,6 +10302,8 @@ function initPostControls() {
       if (isNaN(v)) v = 0;
       v = Math.max(0, Math.min(100, v));
       dashOpRange.value = String(v);
+      const valueEl = document.getElementById('pcDashCardOpacityValue');
+      if (valueEl) valueEl.textContent = v + '%';
       post.dashCardOpacity = v;
       const postEl = document.getElementById(post.id);
       if (postEl) applyDashCardInline(postEl, post);
@@ -9733,6 +10321,8 @@ function initPostControls() {
       if (isNaN(v)) v = 0;
       v = Math.max(0, Math.min(100, v));
       glassOpRange.value = String(v);
+      const valueEl = document.getElementById('pcGlassOpacityValue');
+      if (valueEl) valueEl.textContent = v + '%';
       post.glassOpacity = v;
       const postEl = document.getElementById(post.id);
       if (postEl) applyMolduraBlockInline(postEl, post);
@@ -9740,7 +10330,7 @@ function initPostControls() {
     glassOpRange.addEventListener('input', applyGlassOp);
     glassOpRange.addEventListener('change', () => { applyGlassOp(); saveSession(); });
   }
-  // Overlay opacidade (campo numérico)
+  // Overlay opacidade (slider percentual)
   const opacityRange = document.getElementById('pcOverlayOpacity');
   if (opacityRange) {
     const applyOverlayOp = () => {
@@ -9750,6 +10340,8 @@ function initPostControls() {
       if (isNaN(v)) v = 0;
       v = Math.max(0, Math.min(100, v));
       opacityRange.value = String(v);
+      const valueEl = document.getElementById('pcOverlayOpacityValue');
+      if (valueEl) valueEl.textContent = v + '%';
       post.overlayOpacity = v;
       const postEl = document.getElementById(post.id);
       if (postEl) {
@@ -9915,7 +10507,7 @@ function resetPostStyle() {
   post.overlayDirection = 'top';
   post.dashCardColor     = '#0F1E14';
   post.dashCardOpacity   = 65;
-  post.revistaBlockColor = '#f8fafc';
+  post.revistaBlockColor = post.style === 'revista' ? REVISTA_BLOCK_DEFAULT : '#f8fafc';
   delete post.revistaPhotoPct;
   delete post.revistaPhotoPos;
   delete post.revistaLayout;
@@ -9943,7 +10535,7 @@ function resetPostStyle() {
   delete post.mockupOffsetX;
   delete post.mockupOffsetY;
   // mockupScreen / mockupScreenPhone / mockupScreenDesktop NÃO são deletados — é conteúdo do usuário
-  post.revistaTextMode   = 'dark';
+  post.revistaTextMode   = post.style === 'revista' ? 'light' : 'dark';
   post.splitTextMode     = 'light';
   post.accentBarEnabled  = true;
   post.accentBarPos      = 'tl';
@@ -9962,6 +10554,8 @@ function resetPostStyle() {
   post.siteOffsetX        = 0;
   post.siteOffsetY        = 0;
   post.siteColor          = null;
+  post.brandMode          = 'light';
+  post.siteMode           = 'light';
   post.siteText           = 'cropware.app';
   post.sitePos            = 'bl';
   post.siteEnabled        = true;
@@ -9972,9 +10566,13 @@ function resetPostStyle() {
   post.stripEnabled       = true;
   post.stripHeight        = 6;
   post.stripPos           = 'bottom';
+  // Revista — reset reaplica os defaults visuais do modelo.
+  if (post.style === 'revista') {
+    post._revistaInitialized = true;
+  }
   // Mockup — reset aplica os defaults específicos do modelo
   if (post.style === 'mockup') {
-    post.layout           = 'zoom-left';
+    post.layout           = 'center';
     post.overlayDirection = 'full';
     post.sitePos          = 'tr';
     post._mockupInitialized = true;
@@ -11139,13 +11737,13 @@ async function generatePresBackgrounds() {
 // ── DESIGN CONFIG (diretriz de marca/voz injetada no prompt) ──
 const DESIGN_CFG_LOCAL_KEY = 'cropware_design_config_v1';
 const DEFAULT_DESIGN_CONFIG = {
-  description: 'Cropware é uma agtech que conversa com produtores e agrônomos. Linguagem direta, confiante, apoiada em dado de campo. Evita jargão vazio e clichês motivacionais. Tom próximo mas com autoridade técnica — como um agrônomo experiente explicando para um colega.',
+  description: 'Cropware é uma plataforma para quem constrói mercado no campo. Ajuda profissionais de geração de demanda, desenvolvimento de mercado, promotoria técnica e assistência técnica comercial a transformar visitas, áreas demonstrativas, avaliações e dados técnicos em inteligência prática. Linguagem direta, confiante e apoiada em evidências de campo.',
   audience:    'misto',
   tone:        'casual',
   avoid:       'Emojis excessivos, clichês como "o segredo do sucesso", frases genéricas sem valor técnico, números inventados, linguagem corporativa fria.',
 };
 const DEFAULT_LINKEDIN_CONFIG = {
-  description: 'Cropware é uma agtech que usa dados de campo e inteligência artificial para apoiar decisões agronômicas com precisão. No LinkedIn, a comunicação é técnica, consultiva e orientada a resultados — voltada para profissionais do agronegócio, líderes de operações agrícolas e tomadores de decisão. Evitar linguagem informal ou de rede social. Preferir dados, tendências e raciocínio estratégico.',
+  description: 'Cropware é a plataforma para quem constrói mercado no campo. No LinkedIn, a comunicação é técnica, consultiva e estratégica, voltada para DMs, GDs, coordenadores, promotores, consultores, analistas e lideranças comerciais/técnicas de empresas de insumos e tecnologias agrícolas. Preferir desenvolvimento de mercado, geração de demanda, validação técnica, dados de campo e inteligência prática.',
   audience:    'gestor',
   tone:        'tecnico',
   avoid:       'Emojis, gírias, CTAs genéricos como "comenta aí", linguagem motivacional vazia, clichês de LinkedIn tipo "concordam?", posts excessivamente vendedores.',
@@ -11215,13 +11813,13 @@ function buildDesignContext(platform) {
     parts.push(`DIRETRIZ DE MARCA (obrigatório respeitar):\n${d}`);
   }
   const audienceMap = {
-    produtor:     'produtor rural (linguagem prática, foco em rentabilidade e decisão no campo)',
-    agronomo:     'agrônomo (termos técnicos aceitos, raciocínio agronômico)',
-    gestor:       'gestor agro / líder de operações (foco em KPIs, custo por hectare, escala)',
-    tecnico:      'técnico de campo (linguagem operacional, passo-a-passo)',
-    misto:        'produtor rural e agrônomo (equilibre prática e técnica)',
-    executivo:    'executivos e diretores do agronegócio (visão estratégica, ROI, governança)',
-    investidor:   'investidores e analistas do setor (dados de mercado, tendências macro)',
+    produtor:     'profissional de campo que atende produtores (linguagem prática, foco em evidências e decisão no campo)',
+    agronomo:     'agrônomo, consultor ou assistente técnico (termos técnicos aceitos, raciocínio agronômico e comercial)',
+    gestor:       'DM, GD, coordenador ou gestor técnico-comercial (foco em desenvolvimento de mercado, rotina de equipe e rastreabilidade)',
+    tecnico:      'promotor técnico, RTV ou técnico de campo (linguagem operacional, visitas, áreas demonstrativas e relatórios)',
+    misto:        'profissionais de campo, agrônomos, promotores e gestores de desenvolvimento de mercado',
+    executivo:    'executivos e diretores de empresas de insumos e tecnologia agrícola (visão estratégica, mercado, governança e escala)',
+    investidor:   'investidores e analistas do setor (dados de mercado, adoção tecnológica e tendências macro)',
   };
   const aud = audienceMap[cfg.audience] || audienceMap.misto;
   parts.push(`PÚBLICO-ALVO: ${aud}`);
@@ -11434,6 +12032,71 @@ function applyInstagramAdsFields(postData, parsed, adContext) {
   postData.adPreferredCTA  = (adContext && adContext.cta) || postData.adPreferredCTA || '';
 }
 
+function buildCropwarePositioningContext(channel) {
+  const shared = `NOVO POSICIONAMENTO DA CROPWARE:
+- A Cropware e a plataforma para quem constroi mercado no campo.
+- Fale com profissionais de geracao de demanda, desenvolvimento de mercado, promotoria tecnica, assistencia tecnica comercial, consultoria tecnica de campo, analise de mercado/campo e validacao de tecnologias agricolas.
+- Contexto de empresas: sementes, especialidades, fertilizantes, defensivos, biologicos e tecnologias agricolas.
+- Comunique a Cropware como uma plataforma que transforma visitas, areas demonstrativas, avaliacoes e dados tecnicos em inteligencia de mercado.
+- Conceitos preferenciais: CRM tecnico do agro, sistema operacional de quem constroi mercado no campo, visitas tecnicas virando inteligencia, dados de campo sustentando decisoes comerciais, geracao de demanda com rastreabilidade, desenvolvimento de mercado com organizacao, menos informacao perdida em WhatsApp, planilhas e fotos soltas.
+- Evite posicionar como software para fazenda, aplicativo para produtor, controle da propriedade ou gestao agricola generica.
+- Prefira: geracao de demanda, desenvolvimento de mercado, visitas tecnicas, areas demonstrativas, validacao tecnica, inteligencia de campo, dados de campo, evidencias tecnicas, historico por cliente/regiao/talhao, posicionamento tecnico, suporte a decisao comercial e CRM tecnico do agro.
+- Respeite sempre o tema informado pelo usuario. A Cropware deve entrar como analogia natural ou solucao coerente, nunca como encaixe artificial.`;
+
+  const contexts = {
+    instagram: `DIRECIONAMENTO DO CANAL — INSTAGRAM OFICIAL:
+- Use o tema principal como foco do post.
+- Mostre funcionalidades, dores e boas praticas ligadas a organizacao de visitas, dados, talhoes, relatorios, mapas, evidencias e tomada de decisao.
+- A analogia com Cropware deve ser clara, visual e natural.
+- Tom claro, moderno, direto e levemente comercial, sem parecer anuncio pesado.`,
+    instagramCarousel: `DIRECIONAMENTO DO CANAL — INSTAGRAM CARROSSEL:
+- Conteudo educativo e sequencial.
+- Explique dores, oportunidades e boas praticas da rotina de campo.
+- Mostre como ferramentas digitais ajudam profissionais de campo a organizar visitas, evidencias, areas demonstrativas e dados.
+- Estrutura ideal: hook forte, problema do campo, consequencia pratica, boa pratica, dados/tecnologia, analogia com Cropware e CTA leve.
+- Tom didatico, profissional, simples e visual.`,
+    instagramAds: `DIRECIONAMENTO DO CANAL — INSTAGRAM ADS:
+- Linguagem mais comercial, objetiva e persuasiva.
+- Fale diretamente com profissionais de campo, DM, GD, promotores, consultores e assistentes tecnicos.
+- Destaque dor + solucao + beneficio.
+- Reforce organizacao de visitas, areas demonstrativas, relatorios, mapas, dados de campo, historico tecnico e inteligencia para desenvolvimento de mercado.
+- Evite texto generico e qualquer leitura de "software para fazenda".`,
+    instagramAdsCarousel: `DIRECIONAMENTO DO CANAL — INSTAGRAM ADS CARROSSEL:
+- Mais comercial que o carrossel organico, com progressao de argumentos de conversao.
+- Sequencia sugerida: dor principal, rotina desorganizada, perda de dados/evidencias, necessidade de rastreabilidade, Cropware como solucao, beneficios principais e CTA.
+- Gere desejo de teste, cadastro ou demonstracao sem exageros.
+- Fale com quem vive a rotina de campo e precisa provar resultado.`,
+    linkedin: `DIRECIONAMENTO DO CANAL — LINKEDIN OFICIAL:
+- Conteudo tecnico, consultivo e estrategico.
+- Fale com agronomos, gestores, coordenadores, promotores, consultores, analistas, DM e GD.
+- Puxe para desenvolvimento de mercado, geracao de demanda, validacao tecnica, areas demonstrativas, relatorios e inteligencia de campo.
+- A Cropware deve aparecer como ferramenta que organiza e potencializa esse processo.
+- Tom elegante, B2B e de autoridade, sem exageros comerciais.`,
+    linkedinCarousel: `DIRECIONAMENTO DO CANAL — LINKEDIN CARROSSEL:
+- Conteudo tecnico em formato educativo, com mais profundidade que Instagram.
+- Estrutura sugerida: tese principal, problema tecnico/comercial, impacto na rotina de campo, como organizar melhor, importancia dos dados, relacao com desenvolvimento de mercado e fechamento com Cropware.
+- Foque em DM, GD, validacao tecnica, areas demonstrativas, relatorios e inteligencia de campo.
+- Tom profissional, tecnico, estrategico e de autoridade.`,
+    linkedinPessoal: `DIRECIONAMENTO DO CANAL — LINKEDIN PESSOAL:
+- Conteudo assinado por um profissional do agro, mas com voz editorial, consultiva e pouco autobiografica.
+- Foque no tema informado e em insights sobre campo, tecnologia, tendencias, DM, GD, dados, rotina tecnica e boas praticas.
+- A analogia com o universo da Cropware deve ser sutil, sem vender o app.
+- Evite "Conheca a Cropware", "Teste agora" e "Nossa plataforma faz".
+- Evite primeira pessoa e marcadores autobiograficos como "eu tenho visto", "tenho notado", "na minha experiencia" e "venho observando".
+- Prefira construcoes profissionais como: "Na pratica, equipes de campo enfrentam...", "Desenvolver mercado exige...", "A diferenca esta em transformar observacao em aprendizado...".`,
+    linkedinPessoalCarousel: `DIRECIONAMENTO DO CANAL — LINKEDIN PESSOAL CARROSSEL:
+- Conteudo tecnico/reflexivo, sem propaganda direta da Cropware.
+- O tema principal deve conduzir a narrativa.
+- Traga visao de mercado, experiencia de campo, tecnologia, dados, DM, GD e boas praticas.
+- Evite primeira pessoa e marcadores autobiograficos; priorize leitura profissional, insight tecnico e utilidade para quem atua no setor.
+- A relacao com o universo Cropware deve aparecer apenas como analogia sutil: transformar observacao em aprendizado, dados em decisao e rotina de campo em inteligencia.`
+  };
+
+  return `${shared}\n\n${contexts[channel] || ''}`;
+}
+
+const REVISTA_BLOCK_DEFAULT = '#2B452D';
+
 function buildInstagramAdsSystemPrompt(tone) {
   const toneDirectives = {
     casual:      'TOM: direto, claro e proximo do campo, sem parecer post organico.',
@@ -11449,6 +12112,8 @@ REGRA ABSOLUTA: NUNCA invente numeros, porcentagens, estatisticas ou dados quant
 
 Seu trabalho e criar um criativo estatico para Instagram Ads com linguagem de anuncio, nao de post organico.
 O anuncio precisa ser claro, objetivo, orientado a clique e crivel para publico agro.
+
+${buildCropwarePositioningContext('instagramAds')}
 
 PARTE VISUAL DO CRIATIVO:
 
@@ -11523,14 +12188,16 @@ function buildSystemPrompt(tone) {
   const toneDirectives = {
     casual:      'TOM: linguagem próxima e coloquial, como conversa no WhatsApp. Use "você", expressões leves do campo.',
     tecnico:     'TOM: vocabulário preciso do agro (NDVI, talhão, IPM, manejo integrado). Use termos técnicos reais, sem inventar números.',
-    inspirador:  'TOM: aspiracional, foco em transformação, futuro e empoderamento do produtor.',
+    inspirador:  'TOM: aspiracional, foco em transformação, futuro e empoderamento do profissional que constroi mercado no campo.',
     provocativo: 'TOM: abertura que desafia o senso comum, pergunta incômoda ou afirmação direta. Pode ser até desconfortável.',
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.casual;
 
-  return `Você é um copywriter especialista na marca Cropware (plataforma de gestão agrícola).
+  return `Você é um copywriter especialista na marca Cropware (plataforma para quem constroi mercado no campo).
 
 REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais da Cropware. Use apenas benefícios qualitativos e conceituais. Qualquer número inventado é desinformação e prejudica a marca.
+
+${buildCropwarePositioningContext('instagram')}
 
 Crie posts para Instagram seguindo exatamente este padrão visual:
 
@@ -11581,7 +12248,7 @@ monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturi
 LEGEND (legenda do Instagram):
 - 2-3 frases curtas, máximo 45 palavras no total, 1 parágrafo só
 - Afirmação ou provocação direta, sem introdução nem contextualização
-- Tom de reflexão profissional para agrônomos e produtores
+- Tom de reflexão profissional para agronomos, DMs, GDs, promotores, consultores e assistentes tecnicos
 - PROIBIDO terminar com pergunta, CTA, emoji, "faz sentido", "comenta aí" ou similar
 - 3 hashtags relevantes em linha separada
 
@@ -11672,7 +12339,7 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
   let userPartsResolved = userParts;
   if (platform === 'instagram-ads') {
     const adContextSuffix = adContext
-      ? `\n\nObjetivo da campanha: ${adContext.objective || 'trafego'}\nPublico: ${adContext.audience || 'produtores e agronomos do agro'}\nCTA preferido: ${adContext.cta || 'Saiba mais'}`
+      ? `\n\nObjetivo da campanha: ${adContext.objective || 'trafego'}\nPublico: ${adContext.audience || 'profissionais de campo, DMs, GDs, promotores e assistentes tecnicos'}\nCTA preferido: ${adContext.cta || 'Saiba mais'}`
       : '';
     userPartsResolved = userImageBase64
       ? [
@@ -11885,14 +12552,16 @@ function buildCarouselSystemPrompt(tone, slideCount) {
   const toneDirectives = {
     casual:      'TOM: linguagem próxima e coloquial, como conversa no WhatsApp. Use "você", expressões leves do campo.',
     tecnico:     'TOM: vocabulário preciso do agro (NDVI, talhão, IPM, manejo integrado). Use termos técnicos reais, sem inventar números.',
-    inspirador:  'TOM: aspiracional, foco em transformação, futuro e empoderamento do produtor.',
+    inspirador:  'TOM: aspiracional, foco em transformação, futuro e empoderamento do profissional que constroi mercado no campo.',
     provocativo: 'TOM: abertura que desafia o senso comum, pergunta incômoda ou afirmação direta. Pode ser até desconfortável.',
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.casual;
 
-  return `Você é um copywriter especialista na marca Cropware (plataforma de gestão agrícola).
+  return `Você é um copywriter especialista na marca Cropware (plataforma para quem constroi mercado no campo).
 
 REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais da Cropware. Use apenas benefícios qualitativos e conceituais.
+
+${buildCropwarePositioningContext('instagramCarousel')}
 
 Crie um CARROSSEL para Instagram com ${slideCount} slides seguindo exatamente este padrão:
 
@@ -11980,6 +12649,8 @@ REGRA ABSOLUTA: NUNCA invente numeros, porcentagens, estatisticas ou dados quant
 
 Seu trabalho e criar um CARROSSEL de ${slideCount} slides para Instagram Ads. Linguagem de anuncio, nao de post organico.
 
+${buildCropwarePositioningContext('instagramAdsCarousel')}
+
 ESTRUTURA DO CARROSSEL:
 - Slide 1 (CAPA): hook forte que para o scroll e provoca o swipe. Beneficio imediato, frase curta.
 - Slides do meio (DESENVOLVIMENTO): cada slide aprofunda um argumento de conversao.
@@ -12050,19 +12721,21 @@ Responda APENAS em JSON valido:
 function buildLinkedInSystemPrompt(tone) {
   const toneDirectives = {
     casual:      'TOM: profissional mas acessível. Evite formalismo excessivo, mas mantenha credibilidade.',
-    tecnico:     'TOM: vocabulário técnico do agro (NDVI, manejo integrado, agricultura de precisão). Cite dados, métricas e referências quando possível.',
+    tecnico:     'TOM: vocabulário técnico do agro, desenvolvimento de mercado, validação técnica e inteligência de campo. Use evidências qualitativas, sem inventar números.',
     inspirador:  'TOM: visão estratégica, foco em transformação do setor, liderança e inovação agrícola.',
     provocativo: 'TOM: tese provocativa que desafia o status quo do agronegócio. Posicionamento forte e fundamentado.',
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
 
-  return `Você é um copywriter especialista em LinkedIn para a marca Cropware (plataforma de gestão agrícola com IA).
+  return `Você é um copywriter especialista em LinkedIn para a marca Cropware (plataforma para quem constroi mercado no campo).
 Crie posts para LinkedIn seguindo exatamente este padrão visual:
 
 CONTEXTO LINKEDIN:
 - LinkedIn é uma rede profissional. O conteúdo deve transmitir autoridade, expertise e liderança de pensamento no agronegócio.
 - O público são gestores, agrônomos sêniores, executivos de agro, investidores e profissionais de tecnologia agrícola.
 - O post visual será exibido como imagem no LinkedIn (mesmo formato 1080x1350 do Instagram).
+
+${buildCropwarePositioningContext('linkedin')}
 
 HOOK (texto grande, impactante):
 - 1 OU 2 linhas no total (prefira 2; use 1 só quando a frase já fechar sozinha e for forte)
@@ -12071,20 +12744,20 @@ HOOK (texto grande, impactante):
 - CAPITALIZAÇÃO: só a PRIMEIRA palavra do hook começa com maiúscula. A segunda linha começa com MINÚSCULA
 - PONTUAÇÃO NATURAL (OBRIGATÓRIA): vírgula de respiro, ponto final no fim
 - Máximo 6 palavras por linha
-- Tom consultivo e estratégico — foque em dados, eficiência, ROI, decisão baseada em evidência
+- Tom consultivo e estratégico — foque em dados de campo, evidencias tecnicas, desenvolvimento de mercado e decisao comercial baseada em observacao real
 - Exemplos BONS para LinkedIn:
   · "O custo do achismo <br><em>aparece na colheita.</em>"
-  · "Dados de 3 safras, <br><em>uma decisão em segundos.</em>"
+  · "Dados de campo, <br><em>decisao com contexto.</em>"
   · "Gestão preditiva <br><em>já não é tendência — é padrão.</em>"
 
 COMPLEMENT (texto de apoio menor):
 - 1-2 linhas, máximo 36 caracteres cada
 - Use <strong> para destacar palavras-chave
-- Complementa o hook com insight técnico ou dado de mercado
+- Complementa o hook com insight tecnico, consequencia pratica ou leitura de mercado
 
 BULLETS (3 pontos de apoio, iconizados):
 - Exatamente 3 bullets, curtos e diretos
-- Cada "text": máximo 6 palavras, afirmação concreta com dado ou benefício mensurável
+- Cada "text": máximo 6 palavras, afirmação concreta com beneficio qualitativo ou evidencia tecnica
 - PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
 - NÃO repita palavras ou ideias do hook/complement
 - Cada "icon": nome exato de um Material Symbol da lista permitida
@@ -12119,8 +12792,8 @@ Responda APENAS em JSON válido, sem texto fora do JSON:
   "hook": "primeira linha<br><em>remate estratégico.</em>",
   "complement": "texto de apoio<br><strong>com destaque</strong>",
   "bullets": [
-    {"icon": "analytics", "text": "Afirmação com dado."},
-    {"icon": "trending_up", "text": "Benefício mensurável."},
+    {"icon": "analytics", "text": "Evidencia tecnica organizada."},
+    {"icon": "trending_up", "text": "Mercado com contexto."},
     {"icon": "insights",    "text": "Insight estratégico."}
   ],
   "title": "título curto para sidebar (máx 50 chars)",
@@ -12133,19 +12806,21 @@ Responda APENAS em JSON válido, sem texto fora do JSON:
 function buildLinkedInCarouselSystemPrompt(tone, slideCount) {
   const toneDirectives = {
     casual:      'TOM: profissional mas acessível. Evite formalismo excessivo, mas mantenha credibilidade.',
-    tecnico:     'TOM: vocabulário técnico do agro (NDVI, manejo integrado, agricultura de precisão). Cite dados e métricas.',
+    tecnico:     'TOM: vocabulário técnico do agro, desenvolvimento de mercado, validação técnica e inteligência de campo. Use evidências qualitativas, sem inventar números.',
     inspirador:  'TOM: visão estratégica, foco em transformação do setor, liderança e inovação agrícola.',
     provocativo: 'TOM: tese provocativa que desafia o status quo do agronegócio. Posicionamento forte e fundamentado.',
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
 
-  return `Você é um copywriter especialista em LinkedIn para a marca Cropware (plataforma de gestão agrícola com IA).
+  return `Você é um copywriter especialista em LinkedIn para a marca Cropware (plataforma para quem constroi mercado no campo).
 Crie um CARROSSEL para LinkedIn com ${slideCount} slides seguindo exatamente este padrão:
 
 CONTEXTO LINKEDIN:
 - Carrosséis no LinkedIn são documentos PDF que o público desliza. Cada slide deve funcionar como uma "página" de conteúdo educativo.
 - O público são gestores, agrônomos sêniores, executivos, investidores e profissionais de agtech.
 - Foco em thought leadership, dados e raciocínio estratégico.
+
+${buildCropwarePositioningContext('linkedinCarousel')}
 
 ESTRUTURA DO CARROSSEL:
 - Slide 1 (CAPA): hook forte que gere curiosidade profissional. Tese provocativa ou dado impactante.
@@ -12160,7 +12835,7 @@ HOOK (texto grande, impactante):
 - CAPITALIZAÇÃO: só a PRIMEIRA palavra começa com maiúscula
 - PONTUAÇÃO NATURAL OBRIGATÓRIA
 - Máximo 6 palavras por linha
-- Tom consultivo — dados, eficiência, ROI, decisão baseada em evidência
+- Tom consultivo — dados de campo, evidencia tecnica, organizacao da rotina e decisao comercial baseada em contexto
 
 COMPLEMENT (texto de apoio menor):
 - 1-2 linhas, máximo 36 caracteres cada
@@ -12168,7 +12843,7 @@ COMPLEMENT (texto de apoio menor):
 
 BULLETS (3 pontos de apoio):
 - Exatamente 3 bullets, curtos e diretos
-- Cada "text": máximo 6 palavras, com dado ou benefício mensurável
+- Cada "text": máximo 6 palavras, com beneficio qualitativo, evidencia tecnica ou insight pratico
 - PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
 - Cada "icon": nome exato de Material Symbol da lista permitida
 
@@ -12207,8 +12882,8 @@ Responda APENAS em JSON válido:
       "hook": "texto do hook<br><em>remate estratégico.</em>",
       "complement": "texto de apoio<br><strong>destaque</strong>",
       "bullets": [
-        {"icon": "analytics", "text": "Afirmação com dado."},
-        {"icon": "trending_up", "text": "Benefício mensurável."},
+        {"icon": "analytics", "text": "Evidencia tecnica organizada."},
+        {"icon": "trending_up", "text": "Mercado com contexto."},
         {"icon": "insights", "text": "Insight estratégico."}
       ],
       "imagePrompt": "english image prompt for this slide"
@@ -12232,8 +12907,9 @@ O autor é um técnico ou gestor que entende de tecnologia agrícola, dados de c
 
 REGRA DE OURO — FOCO NO CONTEÚDO, NÃO NO AUTOR:
 - O post deve entregar um INSIGHT, uma PROVOCAÇÃO ou um CONHECIMENTO TÉCNICO útil para quem lê.
-- PROIBIDO centralizar no autor: evite "eu aprendi", "na minha jornada", "minha experiência me ensinou", "eu percebi", "venho observando na minha operação". Isso transforma o post em diário pessoal.
-- A primeira pessoa pode aparecer de forma LEVE e pontual na legenda (1x no máximo), NUNCA no hook, complement ou bullets.
+- PROIBIDO centralizar no autor: evite "eu aprendi", "na minha jornada", "minha experiência me ensinou", "eu percebi", "eu tenho visto", "tenho visto", "eu tenho notado", "tenho notado", "venho observando" e "na minha experiência". Isso transforma o post em diário pessoal.
+- PROIBIDO usar primeira pessoa em qualquer parte do conteúdo: hook, complement, bullets, legenda e hashtags.
+- O texto deve soar como análise profissional assinada por alguém com repertório, não como relato pessoal.
 - O hook e os bullets devem soar como CONTEÚDO TÉCNICO EDITORIAL — como se fosse um artigo curto de uma revista do setor, não um relato pessoal.
 - Pense: "o que o leitor ganha ao ler isso?" — se a resposta for "saber algo sobre o autor", está errado. Se for "entender algo novo sobre o agro", está certo.
 
@@ -12246,6 +12922,8 @@ CONTEXTO LINKEDIN:
 - LinkedIn é uma rede profissional. O conteúdo deve transmitir autoridade técnica e liderança de pensamento.
 - O público são profissionais do agro: gestores, agrônomos, técnicos, executivos, investidores.
 - O post deve parecer conteúdo de valor, não desabafo ou storytelling pessoal.
+
+${buildCropwarePositioningContext('linkedinPessoal')}
 
 HOOK (texto grande, impactante):
 - 1 OU 2 linhas no total (prefira 2; use 1 só quando a frase já fechar sozinha e for forte)
@@ -12289,7 +12967,8 @@ monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturi
 LEGEND (legenda do LinkedIn):
 - 3-5 frases, tom consultivo e profissional, máximo 80 palavras
 - Desenvolva o insight do hook com raciocínio técnico, contexto de mercado ou reflexão estratégica
-- A primeira pessoa pode aparecer NO MÁXIMO 1 vez, de forma sutil ("tenho visto", "vale observar que"), nunca como protagonista
+- PROIBIDO primeira pessoa e marcadores autobiográficos como "eu tenho visto", "tenho visto", "eu tenho notado", "tenho notado", "venho observando", "na minha experiência", "aprendi" e "percebi"
+- Priorize construções impessoais e profissionais: "vale observar que", "na prática do campo", "o ponto central é", "em rotinas de desenvolvimento de mercado"
 - O foco da legenda é ENTREGAR VALOR ao leitor, não contar a história do autor
 - PROIBIDO terminar com "concordam?", "o que vocês acham?", perguntas retóricas vazias, CTAs genéricos
 - PROIBIDO citar qualquer marca ou produto
@@ -12340,8 +13019,8 @@ O objetivo NÃO é falar sobre o autor — é trazer CONTEÚDO TÉCNICO E ESTRAT
 
 REGRA DE OURO — FOCO NO CONTEÚDO, NÃO NO AUTOR:
 - Cada slide deve entregar um INSIGHT, uma PROVOCAÇÃO ou um CONHECIMENTO TÉCNICO útil.
-- PROIBIDO centralizar no autor: evite "eu aprendi", "na minha jornada", "minha experiência me ensinou", "eu percebi". Isso transforma o carrossel em diário pessoal.
-- A primeira pessoa pode aparecer de forma LEVE e pontual na legenda (1x no máximo), NUNCA nos hooks, complements ou bullets.
+- PROIBIDO centralizar no autor: evite "eu aprendi", "na minha jornada", "minha experiência me ensinou", "eu percebi", "eu tenho visto", "tenho visto", "eu tenho notado", "tenho notado", "venho observando" e "na minha experiência". Isso transforma o carrossel em diário pessoal.
+- PROIBIDO usar primeira pessoa em qualquer parte do conteúdo: hooks, complements, bullets, legenda e hashtags.
 - Os slides devem soar como CONTEÚDO TÉCNICO EDITORIAL, não relato pessoal.
 
 REGRAS FUNDAMENTAIS:
@@ -12353,6 +13032,8 @@ CONTEXTO LINKEDIN:
 - Carrosséis no LinkedIn são documentos PDF que o público desliza. Cada slide é uma "página" de conteúdo educativo.
 - O público são profissionais do agro: gestores, agrônomos, técnicos, executivos.
 - Foco em thought leadership técnico, insights de mercado e raciocínio estratégico.
+
+${buildCropwarePositioningContext('linkedinPessoalCarousel')}
 
 ESTRUTURA DO CARROSSEL:
 - Slide 1 (CAPA): hook forte com provocação técnica ou tese estratégica. Ex: "Por que dados históricos valem mais que previsão."
@@ -12390,7 +13071,8 @@ monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturi
 LEGEND (UMA legenda compartilhada para todo o carrossel):
 - 4-6 frases, tom consultivo e profissional, máximo 100 palavras
 - Desenvolva o tema com raciocínio técnico, contexto de mercado ou reflexão estratégica
-- A primeira pessoa pode aparecer NO MÁXIMO 1 vez, de forma sutil, nunca como protagonista
+- PROIBIDO primeira pessoa e marcadores autobiográficos como "eu tenho visto", "tenho visto", "eu tenho notado", "tenho notado", "venho observando", "na minha experiência", "aprendi" e "percebi"
+- Priorize construções impessoais e profissionais: "vale observar que", "na prática do campo", "o ponto central é", "em rotinas de desenvolvimento de mercado"
 - PROIBIDO "concordam?", perguntas retóricas vazias, CTAs genéricos, menção a marcas
 - 3-5 hashtags profissionais em linha separada
 
@@ -12439,7 +13121,7 @@ async function callGeminiCarouselText(theme, tone, slideCount, userImageBase64, 
   const platformLabel = (platform === 'linkedin' || platform === 'linkedin-pessoal') ? 'LinkedIn' : 'Instagram';
   const brandLabel = platform === 'linkedin-pessoal' ? '' : ' da Cropware';
   const adContextSuffix = platform === 'instagram-ads' && adContext
-    ? `\n\nObjetivo da campanha: ${adContext.objective || 'trafego'}\nPublico: ${adContext.audience || 'produtores e agronomos do agro'}\nCTA preferido: ${adContext.cta || 'Saiba mais'}`
+    ? `\n\nObjetivo da campanha: ${adContext.objective || 'trafego'}\nPublico: ${adContext.audience || 'profissionais de campo, DMs, GDs, promotores e assistentes tecnicos'}\nCTA preferido: ${adContext.cta || 'Saiba mais'}`
     : '';
   const baseText = `Crie um carrossel de ${slideCount} slides para ${platformLabel}${brandLabel} sobre:\n\n${theme}${adContextSuffix}`;
   const userParts = userImageBase64
@@ -12488,14 +13170,16 @@ function buildInsertSlideSystemPrompt(tone) {
   const toneDirectives = {
     casual:      'TOM: linguagem próxima e coloquial, como conversa no WhatsApp. Use "você", expressões leves do campo.',
     tecnico:     'TOM: vocabulário preciso do agro (NDVI, talhão, IPM, manejo integrado). Use termos técnicos reais, sem inventar números.',
-    inspirador:  'TOM: aspiracional, foco em transformação, futuro e empoderamento do produtor.',
+    inspirador:  'TOM: aspiracional, foco em transformação, futuro e empoderamento do profissional que constroi mercado no campo.',
     provocativo: 'TOM: abertura que desafia o senso comum, pergunta incômoda ou afirmação direta.',
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.casual;
 
-  return `Você é um copywriter especialista na marca Cropware (plataforma de gestão agrícola).
+  return `Você é um copywriter especialista na marca Cropware (plataforma para quem constroi mercado no campo).
 
 REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais da Cropware. Use apenas benefícios qualitativos e conceituais.
+
+${buildCropwarePositioningContext('instagramCarousel')}
 
 Crie UM ÚNICO slide complementar para encaixar entre slides existentes de um carrossel.
 O slide deve manter coerência narrativa e visual com os slides vizinhos fornecidos no contexto.
@@ -12657,7 +13341,7 @@ async function confirmInsertSlide() {
       complementHTML:  (slideText.complement || '').replace(/\n/g, '<br>'),
       bullets:         Array.isArray(slideText.bullets) ? slideText.bullets.slice(0, 3) : [],
       slideIndex:      insertIdx,
-      style:           ref.style || 'classic',
+      style:           normalizePostStyle(ref.style),
       accent:          ref.accent || '#7AB87E',
       layout:          ref.layout || 'top',
       textAlign:       ref.textAlign || 'left',
