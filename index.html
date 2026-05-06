@@ -230,7 +230,7 @@
   .app-header {
     height: 48px;
     flex-shrink: 0;
-    background: #334155;
+    background: #1e293b;
     border-bottom: 1px solid rgba(255,255,255,0.08);
     display: flex;
     align-items: center;
@@ -247,6 +247,12 @@
     gap: 12px;
     min-width: 0;
   }
+  .app-header-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+  }
   .app-logo {
     display: block;
     width: 142px;
@@ -254,6 +260,16 @@
     background: #fff;
     -webkit-mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
     mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
+    flex-shrink: 0;
+  }
+  .app-studio-label {
+    font-family: 'Alumni Sans', 'Inter', 'Inter Tight', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1;
     flex-shrink: 0;
   }
   .app-header-divider {
@@ -390,8 +406,8 @@
 
   .thumb-item:hover { background: rgba(0,0,0,0.04); }
   .thumb-item.active {
-    border-left-color: #475569;
-    background: rgba(74,162,118,0.08);
+    border-left-color: #1e293b;
+    background: rgba(30,41,59,0.10);
   }
 
   .thumb-preview {
@@ -454,6 +470,7 @@
   .canvas-workspace {
     flex: 1;
     display: flex;
+    flex-direction: column;
     min-width: 0;
     min-height: 0;
     overflow: hidden;
@@ -593,6 +610,8 @@
     z-index: 4;
     pointer-events: none;
   }
+  /* Carrossel notícia: site sem text-shadow (fundo do bloco já é sólido) */
+  .post[data-news-context="carousel"] .post-site { text-shadow: none; }
   .post-site[data-pos="tl"] { top: calc(56px + var(--site-offset-y, 0px)); left: calc(64px + var(--site-offset-x, 0px)); }
   .post-site[data-pos="tc"] { top: calc(56px + var(--site-offset-y, 0px)); left: 50%; transform: translateX(calc(-50% + var(--site-offset-x, 0px))); }
   .post-site[data-pos="tr"] { top: calc(56px + var(--site-offset-y, 0px)); right: calc(64px + var(--site-offset-x, 0px)); }
@@ -782,9 +801,12 @@
     font-size: calc(38px * var(--complement-scale, 1));
     line-height: 1.55;
     color: rgba(255,255,255,0.80);
-    max-width: 580px;
+    max-width: 720px;
     min-height: 1.55em;
   }
+  /* Layouts laterais (card no lado): largura menor pra não estourar */
+  .post[data-layout="left"]  .complement,
+  .post[data-layout="right"] .complement { max-width: 580px; }
 
   .complement strong, .complement b { color: #fff; font-weight: 600; }
 
@@ -1013,9 +1035,12 @@
     font-size: calc(36px * var(--complement-scale, 1));
     line-height: 1.55;
     color: rgba(255,255,255,0.82);
-    max-width: 820px;
+    max-width: 1000px;
     min-height: 1.55em;
   }
+  /* Card lateral (esquerda/direita): largura menor */
+  .dash-card[data-layout="left"]  .dash-complement,
+  .dash-card[data-layout="right"] .dash-complement { max-width: 820px; }
   .dash-complement strong, .dash-complement b { color: #fff; font-weight: 600; }
 
   /* ── ESTILO: REVISTA ───────────────────────────────────── */
@@ -1186,6 +1211,336 @@
   }
 
 
+  /* ── ESTILO: NEWS EDITORIAL (Notícia) ──────────────────── */
+  /* Reaproveita --revista-photo-pct / --revista-block-color e a estrutura split.
+     Tipografia jornalística: header com kicker (Space Mono uppercase) +
+     datalinha à direita, manchete grande Familjen Grotesk. */
+  .news-edit-photo {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: var(--revista-photo-pct, 65%);
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+  }
+  .news-edit-block {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: calc(100% - var(--revista-photo-pct, 65%) + 1px);
+    background: var(--revista-block-color, #6DCA73);
+    padding: 56px 64px 80px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 -30px 60px rgba(15,23,42,0.10);
+    overflow: hidden;
+  }
+  /* Textura editorial sutil sobreposta à cor do bloco — DOM element em vez de
+     ::before pra ser renderizada corretamente pelo html2canvas no export. */
+  .news-edit-texture {
+    position: absolute;
+    inset: 0;
+    background-image: url('4018201.jpg');
+    background-size: cover;
+    background-position: center;
+    mix-blend-mode: overlay;
+    opacity: 0.48;
+    pointer-events: none;
+    z-index: 0;
+  }
+  /* Conteúdo (header, divider, manchete, etc) acima da textura */
+  .news-edit-block > *:not(.news-edit-texture) { position: relative; z-index: 1; }
+  .news-edit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 26px;
+  }
+  .news-edit-kicker {
+    font-family: 'Space Mono', monospace;
+    font-weight: 400;
+    font-size: calc(34px * var(--kicker-scale, 1));
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--post-accent, #7AB87E);
+    line-height: 1;
+    display: inline-block;
+    transform: scaleX(0.94);
+    transform-origin: left center;
+  }
+  .news-edit-dataline {
+    font-family: 'Space Mono', monospace;
+    font-weight: 400;
+    font-size: calc(30px * var(--kicker-scale, 1));
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #5E9061;
+    line-height: 1;
+    text-align: right;
+    display: inline-block;
+    transform: scaleX(0.94);
+    transform-origin: right center;
+  }
+  /* Em bloco com texto-claro mantém a sage; em texto-escuro escurece pra contraste */
+  .news-edit-block.text-dark .news-edit-dataline { color: #4a7a4d; }
+  .news-edit-divider {
+    width: 56px;
+    height: 3px;
+    background: var(--post-accent, #7AB87E);
+    border-radius: 999px;
+    margin-bottom: 28px;
+  }
+  .news-edit-manchete {
+    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-stretch: 92%;
+    font-size: calc(64px * var(--manchete-scale, 1));
+    line-height: 1.06;
+    color: #ffffff;
+    letter-spacing: -1.4px;
+    margin-bottom: 36px;
+  }
+  /* Modo de texto (claro/escuro) — mesma mecânica do revista */
+  .news-edit-block.text-light .news-edit-manchete { color: #ffffff; }
+  .news-edit-block.text-dark  .news-edit-manchete { color: #1a1a1a; }
+  .news-edit-block.text-light .news-edit-dataline { color: rgba(255, 255, 255, 0.75); }
+  .news-edit-block.text-dark  .news-edit-dataline { color: rgba(0, 0, 0, 0.65); }
+
+  /* Carrossel de tendência: header (só kicker, à direita) sobre a foto */
+  .news-edit-photo .news-edit-header {
+    position: absolute;
+    top: 56px;
+    left: 64px;
+    right: 64px;
+    margin-bottom: 0;
+    z-index: 2;
+    justify-content: flex-end;
+  }
+  /* Gradiente sutil no topo da foto pra dar contraste ao kicker */
+  .news-edit-photo:has(> .news-edit-header)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.0) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  /* Kicker branco com text-shadow pra legibilidade sobre a foto */
+  .news-edit-photo .news-edit-header .news-edit-kicker {
+    color: #ffffff;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.35);
+  }
+  /* Datalinha removida do header da foto (some no carrossel) */
+  .news-edit-photo .news-edit-header .news-edit-dataline { display: none; }
+
+  /* Highlight principal (factHighlight) sobreposto na parte inferior da foto */
+  .news-edit-photo-highlight {
+    position: absolute;
+    left: 64px;
+    right: 64px;
+    bottom: 32px;
+    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-stretch: 92%;
+    font-size: 88px;
+    line-height: 0.96;
+    letter-spacing: -2px;
+    color: #ffffff;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.5);
+    z-index: 2;
+  }
+  /* Gradiente no rodapé da foto pra dar contraste ao highlight */
+  .news-edit-photo:has(> .news-edit-photo-highlight)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 320px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.0) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  /* Story format: empurra header pra baixo do safe-zone do Stories */
+  .post[data-format="story"][data-style="news-editorial"] .news-edit-photo .news-edit-header {
+    top: 220px;
+  }
+  .post[data-format="story"][data-style="news-editorial"] .news-edit-photo-highlight {
+    bottom: 64px;
+    font-size: 110px;
+  }
+  /* Bloco do carrossel sem espaço pra header (já saiu): padding-top reduzido */
+  .news-edit-block[data-news-context="carousel"] {
+    padding-top: 56px;
+  }
+
+  /* ── VARIANTES DE SLIDE NO CARROSSEL DE TENDÊNCIA ────────── */
+  /* slideRole=fact: número/dado em destaque + título + corpo + fonte. Sem datalinha. */
+  .news-edit-block[data-role="fact"] .news-edit-header { justify-content: flex-start; }
+  .news-edit-block[data-role="fact"] .news-edit-dataline { display: none; }
+  .news-edit-block[data-role="fact"] .news-edit-divider { margin-bottom: 36px; }
+  .news-edit-fact-highlight {
+    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-stretch: 92%;
+    font-size: 96px;
+    letter-spacing: -2px;
+    line-height: 0.98;
+    margin-bottom: 24px;
+  }
+  .news-edit-fact-title {
+    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-size: 56px;
+    font-weight: 600;
+    line-height: 1.14;
+    letter-spacing: -1px;
+    margin-bottom: 26px;
+  }
+  .news-edit-fact-body {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 38px;
+    font-weight: 400;
+    line-height: 1.42;
+    margin-bottom: 36px;
+    max-width: 940px;
+  }
+  .news-edit-fact-source {
+    font-family: 'Space Mono', monospace;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    opacity: 0.95;
+  }
+  .news-edit-fact-source::before { content: '('; margin-right: 2px; }
+  .news-edit-fact-source::after  { content: ')'; margin-left: 2px; }
+  /* Cores por modo de texto */
+  .news-edit-block.text-light .news-edit-fact-highlight { color: #ffffff; }
+  .news-edit-block.text-dark  .news-edit-fact-highlight { color: #1a1a1a; }
+  .news-edit-block.text-light .news-edit-fact-title { color: #ffffff; }
+  .news-edit-block.text-dark  .news-edit-fact-title { color: #1a1a1a; }
+  .news-edit-block.text-light .news-edit-fact-body { color: rgba(255,255,255,0.85); }
+  .news-edit-block.text-dark  .news-edit-fact-body { color: #2b2b2b; }
+  .news-edit-block.text-light .news-edit-fact-source { color: rgba(255,255,255,0.55); }
+  .news-edit-block.text-dark  .news-edit-fact-source { color: rgba(0,0,0,0.5); }
+
+  /* slideRole=closing: fecho jornalístico, kicker FECHAMENTO + síntese + assinatura. Sem datalinha. */
+  .news-edit-block[data-role="closing"] .news-edit-header { justify-content: flex-start; }
+  .news-edit-block[data-role="closing"] .news-edit-dataline { display: none; }
+  .news-edit-block[data-role="closing"] .news-edit-divider { margin-bottom: 36px; }
+  .news-edit-closing-line {
+    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-stretch: 92%;
+    font-size: 56px;
+    line-height: 1.10;
+    letter-spacing: -1.2px;
+    margin-bottom: 36px;
+  }
+  /* Assinatura "Cropware Tendências" no slide closing — fora do bloco,
+     na mesma linha do site (post-site bottom-right), porém alinhada à esquerda. */
+  .news-edit-closing-signature {
+    position: absolute;
+    bottom: calc(44px + var(--site-offset-y, 0px));
+    left: calc(56px + var(--site-offset-x, 0px));
+    font-family: 'Space Mono', monospace;
+    font-size: calc(31px * var(--site-scale, 1));
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.70);
+    z-index: 4;
+    pointer-events: none;
+  }
+  .news-edit-block.text-light .news-edit-closing-line { color: #ffffff; }
+  .news-edit-block.text-dark  .news-edit-closing-line { color: #1a1a1a; }
+
+  /* Sombra na divisa foto → bloco (controlada por data-revista-shadow="on") */
+  .post[data-style="news-editorial"][data-revista-shadow="on"] .news-edit-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 50%, var(--revista-block-color, #152F17) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .post[data-style="news-editorial"][data-revista-shadow="on"][data-revista-layout="bottom"] .news-edit-photo::after {
+    background: linear-gradient(0deg, transparent 50%, var(--revista-block-color, #152F17) 100%);
+  }
+  .post[data-style="news-editorial"][data-revista-shadow="on"][data-revista-layout="left"] .news-edit-photo::after {
+    background: linear-gradient(90deg, transparent 50%, var(--revista-block-color, #152F17) 100%);
+  }
+  .post[data-style="news-editorial"][data-revista-shadow="on"][data-revista-layout="right"] .news-edit-photo::after {
+    background: linear-gradient(270deg, transparent 50%, var(--revista-block-color, #152F17) 100%);
+  }
+
+  /* Orientação "bottom" — foto embaixo, bloco em cima */
+  .post[data-revista-layout="bottom"][data-style="news-editorial"] .news-edit-photo {
+    top: auto; bottom: 0;
+  }
+  .post[data-revista-layout="bottom"][data-style="news-editorial"] .news-edit-block {
+    bottom: auto; top: 0;
+    box-shadow: 0 30px 60px rgba(15,23,42,0.10);
+  }
+  /* Orientação "left" — foto à esquerda, bloco à direita */
+  .post[data-revista-layout="left"][data-style="news-editorial"] .news-edit-photo {
+    top: 0; left: 0; bottom: 0; right: auto;
+    width: var(--revista-photo-pct, 52%);
+    height: 100%;
+  }
+  .post[data-revista-layout="left"][data-style="news-editorial"] .news-edit-block {
+    top: 0; right: 0; bottom: 0; left: auto;
+    width: calc(100% - var(--revista-photo-pct, 52%) + 1px);
+    height: 100%;
+    box-shadow: -30px 0 60px rgba(15,23,42,0.10);
+  }
+  /* Orientação "right" — foto à direita, bloco à esquerda */
+  .post[data-revista-layout="right"][data-style="news-editorial"] .news-edit-photo {
+    top: 0; right: 0; bottom: 0; left: auto;
+    width: var(--revista-photo-pct, 52%);
+    height: 100%;
+  }
+  .post[data-revista-layout="right"][data-style="news-editorial"] .news-edit-block {
+    top: 0; left: 0; bottom: 0; right: auto;
+    width: calc(100% - var(--revista-photo-pct, 52%) + 1px);
+    height: 100%;
+    box-shadow: 30px 0 60px rgba(15,23,42,0.10);
+  }
+
+  .news-edit-logo {
+    position: absolute;
+    bottom: calc(44px + var(--logo-offset-y, 0px));
+    right: calc(72px + var(--logo-offset-x, 0px));
+    width: calc(300px * var(--logo-scale, 1));
+    height: auto;
+  }
+  .post[data-logo-pos="tl"] .news-edit-logo { top: calc(44px + var(--logo-offset-y, 0px)); left: calc(72px + var(--logo-offset-x, 0px)); bottom: auto; right: auto; }
+  .post[data-logo-pos="tc"] .news-edit-logo { top: calc(44px + var(--logo-offset-y, 0px)); left: 50%; transform: translateX(calc(-50% + var(--logo-offset-x, 0px))); bottom: auto; right: auto; }
+  .post[data-logo-pos="tr"] .news-edit-logo { top: calc(44px + var(--logo-offset-y, 0px)); right: calc(72px + var(--logo-offset-x, 0px)); bottom: auto; left: auto; }
+  .post[data-logo-pos="bl"] .news-edit-logo { bottom: calc(44px + var(--logo-offset-y, 0px)); left: calc(72px + var(--logo-offset-x, 0px)); top: auto; right: auto; }
+  .post[data-logo-pos="bc"] .news-edit-logo { bottom: calc(44px + var(--logo-offset-y, 0px)); left: 50%; transform: translateX(calc(-50% + var(--logo-offset-x, 0px))); top: auto; right: auto; }
+  .post[data-logo-pos="br"] .news-edit-logo { bottom: calc(44px + var(--logo-offset-y, 0px)); right: calc(72px + var(--logo-offset-x, 0px)); top: auto; left: auto; }
+
+  /* Story format: foto em cima (60%), bloco maior embaixo */
+  .post[data-format="story"][data-style="news-editorial"] .news-edit-photo { height: var(--revista-photo-pct, 60%); }
+  .post[data-format="story"][data-style="news-editorial"] .news-edit-block {
+    height: calc(100% - var(--revista-photo-pct, 60%) + 1px);
+    padding: 80px 72px 260px 64px;
+  }
+  .post[data-format="story"][data-style="news-editorial"] .news-edit-logo { bottom: calc(244px + var(--logo-offset-y, 0px)); }
+  .post[data-format="story"][data-style="news-editorial"] .post-site[data-pos="tl"],
+  .post[data-format="story"][data-style="news-editorial"] .post-site[data-pos="tc"],
+  .post[data-format="story"][data-style="news-editorial"] .post-site[data-pos="tr"] { top: calc(216px + var(--site-offset-y, 0px)); }
+  .post[data-format="story"][data-style="news-editorial"] .post-site[data-pos="bl"],
+  .post[data-format="story"][data-style="news-editorial"] .post-site[data-pos="bc"],
+  .post[data-format="story"][data-style="news-editorial"] .post-site[data-pos="br"] { bottom: calc(244px + var(--site-offset-y, 0px)); }
+
+
   /* ── ESTILO: SPLIT ─────────────────────────────────────── */
   .split-photo {
     position: absolute;
@@ -1325,11 +1680,14 @@
     font-size: calc(26px * var(--complement-scale, 1));
     line-height: 1.55;
     color: rgba(255,255,255,0.82);
-    max-width: 820px;
+    max-width: 1000px;
     position: relative;
     z-index: 2;
     min-height: 1.55em;
   }
+  /* Foto/bloco lateral (esquerda/direita): largura menor */
+  .post[data-split-layout="left"]  .split-complement,
+  .post[data-split-layout="right"] .split-complement { max-width: 820px; }
   .split-complement strong, .split-complement b { color: #fff; font-weight: 600; }
   /* Text mode: split */
   .split-block.text-light .split-hook,
@@ -3171,6 +3529,15 @@
   #postControls.style-revista #pcSubRevistaShadow,
   #postControls.style-revista #pcSubBlockTextMode { display: flex !important; }
 
+  /* News editorial reaproveita os subs do revista (mesmos campos no postData),
+     exceto a sombra na divisa — não faz sentido aqui (foto não toca o bloco). */
+  #postControls.style-news-editorial #pcSubRevistaBlockColor,
+  #postControls.style-news-editorial #pcSubRevistaPair,
+  #postControls.style-news-editorial #pcSubRevistaPhotoPct,
+  #postControls.style-news-editorial #pcSubRevistaLayout,
+  #postControls.style-news-editorial #pcSubRevistaPhotoPos,
+  #postControls.style-news-editorial #pcSubBlockTextMode { display: flex !important; }
+
   /* Split libera bloco + proporção/layout/sombra + cor do texto */
   #postControls.style-split #pcSubSplitBlockColor,
   #postControls.style-split #pcSubSplitPair,
@@ -3319,7 +3686,7 @@
   }
   .pc-label {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     color: #334155;
     letter-spacing: 0;
   }
@@ -3825,7 +4192,7 @@
     background: transparent;
     font-family: inherit;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--text);
     cursor: pointer;
     transition: opacity 140ms;
@@ -4074,6 +4441,19 @@
   .pc-regen-undo .ph { font-size: 16px; }
   .pc-regen-undo:hover { background: #fcd34d; }
   .pc-regen-row.has-undo .pc-regen-undo { display: inline-flex; }
+  .pc-regen-badge {
+    margin-left: auto;
+    padding: 2px 8px;
+    background: #FEF3C7;
+    color: #92400E;
+    border: 1px solid #FDE68A;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .pc-regen-badge[hidden] { display: none; }
 
   /* Slider (opacidade do overlay, escala do hook) */
   .pc-icon-btn {
@@ -4388,6 +4768,59 @@
     color: #0f172a;
   }
   .legend-modal .gen-modal-box { width: 640px; }
+  .legend-regen-badge {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 3px 9px;
+    background: #FEF3C7;
+    color: #92400E;
+    border: 1px solid #FDE68A;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    vertical-align: middle;
+  }
+  .legend-regen-badge[hidden] { display: none; }
+
+  /* Overlay de loading durante regeração (texto/imagem/legenda) */
+  .regen-loading {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+  }
+  .regen-loading.open { display: flex; }
+  .regen-loading-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 24px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.22);
+    min-width: 240px;
+  }
+  .regen-loading-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #334155;
+    border-radius: 50%;
+    animation: regenSpin 0.85s linear infinite;
+  }
+  @keyframes regenSpin { to { transform: rotate(360deg); } }
+  .regen-loading-label {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 14px;
+    color: #334155;
+    text-align: center;
+  }
   .legend-modal .gen-body {
     padding: 18px;
     max-height: 62vh;
@@ -4734,8 +5167,8 @@
   }
   .gen-group label {
     font-family: 'Inter Tight', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 400;
     letter-spacing: 0;
     text-transform: none;
     color: #334155;
@@ -4768,6 +5201,32 @@
     font-family: 'Inter Tight', sans-serif;
     font-size: 11px;
     color: #94a3b8;
+  }
+  .gen-chips {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .gen-chip {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #f8fafc;
+    color: #475569;
+    cursor: pointer;
+    transition: background 140ms, border-color 140ms, color 140ms;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .gen-chip:hover { background: #f1f5f9; border-color: #cbd5e1; color: #0f172a; }
+  .gen-chip.active {
+    background: #1e293b;
+    border-color: #1e293b;
+    color: #fff;
   }
   .news-tools {
     display: grid;
@@ -4810,6 +5269,15 @@
     padding: 12px;
     display: grid;
     gap: 8px;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+  .news-card.selected {
+    border-color: #2B452D;
+    box-shadow: 0 0 0 2px rgba(43,69,45,0.18);
+  }
+  .news-card.selected .news-card-action {
+    background: #2B452D;
+    color: #fff;
   }
   .news-card-title {
     font-size: 14px;
@@ -4852,6 +5320,15 @@
     color: #94a3b8;
     line-height: 1.4;
     padding: 4px 0;
+  }
+  .news-info {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.45;
+    padding: 12px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
   }
   .gen-dropzone {
     border: 1px solid #e2e8f0;
@@ -4904,10 +5381,21 @@
   .gen-status.success { color: var(--green); }
   .gen-actions {
     display: flex;
-    justify-content: flex-end;
     gap: 10px;
     padding-top: 2px;
   }
+  /* Botões de ação dos dialogs (Cancelar / Gerar) — dividem largura igualmente,
+     altura padrão do .btn da página, primário em slate sem ícone. */
+  .gen-actions .btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .gen-actions .btn-primary {
+    background: #334155;
+    color: #fff;
+  }
+  .gen-actions .btn-primary:hover { background: #1e293b; }
+  .gen-actions .btn-primary:disabled { background: #64748b; opacity: 1; }
   /* Toast de erro de persistência (Supabase / localStorage) */
   .persist-toast {
     position: fixed;
@@ -4972,9 +5460,8 @@
     line-height: 1.5;
   }
   .empty-state-btn {
-    margin-top: 8px;
-    padding: 12px 28px;
-    background: var(--green);
+    padding: 10px 22px;
+    background: #334155;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -4985,9 +5472,9 @@
     transition: background .2s ease;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
-  .empty-state-btn:hover { background: var(--green-dark); }
+  .empty-state-btn:hover { background: #1e293b; }
 
   /* ──────────────────────────────────────────────────────────
      MOBILE — telas < 900px
@@ -5023,27 +5510,28 @@
   .slide-nav {
     display: none;
     align-items: center;
-    justify-content: flex-start;
-    flex-direction: column;
+    justify-content: center;
+    flex-direction: row;
     gap: 8px;
-    width: 58px;
-    padding: 12px 10px;
-    background: #fff;
-    border-left: 1px solid var(--border);
+    width: 100%;
+    padding: 10px 12px;
+    background: #e2e8f0;
+    border-top: 1px solid var(--border);
     flex-shrink: 0;
     box-sizing: border-box;
   }
   .slide-nav.visible { display: flex; }
   .slide-nav.visible.empty { display: none; }
   .slide-nav-sep {
-    width: 100%;
-    height: 1px;
+    width: 1px;
+    height: 22px;
     background: #cbd5e1;
-    margin: 2px 0;
+    margin: 0 2px;
+    flex-shrink: 0;
   }
   .slide-nav-btn {
-    background: transparent;
-    border: 1px solid var(--border);
+    background: #ffffff;
+    border: none;
     border-radius: 6px;
     width: 36px;
     height: 36px;
@@ -5053,20 +5541,28 @@
     cursor: pointer;
     color: #475569;
     font-size: 18px;
-    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    transition: background 0.15s, color 0.15s;
   }
   .slide-nav-btn:hover:not(:disabled) {
-    background: #f1f5f9;
-    border-color: #64748b;
-    color: #475569;
+    background: #f8fafc;
+    color: #0f172a;
   }
-  .slide-nav-btn:disabled { opacity: 0.35; cursor: default; }
+  .slide-nav-btn:disabled { opacity: 0.4; cursor: default; }
+  /* Botão "Mover" com texto + seta — largura automática, gap entre ícone/texto */
+  .slide-nav-btn.slide-nav-reorder-text {
+    width: auto;
+    padding: 0 12px;
+    gap: 6px;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+  }
   .slide-nav-dots {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 8px;
     align-items: center;
-    padding: 2px 0;
+    padding: 0 4px;
   }
   .slide-nav-dot {
     width: 10px;
@@ -5210,8 +5706,8 @@
     }
     .canvas-stage { padding: 24px 16px; }
     .slide-nav {
-      width: 50px;
-      padding: 10px 6px;
+      width: 100%;
+      padding: 8px 6px;
       gap: 6px;
     }
     .slide-nav-btn {
@@ -5307,12 +5803,14 @@
   <div class="app-header">
     <div class="app-header-left">
       <span class="app-logo" role="img" aria-label="Cropware"></span>
-      <span class="app-header-divider" aria-hidden="true"></span>
-      <span class="app-user-email" id="userEmail"></span>
+      <span class="app-studio-label">STUDIO</span>
     </div>
-    <button type="button" class="app-logout-btn" onclick="handleLogout()">
-      <i class="ph ph-sign-out sz-18"></i>Sair
-    </button>
+    <div class="app-header-right">
+      <span class="app-user-email" id="userEmail"></span>
+      <button type="button" class="app-logout-btn" onclick="handleLogout()">
+        <i class="ph ph-sign-out sz-18"></i>Sair
+      </button>
+    </div>
   </div>
 
   <!-- MODE SELECTOR -->
@@ -5321,7 +5819,6 @@
       <optgroup label="Instagram">
         <option value="post" selected>Instagram — Post</option>
         <option value="carousel">Instagram — Carrossel</option>
-        <option value="news-post">Post Notícia</option>
         <option value="instagram-ads-post">Instagram Ads — Post</option>
         <option value="instagram-ads-carousel">Instagram Ads — Carrossel</option>
       </optgroup>
@@ -5332,6 +5829,10 @@
       <optgroup label="LinkedIn Pessoal">
         <option value="linkedin-pessoal-post">LinkedIn Pessoal — Post</option>
         <option value="linkedin-pessoal-carousel">LinkedIn Pessoal — Carrossel</option>
+      </optgroup>
+      <optgroup label="Notícia">
+        <option value="news-post">Notícia — Post</option>
+        <option value="tendencia-carrossel">Tendência — Carrossel</option>
       </optgroup>
       <optgroup label="Apresentação">
         <option value="presentation">Apresentação</option>
@@ -5371,6 +5872,7 @@
           <option value="moldura">Especial</option>
           <option value="signal">Highlights</option>
           <option value="mockup">Mockup</option>
+          <option value="news-editorial" hidden disabled>Notícia</option>
         </select>
       </div>
     </div>
@@ -6107,8 +6609,6 @@
         </div><!-- /post-scaler -->
 
         <div class="empty-state" id="emptyState">
-          <div class="empty-state-title">Nenhum Post Ainda</div>
-          <div class="empty-state-sub">Gere seu primeiro post com a IA. Os últimos 6 ficam salvos aqui automaticamente.</div>
           <button class="empty-state-btn" onclick="openGenerator()">Gerar Primeiro Post</button>
         </div>
       </div><!-- /canvas-stage -->
@@ -6117,12 +6617,12 @@
       <div class="slide-nav visible empty" id="slideNav">
         <button class="slide-nav-btn slide-nav-add" id="slideAddBefore" onclick="insertSlide('before')" title="Inserir slide antes"><i class="ph ph-plus sz-18"></i></button>
         <div class="slide-nav-sep"></div>
-        <button class="slide-nav-btn slide-nav-reorder" id="slideMovePrev" onclick="moveSlide(-1)" title="Mover slide para cima"><i class="ph ph-caret-double-up sz-18"></i></button>
-        <button class="slide-nav-btn" id="slidePrev" onclick="goToSlide(getCurrentSlide() - 1)" title="Slide anterior"><i class="ph ph-caret-up sz-18"></i></button>
+        <button class="slide-nav-btn slide-nav-reorder slide-nav-reorder-text" id="slideMovePrev" onclick="moveSlide(-1)" title="Mover slide para a esquerda"><i class="ph ph-arrow-left sz-18"></i><span>Mover</span></button>
+        <button class="slide-nav-btn" id="slidePrev" onclick="goToSlide(getCurrentSlide() - 1)" title="Slide anterior"><i class="ph ph-caret-left sz-18"></i></button>
         <div class="slide-nav-dots" id="slideNavDots"></div>
         <span class="slide-nav-label" id="slideNavLabel"></span>
-        <button class="slide-nav-btn" id="slideNext" onclick="goToSlide(getCurrentSlide() + 1)" title="Próximo slide"><i class="ph ph-caret-down sz-18"></i></button>
-        <button class="slide-nav-btn slide-nav-reorder" id="slideMoveNext" onclick="moveSlide(1)" title="Mover slide para baixo"><i class="ph ph-caret-double-down sz-18"></i></button>
+        <button class="slide-nav-btn" id="slideNext" onclick="goToSlide(getCurrentSlide() + 1)" title="Próximo slide"><i class="ph ph-caret-right sz-18"></i></button>
+        <button class="slide-nav-btn slide-nav-reorder slide-nav-reorder-text" id="slideMoveNext" onclick="moveSlide(1)" title="Mover slide para a direita"><span>Mover</span><i class="ph ph-arrow-right sz-18"></i></button>
         <div class="slide-nav-sep"></div>
         <button class="slide-nav-btn slide-nav-add" id="slideAddAfter" onclick="insertSlide('after')" title="Inserir slide depois"><i class="ph ph-plus sz-18"></i></button>
         <div class="slide-nav-sep"></div>
@@ -6183,6 +6683,10 @@ let instagramAdsCurrentSlide = 0;
 const newsPosts = [];
 const newsLegends = [];
 let newsCurrentPost = 0;
+const newsCarousels = [];
+const newsCarouselLegends = [];
+let currentNewsCarousel = 0;
+let newsCarouselCurrentSlide = 0;
 
 // LinkedIn state
 const linkedinPosts = [];
@@ -6211,20 +6715,21 @@ let presentationCurrentSlide = 0;
 // Helpers: which platform and format
 function getPlatform() {
   if (activeMode === 'presentation') return 'presentation';
-  if (activeMode === 'news-post') return 'news';
+  if (activeMode === 'news-post' || activeMode === 'tendencia-carrossel') return 'news';
   if (activeMode === 'instagram-ads-post' || activeMode === 'instagram-ads-carousel') return 'instagram-ads';
   if (activeMode.startsWith('linkedin-pessoal')) return 'linkedin-pessoal';
   return activeMode.startsWith('linkedin') ? 'linkedin' : 'instagram';
 }
 function isNewsMode(mode) {
-  return (mode || activeMode) === 'news-post';
+  const m = mode || activeMode;
+  return m === 'news-post' || m === 'tendencia-carrossel';
 }
 function isInstagramAdsMode(mode) {
   const m = mode || activeMode;
   return m === 'instagram-ads-post' || m === 'instagram-ads-carousel';
 }
 function isCarouselMode() {
-  return activeMode === 'carousel' || activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel' || activeMode === 'presentation' || activeMode === 'instagram-ads-carousel';
+  return activeMode === 'carousel' || activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel' || activeMode === 'presentation' || activeMode === 'instagram-ads-carousel' || activeMode === 'tendencia-carrossel';
 }
 function isPresentationMode() {
   return activeMode === 'presentation';
@@ -6275,6 +6780,15 @@ function getEmptyStateCopy() {
       button: 'Gerar Primeiro Anuncio',
       headerTitle: 'Nenhum Anuncio Ainda',
       headerSub: 'Gere o primeiro com a IA',
+    };
+  }
+  if (isNewsMode() && isCarouselMode()) {
+    return {
+      title: 'Nenhum Carrossel Ainda',
+      subtitle: 'Transforme tendências do agro em carrosséis editoriais com fatos preservados.',
+      button: 'Gerar Carrossel de Tendência',
+      headerTitle: 'Nenhum Carrossel Ainda',
+      headerSub: 'Informe um tema de tendência',
     };
   }
   if (isNewsMode()) {
@@ -6332,12 +6846,17 @@ function getFormatScale(format) {
 }
 
 // Aplica as 4 vars de escala de texto no elemento, já multiplicadas pelo fator de formato.
+// Highlights (signal/sidelight) em formato story aplica baseline reduzido (0.9 em bullets/ícones)
+// — o slider 100% rende visualmente como 90% do feed.
 function applyScaleVars(postEl, postData) {
   const fs = getFormatScale(postData.format);
+  const isSignalStory = (postData.style === 'signal' || postData.style === 'sidelight') && postData.format === 'story';
+  const bulletsBase    = isSignalStory ? 0.9 : 1;
+  const bulletIconBase = isSignalStory ? 0.9 : 1;
   postEl.style.setProperty('--hook-scale',        (postData.hookScale       == null ? 1 : postData.hookScale)       * fs);
   postEl.style.setProperty('--complement-scale',  (postData.complementScale == null ? 1 : postData.complementScale) * fs);
-  postEl.style.setProperty('--bullets-scale',     (postData.bulletsScale    == null ? 1 : postData.bulletsScale)    * fs);
-  postEl.style.setProperty('--bullet-icon-scale', (postData.bulletIconScale == null ? 1 : postData.bulletIconScale) * fs);
+  postEl.style.setProperty('--bullets-scale',     (postData.bulletsScale    == null ? 1 : postData.bulletsScale)    * fs * bulletsBase);
+  postEl.style.setProperty('--bullet-icon-scale', (postData.bulletIconScale == null ? 1 : postData.bulletIconScale) * fs * bulletIconBase);
 }
 
 // Returns the items array for the current mode
@@ -6345,6 +6864,7 @@ function getModeItems() {
   switch (activeMode) {
     case 'carousel':                  return carousels;
     case 'news-post':                 return newsPosts;
+    case 'tendencia-carrossel':       return newsCarousels;
     case 'instagram-ads-post':        return instagramAdsPosts;
     case 'instagram-ads-carousel':    return instagramAdsCarousels;
     case 'linkedin-post':             return linkedinPosts;
@@ -6359,6 +6879,7 @@ function getModeLegends() {
   switch (activeMode) {
     case 'carousel':                  return carouselLegends;
     case 'news-post':                 return newsLegends;
+    case 'tendencia-carrossel':       return newsCarouselLegends;
     case 'instagram-ads-post':        return instagramAdsLegends;
     case 'instagram-ads-carousel':    return instagramAdsCarouselLegends;
     case 'linkedin-post':             return linkedinLegends;
@@ -6373,6 +6894,7 @@ function getModeCurrentIdx() {
   switch (activeMode) {
     case 'carousel':                  return currentCarousel;
     case 'news-post':                 return newsCurrentPost;
+    case 'tendencia-carrossel':       return currentNewsCarousel;
     case 'instagram-ads-post':        return instagramAdsCurrentPost;
     case 'instagram-ads-carousel':    return instagramAdsCurrentCarousel;
     case 'linkedin-post':             return linkedinCurrentPost;
@@ -6387,6 +6909,7 @@ function setModeCurrentIdx(idx) {
   switch (activeMode) {
     case 'carousel':                  currentCarousel = idx; break;
     case 'news-post':                 newsCurrentPost = idx; break;
+    case 'tendencia-carrossel':       currentNewsCarousel = idx; break;
     case 'instagram-ads-post':        instagramAdsCurrentPost = idx; break;
     case 'instagram-ads-carousel':    instagramAdsCurrentCarousel = idx; break;
     case 'linkedin-post':             linkedinCurrentPost = idx; break;
@@ -6402,6 +6925,7 @@ function getCurrentSlide() {
   if (activeMode === 'linkedin-pessoal-carousel') return linkedinPessoalCurrentSlide;
   if (activeMode === 'presentation') return presentationCurrentSlide;
   if (activeMode === 'instagram-ads-carousel') return instagramAdsCurrentSlide;
+  if (activeMode === 'tendencia-carrossel') return newsCarouselCurrentSlide;
   return currentSlide;
 }
 function setCurrentSlide(idx) {
@@ -6409,12 +6933,14 @@ function setCurrentSlide(idx) {
   else if (activeMode === 'linkedin-pessoal-carousel') linkedinPessoalCurrentSlide = idx;
   else if (activeMode === 'presentation') presentationCurrentSlide = idx;
   else if (activeMode === 'instagram-ads-carousel') instagramAdsCurrentSlide = idx;
+  else if (activeMode === 'tendencia-carrossel') newsCarouselCurrentSlide = idx;
   else currentSlide = idx;
 }
 
 function switchMode(mode) {
   if (mode === activeMode) return;
   activeMode = mode;
+  try { localStorage.setItem('cropware-active-mode', mode); } catch (_) {}
 
   // Sync dropdown
   const sel = document.getElementById('studioModeSelect');
@@ -6478,7 +7004,7 @@ function buildSidebar() {
   if (items.length === 0) {
     const empty = document.createElement('div');
     empty.className = 'aside-empty';
-    empty.innerHTML = `<div class="aside-empty-title">Nenhum item ainda</div><div class="aside-empty-sub">Clique em Novo para criar o primeiro conteúdo deste tipo.</div>`;
+    empty.innerHTML = `<div class="aside-empty-title">Nenhum item ainda</div><div class="aside-empty-sub">Clique em <strong>Gerar Primeiro Post</strong> para criar o primeiro conteúdo deste tipo.</div>`;
     asideList.appendChild(empty);
   } else {
     items.forEach((p, i) => {
@@ -6610,25 +7136,6 @@ function updateEmptyStateVisibility() {
   const scaler  = document.getElementById('postScaler');
   if (emptyEl) {
     emptyEl.classList.toggle('visible', empty);
-    const titleEl = emptyEl.querySelector('.empty-state-title');
-    const subEl = emptyEl.querySelector('.empty-state-sub');
-    const btnEl = emptyEl.querySelector('.empty-state-btn');
-    if (isPresentationMode()) {
-      if (titleEl) titleEl.textContent = 'Nenhum Slide Ainda';
-      if (subEl) subEl.textContent = 'Gere slides 16:9 com IA — texto e imagem prontos para apresentações.';
-      if (btnEl) btnEl.textContent = 'Gerar Primeiro Slide';
-    } else if (isCarouselMode()) {
-      if (titleEl) titleEl.textContent = 'Nenhum Carrossel Ainda';
-      if (subEl) subEl.textContent = 'Gere seu primeiro carrossel com a IA. Os últimos 6 ficam salvos aqui automaticamente.';
-      if (btnEl) btnEl.textContent = 'Gerar Primeiro Carrossel';
-    } else {
-      if (titleEl) titleEl.textContent = 'Nenhum Post Ainda';
-      if (subEl) subEl.textContent = 'Gere seu primeiro post com a IA. Os últimos 6 ficam salvos aqui automaticamente.';
-      if (btnEl) btnEl.textContent = 'Gerar Primeiro Post';
-    }
-    if (titleEl) titleEl.textContent = emptyCopy.title;
-    if (subEl) subEl.textContent = emptyCopy.subtitle;
-    if (btnEl) btnEl.textContent = emptyCopy.button;
   }
   if (scaler)  scaler.style.display = empty ? 'none' : '';
   if (!empty) return;
@@ -6849,10 +7356,18 @@ function updateSlideNav() {
   document.getElementById('slidePrev').disabled = cs === 0;
   document.getElementById('slideNext').disabled = cs === carousel.slides.length - 1;
 
+  // Carrossel notícia: reordenação de slides desativada (story arc é fixo).
+  const isNewsCarousel = activeMode === 'tendencia-carrossel';
   const movePrev = document.getElementById('slideMovePrev');
   const moveNext = document.getElementById('slideMoveNext');
-  if (movePrev) movePrev.disabled = cs === 0;
-  if (moveNext) moveNext.disabled = cs === carousel.slides.length - 1;
+  if (movePrev) {
+    movePrev.style.display = isNewsCarousel ? 'none' : '';
+    movePrev.disabled = cs === 0;
+  }
+  if (moveNext) {
+    moveNext.style.display = isNewsCarousel ? 'none' : '';
+    moveNext.disabled = cs === carousel.slides.length - 1;
+  }
 
   const addBefore = document.getElementById('slideAddBefore');
   const addAfter  = document.getElementById('slideAddAfter');
@@ -6860,7 +7375,10 @@ function updateSlideNav() {
   if (addAfter)  addAfter.disabled  = false;
 
   const resetBtn = document.getElementById('slideResetOrder');
-  if (resetBtn) resetBtn.disabled = isSlideOrderOriginal(carousel);
+  if (resetBtn) {
+    resetBtn.style.display = isNewsCarousel ? 'none' : '';
+    resetBtn.disabled = isSlideOrderOriginal(carousel);
+  }
 }
 
 function moveSlide(direction) {
@@ -7283,6 +7801,10 @@ const _saveSessionCore = async function() {
     .map((p, i) => ({ post: p, legend: newsLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
+  const generatedNewsCarousels = newsCarousels
+    .map((c, i) => ({ post: c, legend: newsCarouselLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
   const generatedLinkedinPosts = linkedinPosts
     .map((p, i) => ({ post: p, legend: linkedinLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
@@ -7303,7 +7825,7 @@ const _saveSessionCore = async function() {
     .map((p, i) => ({ post: p, legend: presentationLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
-  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedNewsPosts, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
+  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
   if (!allRows.length) return;
   const sid = getSessionId();
   const now = new Date().toISOString();
@@ -7360,7 +7882,7 @@ async function loadSession() {
         const type = postData.type;
         if (type === 'presentation') {
           renderGeneratedPresentation(postData, row.legend || '');
-        } else if (type === 'carousel' || type === 'linkedin-carousel' || type === 'linkedin-pessoal-carousel' || type === 'instagram-ads-carousel') {
+        } else if (type === 'carousel' || type === 'linkedin-carousel' || type === 'linkedin-pessoal-carousel' || type === 'instagram-ads-carousel' || type === 'news-carousel-post') {
           renderGeneratedCarousel(postData, row.legend || '');
         } else {
           renderGeneratedPost(postData, row.legend || '');
@@ -7439,6 +7961,18 @@ function normalizePostStyle(style) {
     sidelight: 'signal'
   };
   return fallbacks[style] || style || 'classic';
+}
+
+function isNewsPostType(post) {
+  return !!(post && post.type === 'news-post');
+}
+
+function isNewsCarouselSlideType(post) {
+  return !!(post && post.type === 'news-carousel-slide');
+}
+
+function isAnyNewsKind(post) {
+  return isNewsPostType(post) || isNewsCarouselSlideType(post);
 }
 
 const SIGNAL_ICON_DEFAULT = '#2B452D';
@@ -7527,6 +8061,29 @@ function renderGeneratedPost(postData, legendText) {
   if (!postData.frameTextMode)     postData.frameTextMode     = 'light';
   if (!postData.format)            postData.format            = 'feed';
   postData.style = normalizePostStyle(postData.style);
+  // News-post sempre fixa no modelo "news-editorial" e ganha defaults próprios.
+  // Reaproveita os campos do revista (revistaBlockColor, revistaPhotoPct, etc) para os ajustes
+  // de fundo, com defaults distintos: bloco escuro, logo top-right, site bottom-right.
+  if (postData.type === 'news-post') {
+    postData.style = 'news-editorial';
+    if (!postData.kicker)    postData.kicker    = 'AGRO';
+    if (!postData.manchete)  postData.manchete  = '';
+    if (!postData.dataLinha) postData.dataLinha = formatBrazilDateShort();
+    if (!postData.revistaBlockColor)      postData.revistaBlockColor   = '#152F17';
+    if (postData.revistaPhotoPct == null) postData.revistaPhotoPct     = 65;
+    if (postData.revistaPhotoPos == null) postData.revistaPhotoPos     = 50;
+    if (!postData.revistaLayout)          postData.revistaLayout       = 'top';
+    if (postData.revistaShadow == null)   postData.revistaShadow       = false;
+    if (!postData.revistaTextMode)        postData.revistaTextMode     = 'light';
+    if (!postData._newsDefaultsApplied) {
+      postData.logoPos     = 'tr';
+      postData.sitePos     = 'br';
+      postData.logoEnabled = false;
+      postData._newsDefaultsApplied = true;
+    }
+    if (postData.kickerScale    == null) postData.kickerScale       = 1;
+    if (postData.manchetteScale == null) postData.manchetteScale    = 1;
+  }
   ensureSignalVisualDefaults(postData);
   if (postData.hookScale == null)       postData.hookScale       = 1;
   if (postData.complementScale == null) postData.complementScale = 1;
@@ -7568,6 +8125,18 @@ function renderGeneratedPost(postData, legendText) {
 
 // Constrói o DOM de um carrossel (múltiplos slides) e adiciona a carousels[]/carouselLegends[].
 function renderGeneratedCarousel(carouselData, legendText) {
+  // Migração: closing slides do carrossel notícia que herdaram "FECHAMENTO" pegam o kicker do cover.
+  if (carouselData.type === 'news-carousel-post' && Array.isArray(carouselData.slides)) {
+    const cover = carouselData.slides.find(s => s.slideRole === 'cover');
+    const sharedKickerMig = cover && cover.kicker ? cover.kicker : null;
+    if (sharedKickerMig) {
+      carouselData.slides.forEach(s => {
+        if (s.slideRole === 'closing' && (s.kicker || '').toUpperCase() === 'FECHAMENTO') {
+          s.kicker = sharedKickerMig;
+        }
+      });
+    }
+  }
   // Ensure each slide has proper defaults (reuse the same logic as renderGeneratedPost)
   carouselData.slides.forEach((slideData, i) => {
     if (!slideData.accent || ['#4aa276', '#3b9f73'].includes((slideData.accent || '').toLowerCase())) {
@@ -7615,6 +8184,34 @@ function renderGeneratedCarousel(carouselData, legendText) {
     if (!slideData.frameTextMode)     slideData.frameTextMode     = 'light';
     if (!slideData.format)            slideData.format            = 'feed';
     slideData.style = normalizePostStyle(slideData.style);
+    // Migração: slides do carrossel notícia salvos com defaults antigos (60/50) viram 45.
+    if (slideData.type === 'news-carousel-slide' && (slideData.revistaPhotoPct === 60 || slideData.revistaPhotoPct === 50 || slideData.revistaPhotoPct == null)) {
+      slideData.revistaPhotoPct = 45;
+    }
+    // Migração paleta news-carousel: cores antigas (#152F17 original e #2B452D intermediária) viram #6DCA73 (claro).
+    if (slideData.type === 'news-carousel-slide') {
+      const bc = (slideData.revistaBlockColor || '').toLowerCase();
+      if (bc === '#152f17' || bc === '#2b452d') {
+        slideData.revistaBlockColor = '#6DCA73';
+        slideData.revistaTextMode   = 'light';
+        slideData.accent            = '#55A05A';
+      }
+      // Migração de accent: cor antiga #2B452D (intermediária) vira #55A05A
+      if ((slideData.accent || '').toLowerCase() === '#2b452d') {
+        slideData.accent = '#55A05A';
+      }
+      // Migração de logo: cover ativa bl/light, demais slides desativam
+      if (!slideData._newsCarouselLogoMigrated) {
+        if (slideData.slideRole === 'cover') {
+          slideData.logoEnabled = true;
+          slideData.logoPos     = 'bl';
+          slideData.brandMode   = 'light';
+        } else {
+          slideData.logoEnabled = false;
+        }
+        slideData._newsCarouselLogoMigrated = true;
+      }
+    }
     ensureSignalVisualDefaults(slideData);
     if (slideData.hookScale == null)       slideData.hookScale       = 1;
     if (slideData.complementScale == null) slideData.complementScale = 1;
@@ -7648,8 +8245,9 @@ function renderGeneratedCarousel(carouselData, legendText) {
   const isInstagramAdsCarousel = carouselData.type === 'instagram-ads-carousel';
   const isLinkedinPessoal = carouselData.type === 'linkedin-pessoal-carousel';
   const isLinkedin = carouselData.type === 'linkedin-carousel';
-  const targetArr = isInstagramAdsCarousel ? instagramAdsCarousels : isLinkedinPessoal ? linkedinPessoalCarousels : isLinkedin ? linkedinCarousels : carousels;
-  const targetLeg = isInstagramAdsCarousel ? instagramAdsCarouselLegends : isLinkedinPessoal ? linkedinPessoalCarouselLegends : isLinkedin ? linkedinCarouselLegends : carouselLegends;
+  const isNewsCarousel = carouselData.type === 'news-carousel-post';
+  const targetArr = isNewsCarousel ? newsCarousels : isInstagramAdsCarousel ? instagramAdsCarousels : isLinkedinPessoal ? linkedinPessoalCarousels : isLinkedin ? linkedinCarousels : carousels;
+  const targetLeg = isNewsCarousel ? newsCarouselLegends : isInstagramAdsCarousel ? instagramAdsCarouselLegends : isLinkedinPessoal ? linkedinPessoalCarouselLegends : isLinkedin ? linkedinCarouselLegends : carouselLegends;
 
   targetArr.push(carouselData);
   targetLeg.push(isInstagramAdsCarousel ? (legendText || '').trim() : sanitizeLegend(legendText || ''));
@@ -7963,7 +8561,9 @@ function buildSplitBlockBackground(color) {
 }
 
 function applyRevistaBlockInline(postEl, post) {
-  const block = postEl.querySelector('.revista-block');
+  // News-editorial reaproveita os mesmos campos (revistaBlockColor / revistaTextMode)
+  // mas renderiza em .news-edit-block — então aceita ambos seletores aqui.
+  const block = postEl.querySelector('.revista-block, .news-edit-block');
   if (!block) return;
   const blockColor = post.revistaBlockColor || REVISTA_BLOCK_DEFAULT;
   block.style.background = blockColor;
@@ -8053,6 +8653,79 @@ function renderRevistaStyle(postData) {
     </div>
     ${postData.logoEnabled !== false ? '<img class="revista-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     ${renderSiteText(postData)}
+    <div class="brand-strip"></div>
+  `;
+}
+
+function renderNewsEditorialStyle(postData) {
+  const kicker    = postData.kicker    || 'AGRO';
+  const manchete  = postData.manchete  || '';
+  // Migração: posts antigos guardaram "05 de mai • Cropware News" ou "05 mai".
+  // Aceita apenas formato "DD.mmm"; qualquer outra coisa é regenerada com a data de hoje.
+  const rawDate   = (postData.dataLinha || '').trim();
+  const dataLinha = /^\d{1,2}\.[a-záéíóúâêôãõç]{3}$/i.test(rawDate) ? rawDate : formatBrazilDateShort();
+  const imgSrc    = postData.bgImage   || '';
+  const textMode  = postData.revistaTextMode || 'light';
+  const blockBg   = postData.revistaBlockColor || '#152F17';
+  const photoPos  = postData.revistaPhotoPos == null ? 50 : postData.revistaPhotoPos;
+  const layout    = postData.revistaLayout || 'top';
+  const bgPos     = (layout === 'left' || layout === 'right') ? `${photoPos}% center` : `center ${photoPos}%`;
+  // Carrossel de tendência: slideRole determina o conteúdo do bloco editorial.
+  // Sem slideRole (post-notícia single) → comportamento original.
+  const role = postData.slideRole || 'cover';
+  const isCarouselSlideRole = postData.type === 'news-carousel-slide';
+  let blockBody;
+  if (role === 'fact') {
+    const factHighlight = postData.factHighlight || '';
+    const factTitle     = postData.factTitle     || '';
+    const factBody      = postData.factBody      || '';
+    const factSource    = postData.factSource    || '';
+    // No carrossel, factHighlight vai pra foto; só renderiza no bloco no caso single.
+    blockBody = `
+      ${(!isCarouselSlideRole && factHighlight) ? `<div class="news-edit-fact-highlight" contenteditable="true" spellcheck="false">${escapeHTML(factHighlight)}</div>` : ''}
+      ${factTitle ? `<div class="news-edit-fact-title" contenteditable="true" spellcheck="false">${escapeHTML(factTitle)}</div>` : ''}
+      ${factBody ? `<div class="news-edit-fact-body" contenteditable="true" spellcheck="false">${escapeHTML(factBody)}</div>` : ''}
+      ${factSource ? `<div class="news-edit-fact-source" contenteditable="true" spellcheck="false">${escapeHTML(factSource)}</div>` : ''}
+    `;
+  } else if (role === 'closing') {
+    const closingLine = postData.closingLine || '';
+    // closing-signature sai do bloco e vai pra fora (renderizada como irmã do post-site)
+    blockBody = `
+      <div class="news-edit-closing-line" contenteditable="true" spellcheck="false">${escapeHTML(closingLine)}</div>
+    `;
+  } else {
+    blockBody = `<div class="news-edit-manchete" contenteditable="true" spellcheck="false">${escapeHTML(manchete)}</div>`;
+  }
+  // Carrossel de tendência: header (só kicker, à direita) sobre a foto + factHighlight
+  // (título principal do slide) também na foto. Bloco fica só com factTitle/Body/Source.
+  // Single news-post mantém header (kicker + datalinha) dentro do bloco.
+  const isCarouselSlide = postData.type === 'news-carousel-slide';
+  const newsContext = isCarouselSlide ? 'carousel' : 'single';
+  const blockHeaderHtml = `
+      <div class="news-edit-header">
+        <div class="news-edit-kicker" contenteditable="true" spellcheck="false">${escapeHTML(kicker)}</div>
+        <div class="news-edit-dataline" contenteditable="true" spellcheck="false">${escapeHTML(dataLinha)}</div>
+      </div>`;
+  const photoHeaderHtml = `
+      <div class="news-edit-header">
+        <div class="news-edit-kicker" contenteditable="true" spellcheck="false">${escapeHTML(kicker)}</div>
+      </div>`;
+  // Highlight principal sobreposto na foto (carousel + fact)
+  const photoHighlightHtml = (isCarouselSlide && role === 'fact' && (postData.factHighlight || ''))
+    ? `<div class="news-edit-photo-highlight" contenteditable="true" spellcheck="false">${escapeHTML(postData.factHighlight)}</div>`
+    : '';
+  return `
+    <div class="news-edit-photo" style="background-image:url('${imgSrc}');background-position:${bgPos};">${isCarouselSlide ? photoHeaderHtml : ''}${photoHighlightHtml}</div>
+    <div class="post-accent-bar"></div>
+    <div class="news-edit-block text-${textMode}" data-role="${role}" data-news-context="${newsContext}" style="background:${blockBg};">
+      <div class="news-edit-texture"></div>
+      ${isCarouselSlide ? '' : blockHeaderHtml}
+      <div class="news-edit-divider"></div>
+      ${blockBody}
+    </div>
+    ${postData.logoEnabled !== false ? '<img class="news-edit-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
+    ${renderSiteText(postData)}
+    ${role === 'closing' ? '<div class="news-edit-closing-signature">Cropware Tendências</div>' : ''}
     <div class="brand-strip"></div>
   `;
 }
@@ -8337,7 +9010,9 @@ function applyPostVariant(postEl, postData) {
 
   postEl.style.setProperty('--post-accent', accent);
   applyScaleVars(postEl, postData);
-  postEl.style.setProperty('--signal-card-height', signalCardHeight);
+  // Signal+story tem baseline de altura do card 60% (slider 100% renderiza como 60% do feed).
+  const _isSignalStoryCard = (postData.style === 'signal' || postData.style === 'sidelight') && postData.format === 'story';
+  postEl.style.setProperty('--signal-card-height', signalCardHeight * (_isSignalStoryCard ? 0.6 : 1));
   postEl.style.setProperty('--logo-scale', logoScale);
   postEl.style.setProperty('--site-scale', siteScale);
   // Offsets logo/site (px) — range -60 a +60, 0 = posição padrão
@@ -8348,6 +9023,7 @@ function applyPostVariant(postEl, postData) {
   postEl.dataset.style   = style;
   postEl.dataset.layout  = layout;
   postEl.dataset.logoPos = logoPos;
+  postEl.dataset.newsContext = postData.type === 'news-carousel-slide' ? 'carousel' : (postData.type === 'news-post' ? 'single' : '');
   postEl.dataset.brand    = postData.brandMode || 'light';
   postEl.dataset.siteMode = postData.siteMode || 'light';
   // Cor customizada do site — override que ignora siteMode
@@ -8408,6 +9084,11 @@ function applyPostVariant(postEl, postData) {
   postEl.dataset.revistaLayout = postData.revistaLayout || 'top';
   postEl.dataset.revistaShadow = postData.revistaShadow === true ? 'on' : 'off';
 
+  // News editorial reaproveita os campos do revista (revistaBlockColor, revistaPhotoPct, etc).
+  // Apenas mantém escalas tipográficas próprias do news (kicker / manchete).
+  postEl.style.setProperty('--kicker-scale',   (postData.kickerScale    == null ? 1 : postData.kickerScale));
+  postEl.style.setProperty('--manchete-scale', (postData.manchetteScale == null ? 1 : postData.manchetteScale));
+
   // Split: proporção da foto, orientação, cor do bloco (para gradiente da sombra)
   if (postData.splitPhotoPct) {
     postEl.style.setProperty('--split-photo-pct', postData.splitPhotoPct + '%');
@@ -8429,15 +9110,16 @@ function applyPostVariant(postEl, postData) {
 
   let html;
   switch (style) {
-    case 'dashboard': html = renderDashboardStyle(postData); break;
-    case 'revista':   html = renderRevistaStyle(postData);   break;
-    case 'moldura':   html = renderMolduraStyle(postData);   break;
-    case 'spotlight': html = renderSpotlightStyle(postData); break;
-    case 'signal':    html = renderSignalStyle(postData);    break;
-    case 'sidelight': html = renderSignalStyle(postData);    break;
-    case 'mockup':    html = renderMockupStyle(postData);    break;
+    case 'dashboard':       html = renderDashboardStyle(postData);   break;
+    case 'revista':         html = renderRevistaStyle(postData);     break;
+    case 'news-editorial':  html = renderNewsEditorialStyle(postData); break;
+    case 'moldura':         html = renderMolduraStyle(postData);     break;
+    case 'spotlight':       html = renderSpotlightStyle(postData);   break;
+    case 'signal':          html = renderSignalStyle(postData);      break;
+    case 'sidelight':       html = renderSignalStyle(postData);      break;
+    case 'mockup':          html = renderMockupStyle(postData);      break;
     case 'classic':
-    default:          html = renderClassicStyle(postData);
+    default:                html = renderClassicStyle(postData);
   }
   postEl.innerHTML = html;
   // Coluna precisa do dataset.columnSide setado antes de o CSS calcular posição
@@ -8516,7 +9198,8 @@ function updatePostControls(idx) {
   panel.classList.add('visible');
   // Sinaliza estilo atual e formato no panel pra CSS condicional (visibilidade declarativa do Fundo)
   post.style = normalizePostStyle(post.style);
-  const STYLES_LIST = ['classic','dashboard','revista','moldura','signal','mockup'];
+  if (isAnyNewsKind(post)) post.style = 'news-editorial';
+  const STYLES_LIST = ['classic','dashboard','revista','news-editorial','moldura','signal','mockup'];
   STYLES_LIST.forEach(s => panel.classList.toggle(`style-${s}`, post.style === s));
   const FORMATS_LIST = ['feed','story','square','presentation'];
   FORMATS_LIST.forEach(f => panel.classList.toggle(`format-${f}`, post.format === f));
@@ -8545,17 +9228,40 @@ function updatePostControls(idx) {
   const siteOffsetY      = post.siteOffsetY     == null ? 0 : post.siteOffsetY;
 
   // Select de estilo — esconde opções que não são compatíveis com presentation mode
+  // No modo news-post, trava no único modelo "Cropware News"
   const currentStyle = post.style || 'classic';
   const presMode = isPresentationMode();
+  const newsMode = isAnyNewsKind(post);
   const styleSelect = document.getElementById('pcStyleSelect');
   if (styleSelect) {
     styleSelect.value = currentStyle;
+    // Renomeia o label da opção news-editorial conforme o contexto:
+    // single news-post → "Notícia"; carousel slide → "Tendências".
+    const newsOpt = styleSelect.querySelector('option[value="news-editorial"]');
+    if (newsOpt) {
+      newsOpt.textContent = isNewsCarouselSlideType(post) ? 'Tendências' : 'Notícia';
+    }
     styleSelect.querySelectorAll('option').forEach(opt => {
-      if (['signal'].includes(opt.value)) {
-        opt.hidden = presMode;
-        opt.disabled = presMode;
+      if (newsMode) {
+        // Só "news-editorial" disponível em news-post
+        const isNewsOpt = opt.value === 'news-editorial';
+        opt.hidden   = !isNewsOpt;
+        opt.disabled = !isNewsOpt;
+      } else {
+        // Fora de news, esconde "news-editorial"
+        if (opt.value === 'news-editorial') {
+          opt.hidden = true;
+          opt.disabled = true;
+        } else if (['signal'].includes(opt.value)) {
+          opt.hidden = presMode;
+          opt.disabled = presMode;
+        } else {
+          opt.hidden = false;
+          opt.disabled = false;
+        }
       }
     });
+    if (newsMode) styleSelect.value = 'news-editorial';
   }
 
   // Select de formato (feed / story / square) — escondido no modo presentation (formato fixo)
@@ -8582,10 +9288,11 @@ function updatePostControls(idx) {
   //   revista   : esconde "Posição do Texto", "Posição da Logo", "Fundo"
   //   split     : esconde "Posição do Texto", "Posição da Logo", "Fundo"
   const isRevistaPres = isRevista && isPresMode;
+  const isNewsEditorial = currentStyle === 'news-editorial';
   setSubVisible('pcSubAccentColor',        !isRevistaPres && !isDashPres);
-  setSubVisible('pcSubHookScale',          !isRevistaPres && !isDashPres);
-  setSubVisible('pcSubComplementScale',    !isRevistaPres && !isDash);
-  setSubVisible('pcSubTextScalesReset',    !isRevistaPres && !isDashPres);
+  setSubVisible('pcSubHookScale',          !isRevistaPres && !isDashPres && !isNewsEditorial);
+  setSubVisible('pcSubComplementScale',    !isRevistaPres && !isDash && !isNewsEditorial);
+  setSubVisible('pcSubTextScalesReset',    !isRevistaPres && !isDashPres && !isNewsEditorial);
   const hookScaleLabel = document.querySelector('#pcSubHookScale .pc-label');
   if (hookScaleLabel) hookScaleLabel.textContent = 'Escala do Hook';
   setSubVisible('pcSubTextPosition',       !isPresMode && (currentStyle === 'classic' || currentStyle === 'signal' || currentStyle === 'sidelight'));
@@ -8642,9 +9349,9 @@ function updatePostControls(idx) {
   setSubVisible('pcSubSiteMode',           siteOn);
   setSubVisible('pcSubSiteOffsets',        siteOn);
   const bulletsStyles = currentStyle === 'classic' || currentStyle === 'moldura' || currentStyle === 'signal' || currentStyle === 'sidelight';
-  setSubVisible('pcSubVisibility',         !isPresMode);
-  setSubVisible('pcSubVisibilityDivider',  !isPresMode);
-  setGroupVisible('pcGroupBullets',        !isPresMode && bulletsStyles);
+  setSubVisible('pcSubVisibility',         !isPresMode && !isNewsEditorial);
+  setSubVisible('pcSubVisibilityDivider',  !isPresMode && !isNewsEditorial);
+  setGroupVisible('pcGroupBullets',        !isPresMode && bulletsStyles && !isNewsEditorial);
   // Accent bar — sempre visível, sub-controles dependem de estar ativo
   setGroupVisible('pcGroupSignature',      true);
   const accentBarOn = post.accentBarEnabled !== false;
@@ -8672,12 +9379,13 @@ function updatePostControls(idx) {
   setSubVisible('pcSubDashCardColor',      isDash);
   setSubVisible('pcSubDashCardOpacity',    isDash);
   setSubVisible('pcSubDashCardBlur',       isDash);
-  setSubVisible('pcSubRevistaBlockColor',  currentStyle === 'revista');
-  setSubVisible('pcSubRevistaPair',        currentStyle === 'revista');
-  setSubVisible('pcSubRevistaPhotoPct',   currentStyle === 'revista');
-  setSubVisible('pcSubRevistaLayout',     currentStyle === 'revista');
-  setSubVisible('pcSubRevistaPhotoPos',  currentStyle === 'revista');
-  setSubVisible('pcSubRevistaShadow',    currentStyle === 'revista');
+  const revistaLikeStyle = currentStyle === 'revista' || currentStyle === 'news-editorial';
+  setSubVisible('pcSubRevistaBlockColor',  revistaLikeStyle);
+  setSubVisible('pcSubRevistaPair',        revistaLikeStyle);
+  setSubVisible('pcSubRevistaPhotoPct',    revistaLikeStyle);
+  setSubVisible('pcSubRevistaLayout',      revistaLikeStyle);
+  setSubVisible('pcSubRevistaPhotoPos',    revistaLikeStyle);
+  setSubVisible('pcSubRevistaShadow',      currentStyle === 'revista');
   setSubVisible('pcSubSplitBlockColor',    isSplit);
   setSubVisible('pcSubSplitPair',          isSplit);
   setSubVisible('pcSubSplitPhotoPct',     isSplit);
@@ -8704,7 +9412,7 @@ function updatePostControls(idx) {
   setSubVisible('pcSubSignalCardBlur',     isSignal);
   setSubVisible('pcSubSignalIconColor',    isSignal);
   setSubVisible('pcSubSignalIconOpacity',  isSignal);
-  setSubVisible('pcSubBlockTextMode',      currentStyle === 'revista' || (!isPresMode && (currentStyle === 'split' || currentStyle === 'coluna' || currentStyle === 'moldura')));
+  setSubVisible('pcSubBlockTextMode',      currentStyle === 'revista' || currentStyle === 'news-editorial' || (!isPresMode && (currentStyle === 'split' || currentStyle === 'coluna' || currentStyle === 'moldura')));
   // Limpa qualquer inline style residual nos subs do Fundo (CSS declarativo via .style-X cuida da visibilidade)
   ['pcSubDashCardColor','pcSubDashCardOpacity','pcSubDashCardBlur','pcSubDashPresScale','pcSubDashPresPosition',
    'pcSubRevistaBlockColor','pcSubRevistaPair','pcSubRevistaPhotoPct','pcSubRevistaLayout','pcSubRevistaPhotoPos','pcSubRevistaShadow',
@@ -9018,13 +9726,8 @@ function updatePostControls(idx) {
     b.classList.toggle('active', b.dataset.mode === currentTextMode);
   });
 
-  // Undo inline: mini-botão aparece no row cujo kind é o topo da stack
-  const stack = post._undoStack || [];
-  const top = stack[stack.length - 1];
-  const activeKind = top ? top.kind : null;
-  document.querySelectorAll('#regenActionsModal .pc-regen-row').forEach(row => {
-    row.classList.toggle('has-undo', row.dataset.regenKind === activeKind);
-  });
+  // Undo inline + badge "Regerada" por kind — sincroniza state do dialog Regerar com IA
+  syncRegenActionsState();
   updateStyleSectionPicker();
 }
 
@@ -9683,7 +10386,7 @@ function initPostControls() {
       // Marca o panel com a classe do estilo atual (sistema declarativo CSS pro painel Fundo)
       const _panel = document.getElementById('postControls');
       if (_panel) {
-        const _STYLES = ['classic','dashboard','revista','moldura','signal','mockup'];
+        const _STYLES = ['classic','dashboard','revista','news-editorial','moldura','signal','mockup'];
         _STYLES.forEach(s => _panel.classList.toggle(`style-${s}`, post.style === s));
       }
       // Limpa qualquer inline display que possa ter ficado de ajustes anteriores nos subs do Fundo
@@ -10606,12 +11309,12 @@ function initPostControls() {
   }
 }
 
-// Volta as configurações visuais do post atual ao padrão. Não mexe em texto,
-// imagem nem legenda — é só um reset do "template" (cor, layout, overlay, escala).
-function resetPostStyle() {
-  const post = getActivePost();
+// Aplica o reset de template num único post (cor, layout, overlay, escala).
+// Não mexe em texto, imagem nem legenda.
+function _resetPostStyleSingle(post) {
   if (!post || !post.isGenerated) return;
-  post.accent           = '#7AB87E';
+  const isNewsCarouselSlide = post.type === 'news-carousel-slide';
+  post.accent           = isNewsCarouselSlide ? '#55A05A' : '#7AB87E';
   post.layout           = 'top';
   post.textAlign        = 'left';
   post.logoPos          = 'br';
@@ -10620,7 +11323,10 @@ function resetPostStyle() {
   post.overlayDirection = 'top';
   post.dashCardColor     = '#0F1E14';
   post.dashCardOpacity   = 65;
-  post.revistaBlockColor = post.style === 'revista' ? REVISTA_BLOCK_DEFAULT : '#f8fafc';
+  post.revistaBlockColor = post.style === 'revista' ? REVISTA_BLOCK_DEFAULT
+                          : isNewsCarouselSlide ? '#6DCA73'
+                          : post.style === 'news-editorial' ? '#152F17'
+                          : '#f8fafc';
   delete post.revistaPhotoPct;
   delete post.revistaPhotoPos;
   delete post.revistaLayout;
@@ -10648,7 +11354,7 @@ function resetPostStyle() {
   delete post.mockupOffsetX;
   delete post.mockupOffsetY;
   // mockupScreen / mockupScreenPhone / mockupScreenDesktop NÃO são deletados — é conteúdo do usuário
-  post.revistaTextMode   = post.style === 'revista' ? 'light' : 'dark';
+  post.revistaTextMode   = (isNewsCarouselSlide || post.style === 'revista' || post.style === 'news-editorial') ? 'light' : 'dark';
   post.splitTextMode     = 'light';
   post.accentBarEnabled  = true;
   post.accentBarPos      = 'tl';
@@ -10690,8 +11396,37 @@ function resetPostStyle() {
     post.sitePos          = 'tr';
     post._mockupInitialized = true;
   }
+  // News editorial — logo no canto superior direito (desativado por padrão), site no inferior direito
+  if (post.style === 'news-editorial') {
+    post.logoPos     = 'tr';
+    post.sitePos     = 'br';
+    post.logoEnabled = false;
+  }
+  // News carrossel — defaults específicos: proporção foto/bloco 45/55
+  if (isNewsCarouselSlide) {
+    post.revistaPhotoPct = 45;
+  }
   const postEl = document.getElementById(post.id);
   if (postEl) applyPostVariant(postEl, post);
+}
+
+// Em modo carrossel, reset afeta todos os slides do carrossel ativo.
+// Em modo single (post / news-post / etc), reset só o post ativo.
+function resetPostStyle() {
+  if (isCarouselMode()) {
+    const items = getModeItems();
+    const idx = getModeCurrentIdx();
+    const carousel = items && items[idx];
+    if (carousel && Array.isArray(carousel.slides)) {
+      carousel.slides.forEach(s => _resetPostStyleSingle(s));
+      updatePostControls(current);
+      saveSession();
+      return;
+    }
+  }
+  const post = getActivePost();
+  if (!post || !post.isGenerated) return;
+  _resetPostStyleSingle(post);
   updatePostControls(current);
   saveSession();
 }
@@ -10740,6 +11475,12 @@ function findPostDataById(elementId) {
     const s = c.slides.find(s => s.id === elementId);
     if (s) return s;
   }
+  const np = newsPosts.find(p => p.id === elementId);
+  if (np) return np;
+  for (const c of newsCarousels) {
+    const s = c.slides.find(s => s.id === elementId);
+    if (s) return s;
+  }
   const lp = linkedinPosts.find(p => p.id === elementId);
   if (lp) return lp;
   for (const c of linkedinCarousels) {
@@ -10784,6 +11525,34 @@ document.addEventListener('blur', function(e) {
     return;
   }
 
+
+  // News editorial: kicker / manchete / dataLinha + variantes de carrossel (fact / closing)
+  const NEWS_EDIT_FIELD_MAP = {
+    'news-edit-kicker':           'kicker',
+    'news-edit-manchete':         'manchete',
+    'news-edit-dataline':         'dataLinha',
+    'news-edit-fact-highlight':   'factHighlight',
+    'news-edit-photo-highlight':  'factHighlight',
+    'news-edit-fact-title':       'factTitle',
+    'news-edit-fact-body':        'factBody',
+    'news-edit-fact-source':      'factSource',
+    'news-edit-closing-line':     'closingLine',
+  };
+  let newsEditField = null;
+  for (const cls of Object.keys(NEWS_EDIT_FIELD_MAP)) {
+    if (target.classList.contains(cls)) { newsEditField = NEWS_EDIT_FIELD_MAP[cls]; break; }
+  }
+  if (newsEditField && target.isContentEditable) {
+    const postEl = target.closest('.post');
+    if (postEl) {
+      const postData = findPostDataById(postEl.id);
+      if (postData && postData.isGenerated) {
+        postData[newsEditField] = target.innerText.trim();
+        saveSession();
+      }
+    }
+    return;
+  }
 
   // Texto de bullet (inline contenteditable dentro do post) — classic/moldura/highlights
   if (target.hasAttribute && target.hasAttribute('data-bullet-text')) {
@@ -11012,6 +11781,58 @@ function captureLogoDims(rootEl) {
 
 // Substitui <img src="...svg"> por um <svg> inline (com fill fixo),
 // pra que o html2canvas consiga renderizar — filtros CSS em <img> não pegam.
+// Pré-carrega a textura editorial do news-post pra ter Image pronto no onclone (sync).
+const NEWS_TEXTURE_URL = '4018201.jpg';
+const NEWS_TEXTURE_OPACITY = 0.48;
+let newsTextureImg = null;
+let newsTextureLoadPromise = null;
+function preloadNewsTexture() {
+  if (newsTextureImg && newsTextureImg.complete) return Promise.resolve(newsTextureImg);
+  if (newsTextureLoadPromise) return newsTextureLoadPromise;
+  newsTextureLoadPromise = new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => { newsTextureImg = img; resolve(img); };
+    img.onerror = reject;
+    img.src = NEWS_TEXTURE_URL;
+  });
+  return newsTextureLoadPromise;
+}
+// Faz o pre-bake do overlay blend (cor do bloco + textura via globalCompositeOperation='overlay')
+// num data-URL e aplica no clone — html2canvas não suporta mix-blend-mode, então sem isso
+// o export fica só com a cor sólida ou só com a textura sem mistura.
+function bakeNewsTextureForCapture(cloneEl) {
+  if (!newsTextureImg) return;
+  const cloneBlock = cloneEl.querySelector('.news-edit-block');
+  const cloneTexture = cloneEl.querySelector('.news-edit-texture');
+  if (!cloneBlock || !cloneTexture) return;
+  // Tamanho do bloco no DOM clonado (já em escala final do export).
+  const w = Math.max(1, Math.round(cloneBlock.offsetWidth));
+  const h = Math.max(1, Math.round(cloneBlock.offsetHeight));
+  // Cor do bloco — usa a inline style direto (que veio do renderer).
+  const blockColor = cloneBlock.style.background || cloneBlock.style.backgroundColor || '#152F17';
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  // 1. Pinta cor do bloco
+  ctx.fillStyle = blockColor;
+  ctx.fillRect(0, 0, w, h);
+  // 2. Aplica textura com overlay blend e opacity correta
+  ctx.globalAlpha = NEWS_TEXTURE_OPACITY;
+  ctx.globalCompositeOperation = 'overlay';
+  ctx.drawImage(newsTextureImg, 0, 0, w, h);
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = 'source-over';
+  // 3. Aplica resultado no clone, neutralizando o blend
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+  cloneTexture.style.backgroundImage = `url(${dataUrl})`;
+  cloneTexture.style.mixBlendMode = 'normal';
+  cloneTexture.style.opacity = '1';
+  // Cor do bloco vira transparente — a composição já está na textura
+  cloneBlock.style.background = 'transparent';
+}
+
 function inlineLogosForCapture(rootEl, doc, dims) {
   if (!LOGO_SVG_MARKUP) return;
   const imgs = Array.from(rootEl.querySelectorAll('img[src*="logo-cropware"]'));
@@ -11107,6 +11928,18 @@ async function bootStudio() {
   }
 
   ensureLogoSvgMarkup();       // pré-carrega SVG markup (pro html2canvas inline)
+
+  // Restaura último modo selecionado (persistido no localStorage)
+  try {
+    const savedMode = localStorage.getItem('cropware-active-mode');
+    const validModes = ['post','carousel','news-post','tendencia-carrossel','instagram-ads-post','instagram-ads-carousel',
+                        'linkedin-post','linkedin-carousel','linkedin-pessoal-post','linkedin-pessoal-carousel',
+                        'presentation'];
+    if (savedMode && validModes.includes(savedMode) && savedMode !== activeMode) {
+      switchMode(savedMode);
+    }
+  } catch (_) {}
+
   buildSidebar();
   buildDots();
   const items = getModeItems();
@@ -11282,6 +12115,9 @@ async function downloadCurrent() {
       el.style.backgroundImage = blurredUrl ? `url('${blurredUrl}')` : 'none';
     });
 
+    // Garante que a textura editorial do news-post está em memória antes do bake no onclone
+    try { await preloadNewsTexture(); } catch (_) { /* segue sem textura se falhar */ }
+
     let canvas;
     try {
       canvas = await html2canvas(postEl, {
@@ -11312,6 +12148,7 @@ async function downloadCurrent() {
             inlineLogosForCapture(cloneEl, clonedDoc, logoDims);
             activateGlassLayers(cloneEl, blurredUrl, postW, postH);
             rasterizePhosphorIcons(cloneEl);
+            bakeNewsTextureForCapture(cloneEl);
           }
         },
       });
@@ -11399,6 +12236,8 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
       el.style.backgroundImage = blurredUrl ? `url('${blurredUrl}')` : 'none';
     });
 
+    try { await preloadNewsTexture(); } catch (_) { /* segue sem textura se falhar */ }
+
     let canvas;
     try {
       canvas = await html2canvas(postEl, {
@@ -11424,6 +12263,7 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
             inlineLogosForCapture(cloneEl, clonedDoc, logoDims);
             activateGlassLayers(cloneEl, blurredUrl, postW, postH);
             rasterizePhosphorIcons(cloneEl);
+            bakeNewsTextureForCapture(cloneEl);
           }
         },
       });
@@ -11641,12 +12481,9 @@ function copyLegend() {
   if (!full) return;
   navigator.clipboard.writeText(full).then(() => {
     const btn = document.getElementById('copyBtn');
-    btn.innerHTML = '<i class="ph ph-check sz-16"></i>Copiado';
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
-      btn.classList.remove('copied');
-    }, 2000);
+    if (!btn) return;
+    btn.textContent = 'Copiado';
+    setTimeout(() => { btn.textContent = 'Copiar'; }, 2000);
   });
 }
 
@@ -11654,8 +12491,34 @@ function copyLegend() {
 // ── GENERATOR ──────────────────────────────────────────────
 let genImageBase64 = null;
 let genImageMime = 'image/jpeg';
-let newsPautaResults = [];
 let selectedNewsPauta = null;
+
+// Chips de orientação rápida da imagem — cada um adiciona uma linha ao
+// extraDirection do prompt da imagem quando ativo.
+const GEN_CHIP_DIRECTIVES = {
+  'no-people':     'STRICT: NO people, NO humans, NO persons, NO faces, NO body parts, NO silhouettes anywhere in the image. ZERO humans. Even if the scene description below mentions people, agronomists, farmers or workers, REMOVE them entirely. Focus exclusively on landscape, crops, environment, objects, sky, soil.',
+  'no-machines':   'STRICT: NO machinery, NO tractors, NO harvesters, NO combines, NO sprayers, NO drones, NO trucks, NO vehicles, NO industrial equipment of any kind. Even if the scene description mentions equipment, REMOVE it entirely.',
+  'close-up':      'STRICT: TIGHT CLOSE-UP framing only. Macro / detail shot. NO wide landscape views, NO distant horizons. The main subject must fill at least 70% of the frame. Shallow depth of field, blurred background.',
+  'institutional': 'STRICT: INSTITUTIONAL setting WITHIN THE BRAZILIAN AGRO WORLD. Choose ONE of: rural cooperative meeting room with crop maps on the wall; agro dealership ("revenda agropecuária") counter or back-office with stacked fertilizer/seed bags visible; farm office with field maps, NDVI prints, and a window opening to crops; CONAB/MAPA technical room with policy charts about soybean/corn; sector association headquarters (Aprosoja, ABIOVE, ABRAMILHO) with agribusiness panels; conference panel at an agro fair like Agrishow/Expodireto with sector audience visible; technical training room at a research center (Embrapa, ESALQ) with crop samples and field-data dashboards. STRICTLY AVOID: urban skyscrapers, generic corporate offices, financial trading floors, abstract glass boardrooms with no agro context. Attire: business-casual rural — polo or long-sleeve shirt, jeans or chinos, boots OK; sometimes blazer at a sector event but NEVER full executive suit-and-tie. The room must visibly read as agro through props (maps, samples, panels, windows to fields).',
+};
+function getActiveChipDirectives() {
+  return Array.from(document.querySelectorAll('#genChips .gen-chip.active'))
+    .map(el => GEN_CHIP_DIRECTIVES[el.dataset.chip])
+    .filter(Boolean);
+}
+function resetGenChips() {
+  document.querySelectorAll('#genChips .gen-chip').forEach(el => el.classList.remove('active'));
+}
+function wireGenChipsOnce() {
+  const wrap = document.getElementById('genChips');
+  if (!wrap || wrap.dataset.wired === 'true') return;
+  wrap.dataset.wired = 'true';
+  wrap.addEventListener('click', e => {
+    const chip = e.target.closest('.gen-chip');
+    if (!chip) return;
+    chip.classList.toggle('active');
+  });
+}
 
 function openGenerator() {
   if (isPresentationMode()) {
@@ -11667,6 +12530,8 @@ function openGenerator() {
   const isAds = isInstagramAdsMode();
   const isNews = isNewsMode();
   document.getElementById('genModal').classList.add('open');
+  wireGenChipsOnce();
+  resetGenChips();
   const headerSpan = document.querySelector('#genModal .gen-modal-header > span');
   if (headerSpan) {
     const prefix = platform === 'linkedin-pessoal' ? 'LinkedIn Pessoal — ' : platform === 'linkedin' ? 'LinkedIn — ' : '';
@@ -11674,26 +12539,40 @@ function openGenerator() {
   }
   if (isAds && isCarousel) headerSpan.textContent = 'Instagram Ads — Gerar Carrossel com IA';
   else if (isAds) headerSpan.textContent = 'Instagram Ads — Gerar Anuncio com IA';
-  else if (isNews && headerSpan) headerSpan.textContent = 'Post Notícia — Buscar notícia ou tema';
+  else if (isNews && isCarousel && headerSpan) headerSpan.textContent = 'Carrossel de Tendência';
+  else if (isNews && headerSpan) headerSpan.textContent = 'Post Notícia';
   const genBtn = document.getElementById('genBtn');
-  if (genBtn) genBtn.innerHTML = isCarousel
-    ? '<i class="ph ph-pen sz-18"></i>Gerar Carrossel'
-    : '<i class="ph ph-pen sz-18"></i>Gerar Post';
-  if (genBtn && isAds && !isCarousel) genBtn.innerHTML = '<i class="ph ph-pen sz-18"></i>Gerar Anuncio';
-  if (genBtn && isAds && isCarousel) genBtn.innerHTML = '<i class="ph ph-pen sz-18"></i>Gerar Carrossel de Anuncios';
-  if (genBtn && isNews) genBtn.innerHTML = '<i class="ph ph-pen sz-18"></i>Gerar Post Notícia';
+  if (genBtn) genBtn.textContent = isCarousel ? 'Gerar Carrossel' : 'Gerar Post';
+  if (genBtn && isAds && !isCarousel) genBtn.textContent = 'Gerar Anuncio';
+  if (genBtn && isAds && isCarousel) genBtn.textContent = 'Gerar Carrossel de Anuncios';
+  if (genBtn && isNews && isCarousel) genBtn.textContent = 'Gerar Carrossel de Tendência';
+  else if (genBtn && isNews) genBtn.textContent = 'Gerar Notícia';
   const themeLabel = document.getElementById('genThemeLabel');
-  const themeHelp = document.getElementById('genThemeHelp');
   const themeInput = document.getElementById('genTheme');
-  if (themeLabel) themeLabel.textContent = isNews ? 'Buscar notícia ou tema' : 'Tema / Contexto do Post';
-  if (themeHelp) themeHelp.textContent = isNews
-    ? 'Digite um tema manualmente ou busque pautas recentes para usar no fluxo atual.'
-    : 'Descreva o tema, dor ou contexto que deve virar post.';
+  if (themeLabel) {
+    if (isNews && isCarousel) themeLabel.textContent = 'Tema da tendência';
+    else if (isNews) themeLabel.textContent = 'Tema da notícia';
+    else themeLabel.textContent = 'Tema / Contexto do Post';
+  }
   if (themeInput) themeInput.placeholder = isNews
-    ? 'Ex: soja, milho, biológicos, fertilidade, exportação, defensivos, clima...'
+    ? 'Ex: preço da soja em Mato Grosso, exportação de milho para a China, clima na safra de cana, política agrícola...'
     : 'Ex: colheita de soja com variação por talhão, foco em decisão baseada em dado...';
   const slideCountGroup = document.getElementById('genSlideCountGroup');
   if (slideCountGroup) slideCountGroup.style.display = isCarousel ? '' : 'none';
+  // News-carousel só aceita 3 / 5 / 7. Default 5.
+  const slideCountSelect = document.getElementById('genSlideCount');
+  if (slideCountSelect) {
+    const validOptions = (isNews && isCarousel) ? ['3', '5', '7'] : null;
+    if (validOptions) {
+      Array.from(slideCountSelect.options).forEach(opt => {
+        opt.hidden = !validOptions.includes(opt.value);
+        opt.disabled = !validOptions.includes(opt.value);
+      });
+      if (!validOptions.includes(slideCountSelect.value)) slideCountSelect.value = '5';
+    } else {
+      Array.from(slideCountSelect.options).forEach(opt => { opt.hidden = false; opt.disabled = false; });
+    }
+  }
   const newsGroup = document.getElementById('genNewsGroup');
   if (newsGroup) newsGroup.style.display = isNews ? '' : 'none';
   const adsObjectiveGroup = document.getElementById('genAdsObjectiveGroup');
@@ -11709,144 +12588,64 @@ function closeGenerator() {
 }
 
 function resetNewsPautas() {
-  newsPautaResults = [];
   selectedNewsPauta = null;
-  const cards = document.getElementById('genNewsCards');
-  if (cards) cards.innerHTML = '<div class="news-empty">Digite um tema ou busque tendências recentes do agro para transformar em conteúdo estratégico.</div>';
 }
 
-function formatNewsDate(value) {
-  const d = value ? new Date(value) : null;
-  if (!d || Number.isNaN(d.getTime())) return value || 'Recente';
-  const diffHours = Math.round((Date.now() - d.getTime()) / 36e5);
-  if (diffHours >= 0 && diffHours < 24) return diffHours <= 1 ? 'Hoje' : `${diffHours}h atrás`;
-  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+function formatBrazilDateShort(date) {
+  const d = date instanceof Date ? date : new Date();
+  const opts = { timeZone: 'America/Sao_Paulo' };
+  const day = d.toLocaleString('pt-BR', { ...opts, day: '2-digit' });
+  const month = d.toLocaleString('pt-BR', { ...opts, month: 'short' })
+    .replace(/\.$/, '').replace(/\./g, '').trim().toLowerCase();
+  return `${day}.${month}`;
 }
 
-function normalizeNewsItem(item, fallbackSource) {
-  return {
-    title: (item.title || '').trim(),
-    source: (item.source || fallbackSource || 'Radar agro').trim(),
-    category: (item.category || 'Agro').trim(),
-    published: (item.published || item.publishedAt || 'Recente').toString().trim(),
-    summary: (item.summary || item.description || '').trim(),
-    insight: (item.insight || item.suggestedInsight || '').trim(),
-    theme: (item.theme || item.pauta || '').trim(),
-    link: (item.link || '').trim(),
-  };
-}
+// Varre múltiplas fontes do agro brasileiro nas últimas 72h via Google Search grounding
+// e consolida em UMA pauta densa, com fatos preservados (datas, valores, nomes, percentuais).
+async function searchAndConsolidateNews(topic, factsCap) {
+  const cap = Math.max(4, Math.min(16, Number(factsCap) || 8));
+  const today = new Date().toLocaleDateString('pt-BR', {
+    timeZone: 'America/Sao_Paulo', day: '2-digit', month: 'long', year: 'numeric',
+  });
+  const systemPrompt = `Você é repórter sênior da Cropware News. Sua tarefa é fazer UMA varredura jornalística agora, integrar várias fontes recentes sobre o tema pedido, e consolidar UMA notícia única, densa, factual e citável — pronta para virar matéria.
 
-function renderNewsCards(items) {
-  const cards = document.getElementById('genNewsCards');
-  if (!cards) return;
-  newsPautaResults = (items || []).map(item => normalizeNewsItem(item)).filter(item => item.title);
-  selectedNewsPauta = null;
-  if (!newsPautaResults.length) {
-    cards.innerHTML = '<div class="news-empty">Não encontrei pautas boas agora. Tente outro termo ou gere a partir do tema digitado.</div>';
-    return;
-  }
-  cards.innerHTML = newsPautaResults.map((item, idx) => `
-    <div class="news-card">
-      <div class="news-card-title">${escapeHTML(item.title)}</div>
-      <div class="news-card-meta">
-        <span class="news-card-pill">${escapeHTML(item.source || 'Fonte')}</span>
-        <span class="news-card-pill">${escapeHTML(item.category || 'Agro')}</span>
-        <span class="news-card-pill">${escapeHTML(item.published || 'Recente')}</span>
-      </div>
-      <div class="news-card-insight">${escapeHTML(item.insight || item.summary || 'Transformar em leitura técnica para desenvolvimento de mercado.')}</div>
-      <button type="button" class="news-card-action" onclick="useNewsPauta(${idx})">Usar esta pauta</button>
-    </div>
-  `).join('');
-}
+REGRAS DE PESQUISA:
+- Use Google Search agora. Combine pelo menos 2 fontes distintas (portais de notícia, agências, governo, associações setoriais — preferência: Globo Rural, Canal Rural, Agrolink, Notícias Agrícolas, AgFeed, AgroLink, Reuters, Valor Econômico, AgriCensus, CONAB, USDA, MAPA, IBGE, ESALQ/CEPEA, ANEC, ABIOVE, Embrapa, Aprosoja, sindicatos rurais).
+- Janela: últimas 72 horas (hoje é ${today}). Notícias mais antigas que 3 dias devem ser descartadas — exceto se forem o pano de fundo factual indispensável de uma notícia das últimas 72h.
+- Foco temático: agronegócio brasileiro — clima, safra, mercado/preço, exportação, câmbio aplicado a commodities, política agrícola, defensivos, biológicos, fertilizantes, tecnologia agrícola, eventos do setor.
 
-function buildNewsThemeText(item) {
-  const parts = [
-    `Notícia/pauta: ${item.title}`,
-    `Fonte: ${item.source || 'Não informada'}`,
-    `Publicado: ${item.published || 'Recente'}`,
-    `Categoria: ${item.category || 'Agro'}`,
-  ];
-  if (item.summary) parts.push(`Resumo: ${item.summary}`);
-  if (item.insight) parts.push(`Insight sugerido: ${item.insight}`);
-  if (item.link) parts.push(`Link de referência: ${item.link}`);
-  return parts.join('\n');
-}
+REGRAS DE PRESERVAÇÃO FACTUAL (CRÍTICO):
+- Preserve EXATAMENTE: datas (ex: "30/04/2026"), valores monetários (ex: "R$ 132,50/saca"), volumes (ex: "168 milhões de toneladas", "1,2 mi de hectares"), percentuais (ex: "+4,3% em relação a 2025"), nomes de empresas/órgãos/pessoas (ex: "Aprosoja-MT", "ministra Carla Tennenbaum"), citações entre aspas se vierem das fontes.
+- Se uma fonte não dá um número, NÃO invente. Se duas fontes dão números diferentes, escreva ambos com a fonte (ex: "168 mi t segundo a CONAB; 165 mi t segundo o USDA").
+- NÃO arredonde valores específicos. NÃO converta moedas. NÃO substitua "R$" por "reais" no texto factual.
+- Se nenhuma notícia confiável foi encontrada nas últimas 72h sobre o tema, devolva o objeto com manchete vazia e fatos vazios.
 
-function useNewsPauta(index) {
-  const item = newsPautaResults[index];
-  if (!item) return;
-  selectedNewsPauta = item;
-  const themeInput = document.getElementById('genTheme');
-  if (themeInput) themeInput.value = buildNewsThemeText(item);
-  setGenStatus('<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>Pauta selecionada. Agora é só gerar o post.', 'success');
-}
+REGRAS DE ESCRITA:
+- Manchete: 1 frase factual, máx 14 palavras, máx 90 caracteres, com ponto final. Sem clickbait, sem CAPS LOCK, sem ironia, sem aspas, sem emoji. Tem que carregar o fato mais importante.
+- Lead: 1ª frase do tipo lide jornalístico (quem/o quê/quando/onde), 25-40 palavras, com ao menos 1 dado factual preservado.
+- Fatos: array de 4 a ${cap} itens curtos (preencha o máximo possível conforme houver matéria-prima nas fontes), cada um com UM fato preservado da pesquisa (data, valor, nome, percentual, citação). Sem opinião. Sem contexto vago. Vire bullet de uma só linha.
+- Contexto: 60-100 palavras com pano de fundo factual (o que motivou, qual a tendência mostrada por dados oficiais, qual a próxima janela de decisão). Sem invenção.
+- Linguagem: registro brasileiro do agro, vocabulário real do setor (saca, produtividade, manejo, plantio, safra, contratos futuros, prêmio, basis, exportação, embarque, comercialização, etc).
 
-async function fetchNewsCandidates(topic, rangeDays) {
-  const term = topic || 'agronegócio OR agro OR soja OR milho OR biológicos OR fertilizantes OR defensivos OR clima agrícola';
-  const query = `${term} when:${rangeDays || 7}d`;
-  const feedUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=pt-BR&gl=BR&ceid=BR:pt-419`;
-  const proxiedUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(feedUrl)}`;
-  const resp = await fetch(proxiedUrl);
-  if (!resp.ok) throw new Error(`RSS notícias: HTTP ${resp.status}`);
-  const xmlText = await resp.text();
-  const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
-  const items = Array.from(doc.querySelectorAll('item')).slice(0, 12);
-  return items.map(item => {
-    const titleRaw = item.querySelector('title')?.textContent || '';
-    const source = item.querySelector('source')?.textContent || '';
-    const title = titleRaw.replace(/\s+-\s+[^-]+$/, '').trim();
-    return {
-      title,
-      source,
-      publishedAt: item.querySelector('pubDate')?.textContent || '',
-      published: formatNewsDate(item.querySelector('pubDate')?.textContent || ''),
-      summary: (item.querySelector('description')?.textContent || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(),
-      link: item.querySelector('link')?.textContent || '',
-    };
-  }).filter(item => item.title);
-}
-
-function buildNewsCurationPrompt(rawItems, topic, rangeDays, fallbackOnly) {
-  const sourceBlock = rawItems && rawItems.length
-    ? rawItems.map((item, idx) => `${idx + 1}. ${item.title}\nFonte: ${item.source || 'não informada'}\nPublicado: ${item.published || item.publishedAt || 'recente'}\nResumo: ${item.summary || 'sem resumo'}\nLink: ${item.link || ''}`).join('\n\n')
-    : 'Nenhuma manchete externa disponível.';
-  return `Você é editor estratégico da Cropware para agronegócio.
-
-Objetivo: transformar notícias recentes e temas quentes do agro em pautas de conteúdo para quem constrói mercado no campo.
-
-Tema buscado: ${topic || 'agro em geral'}
-Janela: últimos ${rangeDays || 7} dia(s)
-
-${fallbackOnly ? 'IMPORTANTE: a busca externa falhou. Gere temas quentes plausíveis e marque source como "Radar IA", sem afirmar que são notícias verificadas.' : 'Use as manchetes abaixo como referência, sem copiar texto jornalístico.'}
-
-Manchetes/resumos:
-${sourceBlock}
-
-Curadoria obrigatória:
-- Remova ruído e priorize agro brasileiro.
-- Prefira pautas úteis para geração de demanda, desenvolvimento de mercado, consultoria técnica e promotoria técnica.
-- Não copie manchetes; sintetize.
-- O insight deve responder: por que isso importa para quem constrói mercado no campo?
-- Categorias curtas: Clima, Mercado, Tecnologia, Biológicos, Defensivos, Fertilidade, Exportação, Safra, Gestão.
-
-Responda APENAS em JSON válido:
+FORMATO DE SAÍDA — apenas JSON válido, sem markdown, sem comentário fora do JSON:
 {
-  "items": [
-    {
-      "title": "título curto e editorial da pauta",
-      "source": "fonte original ou Radar IA",
-      "category": "categoria curta",
-      "published": "Hoje, 2h atrás, data curta ou Recente",
-      "summary": "síntese em 1 frase",
-      "insight": "insight estratégico em 1 frase",
-      "theme": "texto enriquecido para virar post"
-    }
-  ]
+  "kicker":     "categoria curta MAIÚSCULA — máx 2 palavras (MERCADO, CLIMA, SAFRA, EXPORTAÇÃO, POLÍTICA AGRO, BIOLÓGICOS, TECNOLOGIA, CÂMBIO, LOGÍSTICA)",
+  "manchete":   "Manchete factual única, máx 14 palavras, com ponto final.",
+  "lead":       "Lide jornalístico de 25-40 palavras, com pelo menos 1 dado preservado.",
+  "fatos":      [
+    "Fato 1 com dado preservado (data, valor, nome ou percentual).",
+    "Fato 2 com dado preservado.",
+    "Fato 3 com dado preservado.",
+    "Fato 4 com dado preservado."
+  ],
+  "contexto":   "Pano de fundo factual em 60-100 palavras, com dados quando houver.",
+  "fontes":     ["url1", "url2", "url3"]
 }`;
-}
 
-async function curateNewsCandidates(rawItems, topic, rangeDays, fallbackOnly) {
-  const userPrompt = buildNewsCurationPrompt(rawItems, topic, rangeDays, fallbackOnly);
+  const userPrompt = `Tema da matéria: ${topic || 'agronegócio brasileiro — pauta mais relevante das últimas 72h'}.
+
+Pesquise agora via Google Search. Integre múltiplas fontes recentes (últimas 72h). Consolide UMA notícia única densa e factual no formato JSON. Preserve datas, valores e nomes EXATAMENTE como vieram das fontes.`;
+
   const resp = await fetchGeminiWithRetry(
     `${SUPABASE_URL}/functions/v1/gemini`,
     {
@@ -11859,47 +12658,36 @@ async function curateNewsCandidates(rawItems, topic, rangeDays, fallbackOnly) {
         model: 'gemini-2.5-flash',
         body: {
           contents: [{ parts: [{ text: userPrompt }] }],
-          systemInstruction: { parts: [{ text: 'Você faz curadoria editorial técnica para o agro. Retorne somente JSON válido, sem markdown.' }] },
-          generationConfig: { responseMimeType: 'application/json' }
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          tools: [{ google_search: {} }],
+          generationConfig: { temperature: 0.3 }
         }
       })
     },
-    'Curadoria de notícias'
+    'Pesquisa de notícia'
   );
-  const data = await resp.json();
-  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  const match = raw.match(/\{[\s\S]*\}/);
-  if (!match) throw new Error('Curadoria: resposta não contém JSON válido.');
-  const parsed = JSON.parse(match[0]);
-  return Array.isArray(parsed.items) ? parsed.items.slice(0, 5) : [];
-}
 
-async function handleNewsSearch() {
-  const topic = (document.getElementById('genTheme') || {}).value?.trim() || '';
-  const range = (document.getElementById('genNewsRange') || {}).value || '7';
-  const btn = document.getElementById('genNewsSearchBtn');
-  const cards = document.getElementById('genNewsCards');
-  if (btn) btn.disabled = true;
-  if (cards) cards.innerHTML = '<div class="news-empty">Buscando e curando pautas recentes...</div>';
-  try {
-    let rawItems = [];
-    let fallbackOnly = false;
-    try {
-      rawItems = await fetchNewsCandidates(topic, range);
-    } catch (rssError) {
-      console.warn('news RSS search failed:', rssError);
-      fallbackOnly = true;
-    }
-    const curated = await curateNewsCandidates(rawItems, topic, range, fallbackOnly || !rawItems.length);
-    renderNewsCards(curated);
-    setGenStatus(fallbackOnly ? 'Busca externa indisponível; sugeri pautas estratégicas com IA.' : 'Pautas recentes curadas.', fallbackOnly ? 'warn' : 'success');
-  } catch (e) {
-    console.error('handleNewsSearch failed:', e);
-    if (cards) cards.innerHTML = '<div class="news-empty">Não consegui buscar pautas agora. Você ainda pode digitar um tema e gerar normalmente.</div>';
-    setGenStatus('Erro ao buscar tendências: ' + (e.message || e), 'error');
-  } finally {
-    if (btn) btn.disabled = false;
-  }
+  const data = await resp.json();
+  const parts = data.candidates?.[0]?.content?.parts || [];
+  const raw = parts.map(p => p.text).filter(Boolean).join('\n').trim();
+  if (!raw) throw new Error('Pesquisa não retornou texto.');
+  const match = raw.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('Pesquisa não retornou JSON válido.');
+  let parsed;
+  try { parsed = JSON.parse(match[0]); }
+  catch (e) { throw new Error('Pesquisa: JSON inválido — ' + e.message); }
+
+  const fatos = Array.isArray(parsed.fatos) ? parsed.fatos.map(f => (f || '').toString().trim()).filter(Boolean).slice(0, cap) : [];
+  const fontes = Array.isArray(parsed.fontes) ? parsed.fontes.map(u => (u || '').toString().trim()).filter(Boolean).slice(0, 6) : [];
+
+  return {
+    kicker:   (parsed.kicker   || 'AGRO').toString().toUpperCase().slice(0, 24).trim(),
+    manchete: (parsed.manchete || '').toString().trim(),
+    lead:     (parsed.lead     || '').toString().trim(),
+    fatos,
+    contexto: (parsed.contexto || '').toString().trim(),
+    fontes,
+  };
 }
 
 // ── PRESENTATION BACKGROUNDS GENERATOR ────────────────────
@@ -11917,10 +12705,18 @@ function closePresBgGenerator() {
   document.getElementById('presBgModal').classList.remove('open');
 }
 
+function syncLegendRegenBadge() {
+  const badge = document.getElementById('legendRegenBadge');
+  if (!badge) return;
+  const post = getActivePost();
+  badge.hidden = !(post && post._legendRegenerated);
+}
+
 function openLegendDialog() {
   updateLegend(getModeCurrentIdx());
   const modal = document.getElementById('legendModal');
   if (modal) modal.classList.add('open');
+  syncLegendRegenBadge();
 }
 
 function closeLegendDialog() {
@@ -11928,9 +12724,30 @@ function closeLegendDialog() {
   if (modal) modal.classList.remove('open');
 }
 
+// Sincroniza badge "Regerada" e botão de desfazer (por kind) em cada row do dialog
+// de Regerar com IA. Mostra badge se o flag _<kind>Regenerated do post estiver true,
+// e mostra o botão undo se houver entrada daquele kind na pilha de undo.
+function syncRegenActionsState() {
+  const post = getActivePost();
+  const flags = {
+    text:   !!(post && post._textRegenerated),
+    image:  !!(post && post._imageRegenerated),
+    legend: !!(post && post._legendRegenerated),
+  };
+  // Badge e botão de undo seguem o mesmo flag — a pilha (_undoStack) é stripada antes
+  // de salvar no Supabase, então depender dela faria o botão sumir após qualquer reload.
+  document.querySelectorAll('#regenActionsModal .pc-regen-row').forEach(row => {
+    const kind = row.dataset.regenKind;
+    const badge = row.querySelector('.pc-regen-badge');
+    if (badge) badge.hidden = !flags[kind];
+    row.classList.toggle('has-undo', flags[kind]);
+  });
+}
+
 function openRegenActions() {
   const modal = document.getElementById('regenActionsModal');
   if (modal) modal.classList.add('open');
+  syncRegenActionsState();
 }
 
 function closeRegenActions() {
@@ -12288,31 +13105,7 @@ document.addEventListener('DOMContentLoaded', () => {
       reader.readAsDataURL(file);
     });
   }
-  // Close on backdrop click
-  document.getElementById('genModal').addEventListener('click', function(e) {
-    if (e.target === this) closeGenerator();
-  });
-  document.getElementById('cfgModal').addEventListener('click', function(e) {
-    if (e.target === this) closeConfig();
-  });
-  const regenActionsModal = document.getElementById('regenActionsModal');
-  if (regenActionsModal) {
-    regenActionsModal.addEventListener('click', function(e) {
-      if (e.target === this) closeRegenActions();
-    });
-  }
-  const legendModal = document.getElementById('legendModal');
-  if (legendModal) {
-    legendModal.addEventListener('click', function(e) {
-      if (e.target === this) closeLegendDialog();
-    });
-  }
-  const regenDirModal = document.getElementById('regenDirModal');
-  if (regenDirModal) {
-    regenDirModal.addEventListener('click', function(e) {
-      if (e.target === this) closeRegenDir();
-    });
-  }
+  // Backdrop click NÃO fecha mais — fechamento só pelos botões (X / Cancelar / Gerar etc).
   const regenDirConfirmBtn = document.getElementById('regenDirConfirm');
   if (regenDirConfirmBtn) regenDirConfirmBtn.addEventListener('click', confirmRegenDir);
   // ESC fecha o modal de direção; Ctrl+Enter confirma
@@ -12345,7 +13138,8 @@ function buildInstagramAdsPanelCopy(parsed) {
 
 function buildPanelTextFromParsed(parsed, platform) {
   if (platform === 'instagram-ads') return buildInstagramAdsPanelCopy(parsed);
-  return (parsed.legend || '') + (parsed.hashtags ? '\n\n' + parsed.hashtags : '');
+  const hashtags = (parsed.hashtags || '').trim();
+  return (parsed.legend || '') + (hashtags ? '\n\n' + hashtags : '');
 }
 
 function applyInstagramAdsFields(postData, parsed, adContext) {
@@ -12515,84 +13309,67 @@ Responda APENAS em JSON valido:
 
 function buildNewsPostSystemPrompt(tone) {
   const toneDirectives = {
-    casual:      'TOM: direto, claro e profissional, com linguagem acessivel para agro.',
-    tecnico:     'TOM: tecnico e consultivo, com vocabulario real do agro e raciocinio de mercado.',
-    inspirador:  'TOM: estrategico e confiante, mostrando oportunidade sem exagero.',
-    provocativo: 'TOM: tese forte, leitura de mercado e implicacao pratica clara.',
+    casual:      'TOM: jornalístico claro e direto, registro brasileiro acessível, sem gírias.',
+    tecnico:     'TOM: jornalístico técnico, vocabulário real do agro brasileiro, precisão factual.',
+    inspirador:  'TOM: jornalístico com leitura estratégica de oportunidade, sem hype.',
+    provocativo: 'TOM: jornalístico afiado, ângulo claro de mercado, sem clickbait.',
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
+  const todayDataLinha = formatBrazilDateShort();
 
-  return `Você é editor estratégico da Cropware, plataforma para quem constrói mercado no campo.
+  return `Você é editor da Cropware News, redação editorial agro. Sua função é transformar UMA pauta consolidada (que já vem com manchete sugerida, lide, fatos preservados, contexto e fontes) em um Post Notícia editorial de Instagram. É matéria jornalística, NÃO é post promocional, NÃO é carrossel didático.
 
-Sua função é transformar uma notícia recente ou tema quente do agronegócio em conteúdo visual estratégico.
-Não escreva como portal de notícias. Não copie manchetes. Não resuma apenas o fato.
+REGRA ABSOLUTA: NUNCA invente fato, número, porcentagem, nome, data ou citação. Use APENAS o que vem na pauta entregue (manchete, lide, fatos, contexto). Se faltar dado, escreva sem ele — não complete vazios com suposição.
 
-Pergunta central obrigatória:
-"Por que isso importa para quem constrói mercado no campo?"
+REGRA DE PRESERVAÇÃO DOS FATOS (CRÍTICO):
+- A pauta vai vir com um array de FATOS (datas, valores, percentuais, nomes, citações). Você é OBRIGADO a usar pelo menos 2 desses fatos preservados literalmente na legenda. NÃO os arredonde, NÃO os parafraseie de forma a perder a precisão.
+- Quando um fato tem valor monetário (R$ X,XX/saca), porcentagem (+X,X%), volume (X mi t), data específica (DD/MM/YYYY) ou nome próprio (empresa, órgão, autoridade) — esse dado tem que aparecer EXATAMENTE como veio na pauta.
+- A legenda de uma notícia editorial precisa ser FACTUALMENTE DENSA. Uma legenda sem nenhum dado concreto está ERRADA — repete genericamente o que a manchete já diz.
 
-REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos. Se a pauta trouxer fonte/data, use apenas como contexto e não amplie além do informado.
+ANATOMIA DO POST NOTÍCIA:
+A imagem do post leva APENAS três elementos textuais:
 
-${buildCropwarePositioningContext('instagram')}
+1. KICKER — categoria curta MAIÚSCULA (use o kicker que já vem na pauta, ou ajuste se ficar mais preciso: MERCADO, CLIMA, SAFRA, EXPORTAÇÃO, POLÍTICA AGRO, BIOLÓGICOS, TECNOLOGIA, CÂMBIO, LOGÍSTICA). Sem emoji, sem pontuação.
 
-OBJETIVO DO POST NOTÍCIA:
-- Gerar autoridade, relevância e timing.
-- Conectar a notícia com boas práticas de campo, inteligência de mercado, desenvolvimento de mercado, geração de demanda, consultoria técnica ou promotoria técnica.
-- Mostrar oportunidade prática ou reflexão estratégica.
-- Soar como interpretação profissional, não notícia crua.
+2. MANCHETE — 1 frase, máx 14 palavras, máx 90 caracteres totais. Termina com ponto final. Sem clickbait, sem CAPS LOCK, sem ironia, sem aspas, sem reticências, sem emoji. Pode ser igual à manchete da pauta ou refinada — desde que continue carregando o fato mais importante.
 
-HOOK (texto grande):
-- 1 ou 2 linhas no total
-- A última parte OBRIGATORIAMENTE envolvida em <em>...</em>
-- Frase afirmativa, editorial e estratégica
-- Máximo 6 palavras por linha
-- Sempre terminar com ponto final
-- Não repetir a manchete literalmente
+3. DATALINHA — formato fixo: "${todayDataLinha}" (dia.mes-abreviado, ex: "05.mai" — minúsculo no JSON, o render aplica MAIÚSCULAS automaticamente). Use exatamente esse valor.
 
-COMPLEMENT:
-- 1-2 linhas, máximo 38 caracteres cada
-- Use <strong> para destacar uma expressão-chave
-- Deve interpretar o impacto da pauta para campo, mercado ou tomada de decisão
+A LEGENDA do post é a notícia escrita:
+- Estrutura: lide (use o lead da pauta como base, pode refinar) → contexto/dados (use 2-3 fatos da pauta, literalmente preservados) → fechamento (1 frase de leitura editorial — ver regra do ângulo Cropware abaixo).
+- Total: 120 a 180 palavras. Parágrafo único ou 2 parágrafos curtos.
+- Não use primeira pessoa.
+- Não termine com pergunta retórica nem CTA forçado tipo "comenta aí".
+- Linguagem real do agro brasileiro (saca, safra, plantio, contratos, prêmio, basis, embarque, comercialização, manejo, IPM, defensivos, biológicos, fertilidade, etc) quando o tema permite.
 
-BULLETS:
-- Exatamente 3 bullets
-- Cada text com máximo 6 palavras e ponto final
-- Cada bullet deve apontar uma implicação prática: campo, mercado, demanda, equipe, posicionamento, dados ou decisão
-- Ícones permitidos:
-check_circle, task_alt, trending_up, trending_down, schedule, bolt, savings,
-insights, analytics, agriculture, eco, grass, water_drop, sunny, landscape,
-sensors, visibility, shield, speed, psychology, hub, timeline, query_stats,
-monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturing
+ÂNGULO CROPWARE (CONDICIONAL — IMPORTANTE):
+- Inclua UMA frase de leitura editorial Cropware APENAS se a pauta tiver ligação NATURAL e ÓBVIA com decisão de campo, mercado, geração de demanda, desenvolvimento de mercado (DM), promotoria técnica, consultoria, validação de tecnologia ou inteligência agronômica.
+- Se a pauta NÃO tiver essa ligação clara (ex: notícia política sem efeito direto na operação, evento setorial sem implicação prática, registro climático isolado, polêmica institucional), feche a legenda apenas com encerramento jornalístico: a próxima janela de decisão, o próximo dado a observar, ou o impacto factual esperado. NÃO force conexão.
+- Quando incluir o ângulo Cropware, NÃO cite "Cropware" como produto comercial. Use forma editorial: "Para quem constrói mercado no campo, a leitura é...", "Na operação de quem desenvolve mercado, isso aponta para...", "Para promotoria e consultoria técnica, o sinal é..."
 
-LEGENDA:
-- 2-4 frases curtas, máximo 65 palavras no total
-- Contextualize a pauta sem parecer jornal
-- Priorize leitura profissional, técnica e estratégica
-- Não use primeira pessoa ("eu vi", "tenho notado", "na minha experiência")
-- Não termine com pergunta genérica, CTA, emoji ou "comenta aí"
-- 3 hashtags relevantes em linha separada
+HASHTAGS:
+- 3 a 4 hashtags em linha separada após a legenda. Inclua: 1 ou 2 hashtags GENÉRICAS de notícia/atualidade (#noticias, #atualidades, #agronews, #jornalismo) + 2 hashtags temáticas específicas da pauta (#soja, #safra, #exportacao, etc). Sem capitalização criativa (use #soja não #SoJa). NÃO inclua #cropwarenews nem #cropware.
 
 ${toneBlock}
 ${buildDesignContext('instagram')}
 
-IMAGE_PROMPT:
-- Foto ultra-realista editorial premium do agro brasileiro conectada à pauta
-- Sem texto, logos, marcas ou manchetes na imagem
-- Composição limpa com espaço negativo para texto overlay
-- Visual de campo, equipe técnica, lavoura, mercado ou tecnologia conforme o tema
+IMAGE_PROMPT (descrição em inglês para gerar a foto editorial 4:5):
+- Photojournalistic editorial premium image, agricultural context FACTUALMENTE conectado à pauta (se for soja → cena de soja na fase certa; se for clima → cena climática real; se for exportação → porto/logística; se for política → cena institucional sutil; se for tecnologia → tecnologia agrícola realista).
+- No text, logos, brands, headlines, watermarks, numbers anywhere in the image.
+- Clean composition, negative space at the bottom third (for the editorial block overlay).
+- Magnum/Reuters/Bloomberg aesthetic — NOT Apple-corporate, NOT generic stock.
+- Natural lighting, 50mm feel, cinematic depth of field.
+- NO artificial dark gradients, dark bands or overlays.
 
-Responda APENAS em JSON válido:
+Responda APENAS em JSON válido, sem markdown:
 {
-  "hook": "primeira linha<br><em>remate estratégico.</em>",
-  "complement": "apoio curto<br><strong>com destaque</strong>",
-  "bullets": [
-    {"icon": "radar", "text": "Sinal de mercado."},
-    {"icon": "insights", "text": "Decisão mais clara."},
-    {"icon": "agriculture", "text": "Campo mais preparado."}
-  ],
-  "title": "título curto para sidebar",
-  "legend": "legenda completa",
-  "hashtags": "#tag1 #tag2 #tag3",
-  "imagePrompt": "photorealistic image prompt in english"
+  "kicker":      "MERCADO",
+  "manchete":    "Frase única, máx 14 palavras, com ponto final.",
+  "dataLinha":   "${todayDataLinha}",
+  "title":       "título curto para sidebar (máx 60 caracteres)",
+  "legend":      "lide → fatos preservados literalmente → fechamento (com ângulo Cropware só se houver ligação natural). 120-180 palavras.",
+  "hashtags":    "#tag1 #tag2 #tag3",
+  "imagePrompt": "photojournalistic editorial image prompt in english, no text, 4:5 composition with negative space at bottom"
 }`;
 }
 
@@ -12742,18 +13519,18 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
   const adContext = (options && options.adContext) || null;
   const newsContext = (options && options.newsContext) || null;
   const newsSuffix = newsContext
-    ? `\n\nContexto estruturado da pauta selecionada:\nTítulo: ${newsContext.title || ''}\nFonte: ${newsContext.source || ''}\nCategoria: ${newsContext.category || ''}\nPublicado: ${newsContext.published || ''}\nResumo: ${newsContext.summary || ''}\nInsight sugerido: ${newsContext.insight || ''}\nLink: ${newsContext.link || ''}`
+    ? `\n\nPAUTA CONSOLIDADA (use APENAS estes fatos — NÃO invente, NÃO arredonde, NÃO parafraseie a ponto de perder precisão):\nKicker sugerido: ${newsContext.kicker || ''}\nManchete sugerida: ${newsContext.manchete || ''}\nLead jornalístico: ${newsContext.lead || ''}\nFatos preservados (use pelo menos 2 LITERALMENTE na legenda):\n${(newsContext.fatos || []).map((f, i) => `  ${i + 1}. ${f}`).join('\n') || '  (nenhum fato disponível)'}\nContexto: ${newsContext.contexto || ''}\nFontes consultadas: ${(newsContext.fontes || []).join(', ') || 'não informadas'}`
     : '';
   const userParts = userImageBase64
     ? [
         { inlineData: { mimeType: userImageMime || 'image/jpeg', data: userImageBase64 } },
         { text: platform === 'news'
-          ? `Analise esta imagem agrícola e transforme a pauta abaixo em Post Notícia estratégico para a Cropware:\n\n${theme}${newsSuffix}${directionSuffix}`
+          ? `Analise esta imagem agrícola e transforme a pauta abaixo em manchete editorial Cropware News. Use os FATOS preservados literalmente. Não invente.\n\nTema buscado pelo usuário: ${theme}${newsSuffix}${directionSuffix}`
           : `Analise esta imagem agrícola e crie um post para ${platformLabel}${brandLabel} sobre:\n\n${theme}${directionSuffix}` }
       ]
     : [
         { text: platform === 'news'
-          ? `Transforme a pauta abaixo em Post Notícia estratégico para a Cropware:\n\n${theme}${newsSuffix}${directionSuffix}`
+          ? `Transforme a pauta abaixo em manchete editorial Cropware News. Use os FATOS preservados literalmente. Não invente nada além da pauta.\n\nTema buscado pelo usuário: ${theme}${newsSuffix}${directionSuffix}`
           : `Crie um post para ${platformLabel}${brandLabel} sobre o seguinte tema:\n\n${theme}${directionSuffix}` }
       ];
 
@@ -12821,10 +13598,16 @@ async function callGeminiImage(imagePrompt, extraDirection, aspectRatio) {
   if (avoid) {
     hardRules.push(`Additional brand restrictions to avoid: ${avoid}`);
   }
-  const directionBlock = extraDirection && extraDirection.trim()
-    ? `\n\nAdditional direction: ${extraDirection.trim()}`
+  const userOverride = extraDirection && extraDirection.trim() ? extraDirection.trim() : '';
+  // Constraints do usuário (chips/direção) entram em DOIS pontos com tom imperativo:
+  // antes de tudo (max-priority) e depois das hardRules (reforço final).
+  const overrideHeader = userOverride
+    ? `MANDATORY USER CONSTRAINTS (HIGHEST PRIORITY — these override every instruction below; if any rule below conflicts, ignore the conflicting rule):\n${userOverride}\n\n---\n\n`
     : '';
-  const finalPrompt = `${imagePrompt}\n\n${hardRules.join('\n')}${directionBlock}`;
+  const overrideFooter = userOverride
+    ? `\n\n---\nFINAL REINFORCEMENT — APPLY USER CONSTRAINTS ABOVE ALL ELSE:\n${userOverride}`
+    : '';
+  const finalPrompt = `${overrideHeader}${imagePrompt}\n\n${hardRules.join('\n')}${overrideFooter}`;
   const resp = await fetchGeminiWithRetry(
     `${SUPABASE_URL}/functions/v1/gemini`,
     {
@@ -12857,7 +13640,8 @@ async function callGeminiImage(imagePrompt, extraDirection, aspectRatio) {
 }
 
 function handleGenerate() {
-  if (isCarouselMode()) generateCarousel();
+  if (isCarouselMode() && getPlatform() === 'news') generateNewsCarousel();
+  else if (isCarouselMode()) generateCarousel();
   else generatePost();
 }
 
@@ -12876,7 +13660,7 @@ async function generatePost() {
     cta:       (document.getElementById('genAdsCTA') || {}).value || 'Saiba mais',
   } : null;
 
-  if (!theme)     { setGenStatus(isNews ? 'Busque ou descreva uma notícia/tema.' : 'Descreva o tema do post.', 'error'); return; }
+  if (!theme)     { setGenStatus(isNews ? 'Descreva o tema da notícia.' : 'Descreva o tema do post.', 'error'); return; }
 
   btn.disabled = true;
   btn.textContent = 'Gerando...';
@@ -12885,17 +13669,42 @@ async function generatePost() {
   if (isAds) setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 1/2 - Gemini criando ${firstStepLabel}...`, '');
 
   try {
+    // News: passo 0 — varre e consolida múltiplas fontes em UMA pauta densa antes de gerar
+    let newsContextForGen = null;
+    if (isNews) {
+      setGenStatus('<i class="ph ph-radar sz-16" style="margin-right:6px"></i>Passo 1/3 — Varrendo notícias do agro nas últimas 72h...', '');
+      try {
+        newsContextForGen = await searchAndConsolidateNews(theme);
+      } catch (searchErr) {
+        console.error('searchAndConsolidateNews failed:', searchErr);
+        setGenStatus('Erro na pesquisa: ' + (searchErr.message || searchErr), 'error');
+        btn.disabled = false;
+        btn.textContent = 'Gerar';
+        return;
+      }
+      if (!newsContextForGen.manchete || !newsContextForGen.fatos.length) {
+        setGenStatus('Não encontrei notícia confiável sobre esse tema nas últimas 72h. Tente outro termo ou amplie.', 'warn');
+        btn.disabled = false;
+        btn.textContent = 'Gerar';
+        return;
+      }
+      selectedNewsPauta = newsContextForGen;
+      setGenStatus('<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 2/3 — Gemini escrevendo manchete editorial...', '');
+    }
+
     // Passo 1: Gemini texto (prompt varia por plataforma)
-    const parsed = await callGeminiText(theme, tone, genImageBase64, genImageMime, null, platform, { adContext, newsContext: selectedNewsPauta });
+    const parsed = await callGeminiText(theme, tone, genImageBase64, genImageMime, null, platform, { adContext, newsContext: newsContextForGen || selectedNewsPauta });
 
     // Passo 2: Gemini imagem (se não houver upload)
     let finalImgBase64 = genImageBase64;
     let finalImgMime   = genImageMime;
 
     if (needImage) {
-      setGenStatus('<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 2/2 — Nano Banana gerando imagem...', '');
+      const imgStepLabel = isNews ? 'Passo 3/3 — Nano Banana gerando foto editorial...' : 'Passo 2/2 — Nano Banana gerando imagem...';
+      setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>${imgStepLabel}`, '');
       const imgPrompt = parsed.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
-      const img = await callGeminiImage(imgPrompt);
+      const chipDirectives = getActiveChipDirectives().join(' ');
+      const img = await callGeminiImage(imgPrompt, chipDirectives);
       finalImgBase64 = img.base64;
       finalImgMime   = img.mime;
     }
@@ -12936,7 +13745,16 @@ async function generatePost() {
     if (platform === 'instagram-ads') postData.type = 'instagram-ads-post';
     else if (platform === 'news') {
       postData.type = 'news-post';
+      postData.style = 'news-editorial';
       postData.newsPauta = selectedNewsPauta ? { ...selectedNewsPauta } : null;
+      postData.kicker    = (parsed.kicker    || (selectedNewsPauta && selectedNewsPauta.kicker) || 'AGRO').toString().toUpperCase().slice(0, 24).trim();
+      postData.manchete  = (parsed.manchete  || '').toString().trim();
+      const validDataLinha = /^\d{1,2}\.[a-zA-Zçãéá]{3}$/i.test(parsed.dataLinha || '');
+      postData.dataLinha = validDataLinha ? parsed.dataLinha : formatBrazilDateShort();
+      // News-editorial não usa hook/complement/bullets na imagem
+      delete postData.hookHTML;
+      delete postData.complementHTML;
+      postData.bullets = [];
     }
     else if (platform === 'linkedin') postData.type = 'linkedin-post';
     else if (platform === 'linkedin-pessoal') postData.type = 'linkedin-pessoal-post';
@@ -13539,6 +14357,122 @@ Responda APENAS em JSON válido:
 }`;
 }
 
+// System prompt do carrossel editorial de tendência (3 / 5 / 7 slides).
+// Recebe a pauta consolidada em userPrompt e estrutura UM JSON com slides já distribuídos por role.
+function buildNewsCarouselSystemPrompt(tone, slideCount) {
+  const toneDirectives = {
+    casual:      'TOM: jornalístico claro e direto, registro brasileiro acessível, sem gírias.',
+    tecnico:     'TOM: jornalístico técnico, vocabulário real do agro brasileiro, precisão factual.',
+    inspirador:  'TOM: jornalístico com leitura estratégica de oportunidade, sem hype.',
+    provocativo: 'TOM: jornalístico afiado, ângulo claro de mercado, sem clickbait.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
+  const todayDataLinha = formatBrazilDateShort();
+  const factCount = Math.max(1, slideCount - 2);
+
+  return `Você é editor da Cropware News, redação editorial agro. Sua função é transformar UMA pauta consolidada (que vem com manchete sugerida, lide, fatos preservados, contexto e fontes) em um Carrossel Editorial de Tendência para Instagram, com ${slideCount} slides.
+
+REGRA ABSOLUTA: NUNCA invente fato, número, porcentagem, nome, data ou citação. Use APENAS o que está na pauta entregue (manchete, lide, fatos, contexto). Se faltar dado, escreva sem ele.
+
+REGRA DE PRESERVAÇÃO DOS FATOS (CRÍTICO):
+- A pauta vem com um array de FATOS (datas, valores R$/saca, percentuais, volumes, nomes próprios). Cada slide de fato (role="fact") deve usar UM fato distinto, LITERALMENTE preservado.
+- NÃO arredonde valores (use "R$ 132,50/saca", não "R$ 130/saca"). NÃO converta unidades. NÃO traduza nomes de empresas/órgãos.
+- NÃO repita o mesmo fato em mais de um slide. Se houver mais fatos do que slides de fato, escolha os mais impactantes.
+
+ESTRUTURA DO CARROSSEL (${slideCount} slides total):
+- Slide 1 (role="cover"): manchete-quote forte de até 14 palavras. Frase de impacto que provoca curiosidade ou cria tensão, NÃO resume a pauta. Pode ser afirmação editorial assertiva. Termina com ponto final.
+- Slides 2 a ${slideCount - 1} (role="fact", ${factCount} slides): cada um pega UM fato distinto. Devolve:
+  - factHighlight: número/dado em destaque LITERAL (ex: "R$ 132,50/saca", "+4,3%", "168 mi t", "30/04/2026"). Curto e impactante. Pode ser omitido se o fato não tiver número claro.
+  - factTitle: ≤6 palavras, define o argumento desse slide (ex: "Fósforo importado", "Recuo da CONAB").
+  - factBody: 30 a 50 palavras explicando o fato e seu impacto, com tom jornalístico.
+  - factSource: ≤25 caracteres, no formato "FONTE · DD.mmm" (ex: "CONAB · 02.MAI", "USDA · 03.MAI", "APROSOJA-MT · 04.MAI"). Use a fonte mais autoritativa que vier na pauta. Pode ser omitido.
+- Slide ${slideCount} (role="closing"): fechamento. closingLine de 1 frase (até 18 palavras, sem ponto final em ênfase). Opção condicional do ângulo Cropware:
+  - Se a pauta tiver ligação NATURAL com decisão de campo, mercado, GD/DM, promotoria técnica, consultoria ou validação de tecnologia → fechamento traz leitura editorial Cropware ("Para quem constrói mercado no campo, a leitura é ...", "Na operação de quem desenvolve mercado, isso aponta para ...").
+  - Se NÃO tiver ligação clara → fechamento jornalístico puro ("Próxima janela: X", "O dado a observar é Y").
+  - Sem CTA forçado, sem "comenta aí", sem emoji.
+
+CONSISTÊNCIA VISUAL:
+- kicker: ÚNICO para todo o carrossel, idêntico em todos os slides (cover, fact e closing). MAIÚSCULA, ≤2 palavras (MERCADO, CLIMA, SAFRA, EXPORTAÇÃO, POLÍTICA AGRO, BIOLÓGICOS, TECNOLOGIA, CÂMBIO, LOGÍSTICA).
+- dataLinha: "${todayDataLinha}" (formato DD.mmm minúsculo). Só usada no slide cover; nos outros slides pode ser omitida ou repetida (vai ser escondida no render).
+- blockColor: sugira UMA cor verde clara/média da paleta Cropware (#6DCA73 default — verde claro vibrante, #7AB87E acento brand, #5E9061 sage médio, #97E29C verde mint). Evite cores escuras (#152F17, #0F1E14) — bloco claro com kicker/divisor #2B452D dá contraste editorial.
+
+REGRAS DE IMAGEM (CRÍTICO — aplicar em TODOS os slides):
+- imagePrompt por slide: descrição em INGLÊS para fotografia editorial fotojornalística. Mantenha PALETA E ILUMINAÇÃO consistentes entre slides do mesmo carrossel (ex: "soft golden hour over Brazilian farmland, muted greens, photojournalistic, 50mm").
+- A cena DEVE ser do mundo agro brasileiro REAL e cotidiano. Priorize fortemente:
+  - Lavouras (soja, milho, algodão, café, cana) em diferentes estágios
+  - Agricultores e produtores rurais brasileiros em campo
+  - Maquinário agrícola (tratores, colheitadeiras, pulverizadores, drones agrícolas) em operação
+  - Armazéns rurais, silos, balanças, terminais portuários de grãos
+  - Caminhões graneleiros em estradas rurais ou pátio de armazém
+  - Sacos de fertilizantes, defensivos, insumos em revendas agro
+  - Reuniões técnicas em revendas agropecuárias (balcão da revenda, com produtor e RTV)
+  - Agrônomos e RTVs em visita técnica de campo (com prancheta, app, drone, monitor de NDVI)
+  - Cooperativas agro, leilões de gado, feiras do agro
+  - Cenas de pós-colheita (limpeza de grãos, classificação, embarque)
+- EVITE FORTEMENTE imagens estritamente corporativas urbanas (salas de reunião com terno em capital, escritórios genéricos com computador, prédios comerciais, gráficos abstratos em telas brancas, mãos digitando em teclado neutro). Esses cenários NÃO refletem o agro brasileiro.
+- Quando a pauta for sobre POLÍTICA, MERCADO ou CÂMBIO, ainda assim ancore a imagem em contexto agro: pátio de armazém com caminhão graneleiro em vez de bolsa de valores, produtor olhando celular em frente à lavoura em vez de trader em painel, vista do porto de Paranaguá com navio graneleiro em vez de skyline corporativo.
+- Cenas mais "institucionais" (reunião formal, sala com TV exibindo gráfico) só são aceitáveis SE o cenário for claramente agro: reunião na cooperativa rural, sala da revenda agropecuária, escritório de fazenda com mapa do talhão na parede, sala técnica da CONAB/MAPA. NUNCA mais de 1 desses slides em todo o carrossel.
+- Roupas: jeans, camisa polo/manga longa, chapéu de palha ou boné, botas — vestuário cotidiano do agro brasileiro. NÃO terno e gravata, NÃO blazer.
+- Sem texto, logos ou marcas nas imagens (texto será sobreposto pelo app).
+
+LEGENDA E HASHTAGS (compartilhadas, exibidas fora dos slides):
+- legend: 100 a 160 palavras. Estrutura: lide → 2-3 fatos chave → ângulo Cropware (mesma regra condicional do closing) → fecho.
+- hashtags: 4 a 5 hashtags. Inclua 1-2 genéricas (#noticias, #atualidades, #agronews, #tendencias) + 2-3 temáticas. NÃO inclua #cropwarenews nem #cropware.
+
+${toneBlock}
+${buildDesignContext('instagram')}
+
+Responda APENAS em JSON válido, sem markdown:
+{
+  "title":      "título curto sidebar (≤60 chars)",
+  "kicker":     "MERCADO",
+  "dataLinha":  "${todayDataLinha}",
+  "blockColor": "#152F17",
+  "slides": [
+    { "role": "cover",   "manchete": "...", "imagePrompt": "..." },
+    { "role": "fact",    "factTitle": "...", "factHighlight": "...", "factBody": "...", "factSource": "...", "imagePrompt": "..." }
+    /* ... ${factCount} slides de fato no total ... */,
+    { "role": "closing", "closingLine": "...", "imagePrompt": "..." }
+  ],
+  "legend":   "100-160 palavras",
+  "hashtags": "#tag1 #tag2 #tag3 #tag4"
+}`;
+}
+
+async function callGeminiNewsCarouselText(theme, tone, slideCount, newsContext) {
+  const systemPrompt = buildNewsCarouselSystemPrompt(tone, slideCount);
+  const newsBlock = newsContext
+    ? `\n\nPAUTA CONSOLIDADA (use APENAS estes fatos — NÃO invente, NÃO arredonde):\nKicker sugerido: ${newsContext.kicker || ''}\nManchete sugerida: ${newsContext.manchete || ''}\nLead: ${newsContext.lead || ''}\nFatos preservados (distribua um fato distinto por slide de fato):\n${(newsContext.fatos || []).map((f, i) => `  ${i + 1}. ${f}`).join('\n') || '  (nenhum fato disponível)'}\nContexto: ${newsContext.contexto || ''}\nFontes consultadas: ${(newsContext.fontes || []).join(', ') || 'não informadas'}`
+    : '';
+  const userText = `Tema buscado pelo usuário: ${theme}\n\nMonte um carrossel editorial de ${slideCount} slides (1 cover + ${Math.max(1, slideCount - 2)} fact + 1 closing) usando a pauta abaixo. Preserve fatos LITERALMENTE.${newsBlock}`;
+
+  const resp = await fetchGeminiWithRetry(
+    `${SUPABASE_URL}/functions/v1/gemini`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+      },
+      body: JSON.stringify({
+        model: 'gemini-2.5-flash',
+        body: {
+          contents: [{ parts: [{ text: userText }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          generationConfig: { responseMimeType: 'application/json', temperature: 0.4 }
+        }
+      })
+    },
+    'Gemini texto (carrossel notícia)'
+  );
+
+  const data = await resp.json();
+  const raw  = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const match = raw.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('Carrossel notícia: resposta não contém JSON válido.');
+  return JSON.parse(match[0]);
+}
+
 async function callGeminiCarouselText(theme, tone, slideCount, userImageBase64, userImageMime, platform, adContext) {
   const systemPrompt = platform === 'linkedin-pessoal'
     ? buildLinkedInPessoalCarouselSystemPrompt(tone, slideCount)
@@ -13916,7 +14850,7 @@ async function generateCarousel() {
       if (needImage) {
         setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo ${i + 2}/${totalSteps} — Gerando imagem ${i + 1}/${slides.length}...`, '');
         const imgPrompt = s.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
-        const img = await callGeminiImage(imgPrompt);
+        const img = await callGeminiImage(imgPrompt, getActiveChipDirectives().join(' '));
         imgBase64 = img.base64;
         imgMime = img.mime;
       }
@@ -14001,6 +14935,179 @@ async function generateCarousel() {
   }
 }
 
+// Carrossel editorial de tendência: pesquisa pauta densa → distribui em slides → 1 imagem por slide.
+async function generateNewsCarousel() {
+  const theme      = document.getElementById('genTheme').value.trim();
+  const cfg        = getActiveDesignConfig();
+  const tone       = cfg.tone || 'casual';
+  const slideCountRaw = Number(document.getElementById('genSlideCount').value) || 5;
+  // Aceita só 3 / 5 / 7
+  const slideCount = [3, 5, 7].includes(slideCountRaw) ? slideCountRaw : 5;
+  const btn        = document.getElementById('genBtn');
+  const needImage  = !genImageBase64;
+
+  if (!theme) { setGenStatus('Descreva o tema da tendência.', 'error'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Gerando...';
+  const totalSteps = needImage ? slideCount + 2 : 2;
+
+  try {
+    // Passo 1: Varredura de pauta densa (até 12 fatos)
+    setGenStatus(`<i class="ph ph-radar sz-18" style="margin-right:6px"></i>Passo 1/${totalSteps} — Varrendo notícias do agro nas últimas 72h...`, '');
+    let pauta;
+    try {
+      pauta = await searchAndConsolidateNews(theme, 12);
+    } catch (searchErr) {
+      console.error('searchAndConsolidateNews failed:', searchErr);
+      setGenStatus('Erro na pesquisa: ' + (searchErr.message || searchErr), 'error');
+      btn.disabled = false;
+      btn.textContent = 'Gerar';
+      return;
+    }
+    if (!pauta || !pauta.manchete || !pauta.fatos.length) {
+      setGenStatus('Não encontrei notícia confiável sobre esse tema nas últimas 72h. Tente outro termo ou amplie.', 'warn');
+      btn.disabled = false;
+      btn.textContent = 'Gerar';
+      return;
+    }
+
+    // Passo 2: Estruturar narrativa (story arc)
+    setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 2/${totalSteps} — Estruturando narrativa em ${slideCount} slides...`, '');
+    const parsed = await callGeminiNewsCarouselText(theme, tone, slideCount, pauta);
+    const slides = Array.isArray(parsed.slides) ? parsed.slides : [];
+    if (slides.length === 0) throw new Error('Gemini não retornou slides.');
+
+    const sharedKicker    = (parsed.kicker || pauta.kicker || 'AGRO').toString().toUpperCase().slice(0, 24).trim();
+    const sharedDataLinha = (() => {
+      const d = (parsed.dataLinha || '').trim();
+      return /^\d{1,2}\.[a-zA-Zçãéá]{3}$/i.test(d) ? d : formatBrazilDateShort();
+    })();
+    const sharedBlockColor = parsed.blockColor && /^#[0-9a-f]{6}$/i.test(parsed.blockColor)
+      ? parsed.blockColor
+      : '#6DCA73';
+
+    // Passo 3+: 1 imagem por slide
+    const timestamp = Date.now();
+    const carouselSlides = [];
+    const chipDirectives = getActiveChipDirectives().join(' ');
+    // Reforço fixo: carrossel de tendência sempre ancora as imagens no agro brasileiro real,
+    // evitando cenas corporativas urbanas que o Gemini text às vezes propõe pra pautas de mercado/política.
+    const newsCarouselAgroDirective = 'STRICT REQUIREMENT: Every image MUST be anchored in real Brazilian agribusiness daily life — crop fields, farmers, agronomists, agricultural machinery, rural warehouses, silos, grain trucks, agro dealerships ("revendas agropecuárias"), cooperatives, ports loading commodities, technical field visits, farm offices with crop maps. STRICTLY AVOID: corporate boardrooms in skyscrapers, urban office buildings, suit-and-tie executives, generic abstract corporate scenes, stock-photo computers on white desks, financial trading floors. If the topic is market/policy/exchange-rate, still anchor visually in agro — show farmers checking prices on phones at the field, grain warehouses, port terminals with bulk carriers, NOT corporate offices. Brazilian regional farmer attire (jeans, polo or long-sleeve shirt, straw hat or cap, boots) — never blazer or tie.';
+    const combinedDirective = [newsCarouselAgroDirective, chipDirectives].filter(Boolean).join('\n\n');
+
+    for (let i = 0; i < slides.length; i++) {
+      const s = slides[i];
+      let imgBase64 = genImageBase64;
+      let imgMime = genImageMime;
+
+      if (needImage) {
+        setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo ${i + 3}/${totalSteps} — Gerando imagem ${i + 1}/${slides.length}...`, '');
+        const imgPrompt = s.imagePrompt || `Photojournalistic editorial image of Brazilian agriculture related to: ${theme}. Soft natural lighting, muted greens, cinematic depth of field, no text or logos.`;
+        const img = await callGeminiImage(imgPrompt, combinedDirective);
+        imgBase64 = img.base64;
+        imgMime = img.mime;
+      }
+
+      const role = (s.role === 'cover' || s.role === 'fact' || s.role === 'closing') ? s.role : 'fact';
+
+      carouselSlides.push({
+        id:       `news-carousel-slide-${timestamp}-${i}`,
+        bg:       `bg-news-carousel-${timestamp}-${i}`,
+        slideId:  `slide-news-carousel-${timestamp}-${i}`,
+        title:    `Slide ${i + 1}`,
+        sub:      'Carrossel Notícia',
+        filename: `cropware_tendencia_${timestamp}_${i + 1}.jpg`,
+        type:     'news-carousel-slide',
+        style:    'news-editorial',
+        slideRole: role,
+        isGenerated:    true,
+        bgImage:        `data:${imgMime};base64,${imgBase64}`,
+        theme:          theme,
+        tone:           tone,
+        imagePrompt:    s.imagePrompt || '',
+        // Compartilhados entre todos os slides
+        kicker:         sharedKicker,
+        dataLinha:      sharedDataLinha,
+        revistaBlockColor: sharedBlockColor,
+        revistaTextMode:   'light',
+        accent:            '#55A05A',  // Verde médio pro kicker/divisor
+        revistaPhotoPct:   45,  // Foto 45% / bloco 55% — mais respiro pro texto editorial
+        // Logo só no cover (canto inferior esquerdo, tom claro); demais slides sem logo
+        logoEnabled:       role === 'cover',
+        logoPos:           'bl',
+        brandMode:         'light',
+        // Específicos por role
+        manchete:       (s.manchete      || '').toString().trim(),
+        factHighlight:  (s.factHighlight || '').toString().trim(),
+        factTitle:      (s.factTitle     || '').toString().trim(),
+        factBody:       (s.factBody      || '').toString().trim(),
+        factSource:     (s.factSource    || '').toString().trim(),
+        closingLine:    (s.closingLine   || '').toString().trim(),
+        slideIndex:     i,
+        // News-editorial sem hook/complement/bullets
+        bullets: [],
+      });
+    }
+
+    setGenStatus('<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>Montando carrossel...', 'success');
+
+    // Limita histórico
+    const items = getModeItems();
+    const legendsArr = getModeLegends();
+    const oldestIdx = items.findIndex(c => c.isGenerated);
+    if (oldestIdx >= 0 && items.filter(c => c.isGenerated).length >= MAX_POSTS) {
+      const oldCarousel = items[oldestIdx];
+      deletePostFromSupabase(oldCarousel.id);
+      oldCarousel.slides.forEach(s => {
+        const el = document.getElementById(s.slideId);
+        if (el) el.remove();
+      });
+      items.splice(oldestIdx, 1);
+      legendsArr.splice(oldestIdx, 1);
+    }
+
+    const carouselData = {
+      id:          `news-carousel-gen-${timestamp}`,
+      type:        'news-carousel-post',
+      style:       'news-editorial',
+      title:       parsed.title || 'Tendência gerada',
+      theme:       theme,
+      tone:        tone,
+      isGenerated: true,
+      slides:      carouselSlides,
+      currentSlide: 0,
+      newsPauta:   pauta,
+      slideCount:  slideCount,
+    };
+
+    const legendText = (parsed.legend || '') + (parsed.hashtags ? '\n\n' + parsed.hashtags : '');
+    const newIdx = renderGeneratedCarousel(carouselData, legendText);
+    saveSession();
+
+    setTimeout(() => {
+      closeGenerator();
+      setCurrentSlide(0);
+      buildSidebar();
+      buildDots();
+      goTo(newIdx);
+      // reset form
+      document.getElementById('genTheme').value = '';
+      const inner = document.querySelector('.gen-dropzone-inner');
+      if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
+      genImageBase64 = null;
+      btn.disabled = false;
+      btn.textContent = 'Gerar Carrossel de Tendência';
+      setGenStatus('', '');
+    }, 600);
+
+  } catch(e) {
+    setGenStatus('<i class="ph ph-warning-octagon sz-18" style="margin-right:6px"></i>Erro: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.textContent = 'Gerar Carrossel de Tendência';
+  }
+}
+
 // ── REGENERAÇÃO PARCIAL (texto / imagem / legenda) ──────────
 
 // Desabilita os 3 botões de regen e mostra estado "gerando" no btn clicado.
@@ -14021,22 +15128,56 @@ function setRegenBusy(busy, activeBtnId) {
       if (lbl && el.dataset.label) lbl.textContent = el.dataset.label;
     });
   }
+  // Overlay full-screen durante regeração — label varia conforme o kind
+  const overlay = document.getElementById('regenLoading');
+  const labelEl = document.getElementById('regenLoadingLabel');
+  if (overlay) {
+    if (busy) {
+      const labelMap = {
+        pcRegenText:   'Regerando o texto...',
+        pcRegenImage:  'Regerando a imagem...',
+        pcRegenLegend: 'Regerando a legenda...',
+      };
+      if (labelEl) labelEl.textContent = labelMap[activeBtnId] || 'Gerando...';
+      overlay.classList.add('open');
+    } else {
+      overlay.classList.remove('open');
+    }
+  }
 }
 
 // Abre dialog pedindo a direção (prompt opcional) antes de uma regeração.
 // Resolve com a string (pode ser vazia) em confirmação, ou null se cancelado.
+// showChips=true exibe os chips de orientação rápida (usado na regeração de imagem).
 let _regenDirResolver = null;
-function promptForDirection(titleText) {
+function promptForDirection(titleText, showChips) {
   return new Promise(resolve => {
     _regenDirResolver = resolve;
     const modal = document.getElementById('regenDirModal');
     const title = document.getElementById('regenDirTitle');
     const input = document.getElementById('regenDirInput');
+    const chips = document.getElementById('regenDirChips');
     if (title) title.textContent = titleText || 'Regerar';
     if (input) input.value = '';
+    if (chips) {
+      chips.style.display = showChips ? '' : 'none';
+      chips.querySelectorAll('.gen-chip').forEach(el => el.classList.remove('active'));
+      if (showChips && chips.dataset.wired !== 'true') {
+        chips.dataset.wired = 'true';
+        chips.addEventListener('click', e => {
+          const chip = e.target.closest('.gen-chip');
+          if (chip) chip.classList.toggle('active');
+        });
+      }
+    }
     if (modal) modal.classList.add('open');
     if (input) setTimeout(() => input.focus(), 40);
   });
+}
+function getActiveRegenDirChipDirectives() {
+  return Array.from(document.querySelectorAll('#regenDirChips .gen-chip.active'))
+    .map(el => GEN_CHIP_DIRECTIVES[el.dataset.chip])
+    .filter(Boolean);
 }
 function closeRegenDir() {
   const modal = document.getElementById('regenDirModal');
@@ -14045,7 +15186,9 @@ function closeRegenDir() {
 }
 function confirmRegenDir() {
   const input = document.getElementById('regenDirInput');
-  const val = input ? input.value.trim() : '';
+  const text = input ? input.value.trim() : '';
+  const chipDir = getActiveRegenDirChipDirectives().join(' ');
+  const val = [text, chipDir].filter(Boolean).join('\n\n');
   const modal = document.getElementById('regenDirModal');
   if (modal) modal.classList.remove('open');
   if (_regenDirResolver) { _regenDirResolver(val); _regenDirResolver = null; }
@@ -14079,6 +15222,8 @@ async function regenerateText() {
     post.bullets        = Array.isArray(parsed.bullets) ? parsed.bullets.slice(0, 3) : post.bullets;
     applyInstagramAdsFields(post, parsed, adContext);
     setActiveLegend(normalizePanelText(buildPanelTextFromParsed(parsed, platform), post.type));
+    post._textRegenerated   = true;
+    post._legendRegenerated = true;
     const postEl = document.getElementById(post.id);
     if (postEl) applyPostVariant(postEl, post);
     updateLegend(getModeCurrentIdx());
@@ -14094,7 +15239,7 @@ async function regenerateText() {
 async function regenerateImage() {
   const post = getActivePost();
   if (!post || !post.isGenerated) return;
-  const direction = await promptForDirection('Regerar Imagem');
+  const direction = await promptForDirection('Regerar Imagem', true);
   if (direction === null) return;
   // Prompt base = o original da geração (ou reconstruído do tema)
   const basePrompt = post.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${post.theme || ''}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
@@ -14108,6 +15253,7 @@ async function regenerateImage() {
     const img = await callGeminiImage(imagePrompt, '', aspectRatio);
     pushUndoSnapshot(post, { kind: 'image', bgImage: post.bgImage });
     post.bgImage = `data:${img.mime};base64,${img.base64}`;
+    post._imageRegenerated = true;
     const postEl = document.getElementById(post.id);
     if (postEl) applyPostVariant(postEl, post);
     updatePostControls(getModeCurrentIdx());
@@ -14129,12 +15275,19 @@ async function regenerateLegend() {
     const adContext = platform === 'instagram-ads'
       ? { objective: post.adObjective, audience: post.adAudience, cta: post.adPreferredCTA || post.adCTA }
       : null;
-    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction, platform, { adContext });
+    // News-post: passa a pauta consolidada salva pra que o prompt tenha os fatos preservados
+    const newsContext = platform === 'news' ? (post.newsPauta || null) : null;
+    const themeForRegen = platform === 'news' && post.newsPauta && post.newsPauta.manchete
+      ? post.newsPauta.manchete
+      : (post.theme || post.title || '');
+    const parsed = await callGeminiText(themeForRegen, post.tone || 'casual', null, null, direction, platform, { adContext, newsContext });
     pushUndoSnapshot(post, { kind: 'legend', legend: getActiveLegend() });
     applyInstagramAdsFields(post, parsed, adContext);
     setActiveLegend(normalizePanelText(buildPanelTextFromParsed(parsed, platform), post.type));
+    post._legendRegenerated = true;
     updateLegend(getModeCurrentIdx());
     updatePostControls(getModeCurrentIdx());
+    syncLegendRegenBadge();
     saveSession();
   } catch(e) {
     alert('Erro ao regenerar legenda: ' + e.message);
@@ -14142,12 +15295,34 @@ async function regenerateLegend() {
   setRegenBusy(false);
 }
 
-function undoLastRegen() {
+// Desfaz a última regeração. Se kind for fornecido, busca a última entrada DAQUELE kind
+// na pilha e remove só ela (preserva as outras). Sem kind, pop padrão (topo).
+function undoLastRegen(kind) {
   const post = getActivePost();
   if (!post || !post.isGenerated) return;
-  const stack = post._undoStack;
-  if (!stack || stack.length === 0) return;
-  const snap = stack.pop();
+  const stack = post._undoStack || [];
+  let snap;
+  if (kind) {
+    let idx = -1;
+    for (let i = stack.length - 1; i >= 0; i--) {
+      if (stack[i].kind === kind) { idx = i; break; }
+    }
+    if (idx === -1) {
+      // Sem snapshot na pilha (ex: pós-reload). Apenas limpa o flag e o badge.
+      if (kind === 'text')   post._textRegenerated   = false;
+      if (kind === 'image')  post._imageRegenerated  = false;
+      if (kind === 'legend') post._legendRegenerated = false;
+      syncLegendRegenBadge();
+      syncRegenActionsState();
+      saveSession();
+      alert('Não há snapshot pra desfazer (a regeração foi feita em sessão anterior).');
+      return;
+    }
+    snap = stack.splice(idx, 1)[0];
+  } else {
+    if (stack.length === 0) return;
+    snap = stack.pop();
+  }
   if (snap.kind === 'text') {
     post.hookHTML       = snap.hookHTML       || '';
     post.complementHTML = snap.complementHTML || '';
@@ -14159,15 +15334,22 @@ function undoLastRegen() {
     if (postEl) applyPostVariant(postEl, post);
     updateLegend(getModeCurrentIdx());
     buildSidebar();
+    // Se não houver mais entradas de text na pilha, limpa o flag
+    if (!stack.some(s => s.kind === 'text'))   post._textRegenerated   = false;
+    if (!stack.some(s => s.kind === 'legend')) post._legendRegenerated = false;
   } else if (snap.kind === 'image') {
     post.bgImage = snap.bgImage || '';
     const postEl = document.getElementById(post.id);
     if (postEl) applyPostVariant(postEl, post);
+    if (!stack.some(s => s.kind === 'image')) post._imageRegenerated = false;
   } else if (snap.kind === 'legend') {
     setActiveLegend(snap.legend || '');
     updateLegend(getModeCurrentIdx());
+    if (!stack.some(s => s.kind === 'legend')) post._legendRegenerated = false;
   }
   updatePostControls(getModeCurrentIdx());
+  syncLegendRegenBadge();
+  syncRegenActionsState();
   saveSession();
 }
 
@@ -14183,21 +15365,19 @@ function setGenStatus(msg, type) {
 <div class="gen-modal legend-modal" id="legendModal">
   <div class="gen-modal-box">
     <div class="gen-modal-header">
-      <span>Legenda</span>
+      <span>Legenda<span class="legend-regen-badge" id="legendRegenBadge" hidden>Regerada</span></span>
       <button class="gen-close" onclick="closeLegendDialog()"><i class="ph ph-x"></i></button>
     </div>
     <div class="gen-body">
       <div class="legend-panel">
-        <div class="legend-header">
-          <span class="legend-label">Legenda</span>
-          <button class="copy-btn" id="copyBtn" onclick="copyLegend()">
-            <i class="ph ph-copy sz-16"></i>Copiar
-          </button>
-        </div>
         <div class="legend-body">
           <div class="legend-text" id="legendText"></div>
           <div class="hashtags" id="hashtagsContainer"></div>
         </div>
+      </div>
+      <div class="gen-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeLegendDialog()">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="copyBtn" onclick="copyLegend()">Copiar</button>
       </div>
     </div>
   </div>
@@ -14214,23 +15394,11 @@ function setGenStatus(msg, type) {
       <div class="gen-group">
         <label id="genThemeLabel">Tema / Contexto do Post</label>
         <textarea id="genTheme" rows="3" placeholder="Ex: colheita de soja com variação por talhão, foco em decisão baseada em dado..."></textarea>
-        <small id="genThemeHelp">Descreva o tema, dor ou contexto que deve virar post.</small>
-      </div>
-
-      <div class="gen-group" id="genNewsGroup" style="display:none">
-        <label>Radar de Pautas</label>
-        <div class="news-tools">
-          <select id="genNewsRange">
-            <option value="1">Últimas 24h</option>
-            <option value="7" selected>Últimos 7 dias</option>
-            <option value="30">Últimos 30 dias</option>
-          </select>
-          <button class="news-search-btn" id="genNewsSearchBtn" type="button" onclick="handleNewsSearch()">
-            <i class="ph ph-radar sz-16"></i>Buscar tendências
-          </button>
-        </div>
-        <div class="news-cards" id="genNewsCards">
-          <div class="news-empty">Digite um tema ou busque tendências recentes do agro para transformar em conteúdo estratégico.</div>
+        <div class="gen-chips" id="genChips">
+          <button type="button" class="gen-chip" data-chip="no-people">Sem Personagens</button>
+          <button type="button" class="gen-chip" data-chip="no-machines">Sem Máquinas</button>
+          <button type="button" class="gen-chip" data-chip="close-up">Plano Fechado</button>
+          <button type="button" class="gen-chip" data-chip="institutional">Cena Institucional</button>
         </div>
       </div>
 
@@ -14277,13 +15445,14 @@ function setGenStatus(msg, type) {
           <option value="3">3 slides</option>
           <option value="4" selected>4 slides</option>
           <option value="5">5 slides</option>
+          <option value="7">7 slides</option>
         </select>
       </div>
 
       <div class="gen-status" id="genStatus"></div>
       <div class="gen-actions">
         <button class="btn btn-ghost" onclick="closeGenerator()">Cancelar</button>
-        <button class="btn btn-primary" id="genBtn" onclick="handleGenerate()"><i class="ph ph-pen sz-18"></i>Gerar Post</button>
+        <button class="btn btn-primary" id="genBtn" onclick="handleGenerate()">Gerar Post</button>
       </div>
     </div>
   </div>
@@ -14304,7 +15473,7 @@ function setGenStatus(msg, type) {
       <div class="gen-status" id="insertSlideStatus"></div>
       <div class="gen-actions">
         <button class="btn btn-ghost" onclick="closeInsertSlideModal()">Cancelar</button>
-        <button class="btn btn-primary" id="insertSlideBtn" onclick="confirmInsertSlide()"><i class="ph ph-plus sz-18"></i>Gerar Slide</button>
+        <button class="btn btn-primary" id="insertSlideBtn" onclick="confirmInsertSlide()">Gerar Slide</button>
       </div>
     </div>
   </div>
@@ -14347,16 +15516,16 @@ function setGenStatus(msg, type) {
     <div class="gen-body">
       <div class="pc-regen">
         <div class="pc-regen-row" data-regen-kind="text">
-          <button id="pcRegenText" class="pc-regen-btn" onclick="closeRegenActions()"><i class="ph ph-text-aa"></i><span class="pc-btn-label">Texto</span></button>
-          <button class="pc-regen-undo" data-undo-for="text" title="Desfazer regeração" onclick="closeRegenActions()"><i class="ph ph-arrow-counter-clockwise"></i></button>
+          <button id="pcRegenText" class="pc-regen-btn" onclick="closeRegenActions()"><i class="ph ph-text-aa"></i><span class="pc-btn-label">Texto</span><span class="pc-regen-badge" hidden>Regerada</span></button>
+          <button class="pc-regen-undo" data-undo-for="text" title="Desfazer regeração" onclick="undoLastRegen('text')"><i class="ph ph-arrow-counter-clockwise"></i></button>
         </div>
         <div class="pc-regen-row" data-regen-kind="image">
-          <button id="pcRegenImage" class="pc-regen-btn" onclick="closeRegenActions()"><i class="ph ph-image"></i><span class="pc-btn-label">Imagem</span></button>
-          <button class="pc-regen-undo" data-undo-for="image" title="Desfazer regeração" onclick="closeRegenActions()"><i class="ph ph-arrow-counter-clockwise"></i></button>
+          <button id="pcRegenImage" class="pc-regen-btn" onclick="closeRegenActions()"><i class="ph ph-image"></i><span class="pc-btn-label">Imagem</span><span class="pc-regen-badge" hidden>Regerada</span></button>
+          <button class="pc-regen-undo" data-undo-for="image" title="Desfazer regeração" onclick="undoLastRegen('image')"><i class="ph ph-arrow-counter-clockwise"></i></button>
         </div>
         <div class="pc-regen-row" data-regen-kind="legend">
-          <button id="pcRegenLegend" class="pc-regen-btn" onclick="closeRegenActions()"><i class="ph ph-chat-text"></i><span class="pc-btn-label">Legenda</span></button>
-          <button class="pc-regen-undo" data-undo-for="legend" title="Desfazer regeração" onclick="closeRegenActions()"><i class="ph ph-arrow-counter-clockwise"></i></button>
+          <button id="pcRegenLegend" class="pc-regen-btn" onclick="closeRegenActions()"><i class="ph ph-chat-text"></i><span class="pc-btn-label">Legenda</span><span class="pc-regen-badge" hidden>Regerada</span></button>
+          <button class="pc-regen-undo" data-undo-for="legend" title="Desfazer regeração" onclick="undoLastRegen('legend')"><i class="ph ph-arrow-counter-clockwise"></i></button>
         </div>
       </div>
     </div>
@@ -14374,13 +15543,26 @@ function setGenStatus(msg, type) {
       <div class="gen-group">
         <label>Direção (opcional)</label>
         <textarea id="regenDirInput" rows="4" placeholder="Ex. mais dramático, tom mais sério..." spellcheck="false"></textarea>
-        <small>Deixe vazio para regerar sem instruções adicionais.</small>
+        <div class="gen-chips" id="regenDirChips" style="display:none">
+          <button type="button" class="gen-chip" data-chip="no-people">Sem Personagens</button>
+          <button type="button" class="gen-chip" data-chip="no-machines">Sem Máquinas</button>
+          <button type="button" class="gen-chip" data-chip="close-up">Plano Fechado</button>
+          <button type="button" class="gen-chip" data-chip="institutional">Cena Institucional</button>
+        </div>
       </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;">
-        <button type="button" class="pc-undo-btn" onclick="closeRegenDir()" style="flex:0 0 auto;text-align:center;padding:8px 14px;">Cancelar</button>
-        <button type="button" id="regenDirConfirm" style="flex:0 0 auto;padding:8px 16px;border:none;border-radius:7px;background:var(--green);color:#fff;font-family:'Inter Tight',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">Regerar</button>
+      <div class="gen-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeRegenDir()">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="regenDirConfirm">Regerar</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- REGEN LOADING OVERLAY -->
+<div class="regen-loading" id="regenLoading">
+  <div class="regen-loading-box">
+    <div class="regen-loading-spinner"></div>
+    <span class="regen-loading-label" id="regenLoadingLabel">Gerando...</span>
   </div>
 </div>
 
@@ -14396,7 +15578,6 @@ function setGenStatus(msg, type) {
       <div class="gen-group">
         <label>Descrição da Marca / Voz</label>
         <textarea id="cfgDescription" rows="5" placeholder="Ex: Cropware é uma agtech que conversa com produtores e agrônomos. Linguagem direta, confiante, apoiada em dado de campo. Evita jargão vazio e clichês motivacionais."></textarea>
-        <small>Texto livre que vira diretriz de marca no prompt da IA.</small>
       </div>
 
       <div class="gen-group">
@@ -14420,7 +15601,6 @@ function setGenStatus(msg, type) {
           <option value="inspirador">Inspirador</option>
           <option value="provocativo">Provocativo</option>
         </select>
-        <small>Usado quando você não escolhe um tom específico na geração.</small>
       </div>
 
       <div class="gen-group">
@@ -14431,7 +15611,7 @@ function setGenStatus(msg, type) {
       <div class="gen-status" id="cfgStatus"></div>
       <div class="gen-actions">
         <button class="btn btn-ghost" onclick="closeConfig()">Cancelar</button>
-        <button class="btn btn-primary" id="cfgSaveBtn" onclick="saveConfig()"><i class="ph ph-check sz-18"></i>Salvar</button>
+        <button class="btn btn-primary" id="cfgSaveBtn" onclick="saveConfig()">Salvar</button>
       </div>
     </div>
   </div>
