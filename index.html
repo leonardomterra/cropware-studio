@@ -1240,7 +1240,7 @@
   .news-edit-texture {
     position: absolute;
     inset: 0;
-    background-image: url('4018201.jpg');
+    background-image: url('assets/01-texture.webp');
     background-size: cover;
     background-position: center;
     mix-blend-mode: overlay;
@@ -3536,7 +3536,43 @@
   #postControls.style-news-editorial #pcSubRevistaPhotoPct,
   #postControls.style-news-editorial #pcSubRevistaLayout,
   #postControls.style-news-editorial #pcSubRevistaPhotoPos,
-  #postControls.style-news-editorial #pcSubBlockTextMode { display: flex !important; }
+  #postControls.style-news-editorial #pcSubBlockTextMode,
+  #postControls.style-news-editorial #pcSubNewsTexture { display: flex !important; }
+  /* Textura do bloco escondida em outros estilos */
+  #postControls #pcSubNewsTexture { display: none; }
+  .pc-news-texture-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 2px;
+  }
+  .pc-news-texture-thumb {
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 140ms, transform 140ms;
+    padding: 0;
+    overflow: hidden;
+    background: transparent;
+    position: relative;
+  }
+  /* Inner element é maior que o thumb (margin negativa) — esconde bordas/fade do arquivo de textura.
+     Sempre em grayscale; só a borda do thumb indica seleção. */
+  .pc-news-texture-thumb-inner {
+    position: absolute;
+    inset: -8%;
+    background-size: cover;
+    background-position: center;
+    pointer-events: none;
+    filter: grayscale(1);
+  }
+  .pc-news-texture-thumb:hover { transform: scale(1.04); }
+  .pc-news-texture-thumb.active { border-color: #94a3b8; }
+  .pc-news-texture-grid::-webkit-scrollbar { width: 4px; }
+  .pc-news-texture-grid::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
 
   /* Split libera bloco + proporção/layout/sombra + cor do texto */
   #postControls.style-split #pcSubSplitBlockColor,
@@ -6593,6 +6629,10 @@
           <label class="pc-upload-btn" for="pcBgUpload" title="Usar uma foto sua como fundo">Usar Minha Foto</label>
           <input type="file" id="pcBgUpload" accept="image/*" style="display:none">
         </div>
+        <div class="pc-sub" id="pcSubNewsTexture">
+          <div class="pc-label">Textura do Bloco</div>
+          <div class="pc-news-texture-grid" id="pcNewsTextureGrid"></div>
+        </div>
       </div>
     </div>
 
@@ -8163,6 +8203,7 @@ function renderGeneratedPost(postData, legendText) {
     if (!postData.revistaLayout)          postData.revistaLayout       = 'top';
     if (postData.revistaShadow == null)   postData.revistaShadow       = false;
     if (!postData.revistaTextMode)        postData.revistaTextMode     = 'light';
+    if (!postData.newsTexture)            postData.newsTexture         = 'assets/04-texture.webp';
     if (!postData._newsDefaultsApplied) {
       postData.logoPos     = 'tr';
       postData.sitePos     = 'br';
@@ -8802,11 +8843,14 @@ function renderNewsEditorialStyle(postData) {
   const photoHighlightHtml = (isCarouselSlide && role === 'fact' && (postData.factHighlight || ''))
     ? `<div class="news-edit-photo-highlight" contenteditable="true" spellcheck="false">${escapeHTML(postData.factHighlight)}</div>`
     : '';
+  // Textura customizada do slide (preset path ou data URL); fallback no CSS default.
+  const textureUrl = postData.newsTexture && /^(https?:|data:|assets\/)/.test(postData.newsTexture) ? postData.newsTexture : '';
+  const textureStyle = textureUrl ? ` style="background-image:url('${textureUrl}')"` : '';
   return `
     <div class="news-edit-photo" style="background-image:url('${imgSrc}');background-position:${bgPos};">${isCarouselSlide ? photoHeaderHtml : ''}${photoHighlightHtml}</div>
     <div class="post-accent-bar"></div>
     <div class="news-edit-block text-${textMode}" data-role="${role}" data-news-context="${newsContext}" style="background:${blockBg};">
-      <div class="news-edit-texture"></div>
+      <div class="news-edit-texture"${textureStyle}></div>
       ${isCarouselSlide ? '' : blockHeaderHtml}
       <div class="news-edit-divider"></div>
       ${blockBody}
@@ -9474,6 +9518,11 @@ function updatePostControls(idx) {
   setSubVisible('pcSubRevistaLayout',      revistaLikeStyle);
   setSubVisible('pcSubRevistaPhotoPos',    revistaLikeStyle);
   setSubVisible('pcSubRevistaShadow',      currentStyle === 'revista');
+  setSubVisible('pcSubNewsTexture',        currentStyle === 'news-editorial');
+  // Sincroniza grid de textura ativa com o slide atual
+  if (currentStyle === 'news-editorial') {
+    syncNewsTextureGrid(post);
+  }
   setSubVisible('pcSubSplitBlockColor',    isSplit);
   setSubVisible('pcSubSplitPair',          isSplit);
   setSubVisible('pcSubSplitPhotoPct',     isSplit);
@@ -10655,6 +10704,33 @@ function initPostControls() {
   wireScaleField('pcLogoScale', '--logo-scale', 'logoScale', 60, 140);
   wireScaleField('pcSiteScale', '--site-scale', 'siteScale', 60, 160);
   wireScaleField('pcMockupScale', '--mockup-scale', 'mockupScale', 30, 200);
+
+  // Picker de textura do bloco news-editorial: monta grid + handlers (upload + reset).
+  const textureGrid = document.getElementById('pcNewsTextureGrid');
+  if (textureGrid && textureGrid.dataset.wired !== 'true') {
+    textureGrid.dataset.wired = 'true';
+    // Monta thumbs uma vez
+    NEWS_TEXTURE_PRESETS.forEach(url => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'pc-news-texture-thumb';
+      btn.dataset.url = url;
+      btn.title = url.replace(/^assets\//, '');
+      const inner = document.createElement('span');
+      inner.className = 'pc-news-texture-thumb-inner';
+      inner.style.backgroundImage = `url('${url}')`;
+      btn.appendChild(inner);
+      textureGrid.appendChild(btn);
+    });
+    textureGrid.addEventListener('click', e => {
+      const thumb = e.target.closest('.pc-news-texture-thumb');
+      if (!thumb) return;
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.newsTexture = thumb.dataset.url;
+      _applyTextureChange(post);
+    });
+  }
   // Dashboard: Hook Scale (renomeada para "Escala do Card") sincroniza complementScale junto
   const hookScaleInputEl = document.getElementById('pcHookScale');
   if (hookScaleInputEl) {
@@ -11490,6 +11566,12 @@ function _resetPostStyleSingle(post) {
     post.sitePos     = 'br';
     post.logoEnabled = false;
   }
+  // Textura padrão por tipo: news-post → 04, carrossel/tendência → 01.
+  if (post.type === 'news-post') {
+    post.newsTexture = 'assets/04-texture.webp';
+  } else if (isNewsCarouselSlide) {
+    post.newsTexture = 'assets/01-texture.webp';
+  }
   // News carrossel — defaults específicos: proporção foto/bloco 45/55
   if (isNewsCarouselSlide) {
     post.revistaPhotoPct = 45;
@@ -11869,28 +11951,73 @@ function captureLogoDims(rootEl) {
 
 // Substitui <img src="...svg"> por um <svg> inline (com fill fixo),
 // pra que o html2canvas consiga renderizar — filtros CSS em <img> não pegam.
-// Pré-carrega a textura editorial do news-post pra ter Image pronto no onclone (sync).
-const NEWS_TEXTURE_URL = '4018201.jpg';
+// Texturas editoriais disponíveis em /assets — cada slide news pode escolher uma (postData.newsTexture).
+const NEWS_TEXTURE_PRESETS = [
+  'assets/01-texture.webp',
+  'assets/02-texture.webp',
+  'assets/03-texture.webp',
+  'assets/04-texture.webp',
+  'assets/05-texture.webp',
+  'assets/06-texture.webp',
+  'assets/07-texture.webp',
+  'assets/08-texture.webp',
+  'assets/09-texture.webp',
+  'assets/10-texture.webp',
+  'assets/11-texture.webp',
+  'assets/12-texture.webp',
+  'assets/13-texture.webp',
+  'assets/14-texture.webp',
+  'assets/15-texture.webp',
+  'assets/16-texture.webp',
+];
+const NEWS_TEXTURE_DEFAULT = 'assets/01-texture.webp';
 const NEWS_TEXTURE_OPACITY = 0.48;
-let newsTextureImg = null;
-let newsTextureLoadPromise = null;
-function preloadNewsTexture() {
-  if (newsTextureImg && newsTextureImg.complete) return Promise.resolve(newsTextureImg);
-  if (newsTextureLoadPromise) return newsTextureLoadPromise;
-  newsTextureLoadPromise = new Promise((resolve, reject) => {
+// Cache: key = URL, value = HTMLImageElement (carregado) ou Promise<HTMLImageElement>
+const newsTextureImgCache = new Map();
+// Aplica mudança de textura: re-renderiza o post e atualiza o grid + persiste.
+function _applyTextureChange(post) {
+  const postEl = document.getElementById(post.id);
+  if (postEl) applyPostVariant(postEl, post);
+  syncNewsTextureGrid(post);
+  saveSession();
+}
+// Sincroniza estado ativo do grid de texturas com o post atual.
+function syncNewsTextureGrid(post) {
+  const grid = document.getElementById('pcNewsTextureGrid');
+  if (!grid) return;
+  const active = (post && post.newsTexture) || NEWS_TEXTURE_DEFAULT;
+  grid.querySelectorAll('.pc-news-texture-thumb').forEach(thumb => {
+    thumb.classList.toggle('active', thumb.dataset.url === active);
+  });
+}
+function preloadNewsTexture(url) {
+  const targetUrl = url || NEWS_TEXTURE_DEFAULT;
+  const cached = newsTextureImgCache.get(targetUrl);
+  if (cached) {
+    if (cached instanceof HTMLImageElement && cached.complete) return Promise.resolve(cached);
+    if (cached instanceof Promise) return cached;
+  }
+  const promise = new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.onload = () => { newsTextureImg = img; resolve(img); };
+    img.onload = () => {
+      newsTextureImgCache.set(targetUrl, img);
+      resolve(img);
+    };
     img.onerror = reject;
-    img.src = NEWS_TEXTURE_URL;
+    img.src = targetUrl;
   });
-  return newsTextureLoadPromise;
+  newsTextureImgCache.set(targetUrl, promise);
+  return promise;
 }
 // Faz o pre-bake do overlay blend (cor do bloco + textura via globalCompositeOperation='overlay')
 // num data-URL e aplica no clone — html2canvas não suporta mix-blend-mode, então sem isso
 // o export fica só com a cor sólida ou só com a textura sem mistura.
-function bakeNewsTextureForCapture(cloneEl) {
-  if (!newsTextureImg) return;
+// postData é passado pra escolher a textura específica do slide (postData.newsTexture).
+function bakeNewsTextureForCapture(cloneEl, postData) {
+  const textureUrl = (postData && postData.newsTexture) || NEWS_TEXTURE_DEFAULT;
+  const img = newsTextureImgCache.get(textureUrl);
+  if (!(img instanceof HTMLImageElement) || !img.complete) return;
   const cloneBlock = cloneEl.querySelector('.news-edit-block');
   const cloneTexture = cloneEl.querySelector('.news-edit-texture');
   if (!cloneBlock || !cloneTexture) return;
@@ -11909,7 +12036,7 @@ function bakeNewsTextureForCapture(cloneEl) {
   // 2. Aplica textura com overlay blend e opacity correta
   ctx.globalAlpha = NEWS_TEXTURE_OPACITY;
   ctx.globalCompositeOperation = 'overlay';
-  ctx.drawImage(newsTextureImg, 0, 0, w, h);
+  ctx.drawImage(img, 0, 0, w, h);
   ctx.globalAlpha = 1;
   ctx.globalCompositeOperation = 'source-over';
   // 3. Aplica resultado no clone, neutralizando o blend
@@ -12204,7 +12331,8 @@ async function downloadCurrent() {
     });
 
     // Garante que a textura editorial do news-post está em memória antes do bake no onclone
-    try { await preloadNewsTexture(); } catch (_) { /* segue sem textura se falhar */ }
+    // (carrega a textura específica do slide se ele tiver newsTexture override).
+    try { await preloadNewsTexture(post.newsTexture); } catch (_) { /* segue sem textura se falhar */ }
 
     let canvas;
     try {
@@ -12236,7 +12364,7 @@ async function downloadCurrent() {
             inlineLogosForCapture(cloneEl, clonedDoc, logoDims);
             activateGlassLayers(cloneEl, blurredUrl, postW, postH);
             rasterizePhosphorIcons(cloneEl);
-            bakeNewsTextureForCapture(cloneEl);
+            bakeNewsTextureForCapture(cloneEl, post);
           }
         },
       });
@@ -12324,7 +12452,7 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
       el.style.backgroundImage = blurredUrl ? `url('${blurredUrl}')` : 'none';
     });
 
-    try { await preloadNewsTexture(); } catch (_) { /* segue sem textura se falhar */ }
+    try { await preloadNewsTexture(slideData.newsTexture); } catch (_) { /* segue sem textura se falhar */ }
 
     let canvas;
     try {
@@ -12351,7 +12479,7 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
             inlineLogosForCapture(cloneEl, clonedDoc, logoDims);
             activateGlassLayers(cloneEl, blurredUrl, postW, postH);
             rasterizePhosphorIcons(cloneEl);
-            bakeNewsTextureForCapture(cloneEl);
+            bakeNewsTextureForCapture(cloneEl, slideData);
           }
         },
       });
