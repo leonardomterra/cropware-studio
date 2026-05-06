@@ -5208,24 +5208,81 @@
     gap: 6px;
     margin-top: 4px;
   }
+  /* Lista de links de referência (news / news-carousel) */
+  .gen-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .gen-link-row {
+    position: relative;
+    display: block;
+  }
+  .gen-link-row .gen-link-input {
+    width: 100%;
+    padding-right: 38px;  /* espaço pro × overlay */
+    box-sizing: border-box;
+  }
+  .gen-link-remove {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 26px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 140ms, color 140ms;
+  }
+  .gen-link-remove:hover {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+  /* Primeiro link da lista não mostra o botão de remover */
+  .gen-links-list .gen-link-row:first-child:only-child .gen-link-remove { visibility: hidden; }
+  .gen-link-add {
+    margin-top: 2px;
+    align-self: flex-start;
+    padding: 2px 0;
+    background: transparent;
+    border: none;
+    color: #475569;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color 140ms;
+  }
+  .gen-link-add:hover {
+    color: #0f172a;
+    text-decoration: underline;
+  }
+  .gen-link-add:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    text-decoration: none;
+  }
   .gen-chip {
     font-family: 'Inter Tight', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 6px 12px;
-    border: 1px solid #e2e8f0;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 7px 12px;
+    border: none;
     border-radius: 6px;
-    background: #f8fafc;
+    background: #e2e8f0;
     color: #475569;
     cursor: pointer;
-    transition: background 140ms, border-color 140ms, color 140ms;
+    transition: background 140ms, color 140ms;
     text-align: center;
     white-space: nowrap;
   }
-  .gen-chip:hover { background: #f1f5f9; border-color: #cbd5e1; color: #0f172a; }
+  .gen-chip:hover { background: #cbd5e1; color: #0f172a; }
   .gen-chip.active {
     background: #1e293b;
-    border-color: #1e293b;
     color: #fff;
   }
   .news-tools {
@@ -5599,6 +5656,10 @@
     white-space: nowrap;
   }
 
+  /* Tablet / mobile largo: esconde email (ocupa muita largura) */
+  @media (max-width: 900px) {
+    .app-user-email { display: none; }
+  }
   @media (max-width: 560px) {
     body {
       height: auto;
@@ -5618,19 +5679,31 @@
     .app-header-left {
       gap: 10px;
       flex: 1;
+      min-width: 0;
+    }
+    .app-header-right {
+      gap: 8px;
+      flex-shrink: 0;
     }
     .app-logo {
       width: 118px;
       height: 18px;
     }
-    .app-user-email {
-      font-size: 12px;
+    /* STUDIO em versão compacta no mobile (em vez de esconder) */
+    .app-studio-label {
+      font-size: 14px;
+      letter-spacing: 0.10em;
     }
+    /* Email ocupa muito espaço — esconde no mobile */
+    .app-user-email { display: none; }
+    /* Logout: vira só ícone (mais compacto) */
     .app-logout-btn {
       padding: 7px 10px;
       font-size: 12px;
       flex-shrink: 0;
+      gap: 0;
     }
+    .app-logout-label { display: none; }
     .main-columns {
       flex-direction: column;
       overflow: visible;
@@ -5807,8 +5880,8 @@
     </div>
     <div class="app-header-right">
       <span class="app-user-email" id="userEmail"></span>
-      <button type="button" class="app-logout-btn" onclick="handleLogout()">
-        <i class="ph ph-sign-out sz-18"></i>Sair
+      <button type="button" class="app-logout-btn" onclick="handleLogout()" title="Sair">
+        <i class="ph ph-sign-out sz-18"></i><span class="app-logout-label">Sair</span>
       </button>
     </div>
   </div>
@@ -7037,6 +7110,7 @@ function buildSidebar() {
   const genLabel = isPresentation ? 'Gerar Slide' : (isCarousel ? 'Gerar Carrossel' : 'Gerar Novo');
   const genLabelText = getGenerateButtonLabel();
   const isLinkedinCarousel = activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel';
+  const isNewsCarousel = activeMode === 'tendencia-carrossel';
   let dlLabel, dlAction;
   if (isPresentation) {
     dlLabel = 'Baixar Imagem';
@@ -7044,6 +7118,10 @@ function buildSidebar() {
   } else if (isLinkedinCarousel) {
     dlLabel = 'Baixar PDF';
     dlAction = 'downloadLinkedInCarouselPDF()';
+  } else if (isNewsCarousel) {
+    // News-carousel mostra DOIS botões: PDF (LinkedIn) + ZIP (Instagram). dlAction default = ZIP.
+    dlLabel = 'Baixar Imagens (ZIP)';
+    dlAction = 'downloadCarousel()';
   } else if (isCarousel) {
     dlLabel = 'Baixar Carrossel';
     dlAction = 'downloadCarousel()';
@@ -7051,7 +7129,7 @@ function buildSidebar() {
     dlLabel = 'Baixar Post';
     dlAction = 'downloadCurrent()';
   }
-  if (!isLinkedinCarousel) dlLabel = getDownloadButtonLabel();
+  if (!isLinkedinCarousel && !isNewsCarousel) dlLabel = getDownloadButtonLabel();
   genWrap.insertAdjacentHTML('beforeend', `
     <button class="btn-actions-menu-trigger" id="actionsMenuTrigger" type="button" onclick="toggleActionsMenu(event)" aria-expanded="false" aria-controls="actionsMenu" title="Abrir ações">
       <span><i class="ph ph-dots-three-circle"></i>Ações</span>
@@ -7071,6 +7149,9 @@ function buildSidebar() {
       <button class="actions-menu-btn" id="downloadBtn" type="button" onclick="${dlAction}" style="display:none">
         <i class="ph ph-download-simple"></i>Baixar
       </button>
+      <button class="actions-menu-btn" id="downloadPdfBtn" type="button" onclick="closeActionsMenu(); downloadLinkedInCarouselPDF()" ${isNewsCarousel && items.length > 0 ? '' : 'style="display:none"'}>
+        <i class="ph ph-file-pdf"></i>Baixar PDF
+      </button>
       <div class="actions-menu-divider"></div>
       <button class="actions-menu-btn" type="button" onclick="closeActionsMenu(); openRegenActions()" ${items.length > 0 && !isPresentation ? '' : 'style="display:none"'}>
         <i class="ph ph-magic-wand"></i>Regerar
@@ -7087,10 +7168,17 @@ function buildSidebar() {
   // Restaura visibilidade do botão download (o rebuild recria com display:none)
   const dlBtn = document.getElementById('downloadBtn');
   if (dlBtn) {
-    dlBtn.innerHTML = '<i class="ph ph-download-simple"></i>Baixar';
+    const dlBtnText = isNewsCarousel ? 'Baixar imagens' : (isLinkedinCarousel ? 'Baixar PDF' : 'Baixar');
+    const dlBtnIcon = isNewsCarousel ? 'ph-file-zip' : (isLinkedinCarousel ? 'ph-file-pdf' : 'ph-download-simple');
+    dlBtn.innerHTML = `<i class="ph ${dlBtnIcon}"></i>${dlBtnText}`;
     dlBtn.title = dlLabel;
     dlBtn.setAttribute('onclick', `closeActionsMenu(); ${dlAction}`);
     dlBtn.style.display = items.length > 0 ? 'inline-flex' : 'none';
+  }
+  // Botão PDF extra (só pro carrossel notícia)
+  const dlPdfBtn = document.getElementById('downloadPdfBtn');
+  if (dlPdfBtn) {
+    dlPdfBtn.style.display = (isNewsCarousel && items.length > 0) ? 'inline-flex' : 'none';
   }
 }
 
@@ -12520,6 +12608,66 @@ function wireGenChipsOnce() {
   });
 }
 
+// Links de referência: lista dinâmica de inputs com botão "+ Adicionar link"
+const GEN_LINKS_MAX = 5;
+function _createGenLinkRow() {
+  const row = document.createElement('div');
+  row.className = 'gen-link-row';
+  row.innerHTML = `
+    <input type="url" class="gen-link-input" placeholder="https://exemplo.com/noticia" />
+    <button type="button" class="gen-link-remove" title="Remover" aria-label="Remover" tabindex="-1">×</button>
+  `;
+  return row;
+}
+function _refreshGenLinksAddBtnState() {
+  const list = document.getElementById('genLinksList');
+  const btn = document.getElementById('genLinkAddBtn');
+  if (!list || !btn) return;
+  btn.disabled = list.querySelectorAll('.gen-link-row').length >= GEN_LINKS_MAX;
+}
+function resetGenLinks() {
+  const list = document.getElementById('genLinksList');
+  if (!list) return;
+  list.innerHTML = '';
+  list.appendChild(_createGenLinkRow());
+  _refreshGenLinksAddBtnState();
+}
+function getGenLinkValues() {
+  const list = document.getElementById('genLinksList');
+  if (!list) return [];
+  return Array.from(list.querySelectorAll('.gen-link-input')).map(i => i.value.trim()).filter(Boolean);
+}
+function wireGenLinksOnce() {
+  const list = document.getElementById('genLinksList');
+  const addBtn = document.getElementById('genLinkAddBtn');
+  if (!list || !addBtn || list.dataset.wired === 'true') return;
+  list.dataset.wired = 'true';
+  // Add new row
+  addBtn.addEventListener('click', () => {
+    if (list.querySelectorAll('.gen-link-row').length >= GEN_LINKS_MAX) return;
+    const row = _createGenLinkRow();
+    list.appendChild(row);
+    _refreshGenLinksAddBtnState();
+    const input = row.querySelector('input');
+    if (input) input.focus();
+  });
+  // Remove row (delegated)
+  list.addEventListener('click', e => {
+    const removeBtn = e.target.closest('.gen-link-remove');
+    if (!removeBtn) return;
+    const row = removeBtn.closest('.gen-link-row');
+    if (!row) return;
+    // Se é o único, só limpa o input em vez de remover a linha
+    if (list.querySelectorAll('.gen-link-row').length === 1) {
+      const input = row.querySelector('input');
+      if (input) input.value = '';
+      return;
+    }
+    row.remove();
+    _refreshGenLinksAddBtnState();
+  });
+}
+
 function openGenerator() {
   if (isPresentationMode()) {
     openPresBgGenerator();
@@ -12575,6 +12723,13 @@ function openGenerator() {
   }
   const newsGroup = document.getElementById('genNewsGroup');
   if (newsGroup) newsGroup.style.display = isNews ? '' : 'none';
+  // Links de referência só pros modos news (single + carrossel)
+  const linksGroup = document.getElementById('genLinksGroup');
+  if (linksGroup) linksGroup.style.display = isNews ? '' : 'none';
+  if (isNews) {
+    wireGenLinksOnce();
+    resetGenLinks();
+  }
   const adsObjectiveGroup = document.getElementById('genAdsObjectiveGroup');
   const adsAudienceGroup = document.getElementById('genAdsAudienceGroup');
   const adsCTAGroup = document.getElementById('genAdsCTAGroup');
@@ -12591,6 +12746,35 @@ function resetNewsPautas() {
   selectedNewsPauta = null;
 }
 
+// Parseia URLs do textarea de links de referência (suporta uma por linha,
+// vírgula ou espaço). Filtra só http(s) válidos, deduplica, máximo 5.
+function parseReferenceLinks(raw) {
+  if (!raw) return [];
+  const candidates = String(raw).split(/[\s,;]+/).map(s => s.trim()).filter(Boolean);
+  const valid = [];
+  const seen = new Set();
+  for (const c of candidates) {
+    let url = c;
+    if (!/^https?:\/\//i.test(url)) {
+      if (/^www\./i.test(url) || /\./.test(url)) url = 'https://' + url;
+      else continue;
+    }
+    try {
+      const u = new URL(url);
+      if (!/^https?:$/.test(u.protocol)) continue;
+      const norm = u.toString();
+      if (!seen.has(norm)) {
+        seen.add(norm);
+        valid.push(norm);
+      }
+    } catch (_) {
+      // ignora URLs inválidas
+    }
+    if (valid.length >= 5) break;
+  }
+  return valid;
+}
+
 function formatBrazilDateShort(date) {
   const d = date instanceof Date ? date : new Date();
   const opts = { timeZone: 'America/Sao_Paulo' };
@@ -12602,17 +12786,21 @@ function formatBrazilDateShort(date) {
 
 // Varre múltiplas fontes do agro brasileiro nas últimas 72h via Google Search grounding
 // e consolida em UMA pauta densa, com fatos preservados (datas, valores, nomes, percentuais).
-async function searchAndConsolidateNews(topic, factsCap) {
+async function searchAndConsolidateNews(topic, factsCap, referenceLinks) {
   const cap = Math.max(4, Math.min(16, Number(factsCap) || 8));
+  const links = Array.isArray(referenceLinks) ? referenceLinks.filter(Boolean).slice(0, 5) : [];
   const today = new Date().toLocaleDateString('pt-BR', {
     timeZone: 'America/Sao_Paulo', day: '2-digit', month: 'long', year: 'numeric',
   });
+  const linksBlock = links.length
+    ? `\n\nLINKS DE REFERÊNCIA (PRIORIZE estas fontes):\n${links.map((u, i) => `  ${i + 1}. ${u}`).join('\n')}\n- Acesse cada link via Google Search (use site:dominio quando necessário) e EXTRAIA o conteúdo principal.\n- Use os links como fontes preferenciais — se houver pauta nesses links, ela é a base da matéria.\n- Você ainda pode buscar fontes adicionais para enriquecer com dados (números, datas), mas a NARRATIVA central deve vir dos links.\n- Se o usuário NÃO informou tema explícito, INFERA o tema a partir do conteúdo dos links.\n- Inclua TODAS as URLs informadas no array "fontes" do JSON de saída.`
+    : '';
   const systemPrompt = `Você é repórter sênior da Cropware News. Sua tarefa é fazer UMA varredura jornalística agora, integrar várias fontes recentes sobre o tema pedido, e consolidar UMA notícia única, densa, factual e citável — pronta para virar matéria.
 
 REGRAS DE PESQUISA:
 - Use Google Search agora. Combine pelo menos 2 fontes distintas (portais de notícia, agências, governo, associações setoriais — preferência: Globo Rural, Canal Rural, Agrolink, Notícias Agrícolas, AgFeed, AgroLink, Reuters, Valor Econômico, AgriCensus, CONAB, USDA, MAPA, IBGE, ESALQ/CEPEA, ANEC, ABIOVE, Embrapa, Aprosoja, sindicatos rurais).
 - Janela: últimas 72 horas (hoje é ${today}). Notícias mais antigas que 3 dias devem ser descartadas — exceto se forem o pano de fundo factual indispensável de uma notícia das últimas 72h.
-- Foco temático: agronegócio brasileiro — clima, safra, mercado/preço, exportação, câmbio aplicado a commodities, política agrícola, defensivos, biológicos, fertilizantes, tecnologia agrícola, eventos do setor.
+- Foco temático: agronegócio brasileiro — clima, safra, mercado/preço, exportação, câmbio aplicado a commodities, política agrícola, defensivos, biológicos, fertilizantes, tecnologia agrícola, eventos do setor.${linksBlock}
 
 REGRAS DE PRESERVAÇÃO FACTUAL (CRÍTICO):
 - Preserve EXATAMENTE: datas (ex: "30/04/2026"), valores monetários (ex: "R$ 132,50/saca"), volumes (ex: "168 milhões de toneladas", "1,2 mi de hectares"), percentuais (ex: "+4,3% em relação a 2025"), nomes de empresas/órgãos/pessoas (ex: "Aprosoja-MT", "ministra Carla Tennenbaum"), citações entre aspas se vierem das fontes.
@@ -12642,7 +12830,13 @@ FORMATO DE SAÍDA — apenas JSON válido, sem markdown, sem comentário fora do
   "fontes":     ["url1", "url2", "url3"]
 }`;
 
-  const userPrompt = `Tema da matéria: ${topic || 'agronegócio brasileiro — pauta mais relevante das últimas 72h'}.
+  const themeLine = topic
+    ? `Tema da matéria: ${topic}.`
+    : (links.length
+        ? `Sem tema explícito do usuário — INFERA o tema a partir do conteúdo dos links de referência abaixo.`
+        : `Tema da matéria: agronegócio brasileiro — pauta mais relevante das últimas 72h.`);
+  const linksLine = links.length ? `\n\nLinks de referência prioritários:\n${links.map((u, i) => `  ${i + 1}. ${u}`).join('\n')}` : '';
+  const userPrompt = `${themeLine}${linksLine}
 
 Pesquise agora via Google Search. Integre múltiplas fontes recentes (últimas 72h). Consolide UMA notícia única densa e factual no formato JSON. Preserve datas, valores e nomes EXATAMENTE como vieram das fontes.`;
 
@@ -12678,7 +12872,12 @@ Pesquise agora via Google Search. Integre múltiplas fontes recentes (últimas 7
   catch (e) { throw new Error('Pesquisa: JSON inválido — ' + e.message); }
 
   const fatos = Array.isArray(parsed.fatos) ? parsed.fatos.map(f => (f || '').toString().trim()).filter(Boolean).slice(0, cap) : [];
-  const fontes = Array.isArray(parsed.fontes) ? parsed.fontes.map(u => (u || '').toString().trim()).filter(Boolean).slice(0, 6) : [];
+  let fontes = Array.isArray(parsed.fontes) ? parsed.fontes.map(u => (u || '').toString().trim()).filter(Boolean) : [];
+  // Garante que os links de referência informados pelo usuário entram nas fontes (mesmo se o modelo esquecer)
+  for (const link of links) {
+    if (!fontes.includes(link)) fontes.unshift(link);
+  }
+  fontes = fontes.slice(0, 6);
 
   return {
     kicker:   (parsed.kicker   || 'AGRO').toString().toUpperCase().slice(0, 24).trim(),
@@ -13646,7 +13845,7 @@ function handleGenerate() {
 }
 
 async function generatePost() {
-  const theme     = document.getElementById('genTheme').value.trim();
+  let theme       = document.getElementById('genTheme').value.trim();
   const platform  = getPlatform();
   const isAds     = platform === 'instagram-ads';
   const isNews    = platform === 'news';
@@ -13659,8 +13858,14 @@ async function generatePost() {
     audience:  ((document.getElementById('genAdsAudience') || {}).value || '').trim(),
     cta:       (document.getElementById('genAdsCTA') || {}).value || 'Saiba mais',
   } : null;
+  // Links de referência (só fazem sentido em news mode)
+  const refLinks = isNews ? parseReferenceLinks(getGenLinkValues().join('\n')) : [];
 
-  if (!theme)     { setGenStatus(isNews ? 'Descreva o tema da notícia.' : 'Descreva o tema do post.', 'error'); return; }
+  // News aceita gerar a partir só de links (sem tema). Outros modos exigem tema.
+  if (!theme && !(isNews && refLinks.length)) {
+    setGenStatus(isNews ? 'Descreva o tema ou cole pelo menos 1 link de referência.' : 'Descreva o tema do post.', 'error');
+    return;
+  }
 
   btn.disabled = true;
   btn.textContent = 'Gerando...';
@@ -13674,7 +13879,7 @@ async function generatePost() {
     if (isNews) {
       setGenStatus('<i class="ph ph-radar sz-16" style="margin-right:6px"></i>Passo 1/3 — Varrendo notícias do agro nas últimas 72h...', '');
       try {
-        newsContextForGen = await searchAndConsolidateNews(theme);
+        newsContextForGen = await searchAndConsolidateNews(theme, undefined, refLinks);
       } catch (searchErr) {
         console.error('searchAndConsolidateNews failed:', searchErr);
         setGenStatus('Erro na pesquisa: ' + (searchErr.message || searchErr), 'error');
@@ -13689,6 +13894,10 @@ async function generatePost() {
         return;
       }
       selectedNewsPauta = newsContextForGen;
+      // Se o usuário só passou links, deriva o tema da manchete consolidada pra alimentar o resto do fluxo.
+      if (!theme && newsContextForGen && newsContextForGen.manchete) {
+        theme = newsContextForGen.manchete;
+      }
       setGenStatus('<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 2/3 — Gemini escrevendo manchete editorial...', '');
     }
 
@@ -14417,7 +14626,7 @@ REGRAS DE IMAGEM (CRÍTICO — aplicar em TODOS os slides):
 
 LEGENDA E HASHTAGS (compartilhadas, exibidas fora dos slides):
 - legend: 100 a 160 palavras. Estrutura: lide → 2-3 fatos chave → ângulo Cropware (mesma regra condicional do closing) → fecho.
-- hashtags: 4 a 5 hashtags. Inclua 1-2 genéricas (#noticias, #atualidades, #agronews, #tendencias) + 2-3 temáticas. NÃO inclua #cropwarenews nem #cropware.
+- hashtags: 4 a 5 hashtags em MINÚSCULAS, sem capitalização criativa (use #soja, NÃO #SoJa ou #Soja). Inclua 1-2 genéricas (#noticias, #atualidades, #agronews, #tendencias) + 2-3 temáticas. NÃO inclua #cropwarenews nem #cropware.
 
 ${toneBlock}
 ${buildDesignContext('instagram')}
@@ -14937,7 +15146,7 @@ async function generateCarousel() {
 
 // Carrossel editorial de tendência: pesquisa pauta densa → distribui em slides → 1 imagem por slide.
 async function generateNewsCarousel() {
-  const theme      = document.getElementById('genTheme').value.trim();
+  let theme        = document.getElementById('genTheme').value.trim();
   const cfg        = getActiveDesignConfig();
   const tone       = cfg.tone || 'casual';
   const slideCountRaw = Number(document.getElementById('genSlideCount').value) || 5;
@@ -14945,8 +15154,13 @@ async function generateNewsCarousel() {
   const slideCount = [3, 5, 7].includes(slideCountRaw) ? slideCountRaw : 5;
   const btn        = document.getElementById('genBtn');
   const needImage  = !genImageBase64;
+  // Links de referência opcionais (cada um num campo próprio)
+  const refLinks = parseReferenceLinks(getGenLinkValues().join('\n'));
 
-  if (!theme) { setGenStatus('Descreva o tema da tendência.', 'error'); return; }
+  if (!theme && !refLinks.length) {
+    setGenStatus('Descreva o tema da tendência ou cole pelo menos 1 link de referência.', 'error');
+    return;
+  }
 
   btn.disabled = true;
   btn.textContent = 'Gerando...';
@@ -14957,7 +15171,7 @@ async function generateNewsCarousel() {
     setGenStatus(`<i class="ph ph-radar sz-18" style="margin-right:6px"></i>Passo 1/${totalSteps} — Varrendo notícias do agro nas últimas 72h...`, '');
     let pauta;
     try {
-      pauta = await searchAndConsolidateNews(theme, 12);
+      pauta = await searchAndConsolidateNews(theme, 12, refLinks);
     } catch (searchErr) {
       console.error('searchAndConsolidateNews failed:', searchErr);
       setGenStatus('Erro na pesquisa: ' + (searchErr.message || searchErr), 'error');
@@ -14971,6 +15185,8 @@ async function generateNewsCarousel() {
       btn.textContent = 'Gerar';
       return;
     }
+    // Se o usuário só passou links, usa a manchete consolidada como tema do prompt seguinte.
+    if (!theme && pauta.manchete) theme = pauta.manchete;
 
     // Passo 2: Estruturar narrativa (story arc)
     setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 2/${totalSteps} — Estruturando narrativa em ${slideCount} slides...`, '');
@@ -15081,7 +15297,9 @@ async function generateNewsCarousel() {
       slideCount:  slideCount,
     };
 
-    const legendText = (parsed.legend || '') + (parsed.hashtags ? '\n\n' + parsed.hashtags : '');
+    // Hashtags do carrossel notícia em minúsculo (#NoTicia → #noticia)
+    const hashtagsLower = (parsed.hashtags || '').toLowerCase();
+    const legendText = (parsed.legend || '') + (hashtagsLower ? '\n\n' + hashtagsLower : '');
     const newIdx = renderGeneratedCarousel(carouselData, legendText);
     saveSession();
 
@@ -15400,6 +15618,17 @@ function setGenStatus(msg, type) {
           <button type="button" class="gen-chip" data-chip="close-up">Plano Fechado</button>
           <button type="button" class="gen-chip" data-chip="institutional">Cena Institucional</button>
         </div>
+      </div>
+
+      <div class="gen-group" id="genLinksGroup" style="display:none">
+        <label>Links de referência <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;">(opcional)</span></label>
+        <div class="gen-links-list" id="genLinksList">
+          <div class="gen-link-row">
+            <input type="url" class="gen-link-input" placeholder="https://exemplo.com/noticia" />
+            <button type="button" class="gen-link-remove" title="Remover" aria-label="Remover" tabindex="-1">×</button>
+          </div>
+        </div>
+        <button type="button" class="gen-link-add" id="genLinkAddBtn">+ Adicionar URL</button>
       </div>
 
       <div class="gen-group">
