@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Alumni+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Familjen+Grotesk:wght@400..700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.11/dist/html2canvas-pro.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -2235,8 +2235,6 @@
     border-radius: 22px;
     border: 1px solid rgba(255,255,255,0.18);
     background: var(--signal-card-tint, rgba(255,255,255,0.06));
-    backdrop-filter: blur(var(--signal-card-blur, 24px)) saturate(180%);
-    -webkit-backdrop-filter: blur(var(--signal-card-blur, 24px)) saturate(180%);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -2248,6 +2246,28 @@
       0 2px 8px rgba(0,0,0,0.12);
   }
   .signal-card > * { position: relative; z-index: 3; }
+  /* Liquid Glass: 13 camadas com blur decrescente (borda → centro) criam refração tipo vidro real. */
+  .signal-card .lg-layer {
+    position: absolute !important;
+    background: rgba(255,255,255,0.01);
+    filter: blur(0.5px);
+    pointer-events: none;
+    z-index: 2 !important;
+  }
+  /* Cada camada multiplica o blur base (--signal-card-blur, default 60px) pelo seu fator. */
+  .signal-card .lg-1  { inset: 0px;  border-radius: 22px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.667));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.667)); }
+  .signal-card .lg-2  { inset: 1px;  border-radius: 21px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.467));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.467)); }
+  .signal-card .lg-3  { inset: 2px;  border-radius: 20px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.333));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.333)); }
+  .signal-card .lg-4  { inset: 3px;  border-radius: 19px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.250));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.250)); }
+  .signal-card .lg-5  { inset: 4px;  border-radius: 18px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.183));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.183)); }
+  .signal-card .lg-6  { inset: 5px;  border-radius: 17px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.150));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.150)); }
+  .signal-card .lg-7  { inset: 6px;  border-radius: 16px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.108));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.108)); }
+  .signal-card .lg-8  { inset: 7px;  border-radius: 15px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.083));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.083)); }
+  .signal-card .lg-9  { inset: 8px;  border-radius: 14px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.067));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.067)); }
+  .signal-card .lg-10 { inset: 9px;  border-radius: 13px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.050));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.050)); }
+  .signal-card .lg-11 { inset: 10px; border-radius: 12px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.042));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.042)); }
+  .signal-card .lg-12 { inset: 11px; border-radius: 11px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.033));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.033)); }
+  .signal-card .lg-13 { inset: 12px; border-radius: 10px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.025));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.025)); }
   .signal-card-blur {
     position: absolute !important;
     inset: -40px !important;
@@ -2300,11 +2320,29 @@
     color: var(--post-accent);
     flex-shrink: 0;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
   }
   .signal-card-icon .ph {
     font-size: calc(42px * var(--bullet-icon-scale, 1));
     text-shadow: 0 0 14px rgba(122,184,126,0.45);
+    position: relative;
+    z-index: 5;
   }
+  /* Liquid Glass dentro do ícone — só 5 camadas espaçadas (versão simplificada do efeito do card). */
+  .signal-card-icon .lg-1  { border-radius: 18px; }
+  .signal-card-icon .lg-4  { border-radius: 15px; }
+  .signal-card-icon .lg-7  { border-radius: 12px; }
+  .signal-card-icon .lg-10 { border-radius: 9px; }
+  .signal-card-icon .lg-13 { border-radius: 6px; }
+  .signal-card-icon .lg-2,
+  .signal-card-icon .lg-3,
+  .signal-card-icon .lg-5,
+  .signal-card-icon .lg-6,
+  .signal-card-icon .lg-8,
+  .signal-card-icon .lg-9,
+  .signal-card-icon .lg-11,
+  .signal-card-icon .lg-12 { display: none; }
   .signal-card-text {
     font-family: 'Inter Tight', sans-serif;
     font-size: calc(34px * var(--bullets-scale, 1));
@@ -6189,7 +6227,7 @@
             <span class="pc-label">Blur dos Cards</span>
             <span class="pc-value-pill" id="pcSignalCardBlurValue">24px</span>
           </div>
-          <input type="range" class="pc-range" id="pcSignalCardBlur" min="0" max="60" step="2" value="24" data-value-label="pcSignalCardBlurValue" data-value-unit="px">
+          <input type="range" class="pc-range" id="pcSignalCardBlur" min="0" max="60" step="2" value="4" data-value-label="pcSignalCardBlurValue" data-value-unit="px">
         </div>
         <div class="pc-sub" id="pcSubSignalIconColor">
           <div class="pc-label">Tonalização dos Ícones</div>
@@ -8205,10 +8243,11 @@ function isAnyNewsKind(post) {
   return isNewsPostType(post) || isNewsCarouselSlideType(post);
 }
 
-const SIGNAL_ICON_DEFAULT = '#2B452D';
-const SIGNAL_ICON_OPACITY_DEFAULT = 70;
-const SIGNAL_CARD_DEFAULT = '#2B452D';
-const SIGNAL_CARD_OPACITY_DEFAULT = 50;
+const SIGNAL_ICON_DEFAULT = '#CBD2CB';
+const SIGNAL_ICON_OPACITY_DEFAULT = 20;
+const SIGNAL_CARD_DEFAULT = '#5E9061';
+const SIGNAL_CARD_OPACITY_DEFAULT = 0;
+const SIGNAL_CARD_BLUR_DEFAULT = 4;
 
 function ensureSignalVisualDefaults(postData) {
   if (!postData || normalizePostStyle(postData.style) !== 'signal') return;
@@ -8269,7 +8308,7 @@ function renderGeneratedPost(postData, legendText) {
   if (postData.dashCardOpacity == null) postData.dashCardOpacity = 65;
   if (!postData.signalCardColor) postData.signalCardColor = SIGNAL_CARD_DEFAULT;
   if (postData.signalCardOpacity == null) postData.signalCardOpacity = SIGNAL_CARD_OPACITY_DEFAULT;
-  if (postData.signalCardBlur  == null) postData.signalCardBlur  = 24;
+  if (postData.signalCardBlur  == null) postData.signalCardBlur  = SIGNAL_CARD_BLUR_DEFAULT;
   if (postData.dashCardBlur    == null) postData.dashCardBlur    = 24;
   if (postData.glassBlur       == null) postData.glassBlur       = 24;
   if (postData.spotlightBlur   == null) postData.spotlightBlur   = 22;
@@ -9142,6 +9181,22 @@ function renderSignalStyle(postData) {
   const textExtraClass = isSidelight ? ' sidelight-card-text' : '';
 
   const bullets = Array.isArray(postData.bullets) ? postData.bullets.slice(0, 3) : [];
+  // Liquid Glass: 13 camadas com backdrop-filter decrescente (borda externa = mais blur, centro = menos)
+  // criando o efeito refrativo de vidro real (pattern do True Liquid Glass).
+  const liquidGlass = `
+    <div class="lg-layer lg-1"></div>
+    <div class="lg-layer lg-2"></div>
+    <div class="lg-layer lg-3"></div>
+    <div class="lg-layer lg-4"></div>
+    <div class="lg-layer lg-5"></div>
+    <div class="lg-layer lg-6"></div>
+    <div class="lg-layer lg-7"></div>
+    <div class="lg-layer lg-8"></div>
+    <div class="lg-layer lg-9"></div>
+    <div class="lg-layer lg-10"></div>
+    <div class="lg-layer lg-11"></div>
+    <div class="lg-layer lg-12"></div>
+    <div class="lg-layer lg-13"></div>`;
   const cardsHTML = (showBullets && bullets.length) ? `
     <div class="signal-cards${isSidelight ? ' sidelight-cards' : ''}">
       ${bullets.map((b, i) => `
@@ -9149,7 +9204,8 @@ function renderSignalStyle(postData) {
           <div class="signal-card-blur" style="background-image:url('${imgSrc}');"></div>
           <div class="signal-card-inner-overlay" style="${overlayBg ? 'background:' + overlayBg : ''}"></div>
           <div class="signal-card-tint" style="background:${signalCardTint};"></div>
-          ${showBulletIcons ? `<button type="button" class="signal-card-icon${iconExtraClass}" data-bullet-icon="${i}" title="Trocar ícone"><i class="ph ph-${escapeHTML(resolveIconName(b.icon))}"></i></button>` : ''}
+          ${liquidGlass}
+          ${showBulletIcons ? `<button type="button" class="signal-card-icon${iconExtraClass}" data-bullet-icon="${i}" title="Trocar ícone">${liquidGlass}<i class="ph ph-${escapeHTML(resolveIconName(b.icon))}"></i></button>` : ''}
           <span class="signal-card-text${textExtraClass}" contenteditable="true" spellcheck="false" data-bullet-text="${i}">${escapeHTML(b.text || '')}</span>
         </div>
       `).join('')}
@@ -12122,7 +12178,10 @@ function extractBlurBgSrc(postEl) {
 // O blur div é redimensionado para cobrir o post inteiro e deslocado com offsets negativos
 // para que background-size:cover alinhe pixel-a-pixel com o .bg principal.
 function activateGlassLayers(cloneEl, blurredUrl, postW, postH) {
-  cloneEl.querySelectorAll('.dash-card-blur, .moldura-glass-blur, .premium-glass-blur, .signal-card-blur').forEach(d => {
+  // Signal-card-blur e signal-card-inner-overlay são fallbacks do html2canvas antigo.
+  // Como agora usamos html2canvas-pro que renderiza backdrop-filter nativo nas lg-layers,
+  // ativar esses fallbacks duplicaria o efeito e quebraria a consistência do export.
+  cloneEl.querySelectorAll('.dash-card-blur, .moldura-glass-blur, .premium-glass-blur').forEach(d => {
     const card = d.parentElement; // .dash-card ou .moldura-glass
     const origBgImage = d.style.backgroundImage;
 
@@ -12156,7 +12215,7 @@ function activateGlassLayers(cloneEl, blurredUrl, postW, postH) {
       d.style.setProperty('filter', 'blur(28px)', 'important');
     }
   });
-  cloneEl.querySelectorAll('.dash-card-inner-overlay, .moldura-glass-inner-overlay, .premium-glass-inner-overlay, .signal-card-inner-overlay').forEach(d => {
+  cloneEl.querySelectorAll('.dash-card-inner-overlay, .moldura-glass-inner-overlay, .premium-glass-inner-overlay').forEach(d => {
     d.style.setProperty('display', 'block', 'important');
     d.style.setProperty('z-index', '1', 'important');
     // Na tela, o overlay é desfocado junto com a imagem pelo backdrop-filter,
@@ -12171,7 +12230,7 @@ function activateGlassLayers(cloneEl, blurredUrl, postW, postH) {
   cloneEl.querySelectorAll('.dash-card, .moldura-glass, .spotlight-panel, .signal-card').forEach(glass => {
     Array.from(glass.children).forEach(child => {
       const cls = child.className || '';
-      if (cls.includes('-blur') || cls.includes('-inner-overlay') || cls.includes('-tint')) return;
+      if (cls.includes('-blur') || cls.includes('-inner-overlay') || cls.includes('-tint') || cls.includes('lg-layer')) return;
       child.style.setProperty('z-index', '5', 'important');
     });
   });
@@ -12213,9 +12272,8 @@ const NEWS_TEXTURE_DEFAULT = 'assets/01-texture.webp';
 const NEWS_TEXTURE_OPACITY = 0.48;
 // Cache: key = URL, value = HTMLImageElement (carregado) ou Promise<HTMLImageElement>
 const newsTextureImgCache = new Map();
-// Texturas pra foto do Highlights (signal/sidelight) — reaproveita os 16 webps do news-editorial.
-// CSS aplica grayscale via filter; lá no news-editorial elas mantêm cor original.
-// Toggle "Ativar" controla se a textura é renderizada (sem precisar de slot 'none' no grid).
+// Texturas pra foto do Highlights (signal/sidelight) — reusa os 16 webps do news-editorial.
+// CSS aplica grayscale via filter; html2canvas-pro renderiza mix-blend-mode + grayscale natively.
 const SIGNAL_CARD_TEXTURES = [
   'assets/01-texture.webp', 'assets/02-texture.webp', 'assets/03-texture.webp', 'assets/04-texture.webp',
   'assets/05-texture.webp', 'assets/06-texture.webp', 'assets/07-texture.webp', 'assets/08-texture.webp',
@@ -12338,6 +12396,156 @@ function syncSignalTextureControls(post) {
     blendSelect.value = (post && post.signalPhotoTextureBlendMode) || 'overlay';
   }
 }
+// Cache + preload pra textura do signal/sidelight (mesmo padrão do news-editorial).
+const signalPhotoTextureImgCache = new Map();
+function preloadSignalPhotoTexture(url) {
+  if (!url) return Promise.resolve(null);
+  const cached = signalPhotoTextureImgCache.get(url);
+  if (cached) {
+    if (cached instanceof HTMLImageElement && cached.complete) return Promise.resolve(cached);
+    if (cached instanceof Promise) return cached;
+  }
+  const promise = new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => { signalPhotoTextureImgCache.set(url, img); resolve(img); };
+    img.onerror = reject;
+    img.src = url;
+  });
+  signalPhotoTextureImgCache.set(url, promise);
+  return promise;
+}
+// Mesma ideia pra foto de fundo (bgImage) — necessária pra compor com a textura no canvas.
+// Usa blob URL pra evitar problemas de CORS quando bgImage vem do R2.
+const signalPhotoBgImgCache = new Map();
+async function preloadSignalPhotoBg(url) {
+  if (!url) return null;
+  const cached = signalPhotoBgImgCache.get(url);
+  if (cached) {
+    if (cached instanceof HTMLImageElement && cached.complete) return cached;
+    if (cached instanceof Promise) return cached;
+  }
+  const promise = (async () => {
+    const blobUrl = await toBlobUrl(url);
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => { signalPhotoBgImgCache.set(url, img); resolve(img); };
+      img.onerror = reject;
+      img.src = blobUrl;
+    });
+  })();
+  signalPhotoBgImgCache.set(url, promise);
+  return promise;
+}
+// Desenha img cobrindo a área (background-size: cover) centrado.
+function _drawCover(ctx, img, x, y, w, h) {
+  const ir = img.naturalWidth / img.naturalHeight;
+  const cr = w / h;
+  let dw, dh, dx, dy;
+  if (ir > cr) { dh = h; dw = h * ir; dx = x - (dw - w) / 2; dy = y; }
+  else         { dw = w; dh = w / ir; dx = x; dy = y - (dh - h) / 2; }
+  ctx.drawImage(img, dx, dy, dw, dh);
+}
+// Pinta o post-overlay (mesmas regras de buildOverlayBackground) num canvas existente.
+// Usado pra incluir o overlay na base do blur dos cards (que no browser pega via backdrop-filter).
+function _paintPostOverlay(ctx, w, h, postData) {
+  const color = postData.overlayColor || '#000000';
+  const opRaw = postData.overlayOpacity == null ? 55 : postData.overlayOpacity;
+  const a = Math.max(0, Math.min(100, Number(opRaw) || 0)) / 100;
+  if (a === 0) return;
+  const dir = postData.overlayDirection || 'top';
+  const hex = (color || '#000000').replace('#', '');
+  const r = parseInt(hex.substring(0, 2), 16) || 0;
+  const g = parseInt(hex.substring(2, 4), 16) || 0;
+  const b = parseInt(hex.substring(4, 6), 16) || 0;
+  const rgba = (al) => `rgba(${r},${g},${b},${al})`;
+  if (dir === 'full') {
+    ctx.fillStyle = rgba(a);
+    ctx.fillRect(0, 0, w, h);
+  } else if (dir === 'top') {
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, rgba(a));
+    grad.addColorStop(0.22, rgba(a * 0.55));
+    grad.addColorStop(0.58, rgba(0));
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+  } else if (dir === 'bottom') {
+    const grad = ctx.createLinearGradient(0, h, 0, 0);
+    grad.addColorStop(0, rgba(a));
+    grad.addColorStop(0.22, rgba(a * 0.55));
+    grad.addColorStop(0.58, rgba(0));
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+  } else if (dir === 'radial') {
+    const edgeA = Math.min(1, a * 1.3);
+    const midA = edgeA * 0.35;
+    const cx = w / 2, cy = h / 2;
+    const rOuter = Math.max(w, h) * 0.92 * 0.5;
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, rOuter);
+    grad.addColorStop(0, rgba(0));
+    grad.addColorStop(0.38, rgba(0));
+    grad.addColorStop(0.60, rgba(midA));
+    grad.addColorStop(0.92, rgba(edgeA));
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+  }
+}
+// Compõe foto + textura grayscale (com invert/opacity/blend) num canvas, retorna data URL.
+// Reusado pelo bake do html2canvas (vai no .bg) e pra base do blur dos cards (signal-card-blur).
+// Se includeOverlay=true, pinta também o post-overlay em cima (matches backdrop-filter do browser).
+function composeSignalPhotoTexture(postData, w, h, includeOverlay = false) {
+  if (!postData.signalPhotoTexture || !postData.bgImage) return null;
+  const textureImg = signalPhotoTextureImgCache.get(postData.signalPhotoTexture);
+  const photoImg = signalPhotoBgImgCache.get(postData.bgImage);
+  if (!(textureImg instanceof HTMLImageElement) || !textureImg.complete) return null;
+  if (!(photoImg instanceof HTMLImageElement) || !photoImg.complete) return null;
+  const baseOpacity = postData.signalPhotoTextureIntensity != null ? postData.signalPhotoTextureIntensity / 100 : 0.55;
+  // Canvas overlay opera em sRGB; CSS mix-blend-mode em linear-light. O resultado em canvas
+  // fica perceptualmente mais discreto — bump de 15% compensa essa diferença visual.
+  const opacity = Math.min(1, baseOpacity * 1.15);
+  const blendMode = postData.signalPhotoTextureBlendMode || 'overlay';
+  const invert = !!postData.signalPhotoTextureInvert;
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  _drawCover(ctx, photoImg, 0, 0, w, h);
+  // Canvas auxiliar pra textura grayscale (+ invert opcional)
+  const tCanvas = document.createElement('canvas');
+  tCanvas.width = w; tCanvas.height = h;
+  const tctx = tCanvas.getContext('2d');
+  _drawCover(tctx, textureImg, 0, 0, w, h);
+  const imgData = tctx.getImageData(0, 0, w, h);
+  const d = imgData.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const gray = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
+    const v = invert ? (255 - gray) : gray;
+    d[i] = v; d[i+1] = v; d[i+2] = v;
+  }
+  tctx.putImageData(imgData, 0, 0);
+  ctx.globalAlpha = opacity;
+  ctx.globalCompositeOperation = blendMode;
+  ctx.drawImage(tCanvas, 0, 0);
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = 'source-over';
+  if (includeOverlay) _paintPostOverlay(ctx, w, h, postData);
+  // PNG (lossless) preserva detalhe fino da textura — JPEG suaviza grain demais.
+  return canvas.toDataURL('image/png');
+}
+// Bake completo: compõe foto + textura grayscale (com blend/opacity) no .bg, esconde a div da textura.
+// Necessário pra que o backdrop-filter dos bullets sample a textura também (não só a foto).
+function bakeSignalPhotoTextureForCapture(cloneEl, postData) {
+  if (!postData.signalPhotoTexture) return;
+  const cloneTexture = cloneEl.querySelector('.signal-photo-texture');
+  const cloneBg = cloneEl.querySelector('.bg');
+  if (!cloneTexture || !cloneBg) return;
+  const w = Math.max(1, Math.round(cloneBg.offsetWidth));
+  const h = Math.max(1, Math.round(cloneBg.offsetHeight));
+  const dataUrl = composeSignalPhotoTexture(postData, w * 2, h * 2);
+  if (!dataUrl) return;
+  cloneBg.style.backgroundImage = `url(${dataUrl})`;
+  cloneTexture.style.display = 'none';
+}
+
 function preloadNewsTexture(url) {
   const targetUrl = url || NEWS_TEXTURE_DEFAULT;
   const cached = newsTextureImgCache.get(targetUrl);
@@ -12650,36 +12858,47 @@ async function downloadCurrent() {
 
     const logoDims = captureLogoDims(postEl);
 
+    // Preload pra signal/sidelight ANTES do blur — assim o card-blur usa a foto JÁ com textura.
+    if (post.signalPhotoTexture && post.bgImage) {
+      try {
+        await Promise.all([
+          preloadSignalPhotoTexture(post.signalPhotoTexture),
+          preloadSignalPhotoBg(post.bgImage),
+        ]);
+      } catch (_) { /* segue sem bake se falhar */ }
+    }
+
     const blurSrc = extractBlurBgSrc(postEl);
     let blurredUrl = null;
     if (blurSrc) {
-      // Converte para blob URL antes de desfocar (evita CORS com R2 URLs)
-      const blurBlobUrl = await toBlobUrl(blurSrc);
       const blurPx = (post.style === 'signal' || post.style === 'sidelight') ? (post.signalCardBlur == null ? 24 : post.signalCardBlur) :
                      post.style === 'dashboard' ? (post.dashCardBlur   == null ? 24 : post.dashCardBlur)   :
                      post.style === 'moldura'   ? (post.glassBlur      == null ? 24 : post.glassBlur)      :
                      post.style === 'spotlight' ? (post.spotlightBlur  == null ? 22 : post.spotlightBlur)  : 24;
-      blurredUrl = await preBlurImage(blurBlobUrl, blurPx);
-      URL.revokeObjectURL(blurBlobUrl);
+      // Se tem signalPhotoTexture, usa foto+textura composta como base do blur.
+      // Senão, usa a foto crua (blob URL same-origin pra evitar CORS com R2).
+      let blurInputSrc;
+      if (post.signalPhotoTexture && post.bgImage) {
+        const composed = composeSignalPhotoTexture(post, 1080, 1080);
+        blurInputSrc = composed || blurSrc;
+      } else {
+        blurInputSrc = await toBlobUrl(blurSrc);
+      }
+      blurredUrl = await preBlurImage(blurInputSrc, blurPx);
+      if (blurInputSrc.startsWith('blob:')) URL.revokeObjectURL(blurInputSrc);
     }
 
     // Mobile: scale 2 em vez de 4 (limite de ~16M pixels em browsers mobile)
     const exportScale = isMobile() ? 2 : 4;
 
-    // Converte bgImage para blob URL same-origin no DOM real ANTES do html2canvas clonar.
-    // Blob URLs evitam os bugs do html2canvas com data URIs grandes e CORS cross-origin.
     const bgSwap = await swapBgsToBlobUrl(postEl, post.bgImage);
 
-    // Pré-configura blur divs no DOM real com a imagem pré-desfocada (same-origin data URL)
-    // para que html2canvas pré-carregue corretamente ao clonar.
     const blurSaved = [];
     postEl.querySelectorAll('.dash-card-blur, .moldura-glass-blur, .premium-glass-blur, .signal-card-blur').forEach(el => {
       blurSaved.push({ el, orig: el.style.backgroundImage });
       el.style.backgroundImage = blurredUrl ? `url('${blurredUrl}')` : 'none';
     });
 
-    // Garante que a textura editorial do news-post está em memória antes do bake no onclone
-    // (carrega a textura específica do slide se ele tiver newsTexture override).
     try { await preloadNewsTexture(post.newsTexture); } catch (_) { /* segue sem textura se falhar */ }
 
     let canvas;
@@ -12713,6 +12932,7 @@ async function downloadCurrent() {
             activateGlassLayers(cloneEl, blurredUrl, postW, postH);
             rasterizePhosphorIcons(cloneEl);
             bakeNewsTextureForCapture(cloneEl, post);
+            bakeSignalPhotoTextureForCapture(cloneEl, post);
           }
         },
       });
@@ -12777,23 +12997,36 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
 
     const logoDims = captureLogoDims(postEl);
 
-    // Pré-desfoca a imagem de fundo para o export
+    // Preload pra signal/sidelight ANTES do blur — assim o card-blur usa a foto JÁ com textura.
+    if (slideData.signalPhotoTexture && slideData.bgImage) {
+      try {
+        await Promise.all([
+          preloadSignalPhotoTexture(slideData.signalPhotoTexture),
+          preloadSignalPhotoBg(slideData.bgImage),
+        ]);
+      } catch (_) { /* segue sem bake se falhar */ }
+    }
+
     const blurSrc = extractBlurBgSrc(postEl);
     let blurredUrl = null;
     if (blurSrc) {
-      const blurBlobUrl = await toBlobUrl(blurSrc);
       const blurPx = (slideData.style === 'signal' || slideData.style === 'sidelight') ? (slideData.signalCardBlur == null ? 24 : slideData.signalCardBlur) :
                      slideData.style === 'dashboard' ? (slideData.dashCardBlur   == null ? 24 : slideData.dashCardBlur)   :
                      slideData.style === 'moldura'   ? (slideData.glassBlur      == null ? 24 : slideData.glassBlur)      :
                      slideData.style === 'spotlight' ? (slideData.spotlightBlur  == null ? 22 : slideData.spotlightBlur)  : 24;
-      blurredUrl = await preBlurImage(blurBlobUrl, blurPx);
-      URL.revokeObjectURL(blurBlobUrl);
+      let blurInputSrc;
+      if (slideData.signalPhotoTexture && slideData.bgImage) {
+        const composed = composeSignalPhotoTexture(slideData, 1080, 1080);
+        blurInputSrc = composed || blurSrc;
+      } else {
+        blurInputSrc = await toBlobUrl(blurSrc);
+      }
+      blurredUrl = await preBlurImage(blurInputSrc, blurPx);
+      if (blurInputSrc.startsWith('blob:')) URL.revokeObjectURL(blurInputSrc);
     }
 
-    // Converte bgImage para blob URL same-origin no DOM real ANTES do html2canvas clonar.
     const bgSwap = await swapBgsToBlobUrl(postEl, slideData.bgImage);
 
-    // Pré-configura blur divs no DOM real com a imagem pré-desfocada (same-origin data URL)
     const blurSaved = [];
     postEl.querySelectorAll('.dash-card-blur, .moldura-glass-blur, .premium-glass-blur, .signal-card-blur').forEach(el => {
       blurSaved.push({ el, orig: el.style.backgroundImage });
@@ -12828,6 +13061,7 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
             activateGlassLayers(cloneEl, blurredUrl, postW, postH);
             rasterizePhosphorIcons(cloneEl);
             bakeNewsTextureForCapture(cloneEl, slideData);
+            bakeSignalPhotoTextureForCapture(cloneEl, slideData);
           }
         },
       });
