@@ -1843,8 +1843,6 @@
     right: 36px;
     top: 140px;
     bottom: 120px;
-    backdrop-filter: blur(var(--glass-blur, 24px)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--glass-blur, 24px)) saturate(160%);
     border: 1px solid rgba(255,255,255,0.15);
     border-radius: 28px;
     padding: 52px 40px 48px;
@@ -1852,11 +1850,24 @@
     flex-direction: column;
     justify-content: center;
     overflow: hidden;
-    z-index: 1;
     box-shadow:
       0 8px 32px rgba(0,0,0,0.28),
       0 2px 8px rgba(0,0,0,0.12);
   }
+  /* Liquid Glass no moldura-glass — spec exato do Figma (insets 0-12px, radii 28→16). */
+  .moldura-glass .lg-1  { inset: 0px;  border-radius: 28px; backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.667));   -webkit-backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.667)); }
+  .moldura-glass .lg-2  { inset: 1px;  border-radius: 27px; backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.467));   -webkit-backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.467)); }
+  .moldura-glass .lg-3  { inset: 2px;  border-radius: 26px; backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.333));   -webkit-backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.333)); }
+  .moldura-glass .lg-4  { inset: 3px;  border-radius: 25px; backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.250));   -webkit-backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.250)); }
+  .moldura-glass .lg-5  { inset: 4px;  border-radius: 24px; backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.183));   -webkit-backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.183)); }
+  .moldura-glass .lg-6  { inset: 5px;  border-radius: 23px; backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.150));   -webkit-backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.150)); }
+  .moldura-glass .lg-7  { inset: 6px;  border-radius: 22px; backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.108));   -webkit-backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.108)); }
+  .moldura-glass .lg-8  { inset: 7px;  border-radius: 21px; backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.083));   -webkit-backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.083)); }
+  .moldura-glass .lg-9  { inset: 8px;  border-radius: 20px; backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.067));   -webkit-backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.067)); }
+  .moldura-glass .lg-10 { inset: 9px;  border-radius: 19px; backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.050));   -webkit-backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.050)); }
+  .moldura-glass .lg-11 { inset: 10px; border-radius: 18px; backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.042));   -webkit-backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.042)); }
+  .moldura-glass .lg-12 { inset: 11px; border-radius: 17px; backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.033));   -webkit-backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.033)); }
+  .moldura-glass .lg-13 { inset: 12px; border-radius: 16px; backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.025));   -webkit-backdrop-filter: blur(calc(var(--glass-blur, 60px) * 0.025)); }
   .moldura-glass[data-align="right"] {
     text-align: right;
   }
@@ -1872,7 +1883,7 @@
   .moldura-glass[data-align="right"] .moldura-bullet .post-bullet-text {
     text-align: right;
   }
-  .moldura-glass > * { position: relative; z-index: 3; }
+  .moldura-glass > * { position: relative; z-index: 5; }
   .moldura-glass-blur {
     position: absolute !important;
     inset: -40px !important;
@@ -1917,7 +1928,7 @@
     background: rgba(122,184,126,0.28);
     margin: 24px 0;
     position: relative;
-    z-index: 1;
+    z-index: 5;
   }
   .moldura-bullet-icon .ph {
     font-size: inherit;
@@ -1933,7 +1944,7 @@
     margin-bottom: 0;
     text-shadow: 0 2px 12px rgba(0,0,0,0.2);
     position: relative;
-    z-index: 1;
+    z-index: 5;
     min-height: 1.06em;
   }
   .moldura-hook em, .moldura-hook i {
@@ -1948,7 +1959,7 @@
     line-height: 1.45;
     color: rgba(255,255,255,0.85);
     position: relative;
-    z-index: 1;
+    z-index: 5;
     min-height: 1.45em;
   }
   .moldura-complement strong, .moldura-complement b { color: #ffffff; font-weight: 600; }
@@ -1958,7 +1969,7 @@
     flex-direction: column;
     gap: 18px;
     position: relative;
-    z-index: 1;
+    z-index: 5;
   }
   .moldura-bullet {
     display: flex;
@@ -2247,13 +2258,14 @@
   }
   .signal-card > * { position: relative; z-index: 3; }
   /* Liquid Glass: 13 camadas com blur decrescente (borda → centro) criam refração tipo vidro real. */
-  .signal-card .lg-layer {
+  .lg-layer {
     position: absolute !important;
     background: rgba(255,255,255,0.01);
     filter: blur(0.5px);
     pointer-events: none;
-    z-index: 2 !important;
   }
+  .signal-card .lg-layer,
+  .moldura-glass .lg-layer { z-index: 2 !important; }
   /* Cada camada multiplica o blur base (--signal-card-blur, default 60px) pelo seu fator. */
   .signal-card .lg-1  { inset: 0px;  border-radius: 22px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.667));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.667)); }
   .signal-card .lg-2  { inset: 1px;  border-radius: 21px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.467));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.467)); }
@@ -8884,7 +8896,9 @@ function buildSpotlightPanelBackground(postData) {
 function applyMolduraBlockInline(postEl, post) {
   const glass = postEl.querySelector('.moldura-glass');
   if (!glass) return;
-  glass.style.background = buildGlassBackground(post);
+  // Não setar background no .moldura-glass parent — bloqueia o backdrop-filter das lg-layers.
+  // Tint vai só na div .moldura-glass-tint que fica acima das lg-layers (z-index 3).
+  glass.style.background = '';
   const tint = glass.querySelector('.moldura-glass-tint');
   if (tint) tint.style.background = buildGlassBackground(post);
   glass.classList.toggle('text-light', (post.frameTextMode || 'light') === 'light');
@@ -9059,6 +9073,23 @@ function renderColunaStyle(postData) {
   `;
 }
 
+// Liquid Glass: 13 camadas com backdrop-filter decrescente (borda externa = mais blur, centro = menos).
+// Pattern do True Liquid Glass — reusado em signal-card, signal-card-icon e moldura-glass.
+const LIQUID_GLASS_HTML = `
+    <div class="lg-layer lg-1"></div>
+    <div class="lg-layer lg-2"></div>
+    <div class="lg-layer lg-3"></div>
+    <div class="lg-layer lg-4"></div>
+    <div class="lg-layer lg-5"></div>
+    <div class="lg-layer lg-6"></div>
+    <div class="lg-layer lg-7"></div>
+    <div class="lg-layer lg-8"></div>
+    <div class="lg-layer lg-9"></div>
+    <div class="lg-layer lg-10"></div>
+    <div class="lg-layer lg-11"></div>
+    <div class="lg-layer lg-12"></div>
+    <div class="lg-layer lg-13"></div>`;
+
 function renderMolduraStyle(postData) {
   const hookHTML       = postData.hookHTML       || '';
   const complementHTML = postData.complementHTML || '';
@@ -9099,10 +9130,11 @@ function renderMolduraStyle(postData) {
     <div class="moldura-bg" style="background-image:url('${imgSrc}');"></div>
     <div class="moldura-overlay" style="${overlayBg ? 'background:' + overlayBg : 'display:none'}"></div>
     <div class="post-accent-bar"></div>
-    <div class="moldura-glass text-${textMode}" data-align="${align}" style="background:${glassBg};">
+    <div class="moldura-glass text-${textMode}" data-align="${align}">
       <div class="moldura-glass-blur" style="background-image:url('${imgSrc}');"></div>
       <div class="moldura-glass-inner-overlay" style="${overlayBg ? 'background:' + overlayBg : ''}"></div>
       <div class="moldura-glass-tint" style="background:${glassBg};"></div>
+      ${LIQUID_GLASS_HTML}
       <div class="moldura-glass-accent"></div>
       <div class="moldura-glass-line-top"></div>
       <div class="moldura-glass-sidebar"></div>
@@ -9181,22 +9213,7 @@ function renderSignalStyle(postData) {
   const textExtraClass = isSidelight ? ' sidelight-card-text' : '';
 
   const bullets = Array.isArray(postData.bullets) ? postData.bullets.slice(0, 3) : [];
-  // Liquid Glass: 13 camadas com backdrop-filter decrescente (borda externa = mais blur, centro = menos)
-  // criando o efeito refrativo de vidro real (pattern do True Liquid Glass).
-  const liquidGlass = `
-    <div class="lg-layer lg-1"></div>
-    <div class="lg-layer lg-2"></div>
-    <div class="lg-layer lg-3"></div>
-    <div class="lg-layer lg-4"></div>
-    <div class="lg-layer lg-5"></div>
-    <div class="lg-layer lg-6"></div>
-    <div class="lg-layer lg-7"></div>
-    <div class="lg-layer lg-8"></div>
-    <div class="lg-layer lg-9"></div>
-    <div class="lg-layer lg-10"></div>
-    <div class="lg-layer lg-11"></div>
-    <div class="lg-layer lg-12"></div>
-    <div class="lg-layer lg-13"></div>`;
+  const liquidGlass = LIQUID_GLASS_HTML;
   const cardsHTML = (showBullets && bullets.length) ? `
     <div class="signal-cards${isSidelight ? ' sidelight-cards' : ''}">
       ${bullets.map((b, i) => `
@@ -12181,7 +12198,7 @@ function activateGlassLayers(cloneEl, blurredUrl, postW, postH) {
   // Signal-card-blur e signal-card-inner-overlay são fallbacks do html2canvas antigo.
   // Como agora usamos html2canvas-pro que renderiza backdrop-filter nativo nas lg-layers,
   // ativar esses fallbacks duplicaria o efeito e quebraria a consistência do export.
-  cloneEl.querySelectorAll('.dash-card-blur, .moldura-glass-blur, .premium-glass-blur').forEach(d => {
+  cloneEl.querySelectorAll('.dash-card-blur, .premium-glass-blur, .moldura-glass-blur').forEach(d => {
     const card = d.parentElement; // .dash-card ou .moldura-glass
     const origBgImage = d.style.backgroundImage;
 
@@ -12215,7 +12232,7 @@ function activateGlassLayers(cloneEl, blurredUrl, postW, postH) {
       d.style.setProperty('filter', 'blur(28px)', 'important');
     }
   });
-  cloneEl.querySelectorAll('.dash-card-inner-overlay, .moldura-glass-inner-overlay, .premium-glass-inner-overlay').forEach(d => {
+  cloneEl.querySelectorAll('.dash-card-inner-overlay, .premium-glass-inner-overlay').forEach(d => {
     d.style.setProperty('display', 'block', 'important');
     d.style.setProperty('z-index', '1', 'important');
     // Na tela, o overlay é desfocado junto com a imagem pelo backdrop-filter,
@@ -12223,7 +12240,7 @@ function activateGlassLayers(cloneEl, blurredUrl, postW, postH) {
     // parecendo mais escura. Opacidade 0.45 compensa essa diferença.
     d.style.setProperty('opacity', '0.45', 'important');
   });
-  cloneEl.querySelectorAll('.dash-card-tint, .moldura-glass-tint, .premium-glass-tint, .signal-card-tint').forEach(d => {
+  cloneEl.querySelectorAll('.dash-card-tint, .premium-glass-tint, .signal-card-tint, .moldura-glass-tint').forEach(d => {
     d.style.setProperty('display', 'block', 'important');
     d.style.setProperty('z-index', '2', 'important');
   });
