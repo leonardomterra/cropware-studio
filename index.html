@@ -3599,12 +3599,16 @@
   #postControls #pcSubSignalTextureBlend { display: none; }
   #postControls.style-signal #pcSubSignalTexture,
   #postControls.style-sidelight #pcSubSignalTexture,
+  #postControls.style-moldura #pcSubSignalTexture,
   #postControls.style-signal #pcSubSignalTextureIntensity,
   #postControls.style-sidelight #pcSubSignalTextureIntensity,
+  #postControls.style-moldura #pcSubSignalTextureIntensity,
   #postControls.style-signal #pcSubSignalTextureInvert,
   #postControls.style-sidelight #pcSubSignalTextureInvert,
+  #postControls.style-moldura #pcSubSignalTextureInvert,
   #postControls.style-signal #pcSubSignalTextureBlend,
-  #postControls.style-sidelight #pcSubSignalTextureBlend { display: flex !important; }
+  #postControls.style-sidelight #pcSubSignalTextureBlend,
+  #postControls.style-moldura #pcSubSignalTextureBlend { display: flex !important; }
 
   /* News editorial reaproveita os subs do revista (mesmos campos no postData),
      exceto a sombra na divisa — não faz sentido aqui (foto não toca o bloco). */
@@ -9106,6 +9110,29 @@ function renderColunaStyle(postData) {
   `;
 }
 
+// Helper compartilhado: monta a div da textura da foto (signal, sidelight, moldura).
+// signalPhotoTexture: '' / 'none' = sem textura; senão é o path do .webp.
+function renderPhotoTextureOverlay(postData) {
+  const rawTexture = (postData.signalPhotoTexture || '').trim();
+  const url = (rawTexture && rawTexture !== 'none') ? rawTexture : '';
+  if (!url) return '';
+  const ov = (typeof SIGNAL_CARD_TEXTURE_OVERRIDES !== 'undefined' && SIGNAL_CARD_TEXTURE_OVERRIDES[url]) || {};
+  const filters = [];
+  if (!ov.noGrayscale) filters.push('grayscale(1)');
+  if (postData.signalPhotoTextureInvert) filters.push('invert(1)');
+  const userIntensity = postData.signalPhotoTextureIntensity;
+  const opacityVal = userIntensity != null ? (userIntensity / 100) : (ov.opacity != null ? ov.opacity : null);
+  let extra = `filter:${filters.length ? filters.join(' ') : 'none'};`;
+  if (opacityVal != null) extra += `opacity:${opacityVal};`;
+  if (ov.size) extra += `background-size:${ov.size};`;
+  if (ov.repeat) extra += `background-repeat:${ov.repeat};`;
+  const userBlend = postData.signalPhotoTextureBlendMode;
+  if (userBlend) extra += `mix-blend-mode:${userBlend};`;
+  else if (ov.blendMode) extra += `mix-blend-mode:${ov.blendMode};`;
+  if (ov.scale) extra += `transform:scale(${ov.scale});`;
+  return `<div class="signal-photo-texture" style="background-image:url('${url}');${extra}"></div>`;
+}
+
 // Liquid Glass: 13 camadas com backdrop-filter decrescente (borda externa = mais blur, centro = menos).
 // Pattern do True Liquid Glass — reusado em signal-card, signal-card-icon e moldura-glass.
 const LIQUID_GLASS_HTML = `
@@ -9161,6 +9188,7 @@ function renderMolduraStyle(postData) {
 
   return `
     <div class="moldura-bg" style="background-image:url('${imgSrc}');"></div>
+    ${renderPhotoTextureOverlay(postData)}
     <div class="moldura-overlay" style="${overlayBg ? 'background:' + overlayBg : 'display:none'}"></div>
     <div class="post-accent-bar"></div>
     <div class="moldura-glass text-${textMode}" data-align="${align}">
@@ -9237,9 +9265,7 @@ function renderSignalStyle(postData) {
   const showBullets = postData.bulletsVisible !== false;
   const showBulletIcons = postData.bulletIconsVisible !== false;
   const signalCardTint = hexToRgba(postData.signalCardColor || SIGNAL_CARD_DEFAULT, (postData.signalCardOpacity == null ? SIGNAL_CARD_OPACITY_DEFAULT : postData.signalCardOpacity) / 100);
-  // Textura opcional aplicada sobre a foto (signalPhotoTexture: '' / 'none' = sem textura; senão é path)
-  const rawTexture = (postData.signalPhotoTexture || '').trim();
-  const signalPhotoTextureUrl = (rawTexture && rawTexture !== 'none') ? rawTexture : '';
+  const photoTextureHTML = renderPhotoTextureOverlay(postData);
   const isSidelight = postData.style === 'sidelight';
   const cardExtraClass = isSidelight ? ' sidelight-card' : '';
   const iconExtraClass = isSidelight ? ' sidelight-card-icon' : '';
@@ -9263,23 +9289,7 @@ function renderSignalStyle(postData) {
 
   return `
     <div class="bg" id="${postData.bg}" style="background-image:url('${imgSrc}');"></div>
-    ${signalPhotoTextureUrl ? (() => {
-      const ov = SIGNAL_CARD_TEXTURE_OVERRIDES[signalPhotoTextureUrl] || {};
-      const filters = [];
-      if (!ov.noGrayscale) filters.push('grayscale(1)');
-      if (postData.signalPhotoTextureInvert) filters.push('invert(1)');
-      const userIntensity = postData.signalPhotoTextureIntensity;
-      const opacityVal = userIntensity != null ? (userIntensity / 100) : (ov.opacity != null ? ov.opacity : null);
-      let extra = `filter:${filters.length ? filters.join(' ') : 'none'};`;
-      if (opacityVal != null) extra += `opacity:${opacityVal};`;
-      if (ov.size) extra += `background-size:${ov.size};`;
-      if (ov.repeat) extra += `background-repeat:${ov.repeat};`;
-      const userBlend = postData.signalPhotoTextureBlendMode;
-      if (userBlend) extra += `mix-blend-mode:${userBlend};`;
-      else if (ov.blendMode) extra += `mix-blend-mode:${ov.blendMode};`;
-      if (ov.scale) extra += `transform:scale(${ov.scale});`;
-      return `<div class="signal-photo-texture" style="background-image:url('${signalPhotoTextureUrl}');${extra}"></div>`;
-    })() : ''}
+    ${photoTextureHTML}
     <div class="post-overlay" style="${overlayStyle}"></div>
     <div class="post-accent-bar"></div>
     <div class="signal-panel">
@@ -12238,10 +12248,11 @@ function extractBlurBgSrc(postEl) {
 // O blur div é redimensionado para cobrir o post inteiro e deslocado com offsets negativos
 // para que background-size:cover alinhe pixel-a-pixel com o .bg principal.
 function activateGlassLayers(cloneEl, blurredUrl, postW, postH) {
-  // Signal-card-blur e signal-card-inner-overlay são fallbacks do html2canvas antigo.
-  // Como agora usamos html2canvas-pro que renderiza backdrop-filter nativo nas lg-layers,
-  // ativar esses fallbacks duplicaria o efeito e quebraria a consistência do export.
-  cloneEl.querySelectorAll('.dash-card-blur, .premium-glass-blur, .moldura-glass-blur').forEach(d => {
+  // html2canvas-pro às vezes falha em renderizar backdrop-filter das lg-layers em containers
+  // grandes (moldura ~1000x820) e também em signal-card sob certas condições. Habilitamos os
+  // fallbacks legacy (single-blur via preBlurImage) pra garantir glass visível no export.
+  // Trade-off: não é a refração de 13 camadas do preview, mas tem efeito glass consistente.
+  cloneEl.querySelectorAll('.dash-card-blur, .premium-glass-blur, .moldura-glass-blur, .signal-card-blur').forEach(d => {
     const card = d.parentElement; // .dash-card ou .moldura-glass
     const origBgImage = d.style.backgroundImage;
 
@@ -12596,7 +12607,8 @@ function composeSignalPhotoTexture(postData, w, h, includeOverlay = false) {
 function bakeSignalPhotoTextureForCapture(cloneEl, postData) {
   if (!postData.signalPhotoTexture) return;
   const cloneTexture = cloneEl.querySelector('.signal-photo-texture');
-  const cloneBg = cloneEl.querySelector('.bg');
+  // Signal/sidelight usa .bg, moldura usa .moldura-bg.
+  const cloneBg = cloneEl.querySelector('.bg, .moldura-bg');
   if (!cloneTexture || !cloneBg) return;
   const w = Math.max(1, Math.round(cloneBg.offsetWidth));
   const h = Math.max(1, Math.round(cloneBg.offsetHeight));
@@ -12933,7 +12945,7 @@ async function downloadCurrent() {
     if (blurSrc) {
       const blurPx = (post.style === 'signal' || post.style === 'sidelight') ? (post.signalCardBlur == null ? 24 : post.signalCardBlur) :
                      post.style === 'dashboard' ? (post.dashCardBlur   == null ? 24 : post.dashCardBlur)   :
-                     post.style === 'moldura'   ? Math.round((post.glassBlur == null ? 24 : post.glassBlur) * 0.5) :
+                     post.style === 'moldura'   ? Math.round((post.glassBlur == null ? 24 : post.glassBlur) * 0.9) :
                      post.style === 'spotlight' ? (post.spotlightBlur  == null ? 22 : post.spotlightBlur)  : 24;
       // Moldura usa metade do blur configurado pra match com a média perceptual das 13 lg-layers
       // (lg-1 = 0.667, lg-13 = 0.025; integral ≈ 0.18, mas fator perceptual fica em ~0.5).
@@ -12941,7 +12953,8 @@ async function downloadCurrent() {
       // Senão, usa a foto crua (blob URL same-origin pra evitar CORS com R2).
       let blurInputSrc;
       if (post.signalPhotoTexture && post.bgImage) {
-        const composed = composeSignalPhotoTexture(post, 1080, 1080);
+        // Compõe nas dimensões reais do post (não hardcodar 1080x1080) — moldura usa 1080x1350.
+        const composed = composeSignalPhotoTexture(post, postW, postH);
         blurInputSrc = composed || blurSrc;
       } else {
         blurInputSrc = await toBlobUrl(blurSrc);
@@ -13074,11 +13087,11 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
     if (blurSrc) {
       const blurPx = (slideData.style === 'signal' || slideData.style === 'sidelight') ? (slideData.signalCardBlur == null ? 24 : slideData.signalCardBlur) :
                      slideData.style === 'dashboard' ? (slideData.dashCardBlur   == null ? 24 : slideData.dashCardBlur)   :
-                     slideData.style === 'moldura'   ? Math.round((slideData.glassBlur == null ? 24 : slideData.glassBlur) * 0.5) :
+                     slideData.style === 'moldura'   ? Math.round((slideData.glassBlur == null ? 24 : slideData.glassBlur) * 0.9) :
                      slideData.style === 'spotlight' ? (slideData.spotlightBlur  == null ? 22 : slideData.spotlightBlur)  : 24;
       let blurInputSrc;
       if (slideData.signalPhotoTexture && slideData.bgImage) {
-        const composed = composeSignalPhotoTexture(slideData, 1080, 1080);
+        const composed = composeSignalPhotoTexture(slideData, postW, postH);
         blurInputSrc = composed || blurSrc;
       } else {
         blurInputSrc = await toBlobUrl(blurSrc);
