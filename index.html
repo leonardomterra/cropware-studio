@@ -840,11 +840,12 @@
     align-items: center;
     justify-content: center;
     color: var(--post-accent);
-    backdrop-filter: blur(6px);
     padding: 0;
     cursor: pointer;
     font-family: inherit;
     transition: background 140ms, border-color 140ms, transform 140ms;
+    position: relative;
+    overflow: hidden;
   }
   .post-bullet-icon:hover {
     background: rgba(255,255,255,0.18);
@@ -853,7 +854,24 @@
   }
   .post-bullet-icon .ph {
     font-size: calc(36px * var(--bullet-icon-scale, 1));
+    position: relative;
+    z-index: 5;
   }
+  /* Liquid Glass dentro do ícone — 5 camadas espaçadas, radii 13→4 pra acompanhar 13px outer. */
+  .post-bullet-icon .lg-layer { z-index: 2 !important; }
+  .post-bullet-icon .lg-1  { inset: 0px;  border-radius: 13px; backdrop-filter: blur(20px);   -webkit-backdrop-filter: blur(20px); }
+  .post-bullet-icon .lg-4  { inset: 3px;  border-radius: 11px; backdrop-filter: blur(8px);    -webkit-backdrop-filter: blur(8px); }
+  .post-bullet-icon .lg-7  { inset: 6px;  border-radius: 9px;  backdrop-filter: blur(4px);    -webkit-backdrop-filter: blur(4px); }
+  .post-bullet-icon .lg-10 { inset: 9px;  border-radius: 6px;  backdrop-filter: blur(2px);    -webkit-backdrop-filter: blur(2px); }
+  .post-bullet-icon .lg-13 { inset: 12px; border-radius: 4px;  backdrop-filter: blur(1px);    -webkit-backdrop-filter: blur(1px); }
+  .post-bullet-icon .lg-2,
+  .post-bullet-icon .lg-3,
+  .post-bullet-icon .lg-5,
+  .post-bullet-icon .lg-6,
+  .post-bullet-icon .lg-8,
+  .post-bullet-icon .lg-9,
+  .post-bullet-icon .lg-11,
+  .post-bullet-icon .lg-12 { display: none; }
   .post .post-bullet-text[contenteditable="true"]:hover {
     outline: 2px dashed rgba(255,255,255,0.28);
     outline-offset: 4px;
@@ -939,15 +957,27 @@
     bottom: 110px;
     padding: 60px 64px 58px;
     border-radius: 28px;
-    backdrop-filter: blur(var(--dash-card-blur, 24px)) saturate(160%);
-    -webkit-backdrop-filter: blur(var(--dash-card-blur, 24px)) saturate(160%);
     border: 1px solid rgba(255,255,255,0.15);
     box-shadow:
       0 8px 32px rgba(0,0,0,0.28),
       0 2px 8px rgba(0,0,0,0.12);
     overflow: hidden;
   }
-  .dash-card > * { position: relative; z-index: 3; }
+  .dash-card > * { position: relative; z-index: 5; }
+  /* Liquid Glass no .dash-card — spec do Figma (insets 0-12px, radii 28→16). */
+  .dash-card .lg-1  { inset: 0px;  border-radius: 28px; backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.667));   -webkit-backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.667)); }
+  .dash-card .lg-2  { inset: 1px;  border-radius: 27px; backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.467));   -webkit-backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.467)); }
+  .dash-card .lg-3  { inset: 2px;  border-radius: 26px; backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.333));   -webkit-backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.333)); }
+  .dash-card .lg-4  { inset: 3px;  border-radius: 25px; backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.250));   -webkit-backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.250)); }
+  .dash-card .lg-5  { inset: 4px;  border-radius: 24px; backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.183));   -webkit-backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.183)); }
+  .dash-card .lg-6  { inset: 5px;  border-radius: 23px; backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.150));   -webkit-backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.150)); }
+  .dash-card .lg-7  { inset: 6px;  border-radius: 22px; backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.108));   -webkit-backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.108)); }
+  .dash-card .lg-8  { inset: 7px;  border-radius: 21px; backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.083));   -webkit-backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.083)); }
+  .dash-card .lg-9  { inset: 8px;  border-radius: 20px; backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.067));   -webkit-backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.067)); }
+  .dash-card .lg-10 { inset: 9px;  border-radius: 19px; backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.050));   -webkit-backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.050)); }
+  .dash-card .lg-11 { inset: 10px; border-radius: 18px; backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.042));   -webkit-backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.042)); }
+  .dash-card .lg-12 { inset: 11px; border-radius: 17px; backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.033));   -webkit-backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.033)); }
+  .dash-card .lg-13 { inset: 12px; border-radius: 16px; backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.025));   -webkit-backdrop-filter: blur(calc(var(--dash-card-blur, 60px) * 0.025)); }
   .dash-card-blur {
     position: absolute !important;
     inset: -40px !important;
@@ -1017,7 +1047,7 @@
     color: #fff;
     letter-spacing: -1.4px;
     margin-bottom: 28px;
-    text-shadow: 0 2px 24px rgba(0,0,0,0.5);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.18);
     min-height: 1.08em;
   }
   .dash-hook em, .dash-hook i { font-style: normal; color: var(--post-accent); }
@@ -1047,7 +1077,7 @@
   .revista-photo {
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: var(--revista-photo-pct, 65%);
+    height: var(--revista-photo-pct, 60%);
     background-size: cover;
     background-position: center;
     overflow: hidden;
@@ -1065,7 +1095,7 @@
   .revista-block {
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    height: calc(100% - var(--revista-photo-pct, 65%) + 1px);
+    height: calc(100% - var(--revista-photo-pct, 60%) + 1px);
     background: #2B452D;
     padding: 44px 72px 80px 56px;
     display: flex;
@@ -1218,7 +1248,7 @@
   .news-edit-photo {
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: var(--revista-photo-pct, 65%);
+    height: var(--revista-photo-pct, 60%);
     background-size: cover;
     background-position: center;
     overflow: hidden;
@@ -1226,7 +1256,7 @@
   .news-edit-block {
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    height: calc(100% - var(--revista-photo-pct, 65%) + 1px);
+    height: calc(100% - var(--revista-photo-pct, 60%) + 1px);
     background: var(--revista-block-color, #6DCA73);
     padding: 56px 64px 80px 64px;
     display: flex;
@@ -2264,7 +2294,8 @@
     pointer-events: none;
   }
   .signal-card .lg-layer,
-  .moldura-glass .lg-layer { z-index: 2 !important; }
+  .moldura-glass .lg-layer,
+  .dash-card .lg-layer { z-index: 2 !important; }
   /* Cada camada multiplica o blur base (--signal-card-blur, default 60px) pelo seu fator. */
   .signal-card .lg-1  { inset: 0px;  border-radius: 22px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.667));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.667)); }
   .signal-card .lg-2  { inset: 1px;  border-radius: 21px; backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.467));   -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 60px) * 0.467)); }
@@ -3434,7 +3465,7 @@
 
   /* REVISTA — presentation: fontes ajustadas, proporção via variável */
   .post[data-format="presentation"][data-style="revista"] .revista-photo {
-    height: var(--revista-photo-pct, 55%);
+    height: var(--revista-photo-pct, 60%);
   }
   .post[data-format="presentation"][data-style="revista"] .revista-block {
     height: calc(100% - var(--revista-photo-pct, 55%));
@@ -3456,10 +3487,10 @@
   }
   .post[data-format="presentation"][data-style="revista"] .revista-block {
     box-shadow: none;
-    height: calc(100% - var(--revista-photo-pct, 55%) + 1px);
+    height: calc(100% - var(--revista-photo-pct, 60%) + 1px);
   }
   .post[data-format="presentation"][data-style="revista"][data-revista-layout="bottom"] .revista-block {
-    height: calc(100% - var(--revista-photo-pct, 55%) + 1px);
+    height: calc(100% - var(--revista-photo-pct, 60%) + 1px);
   }
   .post[data-format="presentation"][data-style="revista"][data-revista-layout="left"] .revista-photo,
   .post[data-format="presentation"][data-style="revista"][data-revista-layout="right"] .revista-photo {
@@ -3592,23 +3623,11 @@
   #postControls.style-revista #pcSubRevistaShadow,
   #postControls.style-revista #pcSubBlockTextMode { display: flex !important; }
 
-  /* Highlights / sidelight: textura opcional do card */
+  /* Textura opcional da foto — disponível em todos os modelos. */
   #postControls #pcSubSignalTexture,
   #postControls #pcSubSignalTextureIntensity,
   #postControls #pcSubSignalTextureInvert,
-  #postControls #pcSubSignalTextureBlend { display: none; }
-  #postControls.style-signal #pcSubSignalTexture,
-  #postControls.style-sidelight #pcSubSignalTexture,
-  #postControls.style-moldura #pcSubSignalTexture,
-  #postControls.style-signal #pcSubSignalTextureIntensity,
-  #postControls.style-sidelight #pcSubSignalTextureIntensity,
-  #postControls.style-moldura #pcSubSignalTextureIntensity,
-  #postControls.style-signal #pcSubSignalTextureInvert,
-  #postControls.style-sidelight #pcSubSignalTextureInvert,
-  #postControls.style-moldura #pcSubSignalTextureInvert,
-  #postControls.style-signal #pcSubSignalTextureBlend,
-  #postControls.style-sidelight #pcSubSignalTextureBlend,
-  #postControls.style-moldura #pcSubSignalTextureBlend { display: flex !important; }
+  #postControls #pcSubSignalTextureBlend { display: flex; }
 
   /* News editorial reaproveita os subs do revista (mesmos campos no postData),
      exceto a sombra na divisa — não faz sentido aqui (foto não toca o bloco). */
@@ -6253,7 +6272,7 @@
             <span class="pc-label">Blur dos Cards</span>
             <span class="pc-value-pill" id="pcSignalCardBlurValue">24px</span>
           </div>
-          <input type="range" class="pc-range" id="pcSignalCardBlur" min="0" max="60" step="2" value="4" data-value-label="pcSignalCardBlurValue" data-value-unit="px">
+          <input type="range" class="pc-range" id="pcSignalCardBlur" min="0" max="60" step="2" value="12" data-value-label="pcSignalCardBlurValue" data-value-unit="px">
         </div>
         <div class="pc-sub" id="pcSubSignalIconColor">
           <div class="pc-label">Tonalização dos Ícones</div>
@@ -6268,7 +6287,7 @@
             <span class="pc-label">Opacidade dos Ícones</span>
           <span class="pc-value-pill" id="pcSignalIconOpacityValue">70%</span>
         </div>
-          <input type="range" class="pc-range" id="pcSignalIconOpacity" min="0" max="100" step="5" value="70" data-value-label="pcSignalIconOpacityValue" data-value-unit="%">
+          <input type="range" class="pc-range" id="pcSignalIconOpacity" min="0" max="100" step="5" value="10" data-value-label="pcSignalIconOpacityValue" data-value-unit="%">
         </div>
       </div>
     </div>
@@ -6737,14 +6756,14 @@
             <span class="pc-label">Opacidade do Vidro</span>
             <span class="pc-value-pill" id="pcGlassOpacityValue">55%</span>
           </div>
-          <input type="range" class="pc-range" id="pcGlassOpacity" min="0" max="100" step="5" value="55" data-value-label="pcGlassOpacityValue" data-value-unit="%">
+          <input type="range" class="pc-range" id="pcGlassOpacity" min="0" max="100" step="5" value="15" data-value-label="pcGlassOpacityValue" data-value-unit="%">
         </div>
         <div class="pc-sub pc-offset-field" id="pcSubGlassBlur">
           <div class="pc-label-row">
             <span class="pc-label">Blur do Vidro</span>
             <span class="pc-value-pill" id="pcGlassBlurValue">24px</span>
           </div>
-          <input type="range" class="pc-range" id="pcGlassBlur" min="0" max="60" step="2" value="24" data-value-label="pcGlassBlurValue" data-value-unit="px">
+          <input type="range" class="pc-range" id="pcGlassBlur" min="0" max="60" step="2" value="22" data-value-label="pcGlassBlurValue" data-value-unit="px">
         </div>
         <div class="pc-sub" id="pcSubSpotlightPanelSize">
           <div class="pc-label">Spotlight: Painel</div>
@@ -8269,11 +8288,68 @@ function isAnyNewsKind(post) {
   return isNewsPostType(post) || isNewsCarouselSlideType(post);
 }
 
-const SIGNAL_ICON_DEFAULT = '#CBD2CB';
-const SIGNAL_ICON_OPACITY_DEFAULT = 20;
-const SIGNAL_CARD_DEFAULT = '#5E9061';
-const SIGNAL_CARD_OPACITY_DEFAULT = 0;
-const SIGNAL_CARD_BLUR_DEFAULT = 4;
+const SIGNAL_ICON_DEFAULT = '#FFFFFF';
+const SIGNAL_ICON_OPACITY_DEFAULT = 10;
+const SIGNAL_CARD_DEFAULT = 'transparent';
+const SIGNAL_CARD_OPACITY_DEFAULT = 50;
+const SIGNAL_CARD_BLUR_DEFAULT = 12;
+
+// Campos que devem ser independentes por estilo (cada modelo guarda os seus dentro de post._byStyle).
+// Tudo que tem nome com prefixo do estilo (dashCard*, frameColor, signalCard*, etc) já é naturalmente
+// isolado pelo nome — não precisa entrar nesta lista.
+const PER_STYLE_FIELDS = [
+  'accent',
+  'overlayColor', 'overlayOpacity', 'overlayDirection',
+  'layout', 'textAlign',
+  'logoEnabled', 'logoPos', 'logoScale', 'logoOffsetX', 'logoOffsetY',
+  'siteEnabled', 'siteMode', 'siteText', 'sitePos', 'siteScale', 'siteOffsetX', 'siteOffsetY', 'siteColor',
+  'brandMode',
+  'accentBarEnabled', 'accentBarPos', 'accentBarColor', 'accentBarOffsetX', 'accentBarOffsetY',
+  'stripEnabled', 'stripHeight', 'stripPos',
+  'hookScale', 'complementScale', 'bulletsScale', 'bulletIconScale', 'signalCardHeight',
+  'hookVisible', 'complementVisible', 'bulletsVisible', 'bulletIconsVisible',
+  'signalPhotoTexture', 'signalPhotoTextureIntensity', 'signalPhotoTextureInvert', 'signalPhotoTextureBlendMode',
+];
+
+// Mapeia estilo → flag de _initialized correspondente (pra resetar quando troca de modelo).
+const STYLE_INIT_FLAGS = {
+  signal: '_signalInitialized',
+  sidelight: '_signalInitialized',
+  moldura: '_molduraInitialized',
+  dashboard: '_dashboardInitialized',
+  revista: '_revistaInitialized',
+  mockup: '_mockupInitialized',
+};
+
+// Salva os campos atuais (per-style) no bucket do estilo atual do post.
+function saveCurrentStyleFields(post) {
+  if (!post || !post.style) return;
+  if (!post._byStyle) post._byStyle = {};
+  const bucket = post._byStyle[post.style] || {};
+  PER_STYLE_FIELDS.forEach(f => {
+    if (post[f] !== undefined) bucket[f] = post[f];
+  });
+  post._byStyle[post.style] = bucket;
+}
+
+// Restaura campos do bucket do estilo destino. Se não tiver bucket, limpa os campos
+// pra que os defaults do init do novo estilo sejam aplicados.
+function restoreStyleFields(post, newStyle) {
+  if (!post) return;
+  if (!post._byStyle) post._byStyle = {};
+  const bucket = post._byStyle[newStyle];
+  if (bucket) {
+    PER_STYLE_FIELDS.forEach(f => {
+      if (bucket[f] !== undefined) post[f] = bucket[f];
+      else delete post[f];
+    });
+  } else {
+    // Sem bucket — limpa fields e flag de init pra reaplicar defaults.
+    PER_STYLE_FIELDS.forEach(f => delete post[f]);
+    const flag = STYLE_INIT_FLAGS[newStyle];
+    if (flag) delete post[flag];
+  }
+}
 
 function ensureSignalVisualDefaults(postData) {
   if (!postData || normalizePostStyle(postData.style) !== 'signal') return;
@@ -8391,6 +8467,40 @@ function renderGeneratedPost(postData, legendText) {
   if (postData.bulletIconsVisible == null) postData.bulletIconsVisible = true;
   if (postData.bulletIconScale == null)    postData.bulletIconScale    = 1;
   if (postData.signalCardHeight == null)   postData.signalCardHeight   = 1;
+
+  // Highlights (signal) — accent verde claro, overlay sem cor, logo desativado, intensity 100.
+  // Aplicado uma vez via flag _signalInitialized; preserva customizações do usuário em re-render.
+  if ((postData.style === 'signal' || postData.style === 'sidelight') && !postData._signalInitialized) {
+    if (!postData.accent || postData.accent.toLowerCase() === '#7ab87e') postData.accent = '#6ac58f';
+    if (postData.overlayColor === '#000000' || !postData.overlayColor) postData.overlayColor = 'transparent';
+    if (postData.logoEnabled == null) postData.logoEnabled = false;
+    if (postData.signalPhotoTextureIntensity == null) postData.signalPhotoTextureIntensity = 100;
+    postData._signalInitialized = true;
+  }
+  // Dashboard — overlay sem cor full, card sem cor 65%/24px, posição superior.
+  if (postData.style === 'dashboard' && !postData._dashboardInitialized) {
+    if (!postData.accent || postData.accent.toLowerCase() === '#7ab87e') postData.accent = '#6ac58f';
+    if (postData.overlayColor === '#000000' || !postData.overlayColor) postData.overlayColor = 'transparent';
+    if (!postData.overlayDirection || postData.overlayDirection === 'top') postData.overlayDirection = 'full';
+    postData.dashCardColor = 'transparent';
+    if (postData.dashCardOpacity == null || postData.dashCardOpacity === 65) postData.dashCardOpacity = 65;
+    if (postData.dashCardBlur == null || postData.dashCardBlur === 24) postData.dashCardBlur = 24;
+    if (!postData.dashCardPos) postData.dashCardPos = 'top';
+    postData._dashboardInitialized = true;
+  }
+  // Especial (moldura) — accent verde claro, overlay sem cor, logo off, vidro sem cor 15%/22px,
+  // textura ativada com 55% de intensidade. Aplicado via flag _molduraInitialized.
+  if (postData.style === 'moldura' && !postData._molduraInitialized) {
+    if (!postData.accent || postData.accent.toLowerCase() === '#7ab87e') postData.accent = '#6ac58f';
+    if (postData.overlayColor === '#000000' || !postData.overlayColor) postData.overlayColor = 'transparent';
+    if (postData.logoEnabled == null) postData.logoEnabled = false;
+    postData.frameColor = 'transparent';
+    if (postData.glassOpacity == null) postData.glassOpacity = 15;
+    if (postData.glassBlur == null || postData.glassBlur === 24) postData.glassBlur = 22;
+    if (!postData.frameTextMode) postData.frameTextMode = 'light';
+    if (postData.signalPhotoTextureIntensity == null) postData.signalPhotoTextureIntensity = 55;
+    postData._molduraInitialized = true;
+  }
 
   const isInstagramAds = postData.type === 'instagram-ads-post';
   const isNews = postData.type === 'news-post';
@@ -8794,7 +8904,7 @@ function renderClassicStyle(postData) {
       <div class="post-bullets">
         ${bullets.map((b, i) => `
           <div class="post-bullet" data-bullet-idx="${i}">
-            ${showBulletIcons ? `<button type="button" class="post-bullet-icon" data-bullet-icon="${i}" title="Trocar ícone"><i class="ph ph-${escapeHTML(resolveIconName(b.icon))}"></i></button>` : ''}
+            ${showBulletIcons ? `<button type="button" class="post-bullet-icon" data-bullet-icon="${i}" title="Trocar ícone">${LIQUID_GLASS_HTML}<i class="ph ph-${escapeHTML(resolveIconName(b.icon))}"></i></button>` : ''}
             <span class="post-bullet-text" contenteditable="true" spellcheck="false" data-bullet-text="${i}">${escapeHTML(b.text || '')}</span>
           </div>
         `).join('')}
@@ -8829,6 +8939,7 @@ function renderClassicStyle(postData) {
 
   return `
     <div class="bg" id="${postData.bg}" style="background-image:url('${imgSrc}');"></div>
+    ${renderPhotoTextureOverlay(postData)}
     <div class="post-overlay" style="${overlayStyle}"></div>
     <div class="post-accent-bar"></div>
     ${contentHTML}
@@ -8851,12 +8962,14 @@ function renderDashboardStyle(postData) {
   const dashCardBg     = buildDashCardBackground(postData);
   return `
     <div class="bg" id="${postData.bg}" style="background-image:url('${imgSrc}');"></div>
+    ${renderPhotoTextureOverlay(postData)}
     <div class="post-overlay" style="${overlayStyle}"></div>
     <div class="post-accent-bar"></div>
     <div class="dash-card" data-layout="${layout}" data-align="${textAlign}" style="background:${dashCardBg};">
       <div class="dash-card-blur" style="background-image:url('${imgSrc}');"></div>
       <div class="dash-card-inner-overlay" style="${overlayBg ? 'background:' + overlayBg : ''}"></div>
       <div class="dash-card-tint" style="background:${dashCardBg};"></div>
+      ${LIQUID_GLASS_HTML}
       <div class="dash-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
       <div class="dash-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
     </div>
@@ -8969,6 +9082,7 @@ function renderRevistaStyle(postData) {
   const bgPos          = (layout === 'left' || layout === 'right') ? `${photoPos}% center` : `center ${photoPos}%`;
   return `
     <div class="revista-photo" style="background-image:url('${imgSrc}');background-position:${bgPos};">
+      ${renderPhotoTextureOverlay(postData)}
       <div class="revista-overlay" style="${overlayStyle}"></div>
     </div>
     <div class="post-accent-bar"></div>
@@ -9044,7 +9158,7 @@ function renderNewsEditorialStyle(postData) {
   const textureUrl = postData.newsTexture && /^(https?:|data:|assets\/)/.test(postData.newsTexture) ? postData.newsTexture : '';
   const textureStyle = textureUrl ? ` style="background-image:url('${textureUrl}')"` : '';
   return `
-    <div class="news-edit-photo" style="background-image:url('${imgSrc}');background-position:${bgPos};">${isCarouselSlide ? photoHeaderHtml : ''}${photoHighlightHtml}</div>
+    <div class="news-edit-photo" style="background-image:url('${imgSrc}');background-position:${bgPos};">${renderPhotoTextureOverlay(postData)}${isCarouselSlide ? photoHeaderHtml : ''}${photoHighlightHtml}</div>
     <div class="post-accent-bar"></div>
     <div class="news-edit-block text-${textMode}" data-role="${role}" data-news-context="${newsContext}" style="background:${blockBg};">
       <div class="news-edit-texture"${textureStyle}></div>
@@ -9072,6 +9186,7 @@ function renderSplitStyle(postData) {
   const bgPos          = (layout === 'left' || layout === 'right') ? `${photoPos}% center` : `center ${photoPos}%`;
   return `
     <div class="split-photo" style="background-image:url('${imgSrc}');background-position:${bgPos};">
+      ${renderPhotoTextureOverlay(postData)}
       <div class="split-overlay" style="${overlayStyle}"></div>
     </div>
     <div class="post-accent-bar"></div>
@@ -9097,6 +9212,7 @@ function renderColunaStyle(postData) {
   const bgPos          = `${photoPos}% center`;
   return `
     <div class="coluna-photo" style="background-image:url('${imgSrc}');background-position:${bgPos};">
+      ${renderPhotoTextureOverlay(postData)}
       <div class="coluna-overlay" style="${overlayStyle}"></div>
     </div>
     <div class="post-accent-bar"></div>
@@ -9230,6 +9346,7 @@ function renderSpotlightStyle(postData) {
 
   return `
     <div class="bg" id="${postData.bg}" style="background-image:url('${imgSrc}');"></div>
+    ${renderPhotoTextureOverlay(postData)}
     <div class="post-overlay" style="${overlayStyle}"></div>
     <div class="spotlight-vignette"></div>
     <div class="spotlight-flare"></div>
@@ -9355,6 +9472,7 @@ function renderMockupStyle(postData) {
 
   return `
     <div class="bg" id="${postData.bg}" style="background-image:url('${imgSrc}');"></div>
+    ${renderPhotoTextureOverlay(postData)}
     <div class="post-overlay" style="${overlayStyle}"></div>
     <div class="post-accent-bar"></div>
     <div class="mockup-stage" data-layout="${layout}" data-device="${device}">
@@ -10042,7 +10160,7 @@ function updatePostControls(idx) {
   const revPctDefault = (revLayoutForDefault === 'left' || revLayoutForDefault === 'right') ? 52
                      : post.format === 'story' ? 60
                      : post.format === 'presentation' ? 55
-                     : 65;
+                     : 60;
   const revPct = post.revistaPhotoPct || revPctDefault;
   syncRangeValue('pcRevistaPhotoPct', revPct, '%');
   const revLaySel = document.getElementById('pcRevistaLayoutSelect');
@@ -10739,12 +10857,47 @@ function initPostControls() {
     styleSelectEl.addEventListener('change', () => {
       const post = getActivePost();
       if (!post || !post.isGenerated) return;
-      post.style = styleSelectEl.value;
+      // Salva ajustes do modelo atual no bucket dele, depois troca + restaura do bucket do novo modelo.
+      saveCurrentStyleFields(post);
+      const newStyle = styleSelectEl.value;
+      restoreStyleFields(post, newStyle);
+      post.style = newStyle;
       if (post.style === 'signal' || post.style === 'sidelight') {
-        post.hookScale       = 1;
-        post.complementScale = 1;
+        if (post.hookScale == null) post.hookScale = 1;
+        if (post.complementScale == null) post.complementScale = 1;
       }
       ensureSignalVisualDefaults(post);
+      // Highlights (signal) — defaults na primeira vez ou após reset.
+      if ((post.style === 'signal' || post.style === 'sidelight') && !post._signalInitialized) {
+        if (!post.accent || post.accent.toLowerCase() === '#7ab87e') post.accent = '#6ac58f';
+        if (!post.overlayColor || post.overlayColor === '#000000') post.overlayColor = 'transparent';
+        if (post.logoEnabled == null) post.logoEnabled = false;
+        if (post.signalPhotoTextureIntensity == null) post.signalPhotoTextureIntensity = 100;
+        post._signalInitialized = true;
+      }
+      // Dashboard — defaults na primeira vez ou após reset.
+      if (post.style === 'dashboard' && !post._dashboardInitialized) {
+        if (!post.accent || post.accent.toLowerCase() === '#7ab87e') post.accent = '#6ac58f';
+        if (!post.overlayColor || post.overlayColor === '#000000') post.overlayColor = 'transparent';
+        if (!post.overlayDirection) post.overlayDirection = 'full';
+        if (!post.dashCardColor || post.dashCardColor === '#0F1E14') post.dashCardColor = 'transparent';
+        if (post.dashCardOpacity == null) post.dashCardOpacity = 65;
+        if (post.dashCardBlur == null) post.dashCardBlur = 24;
+        if (!post.dashCardPos) post.dashCardPos = 'top';
+        post._dashboardInitialized = true;
+      }
+      // Especial (moldura) — defaults na primeira vez ou após reset.
+      if (post.style === 'moldura' && !post._molduraInitialized) {
+        if (!post.accent || post.accent.toLowerCase() === '#7ab87e') post.accent = '#6ac58f';
+        if (!post.overlayColor || post.overlayColor === '#000000') post.overlayColor = 'transparent';
+        if (post.logoEnabled == null) post.logoEnabled = false;
+        post.frameColor = 'transparent';
+        if (post.glassOpacity == null) post.glassOpacity = 15;
+        if (post.glassBlur == null || post.glassBlur === 24) post.glassBlur = 22;
+        if (!post.frameTextMode) post.frameTextMode = 'light';
+        if (post.signalPhotoTextureIntensity == null) post.signalPhotoTextureIntensity = 55;
+        post._molduraInitialized = true;
+      }
       // Revista — defaults na primeira vez que o modelo é ativado
       if (post.style === 'revista' && !post._revistaInitialized) {
         post.brandMode = 'light';
@@ -11931,6 +12084,38 @@ function _resetPostStyleSingle(post) {
     post.sitePos     = 'br';
     post.logoEnabled = false;
   }
+  // Highlights (signal) — accent verde claro, overlay sem cor, logo desativado, intensity 100.
+  if (post.style === 'signal' || post.style === 'sidelight') {
+    post.accent                       = '#6ac58f';
+    post.overlayColor                 = 'transparent';
+    post.logoEnabled                  = false;
+    delete post.signalPhotoTexture;
+    post.signalPhotoTextureIntensity  = 100;
+  }
+  // Dashboard — overlay sem cor full, card sem cor 65%/24px, posição superior.
+  if (post.style === 'dashboard') {
+    post.accent             = '#6ac58f';
+    post.overlayColor       = 'transparent';
+    post.overlayDirection   = 'full';
+    post.dashCardColor      = 'transparent';
+    post.dashCardOpacity    = 65;
+    post.dashCardBlur       = 24;
+    post.dashCardPos        = 'top';
+    post._dashboardInitialized = true;
+  }
+  // Especial (moldura) — accent verde claro, overlay sem cor, vidro sem cor 15%/22px, textura on 55%.
+  if (post.style === 'moldura') {
+    post.accent                       = '#6ac58f';
+    post.overlayColor                 = 'transparent';
+    post.logoEnabled                  = false;
+    post.frameColor                   = 'transparent';
+    post.glassOpacity                 = 15;
+    post.glassBlur                    = 22;
+    post.frameTextMode                = 'light';
+    delete post.signalPhotoTexture;
+    post.signalPhotoTextureIntensity  = 55;
+    post._molduraInitialized          = true;
+  }
   // Textura padrão por tipo: news-post → 04, carrossel/tendência → 01.
   if (post.type === 'news-post') {
     post.newsTexture = 'assets/04-texture.webp';
@@ -12607,8 +12792,8 @@ function composeSignalPhotoTexture(postData, w, h, includeOverlay = false) {
 function bakeSignalPhotoTextureForCapture(cloneEl, postData) {
   if (!postData.signalPhotoTexture) return;
   const cloneTexture = cloneEl.querySelector('.signal-photo-texture');
-  // Signal/sidelight usa .bg, moldura usa .moldura-bg.
-  const cloneBg = cloneEl.querySelector('.bg, .moldura-bg');
+  // Cada modelo tem seu próprio container de foto.
+  const cloneBg = cloneEl.querySelector('.bg, .moldura-bg, .revista-photo, .split-photo, .coluna-photo, .news-edit-photo');
   if (!cloneTexture || !cloneBg) return;
   const w = Math.max(1, Math.round(cloneBg.offsetWidth));
   const h = Math.max(1, Math.round(cloneBg.offsetHeight));
