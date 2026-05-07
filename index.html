@@ -12890,8 +12890,10 @@ async function downloadCurrent() {
     if (blurSrc) {
       const blurPx = (post.style === 'signal' || post.style === 'sidelight') ? (post.signalCardBlur == null ? 24 : post.signalCardBlur) :
                      post.style === 'dashboard' ? (post.dashCardBlur   == null ? 24 : post.dashCardBlur)   :
-                     post.style === 'moldura'   ? (post.glassBlur      == null ? 24 : post.glassBlur)      :
+                     post.style === 'moldura'   ? Math.round((post.glassBlur == null ? 24 : post.glassBlur) * 0.5) :
                      post.style === 'spotlight' ? (post.spotlightBlur  == null ? 22 : post.spotlightBlur)  : 24;
+      // Moldura usa metade do blur configurado pra match com a média perceptual das 13 lg-layers
+      // (lg-1 = 0.667, lg-13 = 0.025; integral ≈ 0.18, mas fator perceptual fica em ~0.5).
       // Se tem signalPhotoTexture, usa foto+textura composta como base do blur.
       // Senão, usa a foto crua (blob URL same-origin pra evitar CORS com R2).
       let blurInputSrc;
@@ -13029,7 +13031,7 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
     if (blurSrc) {
       const blurPx = (slideData.style === 'signal' || slideData.style === 'sidelight') ? (slideData.signalCardBlur == null ? 24 : slideData.signalCardBlur) :
                      slideData.style === 'dashboard' ? (slideData.dashCardBlur   == null ? 24 : slideData.dashCardBlur)   :
-                     slideData.style === 'moldura'   ? (slideData.glassBlur      == null ? 24 : slideData.glassBlur)      :
+                     slideData.style === 'moldura'   ? Math.round((slideData.glassBlur == null ? 24 : slideData.glassBlur) * 0.5) :
                      slideData.style === 'spotlight' ? (slideData.spotlightBlur  == null ? 22 : slideData.spotlightBlur)  : 24;
       let blurInputSrc;
       if (slideData.signalPhotoTexture && slideData.bgImage) {
