@@ -1908,7 +1908,6 @@
     z-index: 2 !important;
     border-radius: inherit;
     pointer-events: none;
-    display: none;
   }
   .moldura-glass-accent {
     display: none;
@@ -4222,9 +4221,9 @@
   }
   .pc-color-dropdown[hidden] { display: none; }
   .pc-color-cell {
-    width: 28px;
-    height: 28px;
-    border-radius: 5px;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
     border: 1px solid rgba(0,0,0,0.08);
     cursor: pointer;
     padding: 0;
@@ -4239,6 +4238,17 @@
   .pc-color-cell.active {
     box-shadow: 0 0 0 2px white, 0 0 0 3px #0f172a;
   }
+  /* Célula "sem cor" — fundo branco, ícone proibido phosphor centralizado */
+  .pc-color-cell--none {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 16px;
+  }
+  .pc-color-cell--none .ph { line-height: 1; }
 
   .pc-icon-dropdown {
     position: fixed;
@@ -8631,11 +8641,34 @@ function renderGeneratedPresentation(presentationData, legendText) {
 
 // Converte hex (#rrggbb) + alpha (0..1) em string rgba()
 function hexToRgba(hex, alpha) {
-  const h = (hex || '#000000').replace('#', '');
+  if (hex === 'transparent' || hex === 'none' || !hex) {
+    if (!hex) return `rgba(0, 0, 0, ${alpha})`;
+    return 'transparent';
+  }
+  const h = hex.replace('#', '');
   const r = parseInt(h.substring(0, 2), 16) || 0;
   const g = parseInt(h.substring(2, 4), 16) || 0;
   const b = parseInt(h.substring(4, 6), 16) || 0;
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+// Helper unificado para atualizar swatch + label de qualquer botão de cor.
+// Quando color === 'transparent'/'none', mostra o ícone ph-prohibit e label "sem cor".
+function setColorBtnSwatch(swEl, lbEl, color) {
+  const isNone = color === 'transparent' || color === 'none' || !color;
+  if (swEl) {
+    if (isNone) {
+      swEl.style.background = '#ffffff';
+      swEl.style.display = 'inline-flex';
+      swEl.style.alignItems = 'center';
+      swEl.style.justifyContent = 'center';
+      swEl.innerHTML = '<i class="ph ph-prohibit" style="color:#94a3b8;font-size:14px;line-height:1"></i>';
+    } else {
+      swEl.style.background = color;
+      swEl.innerHTML = '';
+    }
+  }
+  if (lbEl) lbEl.textContent = isNone ? 'sem cor' : (color || '').toLowerCase();
 }
 
 // Clareia (percent > 0) ou escurece (percent < 0) um hex. Retorna hex.
@@ -9811,8 +9844,7 @@ function updatePostControls(idx) {
   // Botão de cor (accent) — atualiza preview e label
   const accentBtnSw = document.getElementById('pcColorBtnSwatch');
   const accentBtnLb = document.getElementById('pcColorBtnLabel');
-  if (accentBtnSw) accentBtnSw.style.background = accent;
-  if (accentBtnLb) accentBtnLb.textContent = accent.toLowerCase();
+  setColorBtnSwatch(accentBtnSw, accentBtnLb, accent);
 
   const logoPosSelect = document.getElementById('pcLogoPosSelect');
   if (logoPosSelect) logoPosSelect.value = logoPos;
@@ -9934,10 +9966,7 @@ function updatePostControls(idx) {
 
 
   // Botão de cor (overlay) — atualiza preview e label
-  const ovBtnSw = document.getElementById('pcOverlayColorBtnSwatch');
-  const ovBtnLb = document.getElementById('pcOverlayColorBtnLabel');
-  if (ovBtnSw) ovBtnSw.style.background = overlayColor;
-  if (ovBtnLb) ovBtnLb.textContent = overlayColor.toLowerCase();
+  setColorBtnSwatch(document.getElementById('pcOverlayColorBtnSwatch'), document.getElementById('pcOverlayColorBtnLabel'), overlayColor);
 
   // Overlay opacity
   const opacityRange = document.getElementById('pcOverlayOpacity');
@@ -9950,10 +9979,7 @@ function updatePostControls(idx) {
   if (dirSelectEl) dirSelectEl.value = overlayDirection;
 
   // Dash card — cor e opacidade
-  const dashBtnSw = document.getElementById('pcDashCardColorBtnSwatch');
-  const dashBtnLb = document.getElementById('pcDashCardColorBtnLabel');
-  if (dashBtnSw) dashBtnSw.style.background = dashCardColor;
-  if (dashBtnLb) dashBtnLb.textContent = dashCardColor.toLowerCase();
+  setColorBtnSwatch(document.getElementById('pcDashCardColorBtnSwatch'), document.getElementById('pcDashCardColorBtnLabel'), dashCardColor);
   syncRangeValue('pcDashCardOpacity', dashCardOpacity, '%');
 
   // Revista / Split / Coluna / Moldura — cor do bloco
@@ -9961,22 +9987,18 @@ function updatePostControls(idx) {
   const splitBlockColor   = post.splitBlockColor   || '#152F17';
   const columnBlockColor  = post.columnBlockColor  || '#f8fafc';
   const frameColor        = post.frameColor        || '#0F1E14';
-  const rbSw = document.getElementById('pcRevistaBlockColorBtnSwatch');
-  const rbLb = document.getElementById('pcRevistaBlockColorBtnLabel');
-  if (rbSw) rbSw.style.background = revistaBlockColor;
-  if (rbLb) rbLb.textContent = revistaBlockColor.toLowerCase();
+  setColorBtnSwatch(document.getElementById('pcRevistaBlockColorBtnSwatch'), document.getElementById('pcRevistaBlockColorBtnLabel'), revistaBlockColor);
+  // Split block usa um background customizado (gradient via buildSplitBlockBackground) — só substitui pelo helper se for transparent.
   const sbSw = document.getElementById('pcSplitBlockColorBtnSwatch');
   const sbLb = document.getElementById('pcSplitBlockColorBtnLabel');
-  if (sbSw) sbSw.style.background = buildSplitBlockBackground(splitBlockColor);
-  if (sbLb) sbLb.textContent = splitBlockColor.toLowerCase();
-  const cbSw = document.getElementById('pcColunaBlockColorBtnSwatch');
-  const cbLb = document.getElementById('pcColunaBlockColorBtnLabel');
-  if (cbSw) cbSw.style.background = columnBlockColor;
-  if (cbLb) cbLb.textContent = columnBlockColor.toLowerCase();
-  const fbSw = document.getElementById('pcFrameColorBtnSwatch');
-  const fbLb = document.getElementById('pcFrameColorBtnLabel');
-  if (fbSw) fbSw.style.background = frameColor;
-  if (fbLb) fbLb.textContent = frameColor.toLowerCase();
+  if (splitBlockColor === 'transparent' || splitBlockColor === 'none') {
+    setColorBtnSwatch(sbSw, sbLb, splitBlockColor);
+  } else {
+    if (sbSw) { sbSw.style.background = buildSplitBlockBackground(splitBlockColor); sbSw.innerHTML = ''; }
+    if (sbLb) sbLb.textContent = splitBlockColor.toLowerCase();
+  }
+  setColorBtnSwatch(document.getElementById('pcColunaBlockColorBtnSwatch'), document.getElementById('pcColunaBlockColorBtnLabel'), columnBlockColor);
+  setColorBtnSwatch(document.getElementById('pcFrameColorBtnSwatch'), document.getElementById('pcFrameColorBtnLabel'), frameColor);
 
   // Glass opacity
   const glassOpacity = post.glassOpacity == null ? 55 : post.glassOpacity;
@@ -9996,19 +10018,13 @@ function updatePostControls(idx) {
   const sigCardOp = post.signalCardOpacity == null ? SIGNAL_CARD_OPACITY_DEFAULT : post.signalCardOpacity;
   const sigIconColor = post.signalIconColor || SIGNAL_ICON_DEFAULT;
   const sigIconOp = post.signalIconOpacity == null ? SIGNAL_ICON_OPACITY_DEFAULT : post.signalIconOpacity;
-  const sigCardSw = document.getElementById('pcSignalCardColorBtnSwatch');
-  const sigCardLb = document.getElementById('pcSignalCardColorBtnLabel');
-  if (sigCardSw) sigCardSw.style.background = sigCardColor;
-  if (sigCardLb) sigCardLb.textContent = sigCardColor.toLowerCase();
+  setColorBtnSwatch(document.getElementById('pcSignalCardColorBtnSwatch'), document.getElementById('pcSignalCardColorBtnLabel'), sigCardColor);
   syncRangeValue('pcSignalCardOpacity', sigCardOp, '%');
   syncRangeValue('pcSignalCardBlur', post.signalCardBlur == null ? 24 : post.signalCardBlur, 'px');
   syncRangeValue('pcDashCardBlur', post.dashCardBlur == null ? 24 : post.dashCardBlur, 'px');
   syncRangeValue('pcGlassBlur', post.glassBlur == null ? 24 : post.glassBlur, 'px');
   syncRangeValue('pcSpotlightBlur', post.spotlightBlur == null ? 22 : post.spotlightBlur, 'px');
-  const sigIconSw = document.getElementById('pcSignalIconColorBtnSwatch');
-  const sigIconLb = document.getElementById('pcSignalIconColorBtnLabel');
-  if (sigIconSw) sigIconSw.style.background = sigIconColor;
-  if (sigIconLb) sigIconLb.textContent = sigIconColor.toLowerCase();
+  setColorBtnSwatch(document.getElementById('pcSignalIconColorBtnSwatch'), document.getElementById('pcSignalIconColorBtnLabel'), sigIconColor);
   syncRangeValue('pcSignalIconOpacity', sigIconOp, '%');
 
   // Revista — proporção da foto + orientação
@@ -10178,11 +10194,16 @@ function pushUndoSnapshot(post, snapshot) {
 // ── PALETA CROPWARE (4 rows × 7 shades) ──
 // Row 1: verde principal saturado / Row 2: verde vibrante
 // Row 3: verde muted           / Row 4: grayscale neutra
+// Paleta Cropware (6 rows × 7 cols = 42 cells), ordenada cool→warm→muted→grayscale.
+// Row 1: teal-leaning (#4DB69D)   / Row 2: brand profunda   / Row 3: brand saturada (#42AA7B)
+// Row 4: vibrant warmer (#6DCA73) / Row 5: muted sage       / Row 6: grayscale neutra
 const CROPWARE_PALETTE = [
-  ['#DDF8DE', '#97E29C', '#7AB87E', '#5E9061', '#446946', '#2B452D', '#142415'],
-  ['#8BF592', '#6DCA73', '#55A05A', '#3E7842', '#29522C', '#152F17', '#061407'],
-  ['#D8F1D9', '#A2CDA5', '#81A484', '#627E64', '#455946', '#29372A', '#101711'],
-  ['#FFFFFF', '#EFF1EF', '#CBD2CB', '#808580', '#5E615E', '#3D3F3D', '#1F201F'],
+  ['#D4F0E8', '#A8DDD0', '#7BCAB7', '#4DB69D', '#348580', '#1E5550', '#0A2A26'],
+  ['#C7E8D5', '#98D7B2', '#6AC58F', '#46AC74', '#348861', '#1F5440', '#0C291B'],
+  ['#D8F0E2', '#AEDEC4', '#82CCA5', '#58B988', '#42AA7B', '#2A7B5A', '#143F2C'],
+  ['#C7F5CB', '#8BF592', '#6DCA73', '#55A05A', '#3E7842', '#29522C', '#152F17'],
+  ['#DCE8DD', '#B6CDB9', '#93AE96', '#6F8B73', '#4D6953', '#344837', '#161C16'],
+  ['#FFFFFF', '#EEEFEE', '#C8CDC9', '#80847F', '#5C605D', '#3D3F3D', '#1A1B1A'],
 ];
 
 let activeColorTarget = null; // 'accent' | 'overlay' | 'dashCard' | 'revistaBlock' | 'splitBlock' | 'columnBlock' | 'frameColor' | 'signalCard' | 'signalIcon' | null
@@ -10194,7 +10215,7 @@ function buildColorDropdown() {
   let html = '';
   for (const row of CROPWARE_PALETTE) {
     for (const color of row) {
-      html += `<button type="button" class="pc-color-cell" data-color="${color}" style="background:${color}" title="${color}"></button>`;
+      html += `<button type="button" class="pc-color-cell" data-color="${color}" data-original-color="${color}" style="background:${color}" title="${color}"></button>`;
     }
   }
   dd.innerHTML = html;
@@ -10239,9 +10260,21 @@ function openColorDropdown(target, anchorEl) {
     target === 'signalIcon'     ? post.signalIconColor    :
     post.overlayColor
   ) : null;
-  dd.querySelectorAll('.pc-color-cell').forEach(cell => {
+  // Cell [0]: sempre "Sem cor" — disponível em todos os pickers de cor.
+  const cells = dd.querySelectorAll('.pc-color-cell');
+  const firstCell = cells[0];
+  if (firstCell) {
+    firstCell.classList.add('pc-color-cell--none');
+    firstCell.dataset.color = 'none';
+    firstCell.title = 'Sem cor';
+    firstCell.style.background = '';
+    if (!firstCell.querySelector('.ph')) firstCell.innerHTML = '<i class="ph ph-prohibit"></i>';
+  }
+  cells.forEach(cell => {
+    const isNoneActive = cell.dataset.color === 'none' && (currentColor === 'transparent' || currentColor === 'none');
     cell.classList.toggle('active',
-      currentColor && cell.dataset.color.toLowerCase() === (currentColor || '').toLowerCase());
+      isNoneActive ||
+      (currentColor && currentColor !== 'transparent' && cell.dataset.color.toLowerCase() === (currentColor || '').toLowerCase()));
   });
   // Close on outside click (delay 1 tick pra não capturar o click atual)
   setTimeout(() => {
@@ -10276,6 +10309,8 @@ function applyColorChoice(color, targetOverride) {
   if (!post || !post.isGenerated) return;
   const postEl = document.getElementById(post.id);
   const target = targetOverride !== undefined ? targetOverride : activeColorTarget;
+  // Normaliza 'none' → 'transparent' antes de aplicar.
+  if (color === 'none') color = 'transparent';
   if (target === 'accent') {
     post.accent = color;
     if (postEl) postEl.style.setProperty('--post-accent', post.accent);
@@ -11823,8 +11858,16 @@ function _resetPostStyleSingle(post) {
   delete post.signalAlign;
   delete post.signalCardColor;
   delete post.signalCardOpacity;
+  delete post.signalCardBlur;
   delete post.signalIconColor;
   delete post.signalIconOpacity;
+  delete post._signalCardDefaultsMigrated;
+  delete post._signalVisualDefaultsMigrated;
+  // Moldura (Especial): cor/opacidade/blur do vidro e modo de texto
+  delete post.frameColor;
+  delete post.glassOpacity;
+  delete post.glassBlur;
+  delete post.frameTextMode;
   delete post.mockupDevice;
   delete post.mockupScale;
   delete post.mockupOffsetX;
