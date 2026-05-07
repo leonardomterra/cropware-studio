@@ -2274,6 +2274,20 @@
     pointer-events: none;
     display: none;
   }
+  /* Textura opcional aplicada como overlay sobre a foto de fundo (signal/sidelight).
+     Grayscale evita que blobs coloridos tinjam a foto — atuam só como relevo/luminância. */
+  .signal-photo-texture {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    mix-blend-mode: overlay;
+    opacity: 0.55;
+    filter: grayscale(1);
+    pointer-events: none;
+  }
   .signal-card-icon {
     display: inline-flex;
     align-items: center;
@@ -3529,6 +3543,20 @@
   #postControls.style-revista #pcSubRevistaShadow,
   #postControls.style-revista #pcSubBlockTextMode { display: flex !important; }
 
+  /* Highlights / sidelight: textura opcional do card */
+  #postControls #pcSubSignalTexture,
+  #postControls #pcSubSignalTextureIntensity,
+  #postControls #pcSubSignalTextureInvert,
+  #postControls #pcSubSignalTextureBlend { display: none; }
+  #postControls.style-signal #pcSubSignalTexture,
+  #postControls.style-sidelight #pcSubSignalTexture,
+  #postControls.style-signal #pcSubSignalTextureIntensity,
+  #postControls.style-sidelight #pcSubSignalTextureIntensity,
+  #postControls.style-signal #pcSubSignalTextureInvert,
+  #postControls.style-sidelight #pcSubSignalTextureInvert,
+  #postControls.style-signal #pcSubSignalTextureBlend,
+  #postControls.style-sidelight #pcSubSignalTextureBlend { display: flex !important; }
+
   /* News editorial reaproveita os subs do revista (mesmos campos no postData),
      exceto a sombra na divisa — não faz sentido aqui (foto não toca o bloco). */
   #postControls.style-news-editorial #pcSubRevistaBlockColor,
@@ -3544,8 +3572,6 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 4px;
-    max-height: 200px;
-    overflow-y: auto;
     padding: 2px;
   }
   .pc-news-texture-thumb {
@@ -3571,8 +3597,7 @@
   }
   .pc-news-texture-thumb:hover { transform: scale(1.04); }
   .pc-news-texture-thumb.active { border-color: #94a3b8; }
-  .pc-news-texture-grid::-webkit-scrollbar { width: 4px; }
-  .pc-news-texture-grid::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+
 
   /* Split libera bloco + proporção/layout/sombra + cor do texto */
   #postControls.style-split #pcSubSplitBlockColor,
@@ -3620,6 +3645,7 @@
     border-right: 1px solid rgba(0,0,0,0.08);
     scrollbar-width: thin;
     scrollbar-color: var(--border) transparent;
+    scrollbar-gutter: stable;
     min-height: 0;
   }
   .pc-body::-webkit-scrollbar { width: 6px; }
@@ -4597,6 +4623,24 @@
     box-sizing: border-box;
   }
   .pc-text-input:focus { border-color: #64748b; }
+  .pc-apply-all-btn {
+    width: 100%;
+    border: none;
+    background: #334155;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: 'Inter Tight', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 140ms;
+  }
+  .pc-apply-all-btn:hover { background: #1e293b; }
+  .pc-apply-all-btn:disabled { background: #64748b; opacity: 1; cursor: default; }
   .pc-upload-btn {
     border: 1px solid var(--border);
     background: rgba(15, 23, 42, 0.02);
@@ -5887,6 +5931,21 @@
 </head>
 <body>
 
+<!-- SVG FILTERS (texturas SVG referenciadas via filter:url()) -->
+<svg width="0" height="0" style="position:absolute;pointer-events:none;" aria-hidden="true">
+  <defs>
+    <!-- Textura "cracked earth": turbulência fractal vira veios escuros orgânicos -->
+    <filter id="tx-cracks">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04 0.06" numOctaves="3" seed="3"/>
+      <feColorMatrix values="0 0 0 0 0
+                             0 0 0 0 0
+                             0 0 0 0 0
+                             0 0 0 -3 1.4"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+  </defs>
+</svg>
+
 <!-- LOGIN SCREEN -->
 <div id="loginScreen" class="login-screen">
   <div class="login-card">
@@ -6405,6 +6464,44 @@
             <option value="full">Uniforme</option>
           </select>
         </div>
+        <div class="pc-sub" id="pcSubSignalTexture">
+          <div class="pc-vis-row">
+            <button type="button" class="pc-vis-btn" id="pcSignalTextureEnableBtn">
+              <span>Textura da Foto</span>
+              <span class="pc-vis-switch"></span>
+            </button>
+          </div>
+          <div class="pc-news-texture-grid" id="pcSignalTextureGrid"></div>
+        </div>
+        <div class="pc-sub pc-offset-field" id="pcSubSignalTextureIntensity">
+          <div class="pc-label-row">
+            <span class="pc-label">Intensidade da Textura</span>
+            <span class="pc-value-pill" id="pcSignalTextureIntensityValue">55%</span>
+          </div>
+          <input type="range" class="pc-range" id="pcSignalTextureIntensity" min="0" max="100" step="5" value="55" data-value-label="pcSignalTextureIntensityValue" data-value-unit="%">
+        </div>
+        <div class="pc-sub" id="pcSubSignalTextureInvert">
+          <div class="pc-toggle">
+            <button type="button" id="pcSignalTextureInvertBtn">Inverter cores</button>
+          </div>
+        </div>
+        <div class="pc-sub" id="pcSubSignalTextureBlend">
+          <div class="pc-label">Mistura</div>
+          <select class="pc-select" id="pcSignalTextureBlend">
+            <option value="overlay">Sobrepor</option>
+            <option value="multiply">Multiplicar</option>
+            <option value="screen">Clarear (Adição)</option>
+            <option value="soft-light">Luz Suave</option>
+            <option value="hard-light">Luz Forte</option>
+            <option value="darken">Escurecer</option>
+            <option value="lighten">Iluminar</option>
+            <option value="difference">Diferença (Subtração)</option>
+            <option value="exclusion">Exclusão</option>
+            <option value="color-dodge">Subexposição</option>
+            <option value="color-burn">Superexposição</option>
+            <option value="normal">Normal</option>
+          </select>
+        </div>
         <div class="pc-sub" id="pcSubDashCardColor">
           <div class="pc-label">Tonalização do Card</div>
           <button class="pc-color-btn" id="pcDashCardColorBtn" type="button" data-target="dashCard">
@@ -6632,6 +6729,11 @@
         <div class="pc-sub" id="pcSubNewsTexture">
           <div class="pc-label">Textura do Bloco</div>
           <div class="pc-news-texture-grid" id="pcNewsTextureGrid"></div>
+        </div>
+        <div class="pc-sub hidden" id="pcSubApplyToAll">
+          <button type="button" class="pc-apply-all-btn" id="pcApplyBgToAllBtn" title="Replica as configurações de fundo deste slide em todos os outros do carrossel">
+            Aplicar à Todos
+          </button>
         </div>
       </div>
     </div>
@@ -8265,6 +8367,11 @@ function renderGeneratedCarousel(carouselData, legendText) {
         }
       });
     }
+    // Migração: title em Title Case (carrosséis antigos podem ter sido salvos em sentence case).
+    if (carouselData.title && !carouselData._titleCased) {
+      carouselData.title = toTitleCase(carouselData.title);
+      carouselData._titleCased = true;
+    }
   }
   // Ensure each slide has proper defaults (reuse the same logic as renderGeneratedPost)
   carouselData.slides.forEach((slideData, i) => {
@@ -8522,8 +8629,8 @@ function buildPostOverlayStyle(color, opacity, direction) {
   const a = Math.max(0, Math.min(100, Number(opacity) || 0)) / 100;
   if (a === 0) return 'display:none;';
   if (direction === 'radial') {
-    // Piso mínimo na cor da borda + transição rápida centro→bordas
-    const edgeA = Math.max(0.55, Math.min(1, a * 1.3));
+    // Transição rápida centro→bordas, escala linear com a opacidade do slider
+    const edgeA = Math.min(1, a * 1.3);
     const midA = edgeA * 0.35;
     const c1 = hexToRgba(color, midA);
     const c2 = hexToRgba(color, edgeA);
@@ -9026,6 +9133,9 @@ function renderSignalStyle(postData) {
   const showBullets = postData.bulletsVisible !== false;
   const showBulletIcons = postData.bulletIconsVisible !== false;
   const signalCardTint = hexToRgba(postData.signalCardColor || SIGNAL_CARD_DEFAULT, (postData.signalCardOpacity == null ? SIGNAL_CARD_OPACITY_DEFAULT : postData.signalCardOpacity) / 100);
+  // Textura opcional aplicada sobre a foto (signalPhotoTexture: '' / 'none' = sem textura; senão é path)
+  const rawTexture = (postData.signalPhotoTexture || '').trim();
+  const signalPhotoTextureUrl = (rawTexture && rawTexture !== 'none') ? rawTexture : '';
   const isSidelight = postData.style === 'sidelight';
   const cardExtraClass = isSidelight ? ' sidelight-card' : '';
   const iconExtraClass = isSidelight ? ' sidelight-card-icon' : '';
@@ -9047,6 +9157,23 @@ function renderSignalStyle(postData) {
 
   return `
     <div class="bg" id="${postData.bg}" style="background-image:url('${imgSrc}');"></div>
+    ${signalPhotoTextureUrl ? (() => {
+      const ov = SIGNAL_CARD_TEXTURE_OVERRIDES[signalPhotoTextureUrl] || {};
+      const filters = [];
+      if (!ov.noGrayscale) filters.push('grayscale(1)');
+      if (postData.signalPhotoTextureInvert) filters.push('invert(1)');
+      const userIntensity = postData.signalPhotoTextureIntensity;
+      const opacityVal = userIntensity != null ? (userIntensity / 100) : (ov.opacity != null ? ov.opacity : null);
+      let extra = `filter:${filters.length ? filters.join(' ') : 'none'};`;
+      if (opacityVal != null) extra += `opacity:${opacityVal};`;
+      if (ov.size) extra += `background-size:${ov.size};`;
+      if (ov.repeat) extra += `background-repeat:${ov.repeat};`;
+      const userBlend = postData.signalPhotoTextureBlendMode;
+      if (userBlend) extra += `mix-blend-mode:${userBlend};`;
+      else if (ov.blendMode) extra += `mix-blend-mode:${ov.blendMode};`;
+      if (ov.scale) extra += `transform:scale(${ov.scale});`;
+      return `<div class="signal-photo-texture" style="background-image:url('${signalPhotoTextureUrl}');${extra}"></div>`;
+    })() : ''}
     <div class="post-overlay" style="${overlayStyle}"></div>
     <div class="post-accent-bar"></div>
     <div class="signal-panel">
@@ -9519,9 +9646,15 @@ function updatePostControls(idx) {
   setSubVisible('pcSubRevistaPhotoPos',    revistaLikeStyle);
   setSubVisible('pcSubRevistaShadow',      currentStyle === 'revista');
   setSubVisible('pcSubNewsTexture',        currentStyle === 'news-editorial');
+  // Botão "Aplicar a todos" só aparece em modo carrossel (qualquer tipo) com 2+ slides
+  setSubVisible('pcSubApplyToAll',         isCarouselMode() && _activeCarouselHasMultipleSlides());
   // Sincroniza grid de textura ativa com o slide atual
   if (currentStyle === 'news-editorial') {
     syncNewsTextureGrid(post);
+  }
+  if (currentStyle === 'signal' || currentStyle === 'sidelight') {
+    syncSignalTextureGrid(post);
+    syncSignalTextureControls(post);
   }
   setSubVisible('pcSubSplitBlockColor',    isSplit);
   setSubVisible('pcSubSplitPair',          isSplit);
@@ -10704,6 +10837,112 @@ function initPostControls() {
   wireScaleField('pcLogoScale', '--logo-scale', 'logoScale', 60, 140);
   wireScaleField('pcSiteScale', '--site-scale', 'siteScale', 60, 160);
   wireScaleField('pcMockupScale', '--mockup-scale', 'mockupScale', 30, 200);
+
+  // Botão "Aplicar a todos os slides" no painel Fundo (qualquer carrossel)
+  const applyAllBtn = document.getElementById('pcApplyBgToAllBtn');
+  if (applyAllBtn && applyAllBtn.dataset.wired !== 'true') {
+    applyAllBtn.dataset.wired = 'true';
+    applyAllBtn.addEventListener('click', applyBgToAllSlides);
+  }
+
+  // Picker de textura do signal/highlights — toggle de ativar separado, grid só com texturas.
+  const signalTextureGrid = document.getElementById('pcSignalTextureGrid');
+  if (signalTextureGrid && signalTextureGrid.dataset.wired !== 'true') {
+    signalTextureGrid.dataset.wired = 'true';
+    SIGNAL_CARD_TEXTURES.forEach(url => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'pc-news-texture-thumb';
+      btn.dataset.url = url;
+      btn.title = url.replace(/^assets\//, '');
+      const inner = document.createElement('span');
+      inner.className = 'pc-news-texture-thumb-inner';
+      inner.style.backgroundImage = `url('${url}')`;
+      btn.appendChild(inner);
+      signalTextureGrid.appendChild(btn);
+    });
+    signalTextureGrid.addEventListener('click', e => {
+      const thumb = e.target.closest('.pc-news-texture-thumb');
+      if (!thumb) return;
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      // Clicar num thumb seleciona a textura E ativa automaticamente.
+      post.signalPhotoTexture = thumb.dataset.url;
+      const postEl = document.getElementById(post.id);
+      if (postEl) applyPostVariant(postEl, post);
+      syncSignalTextureGrid(post);
+      syncSignalTextureControls(post);
+      saveSession();
+    });
+  }
+  // Toggle "Ativar" — liga/desliga renderização da textura.
+  const enableBtn = document.getElementById('pcSignalTextureEnableBtn');
+  if (enableBtn && enableBtn.dataset.wired !== 'true') {
+    enableBtn.dataset.wired = 'true';
+    enableBtn.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      const isEnabled = !!(post.signalPhotoTexture && post.signalPhotoTexture !== 'none');
+      if (isEnabled) {
+        delete post.signalPhotoTexture;
+      } else {
+        // Reabilita com a última textura escolhida (se existir) ou a primeira.
+        post.signalPhotoTexture = post._lastSignalPhotoTexture || SIGNAL_CARD_TEXTURES[0];
+      }
+      // Guarda a última pra reabilitar mantendo a escolha.
+      if (post.signalPhotoTexture) post._lastSignalPhotoTexture = post.signalPhotoTexture;
+      const postEl = document.getElementById(post.id);
+      if (postEl) applyPostVariant(postEl, post);
+      syncSignalTextureGrid(post);
+      syncSignalTextureControls(post);
+      saveSession();
+    });
+  }
+
+  // Intensity slider e invert toggle pra textura da foto.
+  const intensityInput = document.getElementById('pcSignalTextureIntensity');
+  if (intensityInput && intensityInput.dataset.wired !== 'true') {
+    intensityInput.dataset.wired = 'true';
+    const apply = () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      const v = Number(intensityInput.value);
+      post.signalPhotoTextureIntensity = v;
+      const valueLabel = document.getElementById('pcSignalTextureIntensityValue');
+      if (valueLabel) valueLabel.textContent = v + '%';
+      const postEl = document.getElementById(post.id);
+      if (postEl) applyPostVariant(postEl, post);
+    };
+    intensityInput.addEventListener('input', apply);
+    intensityInput.addEventListener('change', () => { apply(); saveSession(); });
+  }
+  const invertBtn = document.getElementById('pcSignalTextureInvertBtn');
+  if (invertBtn && invertBtn.dataset.wired !== 'true') {
+    invertBtn.dataset.wired = 'true';
+    invertBtn.addEventListener('click', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.signalPhotoTextureInvert = !post.signalPhotoTextureInvert;
+      const postEl = document.getElementById(post.id);
+      if (postEl) applyPostVariant(postEl, post);
+      syncSignalTextureControls(post);
+      saveSession();
+    });
+  }
+  const blendSelect = document.getElementById('pcSignalTextureBlend');
+  if (blendSelect && blendSelect.dataset.wired !== 'true') {
+    blendSelect.dataset.wired = 'true';
+    blendSelect.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      const v = blendSelect.value;
+      if (v === 'overlay') delete post.signalPhotoTextureBlendMode;
+      else post.signalPhotoTextureBlendMode = v;
+      const postEl = document.getElementById(post.id);
+      if (postEl) applyPostVariant(postEl, post);
+      saveSession();
+    });
+  }
 
   // Picker de textura do bloco news-editorial: monta grid + handlers (upload + reset).
   const textureGrid = document.getElementById('pcNewsTextureGrid');
@@ -11974,12 +12213,89 @@ const NEWS_TEXTURE_DEFAULT = 'assets/01-texture.webp';
 const NEWS_TEXTURE_OPACITY = 0.48;
 // Cache: key = URL, value = HTMLImageElement (carregado) ou Promise<HTMLImageElement>
 const newsTextureImgCache = new Map();
+// Texturas pra foto do Highlights (signal/sidelight) — reaproveita os 16 webps do news-editorial.
+// CSS aplica grayscale via filter; lá no news-editorial elas mantêm cor original.
+// Toggle "Ativar" controla se a textura é renderizada (sem precisar de slot 'none' no grid).
+const SIGNAL_CARD_TEXTURES = [
+  'assets/01-texture.webp', 'assets/02-texture.webp', 'assets/03-texture.webp', 'assets/04-texture.webp',
+  'assets/05-texture.webp', 'assets/06-texture.webp', 'assets/07-texture.webp', 'assets/08-texture.webp',
+  'assets/09-texture.webp', 'assets/10-texture.webp', 'assets/11-texture.webp', 'assets/12-texture.webp',
+  'assets/13-texture.webp', 'assets/14-texture.webp', 'assets/15-texture.webp', 'assets/16-texture.webp',
+];
+const SIGNAL_CARD_TEXTURE_OVERRIDES = {};
+
 // Aplica mudança de textura: re-renderiza o post e atualiza o grid + persiste.
 function _applyTextureChange(post) {
   const postEl = document.getElementById(post.id);
   if (postEl) applyPostVariant(postEl, post);
   syncNewsTextureGrid(post);
   saveSession();
+}
+
+// Helper: o carrossel ativo tem 2+ slides? (Pra mostrar botão "Aplicar a todos")
+function _activeCarouselHasMultipleSlides() {
+  if (!isCarouselMode()) return false;
+  const items = getModeItems();
+  const carousel = items && items[getModeCurrentIdx()];
+  return !!(carousel && Array.isArray(carousel.slides) && carousel.slides.length >= 2);
+}
+
+// Lista de campos relacionados a "Fundo / aparência do bloco" copiados quando o usuário
+// clica em "Aplicar a todos os slides". Não inclui conteúdo (manchete, fatos, imagens, etc).
+const APPLY_BG_TO_ALL_FIELDS = [
+  // Cor / overlay genérico
+  'accent', 'overlayColor', 'overlayOpacity', 'overlayDirection',
+  // Revista / news-editorial (compartilhados)
+  'revistaBlockColor', 'revistaTextMode', 'revistaPhotoPct', 'revistaPhotoPos',
+  'revistaLayout', 'revistaShadow',
+  // News-editorial específico
+  'newsTexture', 'kickerScale', 'manchetteScale',
+  // Split
+  'splitBlockColor', 'splitTextMode', 'splitPhotoPct', 'splitPhotoPos', 'splitLayout', 'splitShadow',
+  // Coluna
+  'columnBlockColor', 'columnTextMode', 'columnSide',
+  'colunaPhotoPct', 'colunaPhotoPos', 'colunaShadow',
+  // Dashboard
+  'dashCardColor', 'dashCardOpacity', 'dashCardBlur',
+  // Moldura
+  'frameColor', 'frameTextMode', 'glassOpacity', 'glassBlur',
+  // Spotlight
+  'spotlightPanelSize', 'spotlightAnchor', 'spotlightContrast', 'spotlightBlur',
+  // Signal / sidelight
+  'signalCardColor', 'signalCardOpacity', 'signalCardBlur',
+  'signalIconColor', 'signalIconOpacity', 'signalCardHeight',
+];
+
+function applyBgToAllSlides() {
+  const items = getModeItems();
+  const carousel = items && items[getModeCurrentIdx()];
+  if (!carousel || !Array.isArray(carousel.slides) || carousel.slides.length < 2) return;
+  const sourceIdx = getCurrentSlide();
+  const source = carousel.slides[sourceIdx];
+  if (!source) return;
+  let count = 0;
+  carousel.slides.forEach((slide, i) => {
+    if (i === sourceIdx) return;
+    APPLY_BG_TO_ALL_FIELDS.forEach(field => {
+      if (source[field] !== undefined) {
+        slide[field] = source[field];
+      } else {
+        delete slide[field];
+      }
+    });
+    const slideEl = document.getElementById(slide.id);
+    if (slideEl) applyPostVariant(slideEl, slide);
+    count++;
+  });
+  saveSession();
+  // Feedback visual rápido
+  const btn = document.getElementById('pcApplyBgToAllBtn');
+  if (btn) {
+    const orig = btn.textContent;
+    btn.textContent = 'Aplicado em ' + count + ' slide' + (count > 1 ? 's' : '');
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 1600);
+  }
 }
 // Sincroniza estado ativo do grid de texturas com o post atual.
 function syncNewsTextureGrid(post) {
@@ -11989,6 +12305,38 @@ function syncNewsTextureGrid(post) {
   grid.querySelectorAll('.pc-news-texture-thumb').forEach(thumb => {
     thumb.classList.toggle('active', thumb.dataset.url === active);
   });
+}
+// Sincroniza grid de textura do signal/highlights
+function syncSignalTextureGrid(post) {
+  const grid = document.getElementById('pcSignalTextureGrid');
+  if (!grid) return;
+  const active = (post && post.signalPhotoTexture) || 'none';
+  grid.querySelectorAll('.pc-news-texture-thumb').forEach(thumb => {
+    thumb.classList.toggle('active', thumb.dataset.url === active);
+  });
+}
+// Sincroniza toggle de ativar, intensity slider, invert e blend mode com o post ativo
+function syncSignalTextureControls(post) {
+  const enableBtn = document.getElementById('pcSignalTextureEnableBtn');
+  if (enableBtn) {
+    const isEnabled = !!(post && post.signalPhotoTexture && post.signalPhotoTexture !== 'none');
+    enableBtn.classList.toggle('active', isEnabled);
+  }
+  const intensity = document.getElementById('pcSignalTextureIntensity');
+  if (intensity) {
+    const v = (post && post.signalPhotoTextureIntensity != null) ? post.signalPhotoTextureIntensity : 55;
+    intensity.value = String(v);
+    const valueLabel = document.getElementById('pcSignalTextureIntensityValue');
+    if (valueLabel) valueLabel.textContent = v + '%';
+  }
+  const invertBtn = document.getElementById('pcSignalTextureInvertBtn');
+  if (invertBtn) {
+    invertBtn.classList.toggle('active', !!(post && post.signalPhotoTextureInvert));
+  }
+  const blendSelect = document.getElementById('pcSignalTextureBlend');
+  if (blendSelect) {
+    blendSelect.value = (post && post.signalPhotoTextureBlendMode) || 'overlay';
+  }
 }
 function preloadNewsTexture(url) {
   const targetUrl = url || NEWS_TEXTURE_DEFAULT;
@@ -12516,22 +12864,25 @@ async function downloadCarousel() {
 
   try {
     const zip = new JSZip();
-    const safeName = (carousel.theme || carousel.title || 'carrossel')
-      .toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '_')
-      .replace(/^_|_$/g, '')
-      .slice(0, 60);
+    const isNewsCarousel = carousel.type === 'news-carousel-post';
+    // Para news-carousel: usa o t\u00edtulo leg\u00edvel (Title Case, com acentos, espa\u00e7os).
+    // Outros carross\u00e9is: slug min\u00fasculo + underscores (legado).
+    const titleSrc = carousel.title || carousel.theme || 'carrossel';
+    const filenameTitle = isNewsCarousel
+      ? toFilenameTitle(titleSrc, 80)
+      : titleSrc.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 60);
 
     for (let i = 0; i < carousel.slides.length; i++) {
       setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Exportando slide ${i + 1}/${carousel.slides.length}...`, '');
       const blob = await captureSlideAsBlob(carousel.slides[i]);
-      zip.file(`${safeName}_slide_${i + 1}.jpg`, blob);
+      zip.file(`${filenameTitle} - slide ${i + 1}.jpg`, blob);
     }
 
     setGenStatus('<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>Compactando ZIP...', 'success');
     const zipBlob = await zip.generateAsync({ type: 'blob' });
-    downloadBlob(zipBlob, `cropware_carrossel_${safeName}.zip`);
+    const zipName = isNewsCarousel ? `${filenameTitle}.zip` : `cropware_carrossel_${filenameTitle}.zip`;
+    downloadBlob(zipBlob, zipName);
     setGenStatus('', '');
   } catch(e) {
     alert('Erro ao exportar carrossel: ' + e.message);
@@ -12599,16 +12950,18 @@ async function downloadLinkedInCarouselPDF() {
     const pdfSize = pdf.output('arraybuffer').byteLength;
     console.log(`[Cropware] LinkedIn PDF: ${carousel.slides.length} slides, ${(pdfSize / 1024 / 1024).toFixed(1)} MB (flat ${pageW}×${pageH} JPEG + unsharp mask)`);
 
-    // Nome do arquivo baseado no tema
-    const safeName = (carousel.theme || carousel.title || 'carrossel')
-      .toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '_')
-      .replace(/^_|_$/g, '')
-      .slice(0, 60);
+    // Nome do arquivo: news-carousel usa t\u00edtulo leg\u00edvel; outros mant\u00eam slug.
+    const isNewsCarouselPdf = carousel.type === 'news-carousel-post';
+    const titleSrc = carousel.title || carousel.theme || 'carrossel';
+    const safeName = isNewsCarouselPdf
+      ? toFilenameTitle(titleSrc, 80)
+      : titleSrc.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 60);
     const pdfBlob = pdf.output('blob');
-    const pdfPrefix = getPlatform() === 'linkedin-pessoal' ? 'linkedin_pessoal' : 'cropware_linkedin';
-    downloadBlob(pdfBlob, `${pdfPrefix}_${safeName}.pdf`);
+    const pdfName = isNewsCarouselPdf
+      ? `${safeName}.pdf`
+      : `${getPlatform() === 'linkedin-pessoal' ? 'linkedin_pessoal' : 'cropware_linkedin'}_${safeName}.pdf`;
+    downloadBlob(pdfBlob, pdfName);
     setGenStatus('', '');
   } catch(e) {
     alert('Erro ao exportar PDF: ' + e.message);
@@ -12901,6 +13254,32 @@ function parseReferenceLinks(raw) {
     if (valid.length >= 5) break;
   }
   return valid;
+}
+
+// Sanitiza string pra usar em nome de arquivo preservando capitalização, acentos
+// e espaços; só remove caracteres inválidos no filesystem (/, \, ?, *, etc).
+function toFilenameTitle(str, max) {
+  if (!str) return 'carrossel';
+  return String(str)
+    .replace(/[\/\\?%*:|"<>]/g, '')  // chars inválidos em filesystem
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, max || 80);
+}
+
+// Converte string pra Title Case com regras de português brasileiro:
+// preposições/artigos curtos no meio do título ficam em minúscula.
+function toTitleCase(str) {
+  if (!str) return '';
+  const minor = new Set(['de','da','do','das','dos','e','em','na','no','nas','nos','a','o','as','os','para','por','com','sem','que','à','às','ao','aos']);
+  return str.split(/\s+/).map((word, i) => {
+    if (!word) return word;
+    const lower = word.toLowerCase();
+    // Preserva siglas em CAPS (CONAB, USDA, MAPA, etc)
+    if (word === word.toUpperCase() && word.length >= 2 && /[A-Z]/.test(word)) return word;
+    if (i > 0 && minor.has(lower)) return lower;
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+  }).join(' ');
 }
 
 function formatBrazilDateShort(date) {
@@ -15415,7 +15794,7 @@ async function generateNewsCarousel() {
       id:          `news-carousel-gen-${timestamp}`,
       type:        'news-carousel-post',
       style:       'news-editorial',
-      title:       parsed.title || 'Tendência gerada',
+      title:       toTitleCase(parsed.title || 'Tendência Gerada'),
       theme:       theme,
       tone:        tone,
       isGenerated: true,
