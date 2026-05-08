@@ -6243,6 +6243,7 @@
       <optgroup label="Notícia">
         <option value="news-post">Notícia — Post</option>
         <option value="tendencia-carrossel">Tendência — Carrossel</option>
+        <option value="opiniao-carrossel">Opinião — Carrossel</option>
       </optgroup>
       <optgroup label="Apresentação">
         <option value="presentation">Apresentação</option>
@@ -7167,6 +7168,10 @@ const newsCarousels = [];
 const newsCarouselLegends = [];
 let currentNewsCarousel = 0;
 let newsCarouselCurrentSlide = 0;
+const opinionCarousels = [];
+const opinionCarouselLegends = [];
+let currentOpinionCarousel = 0;
+let opinionCarouselCurrentSlide = 0;
 
 // LinkedIn state
 const linkedinPosts = [];
@@ -7195,21 +7200,24 @@ let presentationCurrentSlide = 0;
 // Helpers: which platform and format
 function getPlatform() {
   if (activeMode === 'presentation') return 'presentation';
-  if (activeMode === 'news-post' || activeMode === 'tendencia-carrossel') return 'news';
+  if (activeMode === 'news-post' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel') return 'news';
   if (activeMode === 'instagram-ads-post' || activeMode === 'instagram-ads-carousel') return 'instagram-ads';
   if (activeMode.startsWith('linkedin-pessoal')) return 'linkedin-pessoal';
   return activeMode.startsWith('linkedin') ? 'linkedin' : 'instagram';
 }
 function isNewsMode(mode) {
   const m = mode || activeMode;
-  return m === 'news-post' || m === 'tendencia-carrossel';
+  return m === 'news-post' || m === 'tendencia-carrossel' || m === 'opiniao-carrossel';
 }
 function isInstagramAdsMode(mode) {
   const m = mode || activeMode;
   return m === 'instagram-ads-post' || m === 'instagram-ads-carousel';
 }
 function isCarouselMode() {
-  return activeMode === 'carousel' || activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel' || activeMode === 'presentation' || activeMode === 'instagram-ads-carousel' || activeMode === 'tendencia-carrossel';
+  return activeMode === 'carousel' || activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel' || activeMode === 'presentation' || activeMode === 'instagram-ads-carousel' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel';
+}
+function isOpinionCarouselMode(mode) {
+  return (mode || activeMode) === 'opiniao-carrossel';
 }
 function isPresentationMode() {
   return activeMode === 'presentation';
@@ -7221,12 +7229,15 @@ function getSidePanelLabel() {
 }
 function getSidebarCollectionLabel() {
   if (isPresentationMode()) return 'Apresentacoes';
+  if (isOpinionCarouselMode()) return 'Opinioes';
   if (isNewsMode()) return 'Pautas';
   if (isInstagramAdsMode()) return 'Anuncios';
   return isCarouselMode() ? 'Carrosseis' : 'Posts';
 }
 function getGenerateButtonLabel() {
   if (isPresentationMode()) return 'Gerar Slide';
+  if (isOpinionCarouselMode()) return 'Gerar Carrossel de Opinião';
+  if (activeMode === 'tendencia-carrossel') return 'Gerar Carrossel de Tendência';
   if (isNewsMode()) return 'Post Noticia';
   if (isInstagramAdsMode()) return 'Gerar Anuncio';
   return isCarouselMode() ? 'Gerar Carrossel' : 'Gerar Novo';
@@ -7265,10 +7276,10 @@ function getEmptyStateCopy() {
   if (isNewsMode() && isCarouselMode()) {
     return {
       title: 'Nenhum Carrossel Ainda',
-      subtitle: 'Transforme tendências do agro em carrosséis editoriais com fatos preservados.',
-      button: 'Gerar Carrossel de Tendência',
+      subtitle: isOpinionCarouselMode() ? 'Transforme notícias, artigos e sinais de mercado em análises opinativas com base factual.' : 'Transforme tendências do agro em carrosséis editoriais com fatos preservados.',
+      button: isOpinionCarouselMode() ? 'Gerar Carrossel de Opinião' : 'Gerar Carrossel de Tendência',
       headerTitle: 'Nenhum Carrossel Ainda',
-      headerSub: 'Informe um tema de tendência',
+      headerSub: isOpinionCarouselMode() ? 'Informe um tema para análise' : 'Informe um tema de tendência',
     };
   }
   if (isNewsMode()) {
@@ -7345,6 +7356,7 @@ function getModeItems() {
     case 'carousel':                  return carousels;
     case 'news-post':                 return newsPosts;
     case 'tendencia-carrossel':       return newsCarousels;
+    case 'opiniao-carrossel':         return opinionCarousels;
     case 'instagram-ads-post':        return instagramAdsPosts;
     case 'instagram-ads-carousel':    return instagramAdsCarousels;
     case 'linkedin-post':             return linkedinPosts;
@@ -7360,6 +7372,7 @@ function getModeLegends() {
     case 'carousel':                  return carouselLegends;
     case 'news-post':                 return newsLegends;
     case 'tendencia-carrossel':       return newsCarouselLegends;
+    case 'opiniao-carrossel':         return opinionCarouselLegends;
     case 'instagram-ads-post':        return instagramAdsLegends;
     case 'instagram-ads-carousel':    return instagramAdsCarouselLegends;
     case 'linkedin-post':             return linkedinLegends;
@@ -7375,6 +7388,7 @@ function getModeCurrentIdx() {
     case 'carousel':                  return currentCarousel;
     case 'news-post':                 return newsCurrentPost;
     case 'tendencia-carrossel':       return currentNewsCarousel;
+    case 'opiniao-carrossel':         return currentOpinionCarousel;
     case 'instagram-ads-post':        return instagramAdsCurrentPost;
     case 'instagram-ads-carousel':    return instagramAdsCurrentCarousel;
     case 'linkedin-post':             return linkedinCurrentPost;
@@ -7390,6 +7404,7 @@ function setModeCurrentIdx(idx) {
     case 'carousel':                  currentCarousel = idx; break;
     case 'news-post':                 newsCurrentPost = idx; break;
     case 'tendencia-carrossel':       currentNewsCarousel = idx; break;
+    case 'opiniao-carrossel':         currentOpinionCarousel = idx; break;
     case 'instagram-ads-post':        instagramAdsCurrentPost = idx; break;
     case 'instagram-ads-carousel':    instagramAdsCurrentCarousel = idx; break;
     case 'linkedin-post':             linkedinCurrentPost = idx; break;
@@ -7406,6 +7421,7 @@ function getCurrentSlide() {
   if (activeMode === 'presentation') return presentationCurrentSlide;
   if (activeMode === 'instagram-ads-carousel') return instagramAdsCurrentSlide;
   if (activeMode === 'tendencia-carrossel') return newsCarouselCurrentSlide;
+  if (activeMode === 'opiniao-carrossel') return opinionCarouselCurrentSlide;
   return currentSlide;
 }
 function setCurrentSlide(idx) {
@@ -7414,6 +7430,7 @@ function setCurrentSlide(idx) {
   else if (activeMode === 'presentation') presentationCurrentSlide = idx;
   else if (activeMode === 'instagram-ads-carousel') instagramAdsCurrentSlide = idx;
   else if (activeMode === 'tendencia-carrossel') newsCarouselCurrentSlide = idx;
+  else if (activeMode === 'opiniao-carrossel') opinionCarouselCurrentSlide = idx;
   else currentSlide = idx;
 }
 
@@ -7552,7 +7569,7 @@ function buildSidebar() {
   const genLabel = isPresentation ? 'Gerar Slide' : (isCarousel ? 'Gerar Carrossel' : 'Gerar Novo');
   const genLabelText = getGenerateButtonLabel();
   const isLinkedinCarousel = activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel';
-  const isNewsCarousel = activeMode === 'tendencia-carrossel';
+  const isNewsCarousel = activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel';
   let dlLabel, dlAction;
   if (isPresentation) {
     dlLabel = 'Baixar Imagem';
@@ -7887,7 +7904,7 @@ function updateSlideNav() {
   document.getElementById('slideNext').disabled = cs === carousel.slides.length - 1;
 
   // Carrossel notícia: reordenação de slides desativada (story arc é fixo).
-  const isNewsCarousel = activeMode === 'tendencia-carrossel';
+  const isNewsCarousel = activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel';
   const movePrev = document.getElementById('slideMovePrev');
   const moveNext = document.getElementById('slideMoveNext');
   if (movePrev) {
@@ -8335,6 +8352,10 @@ const _saveSessionCore = async function() {
     .map((c, i) => ({ post: c, legend: newsCarouselLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
+  const generatedOpinionCarousels = opinionCarousels
+    .map((c, i) => ({ post: c, legend: opinionCarouselLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
   const generatedLinkedinPosts = linkedinPosts
     .map((p, i) => ({ post: p, legend: linkedinLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
@@ -8355,7 +8376,7 @@ const _saveSessionCore = async function() {
     .map((p, i) => ({ post: p, legend: presentationLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
-  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
+  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedOpinionCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
   if (!allRows.length) return;
   const sid = getSessionId();
   const now = new Date().toISOString();
@@ -8412,7 +8433,7 @@ async function loadSession() {
         const type = postData.type;
         if (type === 'presentation') {
           renderGeneratedPresentation(postData, row.legend || '');
-        } else if (type === 'carousel' || type === 'linkedin-carousel' || type === 'linkedin-pessoal-carousel' || type === 'instagram-ads-carousel' || type === 'news-carousel-post') {
+        } else if (type === 'carousel' || type === 'linkedin-carousel' || type === 'linkedin-pessoal-carousel' || type === 'instagram-ads-carousel' || type === 'news-carousel-post' || type === 'opinion-carousel-post') {
           renderGeneratedCarousel(postData, row.legend || '');
         } else {
           renderGeneratedPost(postData, row.legend || '');
@@ -8896,8 +8917,9 @@ function renderGeneratedCarousel(carouselData, legendText) {
   const isLinkedinPessoal = carouselData.type === 'linkedin-pessoal-carousel';
   const isLinkedin = carouselData.type === 'linkedin-carousel';
   const isNewsCarousel = carouselData.type === 'news-carousel-post';
-  const targetArr = isNewsCarousel ? newsCarousels : isInstagramAdsCarousel ? instagramAdsCarousels : isLinkedinPessoal ? linkedinPessoalCarousels : isLinkedin ? linkedinCarousels : carousels;
-  const targetLeg = isNewsCarousel ? newsCarouselLegends : isInstagramAdsCarousel ? instagramAdsCarouselLegends : isLinkedinPessoal ? linkedinPessoalCarouselLegends : isLinkedin ? linkedinCarouselLegends : carouselLegends;
+  const isOpinionCarousel = carouselData.type === 'opinion-carousel-post' || carouselData.editorialFlavor === 'opinion';
+  const targetArr = isOpinionCarousel ? opinionCarousels : isNewsCarousel ? newsCarousels : isInstagramAdsCarousel ? instagramAdsCarousels : isLinkedinPessoal ? linkedinPessoalCarousels : isLinkedin ? linkedinCarousels : carousels;
+  const targetLeg = isOpinionCarousel ? opinionCarouselLegends : isNewsCarousel ? newsCarouselLegends : isInstagramAdsCarousel ? instagramAdsCarouselLegends : isLinkedinPessoal ? linkedinPessoalCarouselLegends : isLinkedin ? linkedinCarouselLegends : carouselLegends;
 
   targetArr.push(carouselData);
   targetLeg.push(isInstagramAdsCarousel ? (legendText || '').trim() : sanitizeLegend(legendText || ''));
@@ -9420,7 +9442,7 @@ function renderNewsEditorialStyle(postData) {
     </div>
     ${postData.logoEnabled !== false ? '<img class="news-edit-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     ${renderSiteText(postData)}
-    ${role === 'closing' ? '<div class="news-edit-closing-signature">Cropware Tendências</div>' : ''}
+    ${role === 'closing' ? `<div class="news-edit-closing-signature">${postData.editorialFlavor === 'opinion' ? 'Cropware Opinião' : 'Cropware Tendências'}</div>` : ''}
     <div class="brand-strip"></div>
   `;
 }
@@ -9990,11 +10012,12 @@ function updatePostControls(idx) {
   const styleSelect = document.getElementById('pcStyleSelect');
   if (styleSelect) {
     styleSelect.value = currentStyle;
-    // Renomeia o label da opção news-editorial conforme o contexto:
-    // single news-post → "Notícia"; carousel slide → "Tendências".
+    // Renomeia o label da opção news-editorial conforme o contexto.
     const newsOpt = styleSelect.querySelector('option[value="news-editorial"]');
     if (newsOpt) {
-      newsOpt.textContent = isNewsCarouselSlideType(post) ? 'Tendências' : 'Notícia';
+      newsOpt.textContent = isNewsCarouselSlideType(post)
+        ? (post.editorialFlavor === 'opinion' ? 'Opinião' : 'Tendências')
+        : 'Notícia';
     }
     styleSelect.querySelectorAll('option').forEach(opt => {
       if (newsMode) {
@@ -10706,6 +10729,25 @@ function onEscColor(e) {
 window.addEventListener('scroll', () => { if (activeColorTarget) closeColorDropdown(); }, true);
 window.addEventListener('resize', () => { if (activeColorTarget) closeColorDropdown(); });
 
+function applyAccentToCarouselSlides(color) {
+  if (!isCarouselMode()) return false;
+  const items = getModeItems();
+  const carousel = items && items[getModeCurrentIdx()];
+  if (!carousel || !Array.isArray(carousel.slides) || carousel.slides.length < 2) return false;
+
+  carousel.slides.forEach(slide => {
+    slide.accent = color;
+    const slideStyle = normalizePostStyle(slide.style);
+    if (slide._byStyle && slideStyle && slide._byStyle[slideStyle]) {
+      slide._byStyle[slideStyle].accent = color;
+    }
+
+    const slideEl = document.getElementById(slide.id);
+    if (slideEl) slideEl.style.setProperty('--post-accent', color);
+  });
+  return true;
+}
+
 function applyColorChoice(color, targetOverride) {
   const post = getActivePost();
   if (!post || !post.isGenerated) return;
@@ -10714,8 +10756,10 @@ function applyColorChoice(color, targetOverride) {
   // Normaliza 'none' → 'transparent' antes de aplicar.
   if (color === 'none') color = 'transparent';
   if (target === 'accent') {
-    post.accent = color;
-    if (postEl) postEl.style.setProperty('--post-accent', post.accent);
+    if (!applyAccentToCarouselSlides(color)) {
+      post.accent = color;
+      if (postEl) postEl.style.setProperty('--post-accent', post.accent);
+    }
   } else if (target === 'overlay') {
     post.overlayColor = color;
     if (postEl) {
@@ -12530,6 +12574,10 @@ function findPostDataById(elementId) {
     const s = c.slides.find(s => s.id === elementId);
     if (s) return s;
   }
+  for (const c of opinionCarousels) {
+    const s = c.slides.find(s => s.id === elementId);
+    if (s) return s;
+  }
   const lp = linkedinPosts.find(p => p.id === elementId);
   if (lp) return lp;
   for (const c of linkedinCarousels) {
@@ -13327,7 +13375,7 @@ async function bootStudio() {
   // Restaura último modo selecionado (persistido no localStorage)
   try {
     const savedMode = localStorage.getItem('cropware-active-mode');
-    const validModes = ['post','carousel','news-post','tendencia-carrossel','instagram-ads-post','instagram-ads-carousel',
+    const validModes = ['post','carousel','news-post','tendencia-carrossel','opiniao-carrossel','instagram-ads-post','instagram-ads-carousel',
                         'linkedin-post','linkedin-carousel','linkedin-pessoal-post','linkedin-pessoal-carousel',
                         'presentation'];
     if (savedMode && validModes.includes(savedMode) && savedMode !== activeMode) {
@@ -13744,7 +13792,7 @@ async function downloadCarousel() {
 
   try {
     const zip = new JSZip();
-    const isNewsCarousel = carousel.type === 'news-carousel-post';
+    const isNewsCarousel = carousel.type === 'news-carousel-post' || carousel.type === 'opinion-carousel-post';
     // Para news-carousel: usa o t\u00edtulo leg\u00edvel (Title Case, com acentos, espa\u00e7os).
     // Outros carross\u00e9is: slug min\u00fasculo + underscores (legado).
     const titleSrc = carousel.title || carousel.theme || 'carrossel';
@@ -13837,7 +13885,7 @@ async function downloadLinkedInCarouselPDF() {
     console.log(`[Cropware] LinkedIn PDF: ${carousel.slides.length} slides, ${(pdfSize / 1024 / 1024).toFixed(1)} MB (flat ${pageW}×${pageH} JPEG + unsharp mask)`);
 
     // Nome do arquivo: news-carousel usa t\u00edtulo leg\u00edvel; outros mant\u00eam slug.
-    const isNewsCarouselPdf = carousel.type === 'news-carousel-post';
+    const isNewsCarouselPdf = carousel.type === 'news-carousel-post' || carousel.type === 'opinion-carousel-post';
     const titleSrc = carousel.title || carousel.theme || 'carrossel';
     const safeName = isNewsCarouselPdf
       ? toFilenameTitle(titleSrc, 80)
@@ -13937,7 +13985,8 @@ function updateLegend(idx) {
   const showTitlePanel =
     activeMode === 'linkedin-carousel' ||
     activeMode === 'linkedin-pessoal-carousel' ||
-    activeMode === 'tendencia-carrossel';
+    activeMode === 'tendencia-carrossel' ||
+    activeMode === 'opiniao-carrossel';
   if (titlePanel) {
     titlePanel.style.display = showTitlePanel ? '' : 'none';
   }
@@ -14088,6 +14137,7 @@ function openGenerator() {
   const platform = getPlatform();
   const isAds = isInstagramAdsMode();
   const isNews = isNewsMode();
+  const isOpinion = isOpinionCarouselMode();
   document.getElementById('genModal').classList.add('open');
   wireGenChipsOnce();
   resetGenChips();
@@ -14098,22 +14148,27 @@ function openGenerator() {
   }
   if (isAds && isCarousel) headerSpan.textContent = 'Instagram Ads — Gerar Carrossel com IA';
   else if (isAds) headerSpan.textContent = 'Instagram Ads — Gerar Anuncio com IA';
+  else if (isOpinion && headerSpan) headerSpan.textContent = 'Carrossel de Opinião';
   else if (isNews && isCarousel && headerSpan) headerSpan.textContent = 'Carrossel de Tendência';
   else if (isNews && headerSpan) headerSpan.textContent = 'Post Notícia';
   const genBtn = document.getElementById('genBtn');
   if (genBtn) genBtn.textContent = isCarousel ? 'Gerar Carrossel' : 'Gerar Post';
   if (genBtn && isAds && !isCarousel) genBtn.textContent = 'Gerar Anuncio';
   if (genBtn && isAds && isCarousel) genBtn.textContent = 'Gerar Carrossel de Anuncios';
-  if (genBtn && isNews && isCarousel) genBtn.textContent = 'Gerar Carrossel de Tendência';
+  if (genBtn && isOpinion) genBtn.textContent = 'Gerar Carrossel de Opinião';
+  else if (genBtn && isNews && isCarousel) genBtn.textContent = 'Gerar Carrossel de Tendência';
   else if (genBtn && isNews) genBtn.textContent = 'Gerar Notícia';
   const themeLabel = document.getElementById('genThemeLabel');
   const themeInput = document.getElementById('genTheme');
   if (themeLabel) {
-    if (isNews && isCarousel) themeLabel.textContent = 'Tema da tendência';
+    if (isOpinion) themeLabel.textContent = 'Tema da análise';
+    else if (isNews && isCarousel) themeLabel.textContent = 'Tema da tendência';
     else if (isNews) themeLabel.textContent = 'Tema da notícia';
     else themeLabel.textContent = 'Tema / Contexto do Post';
   }
-  if (themeInput) themeInput.placeholder = isNews
+  if (themeInput) themeInput.placeholder = isOpinion
+    ? 'Ex: o que a alta dos defensivos revela sobre a safra, por que a soja perdeu margem, leitura sobre crédito rural...'
+    : isNews
     ? 'Ex: preço da soja em Mato Grosso, exportação de milho para a China, clima na safra de cana, política agrícola...'
     : 'Ex: colheita de soja com variação por talhão, foco em decisão baseada em dado...';
   const slideCountGroup = document.getElementById('genSlideCountGroup');
@@ -14223,8 +14278,9 @@ function formatBrazilDateShort(date) {
 
 // Varre múltiplas fontes do agro brasileiro nas últimas 72h via Google Search grounding
 // e consolida em UMA pauta densa, com fatos preservados (datas, valores, nomes, percentuais).
-async function searchAndConsolidateNews(topic, factsCap, referenceLinks) {
+async function searchAndConsolidateNews(topic, factsCap, referenceLinks, mode = 'news') {
   const cap = Math.max(4, Math.min(16, Number(factsCap) || 8));
+  const isOpinion = mode === 'opinion';
   const links = Array.isArray(referenceLinks) ? referenceLinks.filter(Boolean).slice(0, 5) : [];
   const today = new Date().toLocaleDateString('pt-BR', {
     timeZone: 'America/Sao_Paulo', day: '2-digit', month: 'long', year: 'numeric',
@@ -14232,22 +14288,22 @@ async function searchAndConsolidateNews(topic, factsCap, referenceLinks) {
   const linksBlock = links.length
     ? `\n\nLINKS DE REFERÊNCIA (ponto de partida da pauta — NÃO a única fonte):\n${links.map((u, i) => `  ${i + 1}. ${u}`).join('\n')}\n- Acesse cada link via Google Search (use site:dominio quando necessário) e EXTRAIA o assunto/manchete que ele cobre.\n- Trate os links como SEMENTE da pauta, não como teto. A narrativa final NÃO pode ser só uma reescrita do(s) link(s).\n- OBRIGATÓRIO: pesquise ATIVAMENTE 2 a 3 fontes ADICIONAIS sobre o mesmo assunto/tema (portais distintos do(s) link(s) original(is)). Use Google Search com queries como "[tema] [data atual]", "[tema] CONAB/USDA/MAPA", "[tema] análise mercado", "[tema] reação setor".\n- Cada fato/slide deve preferencialmente trazer DADOS QUE NÃO ESTÃO no link original — números cruzados, reações de outras fontes, contexto de mercado, dados oficiais (CONAB, USDA, MAPA, IBGE, CEPEA), declarações de associações (Aprosoja, ABIOVE, ANEC).\n- Se a fonte do link diverge de outras fontes em algum dado, REGISTRE ambos com atribuição (ex: "168 mi t segundo a CONAB; 165 mi t segundo o USDA").\n- Se o usuário NÃO informou tema explícito, INFERA o tema a partir do(s) link(s) e amplie a pesquisa.\n- Inclua TODAS as URLs informadas no array "fontes" do JSON de saída — junto com as fontes adicionais que você descobrir.`
     : '';
-  const systemPrompt = `Você é repórter sênior da Cropware News. Sua tarefa é fazer UMA varredura jornalística agora, integrar várias fontes recentes sobre o tema pedido, e consolidar UMA notícia única, densa, factual e citável — pronta para virar matéria.
+  const systemPrompt = `Você é ${isOpinion ? 'analista editorial sênior' : 'repórter sênior'} da Cropware News. Sua tarefa é fazer UMA varredura ${isOpinion ? 'de notícias, trends, artigos, relatórios e análises recentes' : 'jornalística'} agora, integrar várias fontes recentes sobre o tema pedido, e consolidar UMA ${isOpinion ? 'pauta analítica factual e citável — pronta para virar coluna de opinião' : 'notícia única, densa, factual e citável — pronta para virar matéria'}.
 
 REGRAS DE PESQUISA:
-- Use Google Search agora — varredura JORNALÍSTICA, não consulta única. Combine NO MÍNIMO 3 fontes INDEPENDENTES (de domínios distintos), idealmente 4-5: portais de notícia, agências, governo, associações setoriais — preferência: Globo Rural, Canal Rural, Agrolink, Notícias Agrícolas, AgFeed, Reuters, Valor Econômico, AgriCensus, CONAB, USDA, MAPA, IBGE, ESALQ/CEPEA, ANEC, ABIOVE, Embrapa, Aprosoja, sindicatos rurais.
+- Use Google Search agora — varredura ${isOpinion ? 'ANALÍTICA' : 'JORNALÍSTICA'}, não consulta única. Combine NO MÍNIMO 3 fontes INDEPENDENTES (de domínios distintos), idealmente 4-5: portais de notícia, agências, governo, associações setoriais, relatórios e artigos — preferência: Globo Rural, Canal Rural, Agrolink, Notícias Agrícolas, AgFeed, Reuters, Valor Econômico, AgriCensus, CONAB, USDA, MAPA, IBGE, ESALQ/CEPEA, ANEC, ABIOVE, Embrapa, Aprosoja, sindicatos rurais.
 - Cruze dados entre fontes. Onde houver convergência, fortaleça o fato; onde houver divergência, registre ambos com atribuição.
-- Janela: últimas 72 horas (hoje é ${today}). Notícias mais antigas que 3 dias devem ser descartadas — exceto se forem o pano de fundo factual indispensável de uma notícia das últimas 72h.
+- Janela: ${isOpinion ? 'priorize os últimos 14 dias' : 'últimas 72 horas'} (hoje é ${today}). ${isOpinion ? 'Fontes mais antigas podem entrar como pano de fundo, desde que a análise tenha gancho recente ou relevância atual.' : 'Notícias mais antigas que 3 dias devem ser descartadas — exceto se forem o pano de fundo factual indispensável de uma notícia das últimas 72h.'}
 - Foco temático: agronegócio brasileiro — clima, safra, mercado/preço, exportação, câmbio aplicado a commodities, política agrícola, defensivos, biológicos, fertilizantes, tecnologia agrícola, eventos do setor.${linksBlock}
 
 REGRAS DE PRESERVAÇÃO FACTUAL (CRÍTICO):
 - Preserve EXATAMENTE: datas (ex: "30/04/2026"), valores monetários (ex: "R$ 132,50/saca"), volumes (ex: "168 milhões de toneladas", "1,2 mi de hectares"), percentuais (ex: "+4,3% em relação a 2025"), nomes de empresas/órgãos/pessoas (ex: "Aprosoja-MT", "ministra Carla Tennenbaum"), citações entre aspas se vierem das fontes.
 - Se uma fonte não dá um número, NÃO invente. Se duas fontes dão números diferentes, escreva ambos com a fonte (ex: "168 mi t segundo a CONAB; 165 mi t segundo o USDA").
 - NÃO arredonde valores específicos. NÃO converta moedas. NÃO substitua "R$" por "reais" no texto factual.
-- Se nenhuma notícia confiável foi encontrada nas últimas 72h sobre o tema, devolva o objeto com manchete vazia e fatos vazios.
+- Se nenhuma base factual confiável foi encontrada ${isOpinion ? 'para sustentar análise sobre o tema' : 'nas últimas 72h sobre o tema'}, devolva o objeto com manchete vazia e fatos vazios.
 
 REGRAS DE ESCRITA:
-- Manchete: 1 frase factual, máx 14 palavras, máx 90 caracteres, com ponto final. Sem clickbait, sem CAPS LOCK, sem ironia, sem aspas, sem emoji. Tem que carregar o fato mais importante.
+- Manchete: 1 frase ${isOpinion ? 'analítica com tese factual' : 'factual'}, máx 14 palavras, máx 90 caracteres, com ponto final. Sem clickbait, sem CAPS LOCK, sem ironia, sem aspas, sem emoji. Tem que carregar ${isOpinion ? 'a tensão central da análise' : 'o fato mais importante'}.
 - Lead: 1ª frase do tipo lide jornalístico (quem/o quê/quando/onde), 25-40 palavras, com ao menos 1 dado factual preservado.
 - Fatos: array de 4 a ${cap} itens curtos (preencha o máximo possível conforme houver matéria-prima nas fontes), cada um com UM fato preservado da pesquisa (data, valor, nome, percentual, citação). Sem opinião. Sem contexto vago. Vire bullet de uma só linha.
 - Contexto: 60-100 palavras com pano de fundo factual (o que motivou, qual a tendência mostrada por dados oficiais, qual a próxima janela de decisão). Sem invenção.
@@ -14276,7 +14332,7 @@ FORMATO DE SAÍDA — apenas JSON válido, sem markdown, sem comentário fora do
   const linksLine = links.length ? `\n\nLinks de referência prioritários:\n${links.map((u, i) => `  ${i + 1}. ${u}`).join('\n')}` : '';
   const userPrompt = `${themeLine}${linksLine}
 
-Pesquise agora via Google Search. Integre múltiplas fontes recentes (últimas 72h). Consolide UMA notícia única densa e factual no formato JSON. Preserve datas, valores e nomes EXATAMENTE como vieram das fontes.`;
+Pesquise agora via Google Search. Integre múltiplas fontes recentes (${isOpinion ? 'prioridade: últimos 14 dias, aceitando contexto mais antigo quando necessário' : 'últimas 72h'}). Consolide UMA ${isOpinion ? 'pauta analítica' : 'notícia única'} densa e factual no formato JSON. Preserve datas, valores e nomes EXATAMENTE como vieram das fontes.`;
 
   const resp = await fetchGeminiWithRetry(
     `${SUPABASE_URL}/functions/v1/gemini`,
@@ -16006,22 +16062,36 @@ Responda APENAS em JSON válido:
 }`;
 }
 
-// System prompt do carrossel editorial de tendência (3 / 5 / 7 slides).
+// System prompt do carrossel editorial de tendência/opinião (3 / 5 / 7 slides).
 // Recebe a pauta consolidada em userPrompt e estrutura UM JSON com slides já distribuídos por role.
-function buildNewsCarouselSystemPrompt(tone, slideCount) {
+function buildNewsCarouselSystemPrompt(tone, slideCount, flavor = 'trend') {
+  const isOpinion = flavor === 'opinion';
   const toneDirectives = {
-    casual:      'TOM: jornalístico claro e direto, registro brasileiro acessível, sem gírias.',
-    tecnico:     'TOM: jornalístico técnico, vocabulário real do agro brasileiro, precisão factual.',
-    inspirador:  'TOM: jornalístico com leitura estratégica de oportunidade, sem hype.',
-    provocativo: 'TOM: jornalístico afiado, ângulo claro de mercado, sem clickbait.',
+    casual:      isOpinion ? 'TOM: análise editorial clara, impessoal e acessível, como texto de jornal; sem gírias.' : 'TOM: jornalístico claro e direto, registro brasileiro acessível, sem gírias.',
+    tecnico:     isOpinion ? 'TOM: análise técnica, vocabulário real do agro brasileiro, leitura de causa e consequência, precisão factual.' : 'TOM: jornalístico técnico, vocabulário real do agro brasileiro, precisão factual.',
+    inspirador:  isOpinion ? 'TOM: análise estratégica de oportunidade, com visão de mercado e prudência; sem hype.' : 'TOM: jornalístico com leitura estratégica de oportunidade, sem hype.',
+    provocativo: isOpinion ? 'TOM: opinião afiada, tese clara e provocação responsável, sempre sustentada por fatos; sem clickbait.' : 'TOM: jornalístico afiado, ângulo claro de mercado, sem clickbait.',
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
   const todayDataLinha = formatBrazilDateShort();
   const factCount = Math.max(1, slideCount - 2);
+  const productName = isOpinion ? 'Carrossel Editorial de Opinião' : 'Carrossel Editorial de Tendência';
+  const roleFrame = isOpinion
+    ? `Você é editor de opinião e analista da Cropware News, com leitura estratégica do agro brasileiro. Sua função é transformar UMA pauta consolidada (notícias, tendências, artigos, dados e acontecimentos) em um ${productName} para Instagram, com ${slideCount} slides.`
+    : `Você é editor da Cropware News, redação editorial agro. Sua função é transformar UMA pauta consolidada (que vem com manchete sugerida, lide, fatos preservados, contexto e fontes) em um ${productName} para Instagram, com ${slideCount} slides.`;
 
-  return `Você é editor da Cropware News, redação editorial agro. Sua função é transformar UMA pauta consolidada (que vem com manchete sugerida, lide, fatos preservados, contexto e fontes) em um Carrossel Editorial de Tendência para Instagram, com ${slideCount} slides.
+  return `${roleFrame}
 
 REGRA ABSOLUTA: NUNCA invente fato, número, porcentagem, nome, data ou citação. Use APENAS o que está na pauta entregue (manchete, lide, fatos, contexto). Se faltar dado, escreva sem ele.
+
+${isOpinion ? `POSICIONAMENTO DE OPINIÃO:
+- O carrossel deve soar como uma análise autoral: há tese, interpretação e consequência prática.
+- Voz editorial impessoal: escreva como uma análise de jornal, sem explicitar que a opinião é de uma pessoa.
+- PROIBIDO usar primeira pessoa ou marcadores pessoais: "minha leitura", "minha análise", "minha opinião", "eu acho", "entendo que", "na minha visão", "o que eu vejo".
+- Pode usar construções impessoais como "O sinal é", "O ponto central é", "Isso mostra que", "Na prática," — mas NÃO use achismo solto.
+- Cada opinião precisa estar amarrada a pelo menos um número, data, acontecimento, órgão, fonte ou situação preservada da pauta.
+- Evite neutralidade de boletim. Também evite militância, torcida, conselho financeiro ou promessa.
+- A palavra "Opinião" define o formato editorial, mas o texto dos slides deve parecer análise jornalística impessoal.` : ''}
 
 REGRA DE PRESERVAÇÃO DOS FATOS (CRÍTICO):
 - A pauta vem com um array de FATOS (datas, valores R$/saca, percentuais, volumes, nomes próprios). Cada slide de fato (role="fact") deve usar UM fato distinto, LITERALMENTE preservado.
@@ -16029,16 +16099,17 @@ REGRA DE PRESERVAÇÃO DOS FATOS (CRÍTICO):
 - NÃO repita o mesmo fato em mais de um slide. Se houver mais fatos do que slides de fato, escolha os mais impactantes.
 
 ESTRUTURA DO CARROSSEL (${slideCount} slides total):
-- Slide 1 (role="cover"): manchete-quote forte de até 14 palavras. Frase de impacto que provoca curiosidade ou cria tensão, NÃO resume a pauta. Pode ser afirmação editorial assertiva. Termina com ponto final.
+- Slide 1 (role="cover"): ${isOpinion ? 'tese editorial forte com até 14 palavras. Deve parecer abertura de análise jornalística impessoal, não manchete neutra. NÃO use "Minha leitura:", "Minha análise:" nem qualquer primeira pessoa. Termina com ponto final.' : 'manchete-quote forte de até 14 palavras. Frase de impacto que provoca curiosidade ou cria tensão, NÃO resume a pauta. Pode ser afirmação editorial assertiva. Termina com ponto final.'}
 - Slides 2 a ${slideCount - 1} (role="fact", ${factCount} slides): cada um pega UM fato distinto. Devolve:
   - factHighlight: número/dado em destaque LITERAL (ex: "R$ 132,50/saca", "+4,3%", "168 mi t", "30/04/2026"). Curto e impactante. Pode ser omitido se o fato não tiver número claro.
   - factTitle: ≤6 palavras, define o argumento desse slide (ex: "Fósforo importado", "Recuo da CONAB").
-  - factBody: 30 a 50 palavras explicando o fato e seu impacto, com tom jornalístico.
+  - factBody: 30 a 50 palavras ${isOpinion ? 'conectando o fato a uma leitura analítica: o que ele revela, pressiona ou antecipa. Deve conter interpretação, mas ancorada no fato.' : 'explicando o fato e seu impacto, com tom jornalístico.'}
   - factSource: ≤25 caracteres, no formato "FONTE · DD.mmm" (ex: "CONAB · 02.MAI", "USDA · 03.MAI", "APROSOJA-MT · 04.MAI"). Use a fonte mais autoritativa que vier na pauta. Pode ser omitido.
-- Slide ${slideCount} (role="closing"): fechamento. closingLine de 1 frase (até 18 palavras, sem ponto final em ênfase). Opção condicional do ângulo Cropware:
+- Slide ${slideCount} (role="closing"): fechamento. closingLine de 1 frase (até 18 palavras, sem ponto final em ênfase). ${isOpinion ? 'Deve fechar a tese com consequência prática ou sinal de alerta, sem CTA.' : 'Opção condicional do ângulo Cropware:'}
+${isOpinion ? '' : `
   - Se a pauta tiver ligação NATURAL com decisão de campo, mercado, GD/DM, promotoria técnica, consultoria ou validação de tecnologia → fechamento traz leitura editorial Cropware ("Para quem constrói mercado no campo, a leitura é ...", "Na operação de quem desenvolve mercado, isso aponta para ...").
   - Se NÃO tiver ligação clara → fechamento jornalístico puro ("Próxima janela: X", "O dado a observar é Y").
-  - Sem CTA forçado, sem "comenta aí", sem emoji.
+  - Sem CTA forçado, sem "comenta aí", sem emoji.`}
 
 CONSISTÊNCIA VISUAL:
 - kicker: ÚNICO para todo o carrossel, idêntico em todos os slides (cover, fact e closing). MAIÚSCULA, ≤2 palavras (MERCADO, CLIMA, SAFRA, EXPORTAÇÃO, POLÍTICA AGRO, BIOLÓGICOS, TECNOLOGIA, CÂMBIO, LOGÍSTICA).
@@ -16065,7 +16136,7 @@ REGRAS DE IMAGEM (CRÍTICO — aplicar em TODOS os slides):
 - Sem texto, logos ou marcas nas imagens (texto será sobreposto pelo app).
 
 LEGENDA E HASHTAGS (compartilhadas, exibidas fora dos slides):
-- legend: 100 a 160 palavras. Estrutura: lide → 2-3 fatos chave → ângulo Cropware (mesma regra condicional do closing) → fecho.
+- legend: 100 a 160 palavras. Estrutura: ${isOpinion ? 'tese da análise → 2-3 fatos chave → implicação para quem decide no agro → fecho opinativo sóbrio.' : 'lide → 2-3 fatos chave → ângulo Cropware (mesma regra condicional do closing) → fecho.'}
 - hashtags: 4 a 5 hashtags em MINÚSCULAS, sem capitalização criativa (use #soja, NÃO #SoJa ou #Soja). Inclua 1-2 genéricas (#noticias, #atualidades, #agronews, #tendencias) + 2-3 temáticas. NÃO inclua #cropwarenews nem #cropware.
 
 ${toneBlock}
@@ -16076,7 +16147,7 @@ Responda APENAS em JSON válido, sem markdown:
   "title":      "título curto sidebar (≤60 chars)",
   "kicker":     "MERCADO",
   "dataLinha":  "${todayDataLinha}",
-  "blockColor": "#152F17",
+  "blockColor": "#6DCA73",
   "slides": [
     { "role": "cover",   "manchete": "...", "imagePrompt": "..." },
     { "role": "fact",    "factTitle": "...", "factHighlight": "...", "factBody": "...", "factSource": "...", "imagePrompt": "..." }
@@ -16088,12 +16159,13 @@ Responda APENAS em JSON válido, sem markdown:
 }`;
 }
 
-async function callGeminiNewsCarouselText(theme, tone, slideCount, newsContext) {
-  const systemPrompt = buildNewsCarouselSystemPrompt(tone, slideCount);
+async function callGeminiNewsCarouselText(theme, tone, slideCount, newsContext, flavor = 'trend') {
+  const systemPrompt = buildNewsCarouselSystemPrompt(tone, slideCount, flavor);
+  const isOpinion = flavor === 'opinion';
   const newsBlock = newsContext
     ? `\n\nPAUTA CONSOLIDADA (use APENAS estes fatos — NÃO invente, NÃO arredonde):\nKicker sugerido: ${newsContext.kicker || ''}\nManchete sugerida: ${newsContext.manchete || ''}\nLead: ${newsContext.lead || ''}\nFatos preservados (distribua um fato distinto por slide de fato):\n${(newsContext.fatos || []).map((f, i) => `  ${i + 1}. ${f}`).join('\n') || '  (nenhum fato disponível)'}\nContexto: ${newsContext.contexto || ''}\nFontes consultadas: ${(newsContext.fontes || []).join(', ') || 'não informadas'}`
     : '';
-  const userText = `Tema buscado pelo usuário: ${theme}\n\nMonte um carrossel editorial de ${slideCount} slides (1 cover + ${Math.max(1, slideCount - 2)} fact + 1 closing) usando a pauta abaixo. Preserve fatos LITERALMENTE.${newsBlock}`;
+  const userText = `Tema buscado pelo usuário: ${theme}\n\nMonte um carrossel editorial de ${isOpinion ? 'opinião/análise' : 'tendência'} com ${slideCount} slides (1 cover + ${Math.max(1, slideCount - 2)} fact + 1 closing) usando a pauta abaixo. Preserve fatos LITERALMENTE.${newsBlock}`;
 
   const resp = await fetchGeminiWithRetry(
     `${SUPABASE_URL}/functions/v1/gemini`,
@@ -16112,7 +16184,7 @@ async function callGeminiNewsCarouselText(theme, tone, slideCount, newsContext) 
         }
       })
     },
-    'Gemini texto (carrossel notícia)'
+    isOpinion ? 'Gemini texto (carrossel opinião)' : 'Gemini texto (carrossel notícia)'
   );
 
   const data = await resp.json();
@@ -16588,6 +16660,7 @@ async function generateCarousel() {
 // Carrossel editorial de tendência: pesquisa pauta densa → distribui em slides → 1 imagem por slide.
 async function generateNewsCarousel() {
   let theme        = document.getElementById('genTheme').value.trim();
+  const isOpinion  = isOpinionCarouselMode();
   const cfg        = getActiveDesignConfig();
   const tone       = cfg.tone || 'casual';
   const slideCountRaw = Number(document.getElementById('genSlideCount').value) || 5;
@@ -16599,7 +16672,7 @@ async function generateNewsCarousel() {
   const refLinks = parseReferenceLinks(getGenLinkValues().join('\n'));
 
   if (!theme && !refLinks.length) {
-    setGenStatus('Descreva o tema da tendência ou cole pelo menos 1 link de referência.', 'error');
+    setGenStatus(isOpinion ? 'Descreva o tema da análise ou cole pelo menos 1 link de referência.' : 'Descreva o tema da tendência ou cole pelo menos 1 link de referência.', 'error');
     return;
   }
 
@@ -16609,10 +16682,10 @@ async function generateNewsCarousel() {
 
   try {
     // Passo 1: Varredura de pauta densa (até 12 fatos)
-    setGenStatus(`<i class="ph ph-radar sz-18" style="margin-right:6px"></i>Passo 1/${totalSteps} — Varrendo notícias do agro nas últimas 72h...`, '');
+    setGenStatus(`<i class="ph ph-radar sz-18" style="margin-right:6px"></i>Passo 1/${totalSteps} — ${isOpinion ? 'Varrendo notícias, trends e artigos do agro...' : 'Varrendo notícias do agro nas últimas 72h...'}`, '');
     let pauta;
     try {
-      pauta = await searchAndConsolidateNews(theme, 12, refLinks);
+      pauta = await searchAndConsolidateNews(theme, 12, refLinks, isOpinion ? 'opinion' : 'news');
     } catch (searchErr) {
       console.error('searchAndConsolidateNews failed:', searchErr);
       setGenStatus('Erro na pesquisa: ' + (searchErr.message || searchErr), 'error');
@@ -16621,7 +16694,7 @@ async function generateNewsCarousel() {
       return;
     }
     if (!pauta || !pauta.manchete || !pauta.fatos.length) {
-      setGenStatus('Não encontrei notícia confiável sobre esse tema nas últimas 72h. Tente outro termo ou amplie.', 'warn');
+      setGenStatus(isOpinion ? 'Não encontrei base factual confiável para essa análise. Tente outro termo, cole links ou amplie o tema.' : 'Não encontrei notícia confiável sobre esse tema nas últimas 72h. Tente outro termo ou amplie.', 'warn');
       btn.disabled = false;
       btn.textContent = 'Gerar';
       return;
@@ -16630,8 +16703,8 @@ async function generateNewsCarousel() {
     if (!theme && pauta.manchete) theme = pauta.manchete;
 
     // Passo 2: Estruturar narrativa (story arc)
-    setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 2/${totalSteps} — Estruturando narrativa em ${slideCount} slides...`, '');
-    const parsed = await callGeminiNewsCarouselText(theme, tone, slideCount, pauta);
+    setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 2/${totalSteps} — ${isOpinion ? 'Estruturando análise opinativa' : 'Estruturando narrativa'} em ${slideCount} slides...`, '');
+    const parsed = await callGeminiNewsCarouselText(theme, tone, slideCount, pauta, isOpinion ? 'opinion' : 'trend');
     const slides = Array.isArray(parsed.slides) ? parsed.slides : [];
     if (slides.length === 0) throw new Error('Gemini não retornou slides.');
 
@@ -16673,10 +16746,11 @@ async function generateNewsCarousel() {
         bg:       `bg-news-carousel-${timestamp}-${i}`,
         slideId:  `slide-news-carousel-${timestamp}-${i}`,
         title:    `Slide ${i + 1}`,
-        sub:      'Carrossel Notícia',
-        filename: `cropware_tendencia_${timestamp}_${i + 1}.jpg`,
+        sub:      isOpinion ? 'Carrossel Opinião' : 'Carrossel Notícia',
+        filename: `${isOpinion ? 'cropware_opiniao' : 'cropware_tendencia'}_${timestamp}_${i + 1}.jpg`,
         type:     'news-carousel-slide',
         style:    'news-editorial',
+        editorialFlavor: isOpinion ? 'opinion' : 'trend',
         slideRole: role,
         isGenerated:    true,
         bgImage:        `data:${imgMime};base64,${imgBase64}`,
@@ -16726,10 +16800,11 @@ async function generateNewsCarousel() {
     }
 
     const carouselData = {
-      id:          `news-carousel-gen-${timestamp}`,
-      type:        'news-carousel-post',
+      id:          `${isOpinion ? 'opinion' : 'news'}-carousel-gen-${timestamp}`,
+      type:        isOpinion ? 'opinion-carousel-post' : 'news-carousel-post',
       style:       'news-editorial',
-      title:       toTitleCase(parsed.title || 'Tendência Gerada'),
+      editorialFlavor: isOpinion ? 'opinion' : 'trend',
+      title:       toTitleCase(parsed.title || (isOpinion ? 'Opinião Gerada' : 'Tendência Gerada')),
       theme:       theme,
       tone:        tone,
       isGenerated: true,
@@ -16758,14 +16833,14 @@ async function generateNewsCarousel() {
       if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
       genImageBase64 = null;
       btn.disabled = false;
-      btn.textContent = 'Gerar Carrossel de Tendência';
+      btn.textContent = isOpinion ? 'Gerar Carrossel de Opinião' : 'Gerar Carrossel de Tendência';
       setGenStatus('', '');
     }, 600);
 
   } catch(e) {
     setGenStatus('<i class="ph ph-warning-octagon sz-18" style="margin-right:6px"></i>Erro: ' + e.message, 'error');
     btn.disabled = false;
-    btn.textContent = 'Gerar Carrossel de Tendência';
+    btn.textContent = isOpinion ? 'Gerar Carrossel de Opinião' : 'Gerar Carrossel de Tendência';
   }
 }
 
