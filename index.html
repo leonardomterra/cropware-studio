@@ -2570,12 +2570,12 @@
     position: absolute;
     left: 64px;
     right: 64px;
-    top: 72px;
+    top: 180px;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     text-align: center;
-    max-height: 34%;
+    max-height: 30%;
   }
 
   /* Transborda Direita — phone ancorado no canto SUPERIOR direito, laterais totalmente visíveis,
@@ -2764,7 +2764,7 @@
     width: 100%;
     height: 100%;
     border-radius: calc(44px * var(--mockup-scale, 1));
-    background-color: #101828;
+    background-color: var(--mockup-bar-color, #44B584);
     overflow: hidden;
     position: relative;
   }
@@ -2775,7 +2775,7 @@
     left: 0;
     right: 0;
     height: calc(58px * var(--mockup-scale, 1));
-    background: #44B584;
+    background: var(--mockup-bar-color, #44B584);
     z-index: 2;
     pointer-events: none;
   }
@@ -2839,6 +2839,11 @@
   .mockup-phone-indicators .mp-icon-battery {
     height: calc(19px * var(--mockup-scale, 1));
   }
+  /* Modo claro da barra: relógio e ícones em preto. Aplicado quando a luminância
+     de --mockup-bar-color está acima do threshold (definido em applyPostVariant). */
+  .post[data-mockup-bar-mode="light"] .mockup-phone-status { color: #000; }
+  .post[data-mockup-bar-mode="light"] .mockup-phone-indicators img.mp-icon,
+  .post[data-mockup-bar-mode="light"] .mp-icon { filter: invert(1) !important; }
 
   /* Frame desktop — usa SVG do Vecteezy (laptop realista). Screen area
      dentro do viewBox 2050×2050: (x=417 y=599 w=1216 h=804). */
@@ -2914,7 +2919,7 @@
     top: 46%;
   }
   .post[data-format="story"][data-style="mockup"] .mockup-stage[data-layout="zoom-bottom"] .mockup-text {
-    top: 220px;
+    top: 360px;
   }
   .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="desktop"][data-layout="zoom-bottom"] .mockup-device {
     top: 32%;
@@ -2933,6 +2938,19 @@
   .post[data-format="story"][data-style="mockup"] .mockup-stage[data-device="desktop"][data-layout="zoom-left"] .mockup-text {
     top: 220px;
   }
+  /* Safe area do Story — logo e site empurrados pra dentro da zona segura do Instagram */
+  .post[data-format="story"][data-style="mockup"] .logo-post,
+  .post[data-format="story"][data-style="mockup"] .logo-post-tc,
+  .post[data-format="story"][data-style="mockup"] .logo-post-tr                 { top: calc(216px + var(--logo-offset-y, 0px)); }
+  .post[data-format="story"][data-style="mockup"] .logo-post-bl,
+  .post[data-format="story"][data-style="mockup"] .logo-post-bc,
+  .post[data-format="story"][data-style="mockup"] .logo-post-br                 { bottom: calc(244px + var(--logo-offset-y, 0px)); }
+  .post[data-format="story"][data-style="mockup"] .post-site[data-pos="tl"],
+  .post[data-format="story"][data-style="mockup"] .post-site[data-pos="tc"],
+  .post[data-format="story"][data-style="mockup"] .post-site[data-pos="tr"]     { top: calc(216px + var(--site-offset-y, 0px)); }
+  .post[data-format="story"][data-style="mockup"] .post-site[data-pos="bl"],
+  .post[data-format="story"][data-style="mockup"] .post-site[data-pos="bc"],
+  .post[data-format="story"][data-style="mockup"] .post-site[data-pos="br"]     { bottom: calc(244px + var(--site-offset-y, 0px)); }
   /* Presentation (16:9) — padding lateral maior */
   .post[data-format="presentation"][data-style="mockup"] .mockup-stage {
     padding: 64px 96px;
@@ -3588,7 +3606,8 @@
   #postControls.pc-section-mode .pc-group.active-section.hidden {
     display: none;
   }
-  #postControls.pc-section-mode #pcGroupMockup:not(.active-section) {
+  #postControls.pc-section-mode #pcGroupMockup:not(.active-section),
+  #postControls.pc-section-mode #pcGroupMockupHeader:not(.active-section) {
     display: none !important;
   }
   #postControls.pc-section-mode .pc-group-header {
@@ -3736,6 +3755,7 @@
   /* Mockup: nada específico no Fundo (só Overlay + BgImage que são compartilhados).
      E mostra o grupo Mockup (próprio dele) que vive em outro lugar do painel. */
   #postControls.style-mockup #pcGroupMockup { display: block !important; }
+  #postControls.style-mockup #pcGroupMockupHeader { display: block !important; }
   /* Mockup esconde Bullets pq não usa */
   #postControls.style-mockup #pcGroupBullets { display: none !important; }
   .pc-body {
@@ -6169,6 +6189,7 @@
           <option value="pcGroupSignature">Assinatura</option>
           <option value="pcGroupBackground">Fundo</option>
           <option value="pcGroupMockup">Mockup</option>
+          <option value="pcGroupMockupHeader">Cabeçalho</option>
         </select>
       </div>
     </div>
@@ -6915,6 +6936,23 @@
             <button type="button" class="pc-nudge-btn pc-nudge-right" data-dx="1" data-dy="0" title="Mover para direita"><i class="ph ph-caret-right"></i></button>
             <button type="button" class="pc-nudge-btn pc-nudge-down" data-dx="0" data-dy="1" title="Mover para baixo"><i class="ph ph-caret-down"></i></button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pc-group" id="pcGroupMockupHeader" data-group="mockupHeader" style="display:none">
+      <button type="button" class="pc-group-header">
+        <span class="pc-group-header-label">Cabeçalho</span>
+        <i class="ph ph-caret-down pc-group-header-chevron"></i>
+      </button>
+      <div class="pc-group-body">
+        <div class="pc-sub" id="pcSubMockupBarColor">
+          <div class="pc-label">Cor do Cabeçalho</div>
+          <button class="pc-color-btn" id="pcMockupBarColorBtn" type="button" data-target="mockupBar">
+            <span class="pc-color-btn-swatch" id="pcMockupBarColorBtnSwatch"></span>
+            <span class="pc-color-btn-label" id="pcMockupBarColorBtnLabel">#44B584</span>
+            <i class="ph ph-caret-down pc-color-btn-chevron"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -8355,6 +8393,8 @@ const PER_STYLE_FIELDS = [
   'splitBlockColor', 'splitPhotoPct', 'splitPhotoPos', 'splitLayout', 'splitShadow', 'splitTextMode',
   'colunaPhotoPct', 'colunaPhotoPos', 'colunaShadow',
   'spotlightPanelSize', 'spotlightAnchor', 'spotlightBlur', 'spotlightContrast',
+  // Mockup
+  'mockupBarColor',
 ];
 
 // Mapeia estilo → flag de _initialized correspondente (pra resetar quando troca de modelo).
@@ -8808,6 +8848,19 @@ function renderGeneratedPresentation(presentationData, legendText) {
 }
 
 // Converte hex (#rrggbb) + alpha (0..1) em string rgba()
+// Retorna true se a cor é "clara" o suficiente para precisar de texto/ícones escuros.
+// Usa fórmula de luminância percebida (ITU BT.601).
+function isLightHex(hex) {
+  if (!hex || hex === 'transparent' || hex === 'none') return false;
+  const h = hex.replace('#', '');
+  if (h.length !== 6) return false;
+  const r = parseInt(h.substring(0, 2), 16) || 0;
+  const g = parseInt(h.substring(2, 4), 16) || 0;
+  const b = parseInt(h.substring(4, 6), 16) || 0;
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b);
+  return lum > 175;
+}
+
 function hexToRgba(hex, alpha) {
   if (hex === 'transparent' || hex === 'none' || !hex) {
     if (!hex) return `rgba(0, 0, 0, ${alpha})`;
@@ -9599,6 +9652,16 @@ function applyPostVariant(postEl, postData) {
   postEl.style.setProperty('--mockup-scale',     (postData.mockupScale    == null ? 1 : postData.mockupScale));
   postEl.style.setProperty('--mockup-offset-x',  (postData.mockupOffsetX  == null ? 0 : postData.mockupOffsetX) + 'px');
   postEl.style.setProperty('--mockup-offset-y',  (postData.mockupOffsetY  == null ? 0 : postData.mockupOffsetY) + 'px');
+  // Mockup — cor da barra superior (cabeçalho) + modo claro/escuro do conteúdo
+  const _barColor = postData.mockupBarColor || '#44B584';
+  if (postData.mockupBarColor && postData.mockupBarColor !== 'transparent') {
+    postEl.style.setProperty('--mockup-bar-color', postData.mockupBarColor);
+  } else if (postData.mockupBarColor === 'transparent') {
+    postEl.style.setProperty('--mockup-bar-color', 'transparent');
+  } else {
+    postEl.style.removeProperty('--mockup-bar-color');
+  }
+  postEl.dataset.mockupBarMode = isLightHex(_barColor) ? 'light' : 'dark';
 
   // Accent bar — legado usa top/bottom/left/right com offset em % absoluto.
   // Novo sistema (tl/tc/tr/bl/bc/br) usa offset em % relativo à margem 5%.
@@ -9907,12 +9970,19 @@ function updatePostControls(idx) {
   setGroupVisible('pcGroupBackground',     true);
   // Mockup group — verifica tanto post.style quanto o dropdown atual (fallback robusto)
   const _mockupGroup = document.getElementById('pcGroupMockup');
-  if (_mockupGroup) {
+  const _mockupHeaderGroup = document.getElementById('pcGroupMockupHeader');
+  if (_mockupGroup || _mockupHeaderGroup) {
     const _pcStyleSel = document.getElementById('pcStyleSelect');
     const _selectedStyle = _pcStyleSel ? _pcStyleSel.value : '';
     const _isMockup = currentStyle === 'mockup' || _selectedStyle === 'mockup';
-    _mockupGroup.classList.remove('hidden');
-    _mockupGroup.style.display = _isMockup ? '' : 'none';
+    if (_mockupGroup) {
+      _mockupGroup.classList.remove('hidden');
+      _mockupGroup.style.display = _isMockup ? '' : 'none';
+    }
+    if (_mockupHeaderGroup) {
+      _mockupHeaderGroup.classList.remove('hidden');
+      _mockupHeaderGroup.style.display = _isMockup ? '' : 'none';
+    }
   }
   const isSplit  = currentStyle === 'split';
   const isColuna = currentStyle === 'coluna';
@@ -10207,6 +10277,9 @@ function updatePostControls(idx) {
   syncRangeValue('pcGlassBlur', post.glassBlur == null ? 24 : post.glassBlur, 'px');
   syncRangeValue('pcSpotlightBlur', post.spotlightBlur == null ? 22 : post.spotlightBlur, 'px');
   setColorBtnSwatch(document.getElementById('pcSignalIconColorBtnSwatch'), document.getElementById('pcSignalIconColorBtnLabel'), sigIconColor);
+  // Mockup — cor da barra de cabeçalho
+  const mockupBarColor = post.mockupBarColor || '#44B584';
+  setColorBtnSwatch(document.getElementById('pcMockupBarColorBtnSwatch'), document.getElementById('pcMockupBarColorBtnLabel'), mockupBarColor);
   syncRangeValue('pcSignalIconOpacity', sigIconOp, '%');
 
   // Revista — proporção da foto + orientação
@@ -10440,6 +10513,7 @@ function openColorDropdown(target, anchorEl) {
     target === 'frameColor'     ? post.frameColor         :
     target === 'signalCard'     ? post.signalCardColor    :
     target === 'signalIcon'     ? post.signalIconColor    :
+    target === 'mockupBar'      ? post.mockupBarColor     :
     post.overlayColor
   ) : null;
   // Cell [0]: sempre "Sem cor" — disponível em todos os pickers de cor.
@@ -10522,6 +10596,9 @@ function applyColorChoice(color, targetOverride) {
     if (postEl) applyPostVariant(postEl, post);
   } else if (target === 'signalIcon') {
     post.signalIconColor = color;
+    if (postEl) applyPostVariant(postEl, post);
+  } else if (target === 'mockupBar') {
+    post.mockupBarColor = color;
     if (postEl) applyPostVariant(postEl, post);
   }
   updatePostControls(current);
@@ -10983,6 +11060,8 @@ function initPostControls() {
       // Aplica visibilidade do grupo Mockup ANTES do applyPostVariant pra não perder se algo errar
       const _mg = document.getElementById('pcGroupMockup');
       if (_mg) _mg.style.display = post.style === 'mockup' ? '' : 'none';
+      const _mgh = document.getElementById('pcGroupMockupHeader');
+      if (_mgh) _mgh.style.display = post.style === 'mockup' ? '' : 'none';
       // Marca o panel com a classe do estilo atual (sistema declarativo CSS pro painel Fundo)
       const _panel = document.getElementById('postControls');
       if (_panel) {
@@ -11007,7 +11086,26 @@ function initPostControls() {
     formatSelectEl.addEventListener('change', () => {
       const post = getActivePost();
       if (!post || !post.isGenerated) return;
-      post.format = formatSelectEl.value;
+      const newFormat = formatSelectEl.value;
+      // Em modo carrossel, mudança de formato propaga pra TODOS os slides — todos do mesmo
+      // carrossel devem manter o mesmo formato (a altura do canvas é deduzida do slides[0]).
+      if (isCarouselMode()) {
+        const items = getModeItems();
+        const idx = getModeCurrentIdx();
+        const carousel = items && items[idx];
+        if (carousel && Array.isArray(carousel.slides)) {
+          carousel.slides.forEach(slide => {
+            slide.format = newFormat;
+            const slideEl = document.getElementById(slide.id);
+            if (slideEl) applyPostVariant(slideEl, slide);
+          });
+          scalePost();
+          updatePostControls(current);
+          saveSession();
+          return;
+        }
+      }
+      post.format = newFormat;
       const postEl = document.getElementById(post.id);
       if (postEl) applyPostVariant(postEl, post);
       scalePost();
@@ -11418,6 +11516,14 @@ function initPostControls() {
     colunaBlockBtn.addEventListener('click', e => {
       e.stopPropagation();
       openColorDropdown('columnBlock', colunaBlockBtn);
+    });
+  }
+  // Botão do color picker (mockup bar / cabeçalho) — abre dropdown
+  const mockupBarBtn = document.getElementById('pcMockupBarColorBtn');
+  if (mockupBarBtn) {
+    mockupBarBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      openColorDropdown('mockupBar', mockupBarBtn);
     });
   }
   // Botão do color picker (moldura) — abre dropdown
@@ -12094,6 +12200,7 @@ function _resetPostStyleSingle(post) {
   delete post.mockupScale;
   delete post.mockupOffsetX;
   delete post.mockupOffsetY;
+  delete post.mockupBarColor;
   // mockupScreen / mockupScreenPhone / mockupScreenDesktop NÃO são deletados — é conteúdo do usuário
   post.revistaTextMode   = (isNewsCarouselSlide || post.style === 'revista' || post.style === 'news-editorial') ? 'light' : 'dark';
   post.splitTextMode     = 'light';
