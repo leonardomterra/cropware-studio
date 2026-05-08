@@ -823,7 +823,7 @@
     align-items: center;
     gap: 16px;
     font-family: 'Inter Tight', sans-serif;
-    font-size: calc(32px * var(--bullets-scale, 1));
+    font-size: calc(35px * var(--bullets-scale, 1));
     font-weight: 400;
     color: rgba(255,255,255,0.82);
     line-height: 1.4;
@@ -831,9 +831,9 @@
   }
   .post-bullet-icon {
     flex-shrink: 0;
-    width: calc(48px * var(--bullet-icon-scale, 1));
-    height: calc(48px * var(--bullet-icon-scale, 1));
-    border-radius: calc(13px * var(--bullet-icon-scale, 1));
+    width: calc(55px * var(--bullet-icon-scale, 1));
+    height: calc(55px * var(--bullet-icon-scale, 1));
+    border-radius: calc(15px * var(--bullet-icon-scale, 1));
     background: rgba(255,255,255,0.10);
     border: 1px solid rgba(255,255,255,0.22);
     display: flex;
@@ -853,7 +853,7 @@
     transform: scale(1.05);
   }
   .post-bullet-icon .ph {
-    font-size: calc(36px * var(--bullet-icon-scale, 1));
+    font-size: calc(42px * var(--bullet-icon-scale, 1));
     position: relative;
     z-index: 5;
   }
@@ -882,6 +882,38 @@
     outline: 2px solid rgba(255,255,255,0.45);
     outline-offset: 4px;
     border-radius: 4px;
+  }
+  /* Story (1080x1920) no Classic: base 15% menor pra caber proporcional. Sliders continuam marcando 100%. */
+  .post[data-style="classic"][data-format="story"] .hook {
+    font-size: calc(61px * var(--hook-scale, 1));
+  }
+  .post[data-style="classic"][data-format="story"] .complement {
+    font-size: calc(32px * var(--complement-scale, 1));
+  }
+  .post[data-style="classic"][data-format="story"] .post-bullet {
+    font-size: calc(30px * var(--bullets-scale, 1));
+  }
+  .post[data-style="classic"][data-format="story"] .post-bullet-icon {
+    width:  calc(47px * var(--bullet-icon-scale, 1));
+    height: calc(47px * var(--bullet-icon-scale, 1));
+    border-radius: calc(13px * var(--bullet-icon-scale, 1));
+  }
+  .post[data-style="classic"][data-format="story"] .post-bullet-icon .ph {
+    font-size: calc(36px * var(--bullet-icon-scale, 1));
+  }
+  /* Story no Dashboard: hook + complement 15% menores. */
+  .post[data-style="dashboard"][data-format="story"] .dash-hook {
+    font-size: calc(58px * var(--hook-scale, 1));
+  }
+  .post[data-style="dashboard"][data-format="story"] .dash-complement {
+    font-size: calc(31px * var(--complement-scale, 1));
+  }
+  /* Story no Revista: hook -30%, complement -20%. */
+  .post[data-style="revista"][data-format="story"] .revista-hook {
+    font-size: calc(48px * var(--hook-scale, 1));
+  }
+  .post[data-style="revista"][data-format="story"] .revista-complement {
+    font-size: calc(30px * var(--complement-scale, 1));
   }
 
   /* ── EDIÇÃO INLINE ── */
@@ -8295,8 +8327,8 @@ const SIGNAL_CARD_OPACITY_DEFAULT = 50;
 const SIGNAL_CARD_BLUR_DEFAULT = 12;
 
 // Campos que devem ser independentes por estilo (cada modelo guarda os seus dentro de post._byStyle).
-// Tudo que tem nome com prefixo do estilo (dashCard*, frameColor, signalCard*, etc) já é naturalmente
-// isolado pelo nome — não precisa entrar nesta lista.
+// Inclui também campos com prefixo do estilo para garantir isolamento total — se o usuário customiza um
+// slider de outro modelo, esse valor não vaza ao trocar de modelo.
 const PER_STYLE_FIELDS = [
   'accent',
   'overlayColor', 'overlayOpacity', 'overlayDirection',
@@ -8306,13 +8338,28 @@ const PER_STYLE_FIELDS = [
   'brandMode',
   'accentBarEnabled', 'accentBarPos', 'accentBarColor', 'accentBarOffsetX', 'accentBarOffsetY',
   'stripEnabled', 'stripHeight', 'stripPos',
-  'hookScale', 'complementScale', 'bulletsScale', 'bulletIconScale', 'signalCardHeight',
+  'hookScale', 'complementScale', 'bulletsScale', 'bulletIconScale',
   'hookVisible', 'complementVisible', 'bulletsVisible', 'bulletIconsVisible',
   'signalPhotoTexture', 'signalPhotoTextureIntensity', 'signalPhotoTextureInvert', 'signalPhotoTextureBlendMode',
+  // Dashboard
+  'dashCardColor', 'dashCardOpacity', 'dashCardBlur', 'dashCardPos',
+  // Moldura (Especial)
+  'frameColor', 'glassOpacity', 'glassBlur', 'frameTextMode',
+  // Highlights (signal)
+  'signalCardColor', 'signalCardOpacity', 'signalCardBlur', 'signalCardHeight',
+  'signalIconColor', 'signalIconOpacity',
+  'signalAlign', 'signalChrome', 'signalDensity', 'signalLayout',
+  // Revista
+  'revistaBlockColor', 'revistaPhotoPct', 'revistaPhotoPos', 'revistaLayout', 'revistaShadow', 'revistaTextMode',
+  // Split / Coluna / Spotlight
+  'splitBlockColor', 'splitPhotoPct', 'splitPhotoPos', 'splitLayout', 'splitShadow', 'splitTextMode',
+  'colunaPhotoPct', 'colunaPhotoPos', 'colunaShadow',
+  'spotlightPanelSize', 'spotlightAnchor', 'spotlightBlur', 'spotlightContrast',
 ];
 
 // Mapeia estilo → flag de _initialized correspondente (pra resetar quando troca de modelo).
 const STYLE_INIT_FLAGS = {
+  classic: '_classicInitialized',
   signal: '_signalInitialized',
   sidelight: '_signalInitialized',
   moldura: '_molduraInitialized',
@@ -8338,15 +8385,17 @@ function restoreStyleFields(post, newStyle) {
   if (!post) return;
   if (!post._byStyle) post._byStyle = {};
   const bucket = post._byStyle[newStyle];
+  const flag = STYLE_INIT_FLAGS[newStyle];
   if (bucket) {
     PER_STYLE_FIELDS.forEach(f => {
       if (bucket[f] !== undefined) post[f] = bucket[f];
       else delete post[f];
     });
+    // Marca como inicializado pra impedir o init block de sobrescrever os valores restaurados.
+    if (flag) post[flag] = true;
   } else {
     // Sem bucket — limpa fields e flag de init pra reaplicar defaults.
     PER_STYLE_FIELDS.forEach(f => delete post[f]);
-    const flag = STYLE_INIT_FLAGS[newStyle];
     if (flag) delete post[flag];
   }
 }
@@ -8386,8 +8435,8 @@ function ensureSignalVisualDefaults(postData) {
 function renderGeneratedPost(postData, legendText) {
   // Default values para posts novos/antigos sem essas props
   // Migra accents antigos (#4aa276, #3b9f73) pro novo brand #7AB87E
-  if (!postData.accent || ['#4aa276', '#3b9f73'].includes(postData.accent.toLowerCase())) {
-    postData.accent = '#7AB87E';
+  if (!postData.accent || ['#4aa276', '#3b9f73', '#7ab87e'].includes(postData.accent.toLowerCase())) {
+    postData.accent = '#6ac58f';
   }
   if (!postData.layout)    postData.layout    = 'top';
   if (!postData.textAlign) postData.textAlign = 'left';
@@ -8468,6 +8517,11 @@ function renderGeneratedPost(postData, legendText) {
   if (postData.bulletIconScale == null)    postData.bulletIconScale    = 1;
   if (postData.signalCardHeight == null)   postData.signalCardHeight   = 1;
 
+  // Classic (modelo padrão / feed) — accent verde brand.
+  if ((!postData.style || postData.style === 'classic') && !postData._classicInitialized) {
+    if (!postData.accent || postData.accent.toLowerCase() === '#7ab87e') postData.accent = '#6ac58f';
+    postData._classicInitialized = true;
+  }
   // Highlights (signal) — accent verde claro, overlay sem cor, logo desativado, intensity 100.
   // Aplicado uma vez via flag _signalInitialized; preserva customizações do usuário em re-render.
   if ((postData.style === 'signal' || postData.style === 'sidelight') && !postData._signalInitialized) {
@@ -8551,7 +8605,7 @@ function renderGeneratedCarousel(carouselData, legendText) {
   // Ensure each slide has proper defaults (reuse the same logic as renderGeneratedPost)
   carouselData.slides.forEach((slideData, i) => {
     if (!slideData.accent || ['#4aa276', '#3b9f73'].includes((slideData.accent || '').toLowerCase())) {
-      slideData.accent = '#7AB87E';
+      slideData.accent = '#6ac58f';
     }
     if (!slideData.layout)    slideData.layout    = 'top';
     if (!slideData.textAlign) slideData.textAlign = 'left';
@@ -8672,7 +8726,7 @@ function renderGeneratedPresentation(presentationData, legendText) {
   presentationData.slides.forEach((slideData, i) => {
     // Defaults — modelo visual sem texto (logo + site + layout)
     if (!slideData.accent || ['#4aa276', '#3b9f73'].includes((slideData.accent || '').toLowerCase())) {
-      slideData.accent = '#7AB87E';
+      slideData.accent = '#6ac58f';
     }
     if (!slideData.layout)    slideData.layout    = 'top';
     if (!slideData.textAlign) slideData.textAlign = 'left';
@@ -9490,7 +9544,7 @@ function applyPostVariant(postEl, postData) {
   postData.style = normalizePostStyle(postData.style);
   ensureSignalVisualDefaults(postData);
   const style   = postData.style;
-  const accent  = postData.accent  || '#7AB87E';
+  const accent  = postData.accent  || '#6ac58f';
   const layout  = postData.layout  || 'top';
   const logoPos = postData.logoPos || 'br';
   const hookScale       = postData.hookScale       == null ? 1 : postData.hookScale;
@@ -9697,7 +9751,7 @@ function updatePostControls(idx) {
   const FORMATS_LIST = ['feed','story','square','presentation'];
   FORMATS_LIST.forEach(f => panel.classList.toggle(`format-${f}`, post.format === f));
 
-  const accent           = post.accent           || '#7AB87E';
+  const accent           = post.accent           || '#6ac58f';
   const layout           = post.layout           || 'top';
   const textAlign        = post.textAlign        || 'left';
   const logoPos          = post.logoPos          || 'br';
@@ -10867,6 +10921,11 @@ function initPostControls() {
         if (post.complementScale == null) post.complementScale = 1;
       }
       ensureSignalVisualDefaults(post);
+      // Classic (modelo padrão / feed) — accent verde brand.
+      if (post.style === 'classic' && !post._classicInitialized) {
+        if (!post.accent || post.accent.toLowerCase() === '#7ab87e') post.accent = '#6ac58f';
+        post._classicInitialized = true;
+      }
       // Highlights (signal) — defaults na primeira vez ou após reset.
       if ((post.style === 'signal' || post.style === 'sidelight') && !post._signalInitialized) {
         if (!post.accent || post.accent.toLowerCase() === '#7ab87e') post.accent = '#6ac58f';
@@ -12084,6 +12143,11 @@ function _resetPostStyleSingle(post) {
     post.sitePos     = 'br';
     post.logoEnabled = false;
   }
+  // Classic (modelo padrão / feed) — accent verde brand.
+  if (post.style === 'classic' || !post.style) {
+    post.accent = '#6ac58f';
+    post._classicInitialized = true;
+  }
   // Highlights (signal) — accent verde claro, overlay sem cor, logo desativado, intensity 100.
   if (post.style === 'signal' || post.style === 'sidelight') {
     post.accent                       = '#6ac58f';
@@ -12125,6 +12189,11 @@ function _resetPostStyleSingle(post) {
   // News carrossel — defaults específicos: proporção foto/bloco 45/55
   if (isNewsCarouselSlide) {
     post.revistaPhotoPct = 45;
+  }
+  // Após reset, atualiza o bucket do estilo atual pra refletir os defaults — assim, se o usuário
+  // sair desse modelo e voltar, o bucket reaplica o estado pós-reset (não o estado pré-reset).
+  if (post._byStyle && post.style) {
+    delete post._byStyle[post.style];
   }
   const postEl = document.getElementById(post.id);
   if (postEl) applyPostVariant(postEl, post);
