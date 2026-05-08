@@ -437,6 +437,58 @@
   .thumb-sub {
     display: none;
   }
+  .thumb-time {
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(71, 85, 105, 0.65);
+    font-family: 'Inter Tight', sans-serif;
+    margin-top: 4px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+  /* Overlay de loading durante export (PDF, ZIP). Bloqueia interação até concluir. */
+  .download-loading {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+  }
+  .download-loading[hidden] { display: none; }
+  .download-loading-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 28px 32px;
+    min-width: 320px;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .download-loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(106, 197, 143, 0.2);
+    border-top-color: var(--green, #6ac58f);
+    border-radius: 50%;
+    animation: download-spin 0.9s linear infinite;
+  }
+  @keyframes download-spin { to { transform: rotate(360deg); } }
+  .download-loading-msg {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text, #0f172a);
+    text-align: center;
+    line-height: 1.4;
+  }
 
   /* ── CANVAS AREA (header + stage + slide-nav bar) ── */
   .canvas-area {
@@ -1518,6 +1570,10 @@
     color: rgba(255,255,255,0.70);
     z-index: 4;
     pointer-events: none;
+  }
+  /* Safe area do Story — empurra a assinatura "Cropware Tendências" pra dentro da zona segura */
+  .post[data-format="story"][data-style="news-editorial"] .news-edit-closing-signature {
+    bottom: calc(244px + var(--site-offset-y, 0px));
   }
   .news-edit-block.text-light .news-edit-closing-line { color: #ffffff; }
   .news-edit-block.text-dark  .news-edit-closing-line { color: #1a1a1a; }
@@ -5048,6 +5104,57 @@
     min-height: 220px;
     position: relative;
   }
+  /* Painel do título de carrossel — encolhe pra altura mínima e separa visualmente do legend */
+  #legendTitlePanel {
+    min-height: 0;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 14px;
+  }
+  .legend-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .legend-title-text {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text);
+    font-weight: 400;
+    font-family: 'Inter Tight', sans-serif;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: #fff;
+    outline: none;
+  }
+  .legend-title-text:focus { border-color: #94a3b8; }
+  .legend-title-copy {
+    flex-shrink: 0;
+    align-self: stretch;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #cbd5e1;
+    color: #1e293b;
+    border: none;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    padding: 0 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .legend-title-copy:hover { background: #94a3b8; color: #0f172a; }
+  .legend-title-copy.copied { color: var(--green); background: #fff; }
+  /* Botões inferiores do dialog de legenda — mais compactos que o default .btn */
+  .legend-modal .gen-actions .btn {
+    padding: 8px 18px;
+    font-size: 13px;
+  }
 
   .legend-header {
     flex-shrink: 0;
@@ -6638,6 +6745,11 @@
             <option value="normal">Normal</option>
           </select>
         </div>
+        <div class="pc-sub hidden" id="pcSubApplyPhotoTextureToAll">
+          <button type="button" class="pc-apply-all-btn" id="pcApplyPhotoTextureToAllBtn" title="Replica a textura da foto deste slide em todos os outros do carrossel">
+            Aplicar à Todos
+          </button>
+        </div>
         <div class="pc-sub" id="pcSubDashCardColor">
           <div class="pc-label">Tonalização do Card</div>
           <button class="pc-color-btn" id="pcDashCardColorBtn" type="button" data-target="dashCard">
@@ -6714,7 +6826,7 @@
               <span class="pc-label">Posição</span>
               <span class="pc-value-pill" id="pcRevistaPhotoPosValue">50%</span>
             </div>
-            <input type="range" class="pc-range" id="pcRevistaPhotoPos" min="0" max="100" step="5" value="50" data-value-label="pcRevistaPhotoPosValue" data-value-unit="%">
+            <input type="range" class="pc-range" id="pcRevistaPhotoPos" min="0" max="100" step="1" value="50" data-value-label="pcRevistaPhotoPosValue" data-value-unit="%">
           </div>
         </div>
         <div class="pc-sub" id="pcSubRevistaLayout">
@@ -7327,16 +7439,22 @@ function switchMode(mode) {
 
   const items = getModeItems();
   if (items.length > 0) {
+    // Ao trocar de modo, abre o post mais recente desse modo (mesma lógica do boot).
+    let newestIdx = 0;
+    let newestTs = -Infinity;
+    items.forEach((p, i) => {
+      const ts = getPostCreatedAt(p);
+      if (ts > newestTs) { newestTs = ts; newestIdx = i; }
+    });
     if (isCarouselMode()) {
-      const maxIdx = items.length - 1;
-      setModeCurrentIdx(Math.min(getModeCurrentIdx(), maxIdx));
+      setModeCurrentIdx(newestIdx);
       currentSlide = 0;
       linkedinCurrentSlide = 0;
       linkedinPessoalCurrentSlide = 0;
-      goTo(getModeCurrentIdx());
+      goTo(newestIdx);
     } else {
-      setModeCurrentIdx(Math.min(getModeCurrentIdx(), items.length - 1));
-      goTo(getModeCurrentIdx());
+      setModeCurrentIdx(newestIdx);
+      goTo(newestIdx);
     }
   } else {
     updateEmptyStateVisibility();
@@ -7344,6 +7462,27 @@ function switchMode(mode) {
   updateSlideNav();
   updateCanvasHeader();
   scalePost();
+}
+
+// Retorna o timestamp de criação. Posts antigos (sem createdAt) usam fallback que extrai
+// o timestamp do `id` (formato `*-gen-{ts}` ou `*-{ts}-*`). Se não conseguir extrair, retorna 0.
+function getPostCreatedAt(p) {
+  if (!p) return 0;
+  if (typeof p.createdAt === 'number' && p.createdAt > 0) return p.createdAt;
+  const match = String(p.id || '').match(/(\d{13})/);
+  return match ? Number(match[1]) : 0;
+}
+
+// Formata "DD/MM - HH:MM" em pt-BR. Retorna string vazia se ts inválido.
+function formatPostTimestamp(ts) {
+  if (!ts || typeof ts !== 'number') return '';
+  const d = new Date(ts);
+  if (isNaN(d.getTime())) return '';
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${day}/${month} - ${hh}:${mm}`;
 }
 
 function buildSidebar() {
@@ -7375,18 +7514,26 @@ function buildSidebar() {
     empty.innerHTML = `<div class="aside-empty-title">Nenhum item ainda</div><div class="aside-empty-sub">Clique em <strong>Gerar Primeiro Post</strong> para criar o primeiro conteúdo deste tipo.</div>`;
     asideList.appendChild(empty);
   } else {
-    items.forEach((p, i) => {
+    // Renderiza do mais recente para o mais antigo. Ordena por createdAt desc, mas
+    // preserva o índice original `i` (usado por goTo / deletePost).
+    const ordered = items
+      .map((p, i) => ({ p, i, ts: getPostCreatedAt(p) }))
+      .sort((a, b) => b.ts - a.ts);
+    ordered.forEach(({ p, i, ts }) => {
       const item = document.createElement('div');
       item.className = 'thumb-item' + (i === currentIdx ? ' active' : '');
+      item.dataset.itemIdx = String(i);
       const info = document.createElement('div');
       info.className = 'thumb-info';
       info.style.flex = '1';
       info.style.cursor = 'pointer';
       info.style.minWidth = '0';
+      const tsLabel = formatPostTimestamp(ts);
+      const tsHtml = tsLabel ? `<div class="thumb-time">${tsLabel}</div>` : '';
       if (isCarousel || isPresentation) {
-        info.innerHTML = `<div class="thumb-title">${p.title || p.theme || 'Sem título'} <span class="thumb-badge">(${p.slides.length} slides)</span></div>`;
+        info.innerHTML = `<div class="thumb-title">${p.title || p.theme || 'Sem título'} <span class="thumb-badge">(${p.slides.length} slides)</span></div>${tsHtml}`;
       } else {
-        info.innerHTML = `<div class="thumb-title">${p.title}</div><div class="thumb-sub">${p.sub}</div>`;
+        info.innerHTML = `<div class="thumb-title">${p.title}</div><div class="thumb-sub">${p.sub}</div>${tsHtml}`;
       }
       info.addEventListener('click', () => goTo(i));
       const del = document.createElement('button');
@@ -7614,7 +7761,7 @@ function goTo(idx) {
   const post = getActivePost();
   const slide = document.getElementById(post.slideId);
   if (slide) slide.classList.add('visible');
-  const thumb = document.querySelectorAll('.thumb-item')[currentIdx];
+  const thumb = document.querySelector(`.thumb-item[data-item-idx="${currentIdx}"]`);
   if (thumb) thumb.classList.add('active');
   const dot = dotsContainer.children[currentIdx];
   if (dot) dot.classList.add('active');
@@ -7650,7 +7797,7 @@ function goToCarousel(idx) {
   const slideData = carousel.slides[getCurrentSlide()];
   const slide = document.getElementById(slideData.slideId);
   if (slide) slide.classList.add('visible');
-  const thumb = document.querySelectorAll('.thumb-item')[currentIdx];
+  const thumb = document.querySelector(`.thumb-item[data-item-idx="${currentIdx}"]`);
   if (thumb) thumb.classList.add('active');
   const dot = dotsContainer.children[currentIdx];
   if (dot) dot.classList.add('active');
@@ -8705,15 +8852,13 @@ function renderGeneratedCarousel(carouselData, legendText) {
       if ((slideData.accent || '').toLowerCase() === '#2b452d') {
         slideData.accent = '#55A05A';
       }
-      // Migração de logo: cover ativa bl/light, demais slides desativam
+      // Migração de logo: desativado por padrão em todos os slides.
+      // sitePos: todos os slides ficam à direita (br).
       if (!slideData._newsCarouselLogoMigrated) {
-        if (slideData.slideRole === 'cover') {
-          slideData.logoEnabled = true;
-          slideData.logoPos     = 'bl';
-          slideData.brandMode   = 'light';
-        } else {
-          slideData.logoEnabled = false;
-        }
+        slideData.logoEnabled = false;
+        slideData.logoPos     = 'br';
+        slideData.brandMode   = 'light';
+        slideData.sitePos     = 'br';
         slideData._newsCarouselLogoMigrated = true;
       }
     }
@@ -10006,6 +10151,7 @@ function updatePostControls(idx) {
   setSubVisible('pcSubNewsTexture',        currentStyle === 'news-editorial');
   // Botão "Aplicar a todos" só aparece em modo carrossel (qualquer tipo) com 2+ slides
   setSubVisible('pcSubApplyToAll',         isCarouselMode() && _activeCarouselHasMultipleSlides());
+  setSubVisible('pcSubApplyPhotoTextureToAll', isCarouselMode() && _activeCarouselHasMultipleSlides());
   // Sincroniza grid de textura ativa com o slide atual
   if (currentStyle === 'news-editorial') {
     syncNewsTextureGrid(post);
@@ -11266,6 +11412,12 @@ function initPostControls() {
   wireScaleField('pcSiteScale', '--site-scale', 'siteScale', 60, 160);
   wireScaleField('pcMockupScale', '--mockup-scale', 'mockupScale', 30, 200);
 
+  // Botão "Aplicar a todos os slides" da textura da foto
+  const applyPhotoTextureBtn = document.getElementById('pcApplyPhotoTextureToAllBtn');
+  if (applyPhotoTextureBtn && applyPhotoTextureBtn.dataset.wired !== 'true') {
+    applyPhotoTextureBtn.dataset.wired = 'true';
+    applyPhotoTextureBtn.addEventListener('click', applyPhotoTextureToAllSlides);
+  }
   // Botão "Aplicar a todos os slides" no painel Fundo (qualquer carrossel)
   const applyAllBtn = document.getElementById('pcApplyBgToAllBtn');
   if (applyAllBtn && applyAllBtn.dataset.wired !== 'true') {
@@ -11647,11 +11799,12 @@ function initPostControls() {
       saveSession();
     });
   }
-  // Revista — posição da foto (background-position)
+  // Revista — posição da foto (background-position). News-editorial reaproveita o mesmo campo
+  // mas renderiza em .news-edit-photo — então aceita ambos seletores aqui.
   function applyRevistaPhotoPos(post) {
     const postEl = document.getElementById(post.id);
     if (!postEl) return;
-    const photo = postEl.querySelector('.revista-photo');
+    const photo = postEl.querySelector('.revista-photo, .news-edit-photo');
     if (!photo) return;
     const pos = post.revistaPhotoPos == null ? 50 : post.revistaPhotoPos;
     const layout = post.revistaLayout || 'top';
@@ -12244,10 +12397,10 @@ function _resetPostStyleSingle(post) {
     post.sitePos          = 'tr';
     post._mockupInitialized = true;
   }
-  // News editorial — logo no canto superior direito (desativado por padrão), site no inferior direito
+  // News editorial — site no inferior direito; logo desativado por padrão (br se ativado).
   if (post.style === 'news-editorial') {
-    post.logoPos     = 'tr';
     post.sitePos     = 'br';
+    post.logoPos     = 'br';
     post.logoEnabled = false;
   }
   // Classic (modelo padrão / feed) — accent verde brand.
@@ -12756,6 +12909,44 @@ const APPLY_BG_TO_ALL_FIELDS = [
   'signalIconColor', 'signalIconOpacity', 'signalCardHeight',
 ];
 
+const APPLY_PHOTO_TEXTURE_FIELDS = [
+  'signalPhotoTexture',
+  'signalPhotoTextureIntensity',
+  'signalPhotoTextureInvert',
+  'signalPhotoTextureBlendMode',
+];
+
+function applyPhotoTextureToAllSlides() {
+  const items = getModeItems();
+  const carousel = items && items[getModeCurrentIdx()];
+  if (!carousel || !Array.isArray(carousel.slides) || carousel.slides.length < 2) return;
+  const sourceIdx = getCurrentSlide();
+  const source = carousel.slides[sourceIdx];
+  if (!source) return;
+  let count = 0;
+  carousel.slides.forEach((slide, i) => {
+    if (i === sourceIdx) return;
+    APPLY_PHOTO_TEXTURE_FIELDS.forEach(field => {
+      if (source[field] !== undefined) {
+        slide[field] = source[field];
+      } else {
+        delete slide[field];
+      }
+    });
+    const slideEl = document.getElementById(slide.id);
+    if (slideEl) applyPostVariant(slideEl, slide);
+    count++;
+  });
+  saveSession();
+  const btn = document.getElementById('pcApplyPhotoTextureToAllBtn');
+  if (btn) {
+    const orig = btn.textContent;
+    btn.textContent = 'Aplicado em ' + count + ' slide' + (count > 1 ? 's' : '');
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 1600);
+  }
+}
+
 function applyBgToAllSlides() {
   const items = getModeItems();
   const carousel = items && items[getModeCurrentIdx()];
@@ -13148,8 +13339,16 @@ async function bootStudio() {
   buildDots();
   const items = getModeItems();
   if (items.length > 0) {
-    setModeCurrentIdx(Math.min(getModeCurrentIdx(), items.length - 1));
-    goTo(getModeCurrentIdx());
+    // No boot, abre o post mais recente (maior createdAt). Posts antigos sem createdAt
+    // caem no fallback do helper (timestamp extraído do id) e ainda assim ordenam corretamente.
+    let newestIdx = 0;
+    let newestTs = -Infinity;
+    items.forEach((p, i) => {
+      const ts = getPostCreatedAt(p);
+      if (ts > newestTs) { newestTs = ts; newestIdx = i; }
+    });
+    setModeCurrentIdx(newestIdx);
+    goTo(newestIdx);
   } else {
     updateEmptyStateVisibility();
   }
@@ -13493,6 +13692,16 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
             if (slide) { slide.style.display = 'block'; slide.style.visibility = 'visible'; }
             cloneEl.querySelectorAll('.hook').forEach(h => { h.style.paddingRight = '6px'; });
             cloneEl.querySelectorAll('.safe-zone-guide').forEach(g => g.remove());
+            // Reaplica background-position na foto do clone — defensivo contra qualquer
+            // discrepância entre o live DOM e o slideData.revistaPhotoPos persistido.
+            const photoEl = cloneEl.querySelector('.revista-photo, .news-edit-photo, .split-photo, .coluna-photo');
+            if (photoEl) {
+              const pos = slideData.revistaPhotoPos == null ? 50 : slideData.revistaPhotoPos;
+              const layout = slideData.revistaLayout || 'top';
+              photoEl.style.backgroundPosition = (layout === 'left' || layout === 'right')
+                ? `${pos}% center`
+                : `center ${pos}%`;
+            }
             inlineLogosForCapture(cloneEl, clonedDoc, logoDims);
             activateGlassLayers(cloneEl, blurredUrl, postW, postH);
             rasterizePhosphorIcons(cloneEl);
@@ -13531,6 +13740,7 @@ async function downloadCarousel() {
   const btn = document.getElementById('downloadBtn');
   btn.disabled = true;
   btn.style.opacity = '0.5';
+  showDownloadLoading('Preparando exporta\u00e7\u00e3o...');
 
   try {
     const zip = new JSZip();
@@ -13544,11 +13754,13 @@ async function downloadCarousel() {
           .replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 60);
 
     for (let i = 0; i < carousel.slides.length; i++) {
+      setDownloadProgress(`Exportando slide ${i + 1} de ${carousel.slides.length}...`);
       setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Exportando slide ${i + 1}/${carousel.slides.length}...`, '');
       const blob = await captureSlideAsBlob(carousel.slides[i]);
       zip.file(`${filenameTitle} - slide ${i + 1}.jpg`, blob);
     }
 
+    setDownloadProgress('Compactando arquivos...');
     setGenStatus('<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>Compactando ZIP...', 'success');
     const zipBlob = await zip.generateAsync({ type: 'blob' });
     const zipName = isNewsCarousel ? `${filenameTitle}.zip` : `cropware_carrossel_${filenameTitle}.zip`;
@@ -13559,6 +13771,7 @@ async function downloadCarousel() {
     setGenStatus('', '');
   }
 
+  hideDownloadLoading();
   btn.disabled = false;
   btn.style.opacity = '';
 }
@@ -13573,6 +13786,7 @@ async function downloadLinkedInCarouselPDF() {
   const btn = document.getElementById('downloadBtn');
   btn.disabled = true;
   btn.style.opacity = '0.5';
+  showDownloadLoading('Preparando PDF...');
 
   try {
     const { jsPDF } = window.jspdf;
@@ -13591,6 +13805,7 @@ async function downloadLinkedInCarouselPDF() {
     });
 
     for (let i = 0; i < carousel.slides.length; i++) {
+      setDownloadProgress(`Renderizando slide ${i + 1} de ${carousel.slides.length}...`);
       setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Renderizando slide ${i + 1}/${carousel.slides.length} para PDF...`, '');
 
       if (i > 0) pdf.addPage([pageW, pageH], pageH > pageW ? 'portrait' : 'landscape');
@@ -13616,6 +13831,7 @@ async function downloadLinkedInCarouselPDF() {
       pdf.addImage(imgData, 'JPEG', 0, 0, pageW, pageH, `slide_${i}`, 'NONE');
     }
 
+    setDownloadProgress('Gerando PDF final...');
     setGenStatus('<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>Gerando PDF...', 'success');
     const pdfSize = pdf.output('arraybuffer').byteLength;
     console.log(`[Cropware] LinkedIn PDF: ${carousel.slides.length} slides, ${(pdfSize / 1024 / 1024).toFixed(1)} MB (flat ${pageW}×${pageH} JPEG + unsharp mask)`);
@@ -13638,6 +13854,7 @@ async function downloadLinkedInCarouselPDF() {
     setGenStatus('', '');
   }
 
+  hideDownloadLoading();
   btn.disabled = false;
   btn.style.opacity = '';
 }
@@ -13713,6 +13930,49 @@ function updateLegend(idx) {
     btn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
     btn.classList.remove('copied');
   }
+  // Painel de título de carrossel — só aparece em modos LinkedIn (tradicional/pessoal) e Tendência.
+  const titlePanel = document.getElementById('legendTitlePanel');
+  const titleText  = document.getElementById('legendTitleText');
+  const titleBtn   = document.getElementById('copyTitleBtn');
+  const showTitlePanel =
+    activeMode === 'linkedin-carousel' ||
+    activeMode === 'linkedin-pessoal-carousel' ||
+    activeMode === 'tendencia-carrossel';
+  if (titlePanel) {
+    titlePanel.style.display = showTitlePanel ? '' : 'none';
+  }
+  if (showTitlePanel && titleText) {
+    const items = getModeItems();
+    const carousel = items[getModeCurrentIdx()];
+    titleText.textContent = (carousel && (carousel.title || carousel.theme)) || '';
+  }
+  if (titleBtn) {
+    titleBtn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
+    titleBtn.classList.remove('copied');
+  }
+}
+
+function copyCarouselTitle() {
+  const titleText = document.getElementById('legendTitleText');
+  const titleStr = (titleText && titleText.textContent || '').trim();
+  if (!titleStr) return;
+  // Persiste edição de volta no carrossel ativo
+  const items = getModeItems();
+  const carousel = items[getModeCurrentIdx()];
+  if (carousel) {
+    carousel.title = titleStr;
+    saveSession();
+  }
+  navigator.clipboard.writeText(titleStr).then(() => {
+    const btn = document.getElementById('copyTitleBtn');
+    if (!btn) return;
+    btn.innerHTML = '<i class="ph ph-check sz-16"></i>Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
 }
 
 function copyLegend() {
@@ -13970,12 +14230,13 @@ async function searchAndConsolidateNews(topic, factsCap, referenceLinks) {
     timeZone: 'America/Sao_Paulo', day: '2-digit', month: 'long', year: 'numeric',
   });
   const linksBlock = links.length
-    ? `\n\nLINKS DE REFERÊNCIA (PRIORIZE estas fontes):\n${links.map((u, i) => `  ${i + 1}. ${u}`).join('\n')}\n- Acesse cada link via Google Search (use site:dominio quando necessário) e EXTRAIA o conteúdo principal.\n- Use os links como fontes preferenciais — se houver pauta nesses links, ela é a base da matéria.\n- Você ainda pode buscar fontes adicionais para enriquecer com dados (números, datas), mas a NARRATIVA central deve vir dos links.\n- Se o usuário NÃO informou tema explícito, INFERA o tema a partir do conteúdo dos links.\n- Inclua TODAS as URLs informadas no array "fontes" do JSON de saída.`
+    ? `\n\nLINKS DE REFERÊNCIA (ponto de partida da pauta — NÃO a única fonte):\n${links.map((u, i) => `  ${i + 1}. ${u}`).join('\n')}\n- Acesse cada link via Google Search (use site:dominio quando necessário) e EXTRAIA o assunto/manchete que ele cobre.\n- Trate os links como SEMENTE da pauta, não como teto. A narrativa final NÃO pode ser só uma reescrita do(s) link(s).\n- OBRIGATÓRIO: pesquise ATIVAMENTE 2 a 3 fontes ADICIONAIS sobre o mesmo assunto/tema (portais distintos do(s) link(s) original(is)). Use Google Search com queries como "[tema] [data atual]", "[tema] CONAB/USDA/MAPA", "[tema] análise mercado", "[tema] reação setor".\n- Cada fato/slide deve preferencialmente trazer DADOS QUE NÃO ESTÃO no link original — números cruzados, reações de outras fontes, contexto de mercado, dados oficiais (CONAB, USDA, MAPA, IBGE, CEPEA), declarações de associações (Aprosoja, ABIOVE, ANEC).\n- Se a fonte do link diverge de outras fontes em algum dado, REGISTRE ambos com atribuição (ex: "168 mi t segundo a CONAB; 165 mi t segundo o USDA").\n- Se o usuário NÃO informou tema explícito, INFERA o tema a partir do(s) link(s) e amplie a pesquisa.\n- Inclua TODAS as URLs informadas no array "fontes" do JSON de saída — junto com as fontes adicionais que você descobrir.`
     : '';
   const systemPrompt = `Você é repórter sênior da Cropware News. Sua tarefa é fazer UMA varredura jornalística agora, integrar várias fontes recentes sobre o tema pedido, e consolidar UMA notícia única, densa, factual e citável — pronta para virar matéria.
 
 REGRAS DE PESQUISA:
-- Use Google Search agora. Combine pelo menos 2 fontes distintas (portais de notícia, agências, governo, associações setoriais — preferência: Globo Rural, Canal Rural, Agrolink, Notícias Agrícolas, AgFeed, AgroLink, Reuters, Valor Econômico, AgriCensus, CONAB, USDA, MAPA, IBGE, ESALQ/CEPEA, ANEC, ABIOVE, Embrapa, Aprosoja, sindicatos rurais).
+- Use Google Search agora — varredura JORNALÍSTICA, não consulta única. Combine NO MÍNIMO 3 fontes INDEPENDENTES (de domínios distintos), idealmente 4-5: portais de notícia, agências, governo, associações setoriais — preferência: Globo Rural, Canal Rural, Agrolink, Notícias Agrícolas, AgFeed, Reuters, Valor Econômico, AgriCensus, CONAB, USDA, MAPA, IBGE, ESALQ/CEPEA, ANEC, ABIOVE, Embrapa, Aprosoja, sindicatos rurais.
+- Cruze dados entre fontes. Onde houver convergência, fortaleça o fato; onde houver divergência, registre ambos com atribuição.
 - Janela: últimas 72 horas (hoje é ${today}). Notícias mais antigas que 3 dias devem ser descartadas — exceto se forem o pano de fundo factual indispensável de uma notícia das últimas 72h.
 - Foco temático: agronegócio brasileiro — clima, safra, mercado/preço, exportação, câmbio aplicado a commodities, política agrícola, defensivos, biológicos, fertilizantes, tecnologia agrícola, eventos do setor.${linksBlock}
 
@@ -14229,6 +14490,7 @@ async function generatePresBackgrounds() {
       isGenerated:  true,
       slides:       [slideData],
       currentSlide: 0,
+      createdAt:    timestamp,
     };
 
     const newIdx = renderGeneratedPresentation(presentationData, '');
@@ -15119,6 +15381,7 @@ async function generatePost() {
       title:    parsed.title || (isAds ? 'Anuncio gerado' : isNews ? 'Post Notícia gerado' : 'Post gerado'),
       sub:      isAds ? 'Instagram Ads' : isNews ? 'Post Notícia' : 'Gerado por IA',
       filename: isAds ? `cropware_ad_${timestamp}.jpg` : isNews ? `cropware_noticia_${timestamp}.jpg` : `cropware_gerado_${timestamp}.jpg`,
+      createdAt:      timestamp,
       isGenerated:    true,
       bgImage:        `data:${finalImgMime};base64,${finalImgBase64}`,
       theme:          theme,
@@ -16287,6 +16550,7 @@ async function generateCarousel() {
       isGenerated: true,
       slides:      carouselSlides,
       currentSlide: 0,
+      createdAt:   timestamp,
     };
     if (isAds) {
       applyInstagramAdsFields(carouselData, parsed, adContext);
@@ -16426,9 +16690,10 @@ async function generateNewsCarousel() {
         revistaTextMode:   'light',
         accent:            '#55A05A',  // Verde médio pro kicker/divisor
         revistaPhotoPct:   45,  // Foto 45% / bloco 55% — mais respiro pro texto editorial
-        // Logo só no cover (canto inferior esquerdo, tom claro); demais slides sem logo
-        logoEnabled:       role === 'cover',
-        logoPos:           'bl',
+        // Logo desativado por padrão em todos os slides; usuário pode ativar manualmente.
+        logoEnabled:       false,
+        logoPos:           'br',
+        sitePos:           'br',
         brandMode:         'light',
         // Específicos por role
         manchete:       (s.manchete      || '').toString().trim(),
@@ -16472,6 +16737,7 @@ async function generateNewsCarousel() {
       currentSlide: 0,
       newsPauta:   pauta,
       slideCount:  slideCount,
+      createdAt:   timestamp,
     };
 
     // Hashtags do carrossel notícia em minúsculo (#NoTicia → #noticia)
@@ -16754,9 +17020,32 @@ function setGenStatus(msg, type) {
   el.className = 'gen-status' + (type ? ' ' + type : '');
 }
 
+// Modal de loading para downloads pesados (ZIP, PDF). Mostra spinner + mensagem.
+function showDownloadLoading(msg) {
+  const modal = document.getElementById('downloadLoading');
+  const msgEl = document.getElementById('downloadLoadingMsg');
+  if (msgEl) msgEl.textContent = msg || 'Preparando download...';
+  if (modal) modal.hidden = false;
+}
+function setDownloadProgress(msg) {
+  const msgEl = document.getElementById('downloadLoadingMsg');
+  if (msgEl) msgEl.textContent = msg;
+}
+function hideDownloadLoading() {
+  const modal = document.getElementById('downloadLoading');
+  if (modal) modal.hidden = true;
+}
+
 </script>
 
 <!-- LEGEND MODAL -->
+<div class="download-loading" id="downloadLoading" hidden>
+  <div class="download-loading-box">
+    <div class="download-loading-spinner"></div>
+    <div class="download-loading-msg" id="downloadLoadingMsg">Preparando download...</div>
+  </div>
+</div>
+
 <div class="gen-modal legend-modal" id="legendModal">
   <div class="gen-modal-box">
     <div class="gen-modal-header">
@@ -16764,6 +17053,12 @@ function setGenStatus(msg, type) {
       <button class="gen-close" onclick="closeLegendDialog()"><i class="ph ph-x"></i></button>
     </div>
     <div class="gen-body">
+      <div class="legend-panel" id="legendTitlePanel" style="display:none">
+        <div class="legend-title-row">
+          <div class="legend-title-text" id="legendTitleText" contenteditable="true" spellcheck="false"></div>
+          <button type="button" class="legend-title-copy" id="copyTitleBtn" onclick="copyCarouselTitle()" title="Copiar título"><i class="ph ph-copy sz-16"></i>Copiar</button>
+        </div>
+      </div>
       <div class="legend-panel">
         <div class="legend-body">
           <div class="legend-text" id="legendText"></div>
