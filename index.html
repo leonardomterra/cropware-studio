@@ -69,7 +69,7 @@
   .login-input::placeholder { color: #94a3b8; }
   .login-input:focus {
     border-color: #64748b;
-    background: #f8fafc;
+    background: #ffffff;
   }
   .login-btn {
     width: 100%; padding: 12px;
@@ -163,6 +163,23 @@
     --border: rgba(0,0,0,0.08);
     --text: #0f172a;
     --muted: rgba(15,23,42,0.62);
+    --btn-height: 34px;
+    --btn-radius: 4px;
+    --btn-font-size: 13px;
+    --btn-font-weight: 400;
+    --btn-pad-x: 14px;
+    --btn-gap: 7px;
+    --btn-dark-bg: #334155;
+    --btn-dark-bg-hover: #1e293b;
+    --btn-dark-text: #fff;
+    --btn-mid-bg: #e2e8f0;
+    --btn-mid-bg-hover: #cbd5e1;
+    --btn-mid-text: #475569;
+    --btn-light-bg: #fff;
+    --btn-light-bg-hover: #f8fafc;
+    --btn-light-text: #64748b;
+    --btn-light-border: rgba(203, 213, 225, 0.58);
+    --btn-light-border-hover: rgba(148, 163, 184, 0.32);
     --side-panel-width: 290px;
   }
 
@@ -981,20 +998,6 @@
     outline: 2px dashed rgba(255,255,255,0.55);
     outline-offset: 8px;
   }
-  /* ── EDIÇÃO INLINE (legendText) ── */
-  #legendText[contenteditable="true"] {
-    cursor: text;
-    border-radius: 4px;
-    outline: none;
-    transition: background 120ms ease;
-  }
-  #legendText[contenteditable="true"]:hover {
-    background: rgba(0,0,0,0.02);
-  }
-  #legendText[contenteditable="true"]:focus {
-    background: #f1f5f9;
-  }
-
   .brand-strip {
     position: absolute;
     bottom: 0; left: 0; right: 0;
@@ -1232,6 +1235,39 @@
     margin: 0 0 24px;
     background: var(--post-accent);
     border-radius: 999px;
+  }
+  .revista-block::before {
+    content: '';
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    background: var(--post-accent);
+    border-radius: 999px;
+  }
+  .post[data-style="revista"][data-revista-layout="top"] .revista-block::before,
+  .post[data-style="revista"]:not([data-revista-layout]) .revista-block::before {
+    left: 56px;
+    width: 24%;
+    top: -4px;
+    height: 8px;
+  }
+  .post[data-style="revista"][data-revista-layout="bottom"] .revista-block::before {
+    left: 56px;
+    width: 24%;
+    bottom: -4px;
+    height: 8px;
+  }
+  .post[data-style="revista"][data-revista-layout="left"] .revista-block::before {
+    top: 56px;
+    height: 24%;
+    left: -4px;
+    width: 8px;
+  }
+  .post[data-style="revista"][data-revista-layout="right"] .revista-block::before {
+    top: 56px;
+    height: 24%;
+    right: -4px;
+    width: 8px;
   }
   .revista-complement {
     font-family: 'Inter Tight', sans-serif;
@@ -5096,65 +5132,87 @@
     padding: 18px;
     max-height: 62vh;
     overflow-y: auto;
-  }
-  .legend-panel {
-    background: var(--surface);
     display: flex;
     flex-direction: column;
-    min-height: 220px;
+    gap: 14px;
+  }
+  .legend-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     position: relative;
   }
-  /* Painel do título de carrossel — encolhe pra altura mínima e separa visualmente do legend */
+  /* Painel do título de carrossel — usa o mesmo visual do campo de legenda. */
   #legendTitlePanel {
     min-height: 0;
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 14px;
   }
-  .legend-title-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  .legend-field {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    overflow: visible;
+    transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
   }
-  .legend-title-text {
-    flex: 1;
+  .legend-field:hover {
+    background: #f8fafc;
+  }
+  .legend-field:focus-within {
+    border-color: #94a3b8;
+    background: #f8fafc;
+    box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.18);
+  }
+  .legend-title-text,
+  .legend-text {
     font-size: 14px;
-    line-height: 1.4;
+    line-height: 1.5;
     color: var(--text);
     font-weight: 400;
     font-family: 'Inter Tight', sans-serif;
-    padding: 7px 10px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: #fff;
     outline: none;
+    white-space: pre-wrap;
+    cursor: text;
+    padding: 12px;
+    max-width: 1100px;
+    background: transparent;
   }
-  .legend-title-text:focus { border-color: #94a3b8; }
+  .legend-title-text {
+    min-height: 0;
+    line-height: 1.35;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    overflow: visible;
+  }
+  .legend-text {
+    min-height: 220px;
+    color: var(--text);
+  }
   .legend-title-copy {
-    flex-shrink: 0;
-    align-self: stretch;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
-    background: #cbd5e1;
-    color: #1e293b;
-    border: none;
+    min-height: 34px;
+    background: #ffffff;
+    color: #64748b;
+    border: 1px solid rgba(203, 213, 225, 0.58);
     font-family: 'Inter Tight', sans-serif;
     font-size: 13px;
     font-weight: 400;
-    padding: 0 14px;
+    padding: 8px 14px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
     white-space: nowrap;
   }
-  .legend-title-copy:hover { background: #94a3b8; color: #0f172a; }
-  .legend-title-copy.copied { color: var(--green); background: #fff; }
-  /* Botões inferiores do dialog de legenda — mais compactos que o default .btn */
-  .legend-modal .gen-actions .btn {
-    padding: 8px 18px;
-    font-size: 13px;
+  .legend-title-copy:hover { background: #f8fafc; border-color: rgba(148, 163, 184, 0.32); color: #334155; }
+  .legend-title-copy.copied { color: var(--green); background: #fff; border-color: rgba(74,162,118,0.24); }
+  .legend-copy-row {
+    display: flex;
+    justify-content: center;
+    padding-top: 8px;
   }
+  .legend-modal .gen-actions { display: none; }
 
   .legend-header {
     flex-shrink: 0;
@@ -5195,25 +5253,9 @@
 
   .legend-body {
     flex: 1;
-    overflow-y: auto;
-    padding: 12px 0 0;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+    overflow: visible;
+    padding: 0;
     min-height: 0;
-  }
-
-  .legend-body::-webkit-scrollbar { width: 4px; }
-  .legend-body::-webkit-scrollbar-track { background: transparent; }
-  .legend-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .legend-text {
-    font-size: 13px;
-    line-height: 1.55;
-    color: var(--muted);
-    white-space: pre-wrap;
-    font-weight: 400;
-    font-family: 'Inter Tight', sans-serif;
-    max-width: 1100px;
   }
 
   .legend-text strong {
@@ -5864,6 +5906,141 @@
   }
   .empty-state-btn:hover { background: #1e293b; }
 
+  /* ── BUTTON SYSTEM
+     Variantes reutilizáveis:
+     .cw-btn--dark   = ação principal
+     .cw-btn--medium = ação secundária preenchida
+     .cw-btn--light  = ação leve com borda discreta */
+  .cw-btn,
+  .btn,
+  .login-btn,
+  .empty-state-btn,
+  .pc-apply-all-btn,
+  .news-search-btn,
+  .gen-actions .btn,
+  .btn-gen-ai,
+  .btn-actions-menu-trigger,
+  .legend-open-btn,
+  .legend-open-row .btn-download,
+  .legend-title-copy,
+  .pc-footer-actions .pc-regen-launch,
+  .pc-footer-actions .pc-reset-btn,
+  .pc-regen-btn,
+  .pc-segment-grid button,
+  .pc-upload-btn {
+    min-height: var(--btn-height);
+    border-radius: var(--btn-radius);
+    font-family: 'Inter Tight', sans-serif;
+    font-size: var(--btn-font-size);
+    font-weight: var(--btn-font-weight);
+    letter-spacing: 0;
+    line-height: 1.2;
+    padding: 8px var(--btn-pad-x);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--btn-gap);
+    cursor: pointer;
+    transition: background 140ms, border-color 140ms, color 140ms, opacity 140ms;
+    box-sizing: border-box;
+  }
+
+  .cw-btn {
+    border: none;
+    white-space: nowrap;
+  }
+
+  .cw-btn--dark,
+  .login-btn,
+  .empty-state-btn,
+  .pc-apply-all-btn,
+  .news-search-btn,
+  .gen-actions .btn-primary {
+    background: var(--btn-dark-bg);
+    color: var(--btn-dark-text);
+    border: none;
+  }
+
+  .cw-btn--dark:hover,
+  .login-btn:hover,
+  .empty-state-btn:hover,
+  .pc-apply-all-btn:hover,
+  .news-search-btn:hover,
+  .gen-actions .btn-primary:hover {
+    background: var(--btn-dark-bg-hover);
+    color: var(--btn-dark-text);
+  }
+
+  .cw-btn--medium,
+  .btn-gen-ai,
+  .btn-actions-menu-trigger,
+  .legend-open-btn,
+  .legend-open-row .btn-download,
+  .pc-footer-actions .pc-regen-launch,
+  .pc-footer-actions .pc-reset-btn,
+  .pc-regen-btn,
+  .pc-segment-grid button {
+    background: var(--btn-mid-bg);
+    color: var(--btn-mid-text);
+    border: none;
+  }
+
+  .cw-btn--medium:hover,
+  .btn-gen-ai:hover,
+  .btn-actions-menu-trigger:hover,
+  .btn-actions-menu-trigger[aria-expanded="true"],
+  .legend-open-btn:hover,
+  .legend-open-row .btn-download:hover,
+  .pc-footer-actions .pc-regen-launch:hover,
+  .pc-footer-actions .pc-reset-btn:hover,
+  .pc-regen-btn:hover:not(:disabled),
+  .pc-segment-grid button:hover {
+    background: var(--btn-mid-bg-hover);
+    color: var(--text);
+  }
+
+  .cw-btn--light,
+  .legend-title-copy,
+  .btn-ghost,
+  .pc-upload-btn {
+    background: var(--btn-light-bg);
+    color: var(--btn-light-text);
+    border: 1px solid var(--btn-light-border);
+  }
+
+  .cw-btn--light:hover,
+  .legend-title-copy:hover,
+  .btn-ghost:hover,
+  .pc-upload-btn:hover {
+    background: var(--btn-light-bg-hover);
+    border-color: var(--btn-light-border-hover);
+    color: #334155;
+  }
+
+  .pc-segment-grid button.active {
+    background: var(--btn-dark-bg);
+    border-color: var(--btn-dark-bg);
+    color: var(--btn-dark-text);
+  }
+
+  .btn-actions-menu-trigger {
+    justify-content: space-between;
+  }
+
+  .pc-regen-btn {
+    justify-content: flex-start;
+  }
+
+  .cw-btn:disabled,
+  .login-btn:disabled,
+  .pc-apply-all-btn:disabled,
+  .news-search-btn:disabled,
+  .gen-actions .btn-primary:disabled,
+  .pc-regen-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
   /* ──────────────────────────────────────────────────────────
      MOBILE — telas < 900px
      Converte as 3 colunas verticais (posts | canvas | legenda |
@@ -5918,7 +6095,7 @@
     flex-shrink: 0;
   }
   .slide-nav-btn {
-    background: #ffffff;
+    background: #cbd5e1;
     border: none;
     border-radius: 6px;
     width: 36px;
@@ -5927,20 +6104,20 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #475569;
+    color: #334155;
     font-size: 18px;
     transition: background 0.15s, color 0.15s;
   }
   .slide-nav-btn:hover:not(:disabled) {
-    background: #f8fafc;
+    background: #bfccd9;
     color: #0f172a;
   }
   .slide-nav-btn:disabled { opacity: 0.4; cursor: default; }
   /* Botão "Mover" com texto + seta — largura automática, gap entre ícone/texto */
   .slide-nav-btn.slide-nav-reorder-text {
-    width: auto;
-    padding: 0 12px;
-    gap: 6px;
+    width: 36px;
+    padding: 0;
+    gap: 0;
     font-family: 'Inter Tight', sans-serif;
     font-size: 13px;
     font-weight: 500;
@@ -5948,22 +6125,22 @@
   .slide-nav-dots {
     display: flex;
     flex-direction: row;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
     padding: 0 4px;
   }
   .slide-nav-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #cbd5e1;
+    width: 18px;
+    height: 4px;
+    border-radius: 999px;
+    background: #94a3b8;
     cursor: pointer;
-    transition: background 0.15s, transform 0.15s;
+    transition: background 0.15s, width 0.15s;
   }
-  .slide-nav-dot:hover { background: #94a3b8; }
+  .slide-nav-dot:hover { background: #64748b; }
   .slide-nav-dot.active {
-    background: var(--green);
-    transform: scale(1.3);
+    width: 28px;
+    background: #334155;
   }
   .slide-nav-label {
     font-family: 'Inter Tight', sans-serif;
@@ -7115,12 +7292,11 @@
       <div class="slide-nav visible empty" id="slideNav">
         <button class="slide-nav-btn slide-nav-add" id="slideAddBefore" onclick="insertSlide('before')" title="Inserir slide antes"><i class="ph ph-plus sz-18"></i></button>
         <div class="slide-nav-sep"></div>
-        <button class="slide-nav-btn slide-nav-reorder slide-nav-reorder-text" id="slideMovePrev" onclick="moveSlide(-1)" title="Mover slide para a esquerda"><i class="ph ph-arrow-left sz-18"></i><span>Mover</span></button>
+        <button class="slide-nav-btn slide-nav-reorder slide-nav-reorder-text" id="slideMovePrev" onclick="moveSlide(-1)" title="Mover slide para a esquerda"><i class="ph ph-arrow-line-left sz-18"></i></button>
         <button class="slide-nav-btn" id="slidePrev" onclick="goToSlide(getCurrentSlide() - 1)" title="Slide anterior"><i class="ph ph-caret-left sz-18"></i></button>
         <div class="slide-nav-dots" id="slideNavDots"></div>
-        <span class="slide-nav-label" id="slideNavLabel"></span>
         <button class="slide-nav-btn" id="slideNext" onclick="goToSlide(getCurrentSlide() + 1)" title="Próximo slide"><i class="ph ph-caret-right sz-18"></i></button>
-        <button class="slide-nav-btn slide-nav-reorder slide-nav-reorder-text" id="slideMoveNext" onclick="moveSlide(1)" title="Mover slide para a direita"><span>Mover</span><i class="ph ph-arrow-right sz-18"></i></button>
+        <button class="slide-nav-btn slide-nav-reorder slide-nav-reorder-text" id="slideMoveNext" onclick="moveSlide(1)" title="Mover slide para a direita"><i class="ph ph-arrow-line-right sz-18"></i></button>
         <div class="slide-nav-sep"></div>
         <button class="slide-nav-btn slide-nav-add" id="slideAddAfter" onclick="insertSlide('after')" title="Inserir slide depois"><i class="ph ph-plus sz-18"></i></button>
         <div class="slide-nav-sep"></div>
@@ -7936,7 +8112,8 @@ function updateSlideNav() {
     dotsEl.appendChild(dot);
   });
 
-  document.getElementById('slideNavLabel').textContent = `${cs + 1}/${carousel.slides.length}`;
+  const slideNavLabel = document.getElementById('slideNavLabel');
+  if (slideNavLabel) slideNavLabel.textContent = `${cs + 1}/${carousel.slides.length}`;
   document.getElementById('slidePrev').disabled = cs === 0;
   document.getElementById('slideNext').disabled = cs === carousel.slides.length - 1;
 
@@ -8645,6 +8822,43 @@ function restoreStyleFields(post, newStyle) {
   }
 }
 
+function syncCurrentStyleBucket(post) {
+  if (!post || !post.style) return;
+  saveCurrentStyleFields(post);
+}
+
+function cssColorToHex(color) {
+  if (!color) return '';
+  const c = String(color).trim();
+  if (c === 'transparent') return 'transparent';
+  if (/^#[0-9a-f]{6}$/i.test(c)) return c;
+  const m = c.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([0-9.]+))?\)$/i);
+  if (!m) return '';
+  const alpha = m[4] == null ? 1 : Number(m[4]);
+  if (alpha === 0) return 'transparent';
+  const toHex = n => Math.max(0, Math.min(255, Number(n) || 0)).toString(16).padStart(2, '0');
+  return `#${toHex(m[1])}${toHex(m[2])}${toHex(m[3])}`;
+}
+
+function syncRenderedVisualFields(postEl, post) {
+  if (!postEl || !post) return;
+  const style = normalizePostStyle(post.style);
+  if (style === 'revista' || style === 'news-editorial') {
+    const block = postEl.querySelector('.revista-block, .news-edit-block');
+    const blockColor = cssColorToHex(block?.style.backgroundColor || block?.style.background);
+    if (blockColor) post.revistaBlockColor = blockColor;
+  } else if (style === 'split') {
+    const block = postEl.querySelector('.split-block');
+    const blockColor = cssColorToHex(block?.style.backgroundColor || block?.style.background);
+    if (blockColor) post.splitBlockColor = blockColor;
+  } else if (style === 'coluna') {
+    const block = postEl.querySelector('.coluna-block');
+    const blockColor = cssColorToHex(block?.style.backgroundColor || block?.style.background);
+    if (blockColor) post.columnBlockColor = blockColor;
+  }
+  syncCurrentStyleBucket(post);
+}
+
 function ensureSignalVisualDefaults(postData) {
   if (!postData || normalizePostStyle(postData.style) !== 'signal') return;
   let migrated = false;
@@ -9318,6 +9532,7 @@ function applyRevistaBlockInline(postEl, post) {
   postEl.style.setProperty('--revista-block-color', blockColor);
   block.classList.toggle('text-light', (post.revistaTextMode || 'light') === 'light');
   block.classList.toggle('text-dark',  (post.revistaTextMode || 'light') === 'dark');
+  syncCurrentStyleBucket(post);
 }
 
 function applySplitBlockInline(postEl, post) {
@@ -9328,6 +9543,7 @@ function applySplitBlockInline(postEl, post) {
   postEl.style.setProperty('--split-block-color', blockColor);
   block.classList.toggle('text-light', (post.splitTextMode || 'light') === 'light');
   block.classList.toggle('text-dark',  (post.splitTextMode || 'light') === 'dark');
+  syncCurrentStyleBucket(post);
 }
 
 function applyColunaBlockInline(postEl, post) {
@@ -9339,6 +9555,7 @@ function applyColunaBlockInline(postEl, post) {
   block.classList.toggle('text-light', (post.columnTextMode || 'dark') === 'light');
   block.classList.toggle('text-dark',  (post.columnTextMode || 'dark') === 'dark');
   postEl.dataset.columnSide = post.columnSide || 'left';
+  syncCurrentStyleBucket(post);
 }
 
 function buildGlassBackground(postData) {
@@ -9399,7 +9616,6 @@ function renderRevistaStyle(postData) {
     <div class="post-accent-bar"></div>
     <div class="revista-block text-${textMode}" style="background:${blockBg};">
       <div class="revista-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
-      <div class="revista-separator"></div>
       <div class="revista-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
     </div>
     ${postData.logoEnabled !== false ? '<img class="revista-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
@@ -9479,7 +9695,7 @@ function renderNewsEditorialStyle(postData) {
     </div>
     ${postData.logoEnabled !== false ? '<img class="news-edit-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     ${renderSiteText(postData)}
-    ${role === 'closing' ? `<div class="news-edit-closing-signature">${postData.editorialFlavor === 'opinion' ? 'Cropware Opinião' : 'Cropware Tendências'}</div>` : ''}
+    ${role === 'closing' ? `<div class="news-edit-closing-signature">${postData.editorialFlavor === 'opinion' ? 'Cropware Análise' : 'Cropware Tendências'}</div>` : ''}
     <div class="brand-strip"></div>
   `;
 }
@@ -10828,6 +11044,7 @@ function applyColorChoice(color, targetOverride) {
     post.mockupBarColor = color;
     if (postEl) applyPostVariant(postEl, post);
   }
+  syncCurrentStyleBucket(post);
   updatePostControls(current);
   saveSession();
 }
@@ -11202,8 +11419,10 @@ function initPostControls() {
                   : key === 'accentBar' ? 'accentBarEnabled'
                   : key === 'strip' ? 'stripEnabled'
                   : 'bulletsVisible';
-      post[field] = !(post[field] !== false);
       const postEl = document.getElementById(post.id);
+      syncRenderedVisualFields(postEl, post);
+      post[field] = !(post[field] !== false);
+      syncCurrentStyleBucket(post);
       if (postEl) applyPostVariant(postEl, post);
       updatePostControls(current);
       saveSession();
@@ -11426,8 +11645,10 @@ function initPostControls() {
     logoPosSelectEl.addEventListener('change', () => {
       const post = getActivePost();
       if (!post || !post.isGenerated) return;
-      post.logoPos = logoPosSelectEl.value;
       const postEl = document.getElementById(post.id);
+      syncRenderedVisualFields(postEl, post);
+      post.logoPos = logoPosSelectEl.value;
+      syncCurrentStyleBucket(post);
       if (postEl) applyPostVariant(postEl, post);
       updatePostControls(current);
       saveSession();
@@ -12143,8 +12364,10 @@ function initPostControls() {
       if (!post || !post.isGenerated) return;
       const defs = SIGNATURE_DEFAULTS[btn.dataset.reset];
       if (!defs) return;
-      Object.assign(post, defs);
       const postEl = document.getElementById(post.id);
+      syncRenderedVisualFields(postEl, post);
+      Object.assign(post, defs);
+      syncCurrentStyleBucket(post);
       if (postEl) applyPostVariant(postEl, post);
       updatePostControls();
       saveSession();
@@ -13158,6 +13381,7 @@ function _drawCover(ctx, img, x, y, w, h) {
 // Usado pra incluir o overlay na base do blur dos cards (que no browser pega via backdrop-filter).
 function _paintPostOverlay(ctx, w, h, postData) {
   const color = postData.overlayColor || '#000000';
+  if (color === 'transparent' || color === 'none') return;
   const opRaw = postData.overlayOpacity == null ? 55 : postData.overlayOpacity;
   const a = Math.max(0, Math.min(100, Number(opRaw) || 0)) / 100;
   if (a === 0) return;
@@ -13217,6 +13441,7 @@ function composeSignalPhotoTexture(postData, w, h, includeOverlay = false) {
   canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext('2d');
   _drawCover(ctx, photoImg, 0, 0, w, h);
+  if (includeOverlay) _paintPostOverlay(ctx, w, h, postData);
   // Canvas auxiliar pra textura grayscale (+ invert opcional)
   const tCanvas = document.createElement('canvas');
   tCanvas.width = w; tCanvas.height = h;
@@ -13235,7 +13460,6 @@ function composeSignalPhotoTexture(postData, w, h, includeOverlay = false) {
   ctx.drawImage(tCanvas, 0, 0);
   ctx.globalAlpha = 1;
   ctx.globalCompositeOperation = 'source-over';
-  if (includeOverlay) _paintPostOverlay(ctx, w, h, postData);
   // PNG (lossless) preserva detalhe fino da textura — JPEG suaviza grain demais.
   return canvas.toDataURL('image/png');
 }
@@ -13249,10 +13473,12 @@ function bakeSignalPhotoTextureForCapture(cloneEl, postData) {
   if (!cloneTexture || !cloneBg) return;
   const w = Math.max(1, Math.round(cloneBg.offsetWidth));
   const h = Math.max(1, Math.round(cloneBg.offsetHeight));
-  const dataUrl = composeSignalPhotoTexture(postData, w * 2, h * 2);
+  const dataUrl = composeSignalPhotoTexture(postData, w * 2, h * 2, true);
   if (!dataUrl) return;
   cloneBg.style.backgroundImage = `url(${dataUrl})`;
   cloneTexture.style.display = 'none';
+  const cloneOverlay = cloneEl.querySelector('.post-overlay, .moldura-overlay, .revista-overlay, .split-overlay, .coluna-overlay');
+  if (cloneOverlay) cloneOverlay.style.display = 'none';
 }
 
 function preloadNewsTexture(url) {
@@ -13599,7 +13825,7 @@ async function downloadCurrent() {
       let blurInputSrc;
       if (post.signalPhotoTexture && post.bgImage) {
         // Compõe nas dimensões reais do post (não hardcodar 1080x1080) — moldura usa 1080x1350.
-        const composed = composeSignalPhotoTexture(post, postW, postH);
+        const composed = composeSignalPhotoTexture(post, postW, postH, true);
         blurInputSrc = composed || blurSrc;
       } else {
         blurInputSrc = await toBlobUrl(blurSrc);
@@ -13736,7 +13962,7 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
                      slideData.style === 'spotlight' ? (slideData.spotlightBlur  == null ? 22 : slideData.spotlightBlur)  : 24;
       let blurInputSrc;
       if (slideData.signalPhotoTexture && slideData.bgImage) {
-        const composed = composeSignalPhotoTexture(slideData, postW, postH);
+        const composed = composeSignalPhotoTexture(slideData, postW, postH, true);
         blurInputSrc = composed || blurSrc;
       } else {
         blurInputSrc = await toBlobUrl(blurSrc);
@@ -14067,8 +14293,12 @@ function copyLegend() {
   navigator.clipboard.writeText(full).then(() => {
     const btn = document.getElementById('copyBtn');
     if (!btn) return;
-    btn.textContent = 'Copiado';
-    setTimeout(() => { btn.textContent = 'Copiar'; }, 2000);
+    btn.innerHTML = '<i class="ph ph-check sz-16"></i>Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
+      btn.classList.remove('copied');
+    }, 2000);
   });
 }
 
@@ -16994,12 +17224,9 @@ async function regenerateText() {
     post.imagePrompt    = parsed.imagePrompt || post.imagePrompt;
     post.bullets        = Array.isArray(parsed.bullets) ? parsed.bullets.slice(0, 3) : post.bullets;
     applyInstagramAdsFields(post, parsed, adContext);
-    setActiveLegend(normalizePanelText(buildPanelTextFromParsed(parsed, platform), post.type));
     post._textRegenerated   = true;
-    post._legendRegenerated = true;
     const postEl = document.getElementById(post.id);
     if (postEl) applyPostVariant(postEl, post);
-    updateLegend(getModeCurrentIdx());
     buildSidebar();
     updatePostControls(getModeCurrentIdx());
     saveSession();
@@ -17102,14 +17329,11 @@ function undoLastRegen(kind) {
     post.title          = snap.title          || post.title;
     post.imagePrompt    = snap.imagePrompt    || post.imagePrompt;
     post.bullets        = snap.bullets        || [];
-    setActiveLegend(snap.legend || '');
     const postEl = document.getElementById(post.id);
     if (postEl) applyPostVariant(postEl, post);
-    updateLegend(getModeCurrentIdx());
     buildSidebar();
     // Se não houver mais entradas de text na pilha, limpa o flag
     if (!stack.some(s => s.kind === 'text'))   post._textRegenerated   = false;
-    if (!stack.some(s => s.kind === 'legend')) post._legendRegenerated = false;
   } else if (snap.kind === 'image') {
     post.bgImage = snap.bgImage || '';
     const postEl = document.getElementById(post.id);
@@ -17166,20 +17390,23 @@ function hideDownloadLoading() {
     </div>
     <div class="gen-body">
       <div class="legend-panel" id="legendTitlePanel" style="display:none">
-        <div class="legend-title-row">
+        <div class="legend-field">
           <div class="legend-title-text" id="legendTitleText" contenteditable="true" spellcheck="false"></div>
+        </div>
+        <div class="legend-copy-row">
           <button type="button" class="legend-title-copy" id="copyTitleBtn" onclick="copyCarouselTitle()" title="Copiar título"><i class="ph ph-copy sz-16"></i>Copiar</button>
         </div>
       </div>
       <div class="legend-panel">
         <div class="legend-body">
-          <div class="legend-text" id="legendText"></div>
+          <div class="legend-field">
+            <div class="legend-text" id="legendText"></div>
+          </div>
+          <div class="legend-copy-row">
+            <button type="button" class="legend-title-copy" id="copyBtn" onclick="copyLegend()" title="Copiar legenda"><i class="ph ph-copy sz-16"></i>Copiar</button>
+          </div>
           <div class="hashtags" id="hashtagsContainer"></div>
         </div>
-      </div>
-      <div class="gen-actions">
-        <button type="button" class="btn btn-ghost" onclick="closeLegendDialog()">Cancelar</button>
-        <button type="button" class="btn btn-primary" id="copyBtn" onclick="copyLegend()">Copiar</button>
       </div>
     </div>
   </div>
