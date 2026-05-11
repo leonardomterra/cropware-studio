@@ -5313,6 +5313,7 @@
     left: 12px;
     right: 12px;
     bottom: calc(100% + 8px);
+    top: auto;
     padding: 6px;
     background: #fff;
     border: 1px solid #cbd5e1;
@@ -5324,6 +5325,14 @@
   .actions-menu.open {
     display: grid;
     gap: 4px;
+  }
+  .actions-menu[data-placement="down"] {
+    top: calc(100% + 8px);
+    bottom: auto;
+  }
+  .actions-menu[data-placement="up"] {
+    top: auto;
+    bottom: calc(100% + 8px);
   }
   .actions-menu-btn {
     width: 100%;
@@ -6078,6 +6087,14 @@
       border-top: 1px solid var(--border);
       border-left: none;
       gap: 8px;
+      z-index: 90;
+    }
+    #sidebarAside .actions-menu {
+      left: 16px;
+      right: 16px;
+      max-height: min(70vh, 360px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     #sidebarAside .aside-gen-wrap .btn-gen-ai,
     #sidebarAside .aside-gen-wrap .btn-cfg {
@@ -7648,12 +7665,32 @@ function closeActionsMenu() {
   if (trigger) trigger.setAttribute('aria-expanded', 'false');
 }
 
+function updateActionsMenuPlacement(menu, trigger) {
+  if (!menu || !trigger) return;
+  menu.dataset.placement = 'up';
+  const triggerRect = trigger.getBoundingClientRect();
+  const viewportH = window.innerHeight || document.documentElement.clientHeight || 0;
+  const gap = 8;
+  const safeTop = 12;
+  const safeBottom = 12;
+  const spaceAbove = triggerRect.top - safeTop - gap;
+  const spaceBelow = viewportH - triggerRect.bottom - safeBottom - gap;
+
+  menu.classList.add('open');
+  const menuH = menu.offsetHeight;
+  menu.classList.remove('open');
+
+  const shouldOpenDown = spaceAbove < menuH && spaceBelow > spaceAbove;
+  menu.dataset.placement = shouldOpenDown ? 'down' : 'up';
+}
+
 function toggleActionsMenu(event) {
   if (event) event.stopPropagation();
   const menu = document.getElementById('actionsMenu');
   const trigger = document.getElementById('actionsMenuTrigger');
   if (!menu || !trigger) return;
   const willOpen = !menu.classList.contains('open');
+  if (willOpen) updateActionsMenuPlacement(menu, trigger);
   menu.classList.toggle('open', willOpen);
   trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
 }
