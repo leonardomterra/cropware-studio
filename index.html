@@ -1991,6 +1991,9 @@
   .post[data-style="moldura"][data-logo-pos="bl"] .moldura-logo { bottom: calc(56px + var(--logo-offset-y, 0px)); left: calc(72px + var(--logo-offset-x, 0px)); top: auto; right: auto; }
   .post[data-style="moldura"][data-logo-pos="bc"] .moldura-logo { bottom: calc(56px + var(--logo-offset-y, 0px)); left: 50%; transform: translateX(calc(-50% + var(--logo-offset-x, 0px))); top: auto; right: auto; }
   .post[data-style="moldura"][data-logo-pos="br"] .moldura-logo { bottom: calc(56px + var(--logo-offset-y, 0px)); right: calc(72px + var(--logo-offset-x, 0px)); top: auto; left: auto; }
+  .post[data-type="weather-carousel-slide"][data-style="moldura"][data-logo-pos="br"] .moldura-logo {
+    bottom: calc(40px + var(--logo-offset-y, 0px));
+  }
   .moldura-glass {
     position: absolute;
     left: 36px;
@@ -2115,6 +2118,21 @@
     z-index: 5;
     min-height: 1.45em;
   }
+  .moldura-conclusion-text {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 400;
+    font-size: calc(34px * var(--complement-scale, 1));
+    line-height: 1.45;
+    color: rgba(255,255,255,0.86);
+    position: relative;
+    z-index: 5;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.18);
+  }
+  .moldura-conclusion-text strong,
+  .moldura-conclusion-text b {
+    color: #ffffff;
+    font-weight: 600;
+  }
   .moldura-complement strong, .moldura-complement b { color: #ffffff; font-weight: 600; }
   .moldura-bullets {
     margin-top: 0;
@@ -2139,11 +2157,147 @@
     padding: 0;
     cursor: pointer;
   }
+  .moldura-bullet-dash {
+    width: calc(30px * var(--bullet-icon-scale, 1));
+    height: calc(2px * var(--bullet-icon-scale, 1));
+    margin-top: 0.08em;
+    border: none;
+    border-radius: 999px;
+    background: var(--post-accent);
+    opacity: 0.95;
+    flex-shrink: 0;
+    padding: 0;
+    cursor: default;
+    box-shadow: 0 0 14px rgba(106,197,143,0.34);
+  }
   .moldura-bullet .post-bullet-text {
     font-family: 'Inter Tight', sans-serif;
-    font-size: calc(32px * var(--bullets-scale, 1));
+    font-size: calc(30px * var(--bullets-scale, 1));
     color: rgba(255,255,255,0.8);
     line-height: 1.4;
+  }
+  .moldura-weather-slide-icon {
+    position: relative;
+    z-index: 5;
+    width: 146px;
+    height: 146px;
+    margin: 0 auto 30px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 30px;
+    color: var(--post-accent);
+    background:
+      radial-gradient(circle at 32% 22%, rgba(255,255,255,0.18), transparent 34%),
+      rgba(255,255,255,0.055);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.12),
+      0 18px 42px rgba(0,0,0,0.16),
+      0 0 34px rgba(106,197,143,0.18);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    pointer-events: none;
+  }
+  .moldura-weather-slide-icon .ph {
+    font-size: 88px;
+    opacity: 0.92;
+    filter: drop-shadow(0 0 14px rgba(106,197,143,0.24));
+  }
+  .moldura-weather-chart {
+    position: relative;
+    width: 100%;
+    margin: 10px 0 6px;
+    padding: 18px;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 18px;
+    background: transparent;
+    box-shadow: none;
+  }
+  .moldura-weather-chart-title {
+    margin: 20px 0 0;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: calc(27px * var(--complement-scale, 1));
+    font-weight: 400;
+    line-height: 1.34;
+    color: rgba(255,255,255,0.85);
+    text-align: left;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.22);
+  }
+  .moldura-chart-legend-card {
+    position: absolute;
+    left: 38px;
+    right: 38px;
+    bottom: 24px;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 14px 18px;
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.08);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.10);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .moldura-chart-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-family: 'Space Mono', monospace;
+    font-size: 20px;
+    letter-spacing: 1px;
+    line-height: 1;
+    color: rgba(255,255,255,0.82);
+    text-transform: uppercase;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .moldura-chart-legend-mark {
+    width: 26px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--legend-color);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--legend-color) 45%, transparent);
+  }
+  .moldura-chart-legend-mark.bar {
+    width: 20px;
+    height: 12px;
+    border-radius: 3px;
+  }
+  .moldura-weather-chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .post[data-type="weather-carousel-slide"] .moldura-glass {
+    justify-content: flex-start;
+  }
+  .post[data-type="weather-carousel-slide"] .moldura-hook {
+    font-size: calc(52px * var(--hook-scale, 1));
+    color: var(--post-accent);
+  }
+  .post[data-type="weather-carousel-slide"] .moldura-hook em,
+  .post[data-type="weather-carousel-slide"] .moldura-hook i {
+    color: var(--post-accent);
+  }
+  .post[data-type="weather-carousel-slide"] .moldura-complement {
+    font-size: calc(31px * var(--complement-scale, 1));
+    line-height: 1.38;
+  }
+  .post[data-weather-chart="true"] .moldura-hook {
+    font-size: calc(50px * var(--hook-scale, 1));
+    line-height: 1.02;
+  }
+  .post[data-weather-chart="true"] .moldura-divider {
+    margin: 18px 0;
+  }
+  .post[data-weather-chart="true"] .moldura-bullets {
+    gap: 12px;
   }
   /* Text mode: dark (para fundo claro do vidro) */
   .moldura-glass.text-dark .moldura-hook { color: #1e293b; text-shadow: none; }
@@ -6423,6 +6577,8 @@
       <optgroup label="Instagram">
         <option value="post" selected>Instagram — Post</option>
         <option value="carousel">Instagram — Carrossel</option>
+        <option value="funcionalidades-post">Funcionalidades — Post</option>
+        <option value="funcionalidades-carousel">Funcionalidades — Carrossel</option>
         <option value="instagram-ads-post">Instagram Ads — Post</option>
         <option value="instagram-ads-carousel">Instagram Ads — Carrossel</option>
       </optgroup>
@@ -6438,6 +6594,9 @@
         <option value="news-post">Notícia — Post</option>
         <option value="tendencia-carrossel">Tendência — Carrossel</option>
         <option value="opiniao-carrossel">Opinião — Carrossel</option>
+      </optgroup>
+      <optgroup label="Clima">
+        <option value="previsao-carrossel">Previsão — Carrossel</option>
       </optgroup>
       <optgroup label="Apresentação">
         <option value="presentation">Apresentação</option>
@@ -7354,6 +7513,13 @@ const instagramAdsCarousels = [];
 const instagramAdsCarouselLegends = [];
 let instagramAdsCurrentCarousel = 0;
 let instagramAdsCurrentSlide = 0;
+const featurePosts = [];
+const featureLegends = [];
+let featureCurrentPost = 0;
+const featureCarousels = [];
+const featureCarouselLegends = [];
+let featureCurrentCarousel = 0;
+let featureCurrentSlide = 0;
 const newsPosts = [];
 const newsLegends = [];
 let newsCurrentPost = 0;
@@ -7365,6 +7531,10 @@ const opinionCarousels = [];
 const opinionCarouselLegends = [];
 let currentOpinionCarousel = 0;
 let opinionCarouselCurrentSlide = 0;
+const weatherCarousels = [];
+const weatherCarouselLegends = [];
+let currentWeatherCarousel = 0;
+let weatherCarouselCurrentSlide = 0;
 
 // LinkedIn state
 const linkedinPosts = [];
@@ -7393,6 +7563,8 @@ let presentationCurrentSlide = 0;
 // Helpers: which platform and format
 function getPlatform() {
   if (activeMode === 'presentation') return 'presentation';
+  if (activeMode === 'funcionalidades-post' || activeMode === 'funcionalidades-carousel') return 'features';
+  if (activeMode === 'previsao-carrossel') return 'weather';
   if (activeMode === 'news-post' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel') return 'news';
   if (activeMode === 'instagram-ads-post' || activeMode === 'instagram-ads-carousel') return 'instagram-ads';
   if (activeMode.startsWith('linkedin-pessoal')) return 'linkedin-pessoal';
@@ -7406,8 +7578,15 @@ function isInstagramAdsMode(mode) {
   const m = mode || activeMode;
   return m === 'instagram-ads-post' || m === 'instagram-ads-carousel';
 }
+function isFeatureMode(mode) {
+  const m = mode || activeMode;
+  return m === 'funcionalidades-post' || m === 'funcionalidades-carousel';
+}
+function isWeatherMode(mode) {
+  return (mode || activeMode) === 'previsao-carrossel';
+}
 function isCarouselMode() {
-  return activeMode === 'carousel' || activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel' || activeMode === 'presentation' || activeMode === 'instagram-ads-carousel' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel';
+  return activeMode === 'carousel' || activeMode === 'funcionalidades-carousel' || activeMode === 'previsao-carrossel' || activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel' || activeMode === 'presentation' || activeMode === 'instagram-ads-carousel' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel';
 }
 function isOpinionCarouselMode(mode) {
   return (mode || activeMode) === 'opiniao-carrossel';
@@ -7422,6 +7601,8 @@ function getSidePanelLabel() {
 }
 function getSidebarCollectionLabel() {
   if (isPresentationMode()) return 'Apresentacoes';
+  if (isFeatureMode()) return 'Funcionalidades';
+  if (isWeatherMode()) return 'Previsoes';
   if (isOpinionCarouselMode()) return 'Opinioes';
   if (isNewsMode()) return 'Pautas';
   if (isInstagramAdsMode()) return 'Anuncios';
@@ -7429,6 +7610,9 @@ function getSidebarCollectionLabel() {
 }
 function getGenerateButtonLabel() {
   if (isPresentationMode()) return 'Gerar Slide';
+  if (activeMode === 'funcionalidades-post') return 'Gerar Post de Funcionalidade';
+  if (activeMode === 'funcionalidades-carousel') return 'Gerar Carrossel de Funcionalidade';
+  if (isWeatherMode()) return 'Gerar Previsão';
   if (isOpinionCarouselMode()) return 'Gerar Carrossel de Opinião';
   if (activeMode === 'tendencia-carrossel') return 'Gerar Carrossel de Tendência';
   if (isNewsMode()) return 'Post Noticia';
@@ -7464,6 +7648,24 @@ function getEmptyStateCopy() {
       button: 'Gerar Primeiro Anuncio',
       headerTitle: 'Nenhum Anuncio Ainda',
       headerSub: 'Gere o primeiro com a IA',
+    };
+  }
+  if (isFeatureMode()) {
+    return {
+      title: isCarouselMode() ? 'Nenhum Carrossel Ainda' : 'Nenhum Post Ainda',
+      subtitle: 'Escolha uma funcionalidade do Cropware e gere um conteúdo prático mostrando como ela entra na rotina do campo.',
+      button: isCarouselMode() ? 'Gerar Carrossel de Funcionalidade' : 'Gerar Post de Funcionalidade',
+      headerTitle: isCarouselMode() ? 'Nenhum Carrossel Ainda' : 'Nenhum Post Ainda',
+      headerSub: 'Escolha uma funcionalidade do app',
+    };
+  }
+  if (isWeatherMode()) {
+    return {
+      title: 'Nenhuma Previsão Ainda',
+      subtitle: 'Gere um carrossel de 8 slides com previsão semanal, alertas e gráficos climáticos.',
+      button: 'Gerar Previsão',
+      headerTitle: 'Nenhuma Previsão Ainda',
+      headerSub: 'Informe uma cidade ou região',
     };
   }
   if (isNewsMode() && isCarouselMode()) {
@@ -7502,6 +7704,8 @@ function getEmptyStateCopy() {
   };
 }
 function getPlatformDisplayName(platform) {
+  if (platform === 'features') return 'Funcionalidades';
+  if (platform === 'weather') return 'Previsão';
   if (platform === 'news') return 'Post Notícia';
   if (platform === 'instagram-ads') return 'Instagram Ads';
   if (platform === 'linkedin-pessoal') return 'LinkedIn Pessoal';
@@ -7517,6 +7721,126 @@ function getPostDimensions(format) {
   if (format === 'story') return { w: 1080, h: 1920 };
   if (format === 'square') return { w: 1080, h: 1080 };
   return { w: 1080, h: 1350 };
+}
+
+const CROPWARE_FEATURE_CATALOG = [
+  {"id":"cropware-field-dashboard","module":"Cropware Field","name":"Dashboard","description":"Tela central com visão holística do estado de todas as operações — resumos, alertas e atalhos.","userActions":"Visualiza KPIs agregados, monitora plantios em andamento, vê eventos próximos do calendário, status de sincronização offline, notas rápidas e acessa atalhos para principais funcionalidades.","screens":"Resumo de plantios por status (ativo, concluído, planejado), contadores de atividades, próximos eventos, notas sticky, filtros globais (organização, usuário), botões de acesso rápido a agenda/análises/backup.","examples":"Promotor abre o dashboard pela manhã e vê \"3 plantios ativos, 8 atividades pendentes, próxima visita amanhã\"; identifica quais áreas de GD estão em fase crítica.","benefits":"Economia de tempo, contexto operacional imediato, redução de risco de esquecimento.","data":"Estatísticas de plantios, contagem de atividades por tipo, próximos eventos, filtros globais aplicados.","themes":"Planejamento operacional, monitoramento de safra, gestão de agenda técnica, rastreamento de visitação.","terms":"Status do plantio, lifecycle, filtros globais, sincronização offline.","positioning":"\"Painel de Comando do Desenvolvimento de Mercado\" — controle centralizado da carteira de desenvolvimento do GD/DM."},
+  {"id":"cropware-field-gerenciamento-de-fazendas-farms","module":"Cropware Field","name":"Gerenciamento de Fazendas (Farms)","description":"Cadastro e visualização de propriedades onde ocorrem plantios e ensaios, com geolocalização e produtor associado.","userActions":"Cria fazendas com geolocalização, edita dados (localização, produtor, solo, irrigação), filtra/busca, visualiza em lista ou grid, gera relatórios.","screens":"Nome da fazenda, lat/long, mapa interativo, produtor associado, estado/município, área total, tipo de solo, regime de irrigação, upload de fotos.","examples":"Empresa de sementes cadastra 15 fazendas-parceiras em diferentes regiões; ao selecionar uma, vê todos os plantios, atividades e inicia novo ensaio já geo-localizado.","benefits":"Estrutura padronizada por propriedade, rastreabilidade geográfica, redução de erros de associação.","data":"Coordenadas, tipo de solo, irrigação, produtores, histórico de uso, fotos georreferenciadas.","themes":"Mapeamento de mercado, segmentação por região, estrutura fundiária.","terms":"Geolocalização, geocodificação, coordenadas WGS84, produtor responsável.","positioning":"\"Mapa de Oportunidades de Mercado por Localização\" — não é cadastro burocrático; valida estratégia geográfica de entrada e concentração de adoção."},
+  {"id":"cropware-field-gerenciamento-de-talhoes-plots","module":"Cropware Field","name":"Gerenciamento de Talhões (Plots)","description":"Divisão de fazendas em talhões com geometria, características de solo e histórico agronômico.","userActions":"Desenha talhões no mapa (ferramenta Leaflet/Google Maps integrada), edita nome/área/solo/irrigação, classifica uso (Produção Grãos / Campos GD / Sementes / etc.), consulta histórico.","screens":"Mapa com ferramenta de desenho, formulário com nome/número/área (ha)/coordenadas, classificação de campo, importação shapefile/GeoJSON, fotos aéreas.","examples":"Técnico de biotech desenha talhão de 8 ha, marca como \"Campo de GD\", associando-o automaticamente a futuros ensaios.","benefits":"Precisão para cálculo de produtividade e custo/ha, histórico granular, rastreabilidade geográfica.","data":"Polígono (coordenadas), área em hectares, histórico de cultivos, características de solo, atividades por talhão.","themes":"Mapeamento temático, variabilidade dentro da propriedade, recomendação zonificada, validação de tecnologia por zona.","terms":"Polígono, centroide, shapefile, GeoJSON, WGS84.","positioning":"\"Microssegmentação de Mercado por Talhão\" — validação site-specific para expansão em talhões semelhantes de outros clientes."},
+  {"id":"cropware-field-gerenciamento-de-plantios-plantings","module":"Cropware Field","name":"Gerenciamento de Plantios (Plantings)","description":"Registro e acompanhamento de cada semeadura, com dados agronômicos, status de ciclo e produtividade.","userActions":"Cria plantio vinculado a talhão, cultura, variedade, data, densidade, status (Produção/GD/Sementes); acompanha ciclo; gera relatório e QR code de rastreabilidade pública.","screens":"Grid de plantios, filtros (produtor/fazenda/talhão/safra), cultura, variedade, data, status lifecycle, colheita prevista/real, produtividade, PMG, umidade, população, formulário detalhado, QR code, relatório HTML.","examples":"Empresa de sementes planta variedade nova em 5 talhões; ao final, gera relatório comparativo mostrando produtividade vs. testemunha comercial com fotos georreferenciadas.","benefits":"Rastreabilidade completa do ciclo, dados para ROI, validação técnica documentada.","data":"Data plantio/colheita, cultura, variedade, população, produtividade bruta/corrigida, PMG, umidade, QR code, relatório de ensaio.","themes":"Validação de variedade, comparação de genótipos, rastreabilidade de semente.","terms":"Ciclo, lifecycle (ativo/completado), PMG, produtividade corrigida, população de plantas, QR code.","positioning":"\"Vitrine Técnica de Validação de Produto\" — cada plantio é experimento que gera evidência; QR code viraliza resultado entre vizinhos."},
+  {"id":"cropware-field-gerenciamento-de-atividades","module":"Cropware Field","name":"Gerenciamento de Atividades","description":"Registro detalhado de operações (aplicações, irrigação, fertilização, colheita, observações) com fotos georreferenciadas, custos e anexos.","userActions":"Registra atividade (tipo, data, plantio, produto, dose, equipamento), anexa fotos georreferenciadas e notas fiscais (OCR), calcula custo, visualiza histórico.","screens":"Dropdown de tipos, data/hora, seletor plantio/talhão, produto/dose, equipamento, observações, foto com geolocalização, anexação de NF (scanner OCR), checkbox \"área total vs parcial\", custo automático.","examples":"Técnico registra aplicação de produto novo em campo de GD; sistema gera rastreabilidade (produto, dose, data, foto georref, testemunha); compila relatório de eficácia ao final da safra.","benefits":"Rastreabilidade regulatória, defesa contra reclamações, dados de ROI, compliance.","data":"Tipo, data, produto/dose, foto georreferenciada, custo, NF digitalizada, responsável.","themes":"Fitossanidade, manejo de pragas, histórico de adubação, rastreabilidade de defensivo, custo de produção.","terms":"Geolocalização EXIF, OCR de NF, custo/ha, rastreabilidade.","positioning":"\"Laboratório de Campo Documentado\" — cada atividade vira evidência; serve para defesa regulatória e ataque comercial (validação de tecnologia)."},
+  {"id":"cropware-field-analises-de-desenvolvimento-gd-analysis-management","module":"Cropware Field","name":"Análises de Desenvolvimento (GD / Analysis Management)","description":"Módulo de comparação técnica side-by-side de produtos (variedades, fertilizantes, defensivos, biológicos), com dashboards e relatórios de ensaios.","userActions":"Visualiza comparativas GD vs. competidor, monitora produtividade/PMG/fitossanidade, acessa Dashboard GD individual e Dashboard de Equipe, organiza ensaios por tipo.","screens":"Abas Comparativas / Dashboard / Protocolos / Ensaios / Compilation / Tracking / Equipe; cards GD vs competidor; gráficos de produtividade; filtros; relatório HTML; sales tracking vinculado.","examples":"Promotor vê 12 comparativas de variedade nova vs. comercial padrão; sistema mostra ganho médio +2,5%; gera relatório executivo para vendedores/clientes.","benefits":"Validação técnica visual, argumentação comercial baseada em dados próprios, suporte à decisão de plantio.","data":"Produtividade, PMG, população, características de avaliação, comparativa GD vs competidor, vendas vinculadas.","themes":"Validação agronômica, comparação de genótipos, documentação de pesquisa, argumentação comercial.","terms":"Ensaio (trial), GD, fitossanidade, PMG, produtividade corrigida, protocolo de avaliação.","positioning":"\"Arena de Validação Técnica\" — diferencia-se de competidor sem dados próprios; cada comparativa é vitrine documentada."},
+  {"id":"cropware-field-gestao-de-protocolos-de-avaliacao","module":"Cropware Field","name":"Gestão de Protocolos de Avaliação","description":"Criação de formulários padrão de avaliação (checklist agronômico) aplicados a ensaios e comparativas.","userActions":"Define protocolo (nome, tipo ensaio, cultura, lista de características), especifica escala de avaliação (numérica/qualitativa/range), salva como template reutilizável.","screens":"Tabela de protocolos, form com nome/tipo/cultura, características com drag-and-drop, tipo de escala por característica, cores de severidade.","examples":"Empresa de defensivo cria protocolo padrão para fungicida (Vigor, Altura, Incidência, Produtividade) e aplica a todos os ensaios para comparabilidade.","benefits":"Padronização, redução de subjetividade, comparabilidade entre regiões, conformidade científica.","data":"Nome, tipo, características, escalas, valores mín/máx, versões.","themes":"Metodologia de pesquisa, padronização, reprodutibilidade.","terms":"Protocolo, escala qualitativa/quantitativa, severidade.","positioning":"\"Sistema de Controle de Qualidade Agronômica\" — credibilidade junto a consultores e agrônomos."},
+  {"id":"cropware-field-gerenciamento-de-checklists","module":"Cropware Field","name":"Gerenciamento de Checklists","description":"Listas de verificação customizáveis para conformidade de procedimentos e rastreabilidade de visita.","userActions":"Cria template (itens com deadline, anexos opcionais), vincula a plantios, preenche em campo (datas, fotos, documentos), gera relatório de conformidade.","screens":"Abas Templates / Meus Checklists, grid de preenchidos, formulário de template, items com deadline em dias, opção solicitar anexo, marcação de completo, relatório com timestamps.","examples":"Consultora cria checklist padrão de visita (inspeção de praga, amostra de solo, foto de folha, altura); usa em todas as visitas; relatório mostra qual cliente faltou amostra.","benefits":"Redução de erros em campo, rastreabilidade, compliance, auditoria.","data":"Template, itens, status, datas, fotos, relatório de conformidade.","themes":"Boas práticas, compliance, procedimentos técnicos, rastreabilidade.","terms":"Template, item, deadline, conformidade.","positioning":"\"Protocolo de Controle de Qualidade de Assistência Técnica\" — profissionalismo e padronização."},
+  {"id":"cropware-field-formularios-customizados-formbuilder","module":"Cropware Field","name":"Formulários Customizados (FormBuilder)","description":"Builder de formulários sem código com múltiplos tipos de pergunta para coleta estruturada de dados de campo.","userActions":"Cria formulário (texto/número/escolha única/múltipla/Likert/data), distribui, visualiza respostas em tempo real, exporta.","screens":"Abas Templates / Meus Formulários, drag-and-drop builder, tipo de pergunta, validações, view de preenchimento responsivo, galeria com exportação CSV/Excel.","examples":"Empresa cria \"Pesquisa de opinião sobre variedade\" com escala 1-5, distribui para 50 clientes, exporta para relatório de percepção.","benefits":"Coleta estruturada, análise de opinião, eliminação de papel.","data":"Template, respostas estruturadas, timestamps, respondente, export tabular.","themes":"Pesquisa de mercado, feedback, satisfação técnica.","terms":"Form builder, tipo de pergunta, validação.","positioning":"\"Inteligência de Campo Instantânea\" — feedback estruturado sem burocracia, alimenta roadmap de produto."},
+  {"id":"cropware-field-visualizador-de-mapas-interativos","module":"Cropware Field","name":"Visualizador de Mapas Interativos","description":"Mapa Google Maps/Leaflet com camadas temáticas — talhões, plantios, atividades, NDVI Sentinel-2 e marcações customizadas.","userActions":"Visualiza tudo no mapa, filtra por classificação de campo, ativa camada NDVI, desenha marcações (ponto/linha/polígono), exporta área.","screens":"Mapa full-screen, camadas (talhões/plantios/NDVI), legenda, seletor de data NDVI, ferramenta de desenho, controle de opacidade, zoom automático.","examples":"GD valida uniformidade do desenvolvimento; abre NDVI; vê dois talhões com mesma variedade — um com NDVI alto, outro baixo; marca área de problema; registra observação.","benefits":"Detecção rápida de anomalias, diagnóstico remoto, rastreabilidade geográfica.","data":"Posição talhões, histórico NDVI, marcações, índices.","themes":"Sensoriamento remoto, variabilidade espacial, diagnóstico de anomalias.","terms":"NDVI Sentinel-2, camada temática, polígono.","positioning":"\"Vigia Agrícola por Satélite\" — acessa dados de ponta; detecção antes do visual."},
+  {"id":"cropware-field-visualizador-de-ndvi-sentinel-2","module":"Cropware Field","name":"Visualizador de NDVI (Sentinel-2)","description":"Integração com Sentinel-2 via Google Earth Engine para análise de NDVI em talhões ao longo do tempo.","userActions":"Seleciona talhão, escolhe data, visualiza NDVI colorizado, consulta estatísticas (mín/máx/média), compara múltiplas datas, desenha ROI.","screens":"Calendário de datas Sentinel-2, paleta de cor, estatísticas em cards, comparação lado-a-lado, zoom.","examples":"Consultora acompanha lavoura de GD em soja; consulta NDVI a cada 10 dias; em comparativa, vê GD com NDVI mais alto desde V4 — evidência de vigor superior.","benefits":"Monitoramento remoto, detecção precoce de stress, validação de eficácia de bioestimulantes.","data":"Imagem NDVI, estatísticas por talhão, série temporal, ROI.","themes":"Sensoriamento remoto, diagnóstico de stress hídrico/nutricional, fenologia.","terms":"NDVI, Sentinel-2, Google Earth Engine, paleta de cor, ROI, série temporal.","positioning":"\"Análise Agronômica por Satélite\" — argumento poderoso: \"seu GD teve NDVI X% superior desde V4\"."},
+  {"id":"cropware-field-comparacao-de-ndvi-multi-data","module":"Cropware Field","name":"Comparação de NDVI Multi-Data","description":"Visualização lado-a-lado de NDVI do mesmo talhão em até 4 datas com diferença calculada.","userActions":"Seleciona talhão e datas, visualiza grid 2x2, vê diferença NDVI por cor (ganho verde, perda vermelho), exporta relatório.","screens":"Seletor talhão + múltiplas datas, visualizador 2x2, overlay de diferença, gráfico de evolução.","examples":"Após aplicação de bioestimulante, técnico compara NDVI antes e 15 dias depois; gera mapa de diferença para relatório comercial.","benefits":"Validação visual de intervenção, comparação temporal estruturada.","data":"Série NDVI multi-temporal, diferença calculada, relatório.","themes":"Validação de bioestimulante, resposta a fertilizante, recuperação de stress.","terms":"NDVI diferença, série temporal, comparação multi-data.","positioning":"\"Câmera de Monitoramento Agronômico Contínua\" — evolução documentada por satélite."},
+  {"id":"cropware-field-relatorios-de-plantio-reports","module":"Cropware Field","name":"Relatórios de Plantio (Reports)","description":"Relatórios automáticos por plantio com histórico de operações, fotos, dados agronômicos e comparativas.","userActions":"Seleciona plantio, escolhe seções (atividades, checklists, fotos, NDVI, produtividade, análises), gera HTML/PDF com marca d'água, compartilha link.","screens":"Seletor plantio, checkboxes de seções, opções de marca d'água, preview HTML, botões gerar/baixar/compartilhar.","examples":"Empresa cria relatório de variedade nova com data, localização, fotos, atividades, NDVI, produtividade vs comercial — documento profissional que valida tecnologia.","benefits":"Documentação profissional, argumento comercial estruturado, histórico para auditoria.","data":"Resumo plantio, atividades, série NDVI, fotos georreferenciadas, dados de produtividade.","themes":"Validação técnica, rastreabilidade, documentação.","terms":"Relatório estruturado, marca d'água, export HTML/PDF.","positioning":"\"Dossiê Técnico de Validação\" — dados brutos viram narrativa comercial; viraliza caso de sucesso."},
+  {"id":"cropware-field-painel-de-plantios-painel-plantios","module":"Cropware Field","name":"Painel de Plantios (Painel Plantios)","description":"Dashboard de cards com status visual de todos os plantios, alertas e progresso de ciclo.","userActions":"Vê overview em cards (status visual, progresso, alertas em badge), filtra por safra/produtor/status, clica para detalhe rápido.","screens":"Grid de cards (cultura, variedade, status, barra de progresso, badges), filtros.","examples":"Gerente abre o painel: 15 plantios em Vegetativo (verde), 3 em Reprodutivo (amarelo), 2 com alerta (vermelho); age sobre o crítico.","benefits":"Overview rápido, priorização visual, redução de tempo de diagnóstico.","data":"Status, alertas, progresso do ciclo.","themes":"Monitoramento de safra, gestão de agenda técnica.","terms":"Status do plantio, alertas.","positioning":"\"Central de Monitoramento Agrícola\" — war room do GD/DM; cada card é oportunidade de intervenção."},
+  {"id":"cropware-field-painel-de-alertas","module":"Cropware Field","name":"Painel de Alertas","description":"Sistema de alertas automáticos para eventos críticos (queda de NDVI, praga detectada, atividade atrasada) com notificação multi-canal.","userActions":"Configura regras (NDVI < X, praga, atividade > 7 dias pendente), recebe notificação (push/email/Telegram), marca como resolvido.","screens":"Regras de alerta, seletor de condição, seletor de ação, listagem histórico com status, botão aceitar/descartar.","examples":"Técnico configura \"Se NDVI cair >15% em comparativa GD, notificar\"; sistema envia Telegram quando detecta; técnico abre mapa e registra causa.","benefits":"Detecção precoce, reação rápida, redução de perda.","data":"Regra, histórico de acionamentos, timestamps de detecção/resolução.","themes":"Manejo integrado, detecção de stress, agricultura de precisão.","terms":"Regra de alerta, threshold, trigger, log.","positioning":"\"Sistema de Vigilância Agronômica 24/7\" — proatividade, não precisa estar em campo."},
+  {"id":"cropware-field-agenda-calendario-de-eventos","module":"Cropware Field","name":"Agenda / Calendário de Eventos","description":"Calendário integrado para planejar e rastrear visitas técnicas, aplicações, colheitas, treinamentos e reuniões.","userActions":"Cria evento (tipo, data/hora, localização, plantio, participantes), visualiza em mês/semana/lista, recebe lembrete por Telegram, marca concluído.","screens":"Visualização mês/semana/lista, form de evento, view de detalhe, sincronização Telegram.","examples":"Gerente agenda 10 visitas para próxima semana; sistema envia Telegram às 7h com visitas do dia e rotas otimizadas.","benefits":"Planejamento centralizado, lembretes automáticos, histórico de visitas por cliente.","data":"Tipo, data/hora, localização, participantes, status (planejado/concluído), notas.","themes":"Rotina técnica, planejamento, rastreamento de visita.","terms":"Evento, lembrete, sincronização.","positioning":"\"Agenda Inteligente de Visitas Técnicas\" — frequência sinaliza comprometimento; Telegram reduz esquecimento."},
+  {"id":"cropware-field-notas-rapidas-sticky-notes","module":"Cropware Field","name":"Notas Rápidas / Sticky Notes","description":"Notas adesivas virtuais para captura rápida de observações, lembretes e ideias.","userActions":"Cria nota associando opcionalmente a plantio/talhão/produtor, visualiza em dashboard, marca como concluído.","screens":"Botão flutuante, formulário rápido, cards sortable, arquivar/excluir.","examples":"Durante visita, técnico anota \"Cliente mencionou interesse em defensivo novo\"; depois inclui no relatório e segue contato.","benefits":"Captura rápida, lembretes, histórico de conversas.","data":"Texto, timestamp, associação, status.","themes":"Gestão de relacionamento, rastreamento de oportunidade.","terms":"Nota, prioridade.","positioning":"\"CRM Implícito\" — captura insights que alimentam pipeline."},
+  {"id":"cropware-field-relatorios-rapidos-quick-reports","module":"Cropware Field","name":"Relatórios Rápidos (Quick Reports)","description":"Captura ágil de observação em campo com foto georreferenciada, detecção de praga/doença e geração de relatório HTML.","userActions":"Tira foto (geoloc auto), seleciona tipo (praga/doença/observação), descreve, envia; sistema compila e gera relatório compartilhável.","screens":"Câmera, dropdown tipo, descrição, seletor produtor/fazenda auto-preenchido, link HTML.","examples":"Técnico vê mancha foliar, tira foto, registra \"Provável ferrugem\"; cria link compartilhável para o cliente consultar relatório georreferenciado.","benefits":"Documentação rápida, fotos com contexto, comunicação eficiente.","data":"Foto georreferenciada, tipo, descrição, localização, relatório HTML.","themes":"Diagnóstico fitossanitário, comunicação de campo.","terms":"Geolocalização, relatório HTML.","positioning":"\"Patrulha Técnica Documentada\" — cada visita gera evidência visual; diferencia da concorrência sem documentação."},
+  {"id":"cropware-field-relatorios-semanais","module":"Cropware Field","name":"Relatórios Semanais","description":"Compêndio estruturado de atividades da semana com drag-and-drop e compilação automática.","userActions":"Sistema extrai atividades da semana; usuário ordena (drag-and-drop), adiciona notas, gera HTML/PDF para exportar.","screens":"Drag-and-drop de atividades, seletor de período, campo notas, preview HTML.","examples":"Consultora resume \"5 aplicações, 3 coletas de solo, 1 diagnóstico de praga\"; relatório limpo enviado toda sexta ao cliente.","benefits":"Documentação semanal estruturada, comunicação profissional, redução de tempo manual.","data":"Lista de atividades priorizada, notas, relatório HTML.","themes":"Documentação de assistência técnica.","terms":"Relatório semanal, compilação automática.","positioning":"\"Transparência Semanal de Execução\" — frequência sinaliza comprometimento técnico."},
+  {"id":"cropware-field-gestao-de-custos-por-atividade","module":"Cropware Field","name":"Gestão de Custos por Atividade","description":"Rastreamento de custos por atividade com cálculo automático de custo/ha e ROI.","userActions":"Insere custo na atividade (preço × quantidade), sistema calcula custo/ha; visualiza relatório por tipo/talhão/safra; compara realizado vs orçado.","screens":"Campo custo, cálculo automático, tabela resumo, gráfico de evolução, filtros, exportação.","examples":"Empresa registra custos de variedade nova (sementes, aplicações, colheita) e compara com a variedade padrão para validar ROI.","benefits":"Visibilidade de custo real, suporte à decisão, validação econômica.","data":"Custo por atividade, custo/ha, custo total, comparativo orçado vs realizado.","themes":"Análise econômica, ROI de tecnologia, custo de produção.","terms":"Custo/ha, ROI, análise econômica.","positioning":"\"Calculadora de Retorno sobre Investimento Agrícola\" — argumento econômico de adoção."},
+  {"id":"cropware-field-gestao-de-custos-de-plantio","module":"Cropware Field","name":"Gestão de Custos de Plantio","description":"Agrupamento de custos por plantio com breakdown por categoria (sementes, defensivos, fertilizantes, aplicações).","userActions":"Visualiza custo total por plantio, breakdown por categoria, calcula custo/ha e custo/saca, compara entre plantios.","screens":"Tabela de plantios com custo total/ha, detalhe com breakdown, gráfico pizza, comparativa entre variedades.","examples":"Gerente analisa 3 plantios de soja com variedades diferentes; vê Var A a R$300/ha, Var B a R$280/ha; combina com produtividade para custo/saca.","benefits":"Análise econômica rápida, comparação de variedades.","data":"Custo total, breakdown por categoria, custo/ha, custo/saca.","themes":"Viabilidade de variedade, custo de produção.","terms":"Custo/ha, custo/saca.","positioning":"\"Análise de Viabilidade Agronômico-Econômica\" — cada plantio é case de ROI."},
+  {"id":"cropware-field-scanner-de-notas-fiscais-ocr","module":"Cropware Field","name":"Scanner de Notas Fiscais (OCR)","description":"OCR de notas fiscais com extração automática de fornecedor, produto, valor, data — vinculado a atividades.","userActions":"Tira foto/carrega NF; sistema extrai dados; associa a atividade; consulta histórico por fornecedor/produto/período.","screens":"Upload/câmera, preview com edição, seletor de atividade, galeria de NFs, filtros.","examples":"Após aplicação, técnico fotografa embalagem/NF; sistema extrai \"Fungicida Y a R$50/L\"; ao final da safra, rastreia todas as aplicações de Fungicida Y.","benefits":"Rastreabilidade regulatória, redução de entrada manual, histórico de origem.","data":"Fornecedor, produto, valor, data, imagem NF.","themes":"Rastreabilidade de insumo, conformidade.","terms":"OCR, extração, rastreabilidade.","positioning":"\"Rastreamento Digital de Insumos\" — conformidade e modernização."},
+  {"id":"cropware-field-gestao-de-leads-leadsmanagement","module":"Cropware Field","name":"Gestão de Leads (LeadsManagement)","description":"CRM leve com pipeline de oportunidades de venda (novo → qualificando → qualificado → contatado → convertido / perdido).","userActions":"Cria lead manual ou importa via Telegram/WhatsApp, qualifica status, registra notas e motivo de perda, visualiza funil, rastreia histórico.","screens":"Tabela de leads, seletor de status, campo notas, funil visual, filtros, botão de contato (Telegram/WhatsApp), relatório de pipeline.","examples":"Promotor recebe lead via Telegram (cliente com 500 ha de soja), qualifica, depois marca conversão e vincula a novo plantio.","benefits":"Visibilidade de pipeline, rastreabilidade de oportunidade, métrica de conversão.","data":"Nome, contato, status, origem, histórico de interações, valor potencial.","themes":"Desenvolvimento de mercado, gestão de oportunidade, crescimento de vendas.","terms":"Lead, pipeline, funil, taxa de conversão.","positioning":"\"Controle de Oportunidades de Desenvolvimento\" — pipeline é métrica-chave para GD/DM."},
+  {"id":"cropware-field-rastreamento-de-vendas-sales-tracking","module":"Cropware Field","name":"Rastreamento de Vendas (Sales Tracking)","description":"Registro de volume vendido (sementes, defensivos, fertilizantes) vinculado a ensaios/plantios para rastreabilidade de ROI de pesquisa.","userActions":"Vincula ensaio à venda, registra volume, produto, cliente, data; visualiza total por ensaio/produtor/período; compara ensaios vs controle.","screens":"Form de venda, tabela histórico, filtros, gráfico de volume por ensaio, relatório comparativo.","examples":"Empresa planta variedade nova em 5 talhões; registra vendas dessa variedade na safra; conclui \"gerou 250 sacas de venda\" como ROI da pesquisa.","benefits":"Justificação de orçamento de pesquisa, métrica de impacto comercial.","data":"Produto, volume, cliente, origem (ensaio), data, total por ensaio.","themes":"Validação comercial de pesquisa, ROI de desenvolvimento.","terms":"Volume vendido, origem, rastreabilidade.","positioning":"\"Contabilização de Impacto Comercial da Pesquisa\" — cada ensaio gera vendas rastreáveis."},
+  {"id":"cropware-field-codigos-de-rastreabilidade-com-qr-code-traceabilityids","module":"Cropware Field","name":"Códigos de Rastreabilidade com QR Code (TraceabilityIDs)","description":"QR codes únicos por plantio com página pública (localização, variedade, produtividade, fotos) para rastreabilidade externa.","userActions":"Gera QR code de plantio, recebe link público, distribui (adesivo no portão do talhão, redes sociais); acompanha quantos acessos.","screens":"Botão \"gerar QR\" no detalhe do plantio, preview, link público, página pública renderizada, métrica de acessos.","examples":"Empresa coloca adesivo QR no portão; vizinhos escaneiam, veem resultado, interessam-se na variedade; vendas viralizam organicamente.","benefits":"Marketing viral, rastreabilidade pública, prova de efetividade.","data":"QR code, link público, dados expostos, métrica de acessos.","themes":"Marketing de inovação, validação pública.","terms":"QR code, página pública.","positioning":"\"Vitrine Digital de Resultado\" — cada plantio vira ponto de marketing orgânico."},
+  {"id":"cropware-field-gerenciamento-de-anexos-e-documentos","module":"Cropware Field","name":"Gerenciamento de Anexos e Documentos","description":"Upload e organização de fotos/vídeos/PDFs/planilhas com geolocalização EXIF e vinculação a plantios/atividades.","userActions":"Anexa documentos/fotos, sistema captura geoloc EXIF, organiza em galeria, busca por tipo/data/local, exporta.","screens":"Uploader drag-and-drop, suporte multi-formato, galeria com preview, filtros, vinculação automática.","examples":"Técnico registra aplicação anexando 3 fotos da lavoura (geoloc auto), NF (PDF) e vídeo de drone; tudo organizado, incluído no relatório de plantio automaticamente.","benefits":"Documentação multimedia, geolocalização sem esforço, histórico visual.","data":"Arquivo (tipo, tamanho), EXIF, vinculação, metadata.","themes":"Documentação operacional, rastreabilidade visual.","terms":"EXIF, metadados, storage.","positioning":"\"Arquivo Vivo de Campo\" — fotos georreferenciadas como prova irrefutável."},
+  {"id":"cropware-field-integracao-com-telegram-bot","module":"Cropware Field","name":"Integração com Telegram Bot","description":"Bot Telegram para receber lembretes, alertas, relatórios e registrar ações por chat.","userActions":"Vincula conta, configura notificações (eventos próximos, alertas, leads), recebe lembretes diários, responde ao bot para registrar atividade.","screens":"Tela vincular Telegram, configuração de notificações, histórico de mensagens, registro de ação via bot.","examples":"Consultora recebe às 7h lembrete de visitas do dia; ao terminar, responde \"Visita realizada, cliente interessado\"; bot registra automaticamente.","benefits":"Lembretes não-intrusivos, registro rápido via chat, app que cliente já usa.","data":"Notificações configuradas, mensagens, registros via bot.","themes":"Comunicação operacional, lembretes de campo.","terms":"Bot, webhook, chat API.","positioning":"\"Cropware em seu Bolso\" — reduz atrito de entrada de dados."},
+  {"id":"cropware-field-whatsapp-ia-health-dashboard-assistente","module":"Cropware Field","name":"WhatsApp IA (Health Dashboard + Assistente)","description":"Assistente IA no WhatsApp que recebe texto/áudio/foto, responde com recomendação agronômica, captura leads e tem dashboard de saúde.","userActions":"Cliente envia mensagem (texto/áudio/foto); IA responde com recomendação; expressa interesse e bot captura como lead no Cropware. Operador monitora dashboard de saúde do bot.","screens":"Configuração webhook, dashboard de conversas, lista de leads gerados, analytics de engajamento.","examples":"Cliente envia foto de mancha foliar; IA identifica plantio (via histórico), recomenda tratamento; oferece produto; cliente clica para comprar.","benefits":"Geração de leads 24/7, recomendação personalizada, redução de atrito.","data":"Histórico de conversa, recomendação, lead, timestamp, contexto.","themes":"Diagnóstico remoto, atendimento, geração de leads, recomendação agrícola.","terms":"Bot WhatsApp, IA, webhook, captura de lead.","positioning":"\"Extensão IA de Atendimento Técnico\" — recomendação 24/7 sem técnico em ponta; diferencial competitivo."},
+  {"id":"cropware-field-gestao-de-usuarios-e-permissoes","module":"Cropware Field","name":"Gestão de Usuários e Permissões","description":"Administração de usuários, papéis (Master/Editor/Viewer/Individual/Subscriber) e permissões granulares, com MFA.","userActions":"Master cria usuários, atribui papéis, define organizações visíveis, ativa/desativa MFA, visualiza log de ações.","screens":"Tabela de usuários, form de criação, seletor de papel, checkbox por organização, toggle MFA, log.","examples":"Empresa tem 5 promotores, 2 gerentes e 1 master; permissões diferenciadas por região; auditoria de quem fez o quê.","benefits":"Controle de acesso seguro, separação por unidade, conformidade interna.","data":"ID usuário, papel, organizações, último login, ações.","themes":"Estrutura organizacional, controle de acesso, auditoria.","terms":"Papel (role), MFA, log.","positioning":"\"Estrutura de Governança de Dados\" — crítico em organizações multi-unidade."},
+  {"id":"cropware-field-gestao-de-organizacoes-multi-tenant","module":"Cropware Field","name":"Gestão de Organizações (Multi-Tenant)","description":"Múltiplas organizações (filiais/parceiros/fornecedores) na mesma instância com isolamento de dados.","userActions":"Master cria organização, atribui usuários, dados ficam isolados por org, consolida visão multi-org.","screens":"Tabela de orgs, form de criação, seletor de usuários, alternador de org ativa, relatório consolidado.","examples":"Empresa de sementes com filiais Centro-Oeste/SE/NE; cada filial tem seus dados; master vê consolidado.","benefits":"Escalabilidade multi-regional, isolamento, relatório consolidado.","data":"ID org, usuários, dados associados, consolidação.","themes":"Estrutura organizacional, escalabilidade.","terms":"Tenant, isolamento de dados.","positioning":"\"Plataforma Multi-Unidade\" — escala suportada com autonomia regional."},
+  {"id":"cropware-field-planos-e-assinatura","module":"Cropware Field","name":"Planos e Assinatura","description":"Gerenciamento de planos (Básico/Profissional/Completo) com limites de usuários/dados/funcionalidades.","userActions":"Master altera plano, vê limites, upgrade/downgrade, histórico de billing, próxima renovação.","screens":"Card de plano atual, tabela comparativa, botão upgrade, histórico billing, renovação.","examples":"Pequena empresa começa com Básico (5 usuários), em 6 meses precisa mais e sobe para Profissional.","benefits":"Flexibilidade de crescimento, transparência de custo.","data":"Plano, limites, histórico, renovação.","themes":"Modelo de negócio, escalabilidade.","terms":"Tier, limite, cobrança recorrente.","positioning":"\"Precificação Escalável\" — modelo trial reduz atrito de entrada."},
+  {"id":"cropware-field-backup-e-recuperacao","module":"Cropware Field","name":"Backup e Recuperação","description":"Backup automático/manual com restauração, envio por email e configuração de intervalo.","userActions":"Configura backup (diário/semanal), faz backup manual, vê histórico, restaura, baixa ZIP, envia por email.","screens":"Toggle automático, seletor de intervalo, botão backup agora, tabela histórico, restaurar/baixar, envio por email.","examples":"Empresa apaga plantio acidentalmente; restaura backup de 1 dia atrás; dado volta.","benefits":"Segurança contra perda, recuperação rápida, conformidade.","data":"Arquivos ZIP, timestamps, status, tamanho.","themes":"Continuidade operacional, conformidade.","terms":"Backup, restauração, ZIP.","positioning":"\"Seguro de Dados Agrícola\" — reduz risco de perda total de safra de informação."},
+  {"id":"cropware-field-sincronizacao-offline-pwa-capacitor-ios","module":"Cropware Field","name":"Sincronização Offline (PWA / Capacitor iOS)","description":"Funcionamento offline com fila de sincronização ao retornar conexão (PWA + app iOS).","userActions":"Em campo sem sinal, registra atividades/fotos/checklists; ao retornar à área com sinal, sincroniza automático.","screens":"Indicador online/offline, banner de sincronização pendente, fila visível, botão sincronizar manualmente.","examples":"Técnico em fazenda com sinal precário registra atividade, foto e checklist; ao retornar, tudo sincroniza sem perda.","benefits":"Continuidade em zona rural, redução de risco de perda, produtividade.","data":"Fila de sincronização, status, histórico.","themes":"Produtividade em campo, conectividade rural.","terms":"PWA, service worker, Capacitor, fila offline.","positioning":"\"Funcionamento Offline = Zero Interrupção\" — sinal ruim deixa de ser empecilho."},
+  {"id":"cropware-field-importacao-e-exportacao-excel-csv-shapefile","module":"Cropware Field","name":"Importação e Exportação (Excel / CSV / Shapefile)","description":"Migração de dados em lote (plantios, atividades, talhões) em múltiplos formatos para integração com sistemas externos.","userActions":"Escolhe entidade e formato, exporta com campos selecionados; ou carrega arquivo, preview, confirma importação.","screens":"Tabs Export/Import, seletor de entidade, formato, checkbox de campos, uploader, preview, confirmação.","examples":"Agrônomo importa 200 plantios de Excel em lote, economizando horas de cadastro.","benefits":"Migração rápida, integração com GIS, backup tabular.","data":"Arquivo, mapeamento, registros processados, erros.","themes":"Migração, integração com GIS.","terms":"Excel, CSV, Shapefile, mapeamento.","positioning":"\"Ponte de Dados com Sistema Legado\" — facilita adoção sem refazer manualmente."},
+  {"id":"cropware-field-integracoes-com-servicos-externos","module":"Cropware Field","name":"Integrações com Serviços Externos","description":"Conexão com Google Drive, Slack, Make (Zapier) e webhooks customizados.","userActions":"Conecta serviço via OAuth, define triggers e ações, monitora histórico.","screens":"Lista de serviços, conectar, seletores trigger/ação, toggle ativo, log de execução.","examples":"Empresa conecta Cropware ao Slack; \"novo alerta → notificar canal #campo\".","benefits":"Automação, integração com fluxo existente.","data":"Integração, trigger, ação, log.","themes":"Automação operacional.","terms":"Webhook, trigger, OAuth.","positioning":"\"Hub de Automação Agrícola\" — Cropware não é uma ilha; multiplica valor."},
+  {"id":"cropware-field-auditoria-e-historico-de-mudancas","module":"Cropware Field","name":"Auditoria e Histórico de Mudanças","description":"Log automático de create/edit/delete em qualquer entidade, com quem/quando/o que mudou e versionamento.","userActions":"Visualiza histórico em qualquer entidade, vê editor, valor anterior/novo, restaura versão anterior.","screens":"Timeline de mudanças, nome do editor, timestamp, campo alterado, valor antes/depois, restaurar.","examples":"Gerente vê produtividade editada de 50 para 55 sc/ha; abre histórico, identifica autor e data, valida razão.","benefits":"Rastreabilidade, auditoria, detecção de erro/fraude.","data":"Timestamp, usuário, ação, campo, valores.","themes":"Conformidade, governança, auditoria.","terms":"Log, auditoria, versionamento.","positioning":"\"Transparência Total de Mudanças\" — crítico em organizações grandes."},
+  {"id":"cropware-calc-fertilizacao-adubacao","module":"Cropware Calc","name":"Fertilização (Adubação)","description":"Recomendação de N, P2O5 e K2O com base em cultura, produtividade alvo e classe de fertilidade (P/K) — base Sousa & Lobato (Embrapa).","userActions":"Seleciona cultura (soja/milho/feijão/algodão) e nível de produtividade; insere análise de solo (P e K mg/dm³); recebe N plantio + N cobertura + P2O5 + K2O em kg/ha.","screens":"Presets por cultura (Cerrado), seletor de nível (Baixa/Média/Alta), campos P e K, cards de recomendação.","examples":"RTV valida recomendação em reunião com produtor; consultor calibra portfólio.","benefits":"Recomendação técnica rápida, fonte confiável, suporte a venda de fertilizante.","data":"Classe de fertilidade (MB/B/M/A/MA), N plantio, N cobertura, P2O5, K2O total (kg/ha).","themes":"Análise de solo, adubação de precisão, nutrição mineral.","terms":"P/K em mg/dm³, kg/ha, classe de fertilidade, Sousa & Lobato, Embrapa.","positioning":"Ferramenta de argumento técnico para promotor/RTV — \"validação de recomendação em campo\" e \"suporte técnico a venda de adubo\"."},
+  {"id":"cropware-calc-pulverizacao-taxa-de-aplicacao","module":"Cropware Calc","name":"Pulverização (Taxa de Aplicação)","description":"Taxa (L/ha), consumo de calda, capacidade teórica (ha/h) e tanques necessários a partir de vazão de bico, velocidade, espaçamento e largura da barra.","userActions":"Insere vazão (L/min), velocidade (km/h), espaçamento (m), largura (m), capacidade do tanque (L), área; recebe L/ha, ha/tanque, tanques, ha/h.","screens":"Campos de pulverizador, cards de resultado.","examples":"Técnico calibra para herbicida; RTV valida taxa correta no equipamento do produtor.","benefits":"Validação técnica em campo, suporte a decisão de ajuste/compra.","data":"Taxa L/ha, calda total, área/tanque, capacidade ha/h.","themes":"Calibração, qualidade de pulverização, herbicidas/inseticidas/fungicidas.","terms":"Vazão, velocidade, taxa, capacidade operacional, ASABE.","positioning":"\"Garantia de taxa correta\" — argumento técnico de qualidade de aplicação."},
+  {"id":"cropware-calc-sementes-populacao-de-plantas","module":"Cropware Calc","name":"Sementes (População de Plantas)","description":"Conversão de população alvo em sementes/m e kg/ha considerando germinação, pureza, emergência e PMS.","userActions":"Insere população alvo, espaçamento, PMS, germinação, pureza, emergência; recebe sementes/m, kg/ha, total de sementes.","screens":"Campos de parâmetros, eficiência total, cards de resultado.","examples":"Técnico de sementes recomenda dose conforme análise de germinação/pureza; RTV defende sementes de maior qualidade (menor dose).","benefits":"Redução de erros de dose, argumento técnico de qualidade.","data":"Eficiência total, sementes/ha, sementes/m, kg/ha.","themes":"Semeadura, densidade, qualidade fisiológica, análise de sementes.","terms":"População (plantas/ha), PMS, germinação, pureza, emergência.","positioning":"\"Validação de dose correta\" — impacto da qualidade fisiológica na dose final."},
+  {"id":"cropware-calc-tanque-calda-dosagem","module":"Cropware Calc","name":"Tanque / Calda (Dosagem)","description":"Conversão de dose de produto (L/ha, kg/ha, mL/100L, g/100L) em quantidade por tanque e total da operação.","userActions":"Insere produto, dose e unidade, capacidade do tanque, taxa de aplicação, área; recebe quantidade por tanque e total.","screens":"Campos de dose, cards com calda total e quantidade total.","examples":"Promotor calcula herbicida/inseticida/fungicida no tanque durante visita técnica.","benefits":"Evita subdose/superdose, suporte a treinamento.","data":"Área/tanque, calda total, quantidade por tanque e total.","themes":"Pulverização, calibração, mistura de calda.","terms":"L/ha, kg/ha, mL/100L, g/100L, calda total.","positioning":"\"Dosagem correta\" — argumento para venda de defensivo."},
+  {"id":"cropware-calc-adjuvantes-dosagem","module":"Cropware Calc","name":"Adjuvantes (Dosagem)","description":"Quantidade de adjuvante por tanque e operação (mL/100L, % v/v, mL/ha).","userActions":"Insere nome, dose, unidade, área, tanque, taxa; recebe quantidade por tanque e total.","screens":"Campos e cards de quantidades.","examples":"Promotor de adjuvante valida recomendação e treina sobre importância na aplicação.","benefits":"Padroniza uso, argumento de venda de adjuvante.","data":"Quantidade por tanque e total.","themes":"Espalhantes, adesivos, antiderivantes, sinergismo.","terms":"% v/v, mL/100L, mL/ha.","positioning":"\"Uso correto = melhor eficiência do defensivo\"."},
+  {"id":"cropware-calc-conversao-de-unidades","module":"Cropware Calc","name":"Conversão de Unidades","description":"Conversões agrícolas: L/ha ↔ mL/m², kg/ha ↔ g/m², % ↔ mL/L, ppm ↔ g/100L.","userActions":"Seleciona tipo e insere valor; recebe resultado instantâneo.","examples":"Técnico compara doses de produtos em unidades diferentes; consultor com dados internacionais.","benefits":"Evita erros de conversão manual.","terms":"L/ha, mL/m², kg/ha, g/m², %, mL/L, ppm.","positioning":"Utilitário — \"sem erros na conversão de recomendações\"."},
+  {"id":"cropware-calc-calibracao-de-bicos-desvio","module":"Cropware Calc","name":"Calibração de Bicos (Desvio)","description":"Avaliação de variabilidade de vazão entre bicos (CV%, desvio máximo, status OK/Atenção/Substituir).","userActions":"Insere leituras de até 12 bicos e vazão alvo; recebe média, CV%, desvio máximo, status.","screens":"12 campos de leitura, vazão alvo, status com código de cor.","examples":"Técnico em manutenção preventiva identifica bicos gastos; RTV documenta estado do equipamento.","benefits":"Padronização da avaliação, suporte à decisão de manutenção.","data":"Média, CV%, desvio máximo, status.","terms":"Vazão (L/min), CV, desvio (%).","positioning":"\"Validação de equipamento em campo\"."},
+  {"id":"cropware-calc-milho-distribuicao-na-linha","module":"Cropware Calc","name":"Milho (Distribuição na Linha)","description":"Conversão de população alvo em sementes/m e distância média (cm) entre sementes na linha.","userActions":"Insere população, espaçamento, germinação, emergência; recebe sementes/m e cm entre sementes.","examples":"Técnico calibra distribuidor/plantadora; RTV recomenda população conforme espaçamento.","benefits":"Tradução direta para ajuste de máquina.","terms":"População, espaçamento, sementes/m, cm entre sementes.","positioning":"\"Otimização de densidade para a máquina\"."},
+  {"id":"cropware-calc-custo-de-operacao","module":"Cropware Calc","name":"Custo de Operação","description":"Custo decomposto de operação (produto + adjuvante + combustível + máquina + mão de obra).","userActions":"Insere área e custos/ha por componente; recebe custo total e custo/ha.","examples":"Gestor precifica serviço; RTV demonstra retorno econômico de produto premium.","benefits":"Breakdown transparente, argumentação econômica.","data":"Custo/ha por componente, custo total.","terms":"R$/ha, custo operacional.","positioning":"\"Justificativa econômica para qualidade de insumo\"."},
+  {"id":"cropware-calc-mistura-por-concentracao-solucoes","module":"Cropware Calc","name":"Mistura por Concentração (Soluções)","description":"Quantidade de produto para preparar solução a concentração alvo (%, ppm, mL/L, g/L), com densidade opcional.","examples":"Laboratório prepara padrões; técnico prepara fertirrigação.","benefits":"Precisão de concentração.","terms":"%, ppm, mL/L, g/L, densidade (kg/L).","positioning":"\"Garantia de concentração correta\"."},
+  {"id":"cropware-calc-reabastecimento-de-pulverizador","module":"Cropware Calc","name":"Reabastecimento de Pulverizador","description":"Água e produto a adicionar ao completar tanque com sobra de calda.","userActions":"Insere produto, tanque cheio, sobra, taxa, dose; recebe água a completar, áreas, produto a adicionar.","examples":"RTV treina operador sobre rastreabilidade de dose no reabastecimento.","benefits":"Evita redose, controle técnico durante operação.","terms":"Sobra, taxa, dose.","positioning":"\"Rastreabilidade de dose durante operação\"."},
+  {"id":"cropware-calc-janela-operacional","module":"Cropware Calc","name":"Janela Operacional","description":"Capacidade operacional: ha/h efetivos, ha/dia por máquina e da frota, dias para prazo, máquinas necessárias.","userActions":"Insere área, velocidade, largura, eficiência, horas/dia, prazo, máquinas; recebe capacidades e prazo.","examples":"Gestor planeja frota; RTV valida viabilidade de cronograma.","benefits":"Planejamento de frota, visualização de impacto de cada parâmetro.","terms":"Eficiência (%), ha/h, ha/dia.","positioning":"\"Diagnóstico de necessidade de máquinas\"."},
+  {"id":"cropware-calc-custo-por-tanque","module":"Cropware Calc","name":"Custo por Tanque","description":"Conversão de custo/ha em custo por tanque e custo total da operação.","examples":"Gestor precifica abastecimento; consultor faz levantamento por insumo.","benefits":"Visibilidade de custo por tanque.","terms":"Taxa, capacidade, R$/ha, R$/tanque.","positioning":"\"Visibilidade de custo por tanque\"."},
+  {"id":"cropware-calc-umidade-e-correcao-de-peso","module":"Cropware Calc","name":"Umidade e Correção de Peso","description":"Correção de peso de colheita conforme umidade alvo (matéria seca conservada), com desconto técnico (%).","userActions":"Insere peso bruto (kg ou sacas 60kg), umidade atual e alvo; recebe peso corrigido, desconto, matéria seca, água a remover.","examples":"Técnico valida desconto de umidade no recebimento; produtor estima perda.","benefits":"Transparência de desconto em negociação.","terms":"Umidade (%), matéria seca, sacas 60 kg.","positioning":"\"Transparência em negociação de colheita\"."},
+  {"id":"cropware-calc-produtividade-e-conversao","module":"Cropware Calc","name":"Produtividade e Conversão","description":"Conversão de peso total em produtividade (kg/ha, sc/ha) por área.","examples":"Comparação de produtividade entre áreas.","terms":"kg/ha, sc/ha.","positioning":"\"Cálculo rápido de produtividade\"."},
+  {"id":"cropware-calc-custo-de-replantio","module":"Cropware Calc","name":"Custo de Replantio","description":"Custo total de replantio: sementes necessárias, bolsas, custo de semente, custo operacional a partir de stand vs. população alvo.","userActions":"Insere área, população alvo, stand, preço bolsa, sementes/bolsa, custo operacional; recebe déficit, % falha, bolsas, custos.","examples":"RTV recomenda replantio quantificando o custo; consultor valida viabilidade.","benefits":"Quantifica impacto econômico de falha de germinação.","terms":"Stand, déficit, bolsas.","positioning":"\"Quantificação de custo de replantio\"."},
+  {"id":"cropware-calc-capacidade-por-tanque-turno","module":"Cropware Calc","name":"Capacidade por Tanque / Turno","description":"ha/turno por máquina e da frota a partir de tempos de ciclo (reabastecimento + deslocamento + aplicação) e turno.","examples":"Gestor estima produtividade do turno e identifica gargalos.","terms":"Ciclo (min), ha/turno.","positioning":"\"Estimativa de produtividade de turno\"."},
+  {"id":"cropware-calc-deriva-triagem-rapida","module":"Cropware Calc","name":"Deriva (Triagem Rápida)","description":"Semáforo de risco de deriva: vento + umidade + temperatura + classe de gota → score e status (OK/Atenção/Não aplicar).","userActions":"Insere parâmetros climáticos e classe de gota; recebe score e recomendações.","examples":"Técnico valida condição antes de autorizar pulverização.","benefits":"Decisão visual documentada, segurança ambiental.","terms":"Vento, UR, temperatura, classe de gota, deriva.","positioning":"\"Validação de segurança da aplicação\" — responsabilidade técnica."},
+  {"id":"cropware-calc-delta-t-psicrometria","module":"Cropware Calc","name":"Delta T (Psicrometria)","description":"Cálculo de Delta T (Stull 2011) e status (Não recomendado / Janela ideal / Atenção) a partir de temperatura e UR.","examples":"Técnico valida psicrometria para aplicação; pesquisador documenta condições.","benefits":"Método científico validado para janela ideal.","terms":"Delta T, bulbo seco/úmido, Stull (2011).","positioning":"\"Ciência por trás da janela ideal de aplicação\"."},
+  {"id":"cropware-calc-valor-futuro-financeiro","module":"Cropware Calc","name":"Valor Futuro (Financeiro)","description":"Juros compostos mensais (capital, taxa, meses → valor futuro, rendimento, fator acumulado).","examples":"Consultor simula retorno de investimento em tecnologia premium.","benefits":"Argumento financeiro sobre retorno.","terms":"Capital, taxa mensal, juros compostos.","positioning":"\"Demonstração de retorno de investimento\"."},
+  {"id":"cropware-calc-calagem","module":"Cropware Calc","name":"Calagem","description":"Necessidade de calcário para elevar V% (saturação por bases) por análise (Ca, Mg, K, H+Al), profundidade, PRNT e cultura.","userActions":"Seleciona cultura (presets V% padrão), insere análise + PRNT + profundidade + área; recebe CTC, SB, V% atual, V% alvo, NC em t/ha e total.","examples":"Agrônomo recomenda calagem; RTV valida recomendação de calcário.","benefits":"Quantificação técnica para venda de calcário.","terms":"Ca, Mg, K, H+Al (cmolc/dm³), CTC, V%, PRNT, t/ha.","positioning":"\"Diagnóstico e quantificação de necessidade de calagem\"."},
+  {"id":"cropware-calc-gessagem","module":"Cropware Calc","name":"Gessagem","description":"Necessidade de gessagem para subsuperfície (20–40 cm) por Ca²⁺ ≤ 0,5 cmolc/dm³ e/ou m% > 20%, com fator por argila.","userActions":"Seleciona sistema (anuais/pastagens 50x ou perenes/frutíferas 75x), insere Ca²⁺, m%, argila, área; recebe recomendação, dose em kg/ha (cap 5000), total em t.","examples":"Agrônomo recomenda gessagem; RTV valida necessidade em subsuperfície.","benefits":"Conecta critério técnico a dose operacional.","terms":"Ca²⁺ subsuperficial, m%, argila (g/kg), kg/ha, alumínio tóxico.","positioning":"\"Diagnóstico de subsuperfície e cálculo de gessagem\"."},
+  {"id":"cropware-calc-estimativa-de-produtividade","module":"Cropware Calc","name":"Estimativa de Produtividade","description":"Estimativa de produtividade (kg/ha, sc/ha, @/ha) por componentes de rendimento específicos por cultura (soja, milho, feijão, sorgo, arroz, trigo, algodão).","userActions":"Seleciona cultura, insere componentes (ex: soja → estande, vagens/pl, grãos/vagem, PMG); recebe kg/ha e unidade apropriada.","examples":"Pesquisador estima produtividade em parcela de teste; consultor compara cenários (variedade, adubação, sanidade).","benefits":"Decompõe produtividade em componentes mensuráveis para diagnóstico.","terms":"Estande, vagens/pl, grãos/vagem, fileiras, espiguetas, macas, capulho, PMG.","positioning":"\"Diagnóstico de componentes de rendimento\"."},
+  {"id":"cropware-calc-historico-e-favoritos-de-calculos","module":"Cropware Calc","name":"Histórico e Favoritos de Cálculos","description":"Histórico de cálculos da sessão com exportação PDF e marcação de favoritos por calculadora.","userActions":"Após cálculo, vê snapshot, exporta PDF, marca como favorito, reusa configurações.","examples":"RTV reutiliza configurações anteriores; gestor documenta operações para rastreabilidade.","benefits":"Documentação automática em PDF, acesso rápido a operações similares.","terms":"Snapshot, favorito.","positioning":"\"Documentação automática e acesso rápido\"."},
+  {"id":"cropware-calc-bulario-de-defensivos","module":"Cropware Calc","name":"Bulário de Defensivos","description":"Base de consulta online de bulas de agrotóxicos registrados no Brasil, com busca, categorias (inseticida/herbicida/fungicida/outro), favoritos e acesso ao PDF oficial.","userActions":"Busca por nome ou categoria, acessa bula em PDF, favorita produtos do portfólio.","screens":"Abas Busca/Favoritos, busca, filtros por categoria, badges por tipo, botão estrela, diálogo de confirmação, link PDF.","examples":"RTV consulta bula em visita técnica via celular; consultor valida dose/modo de uso com documento oficial; promotor monta estratégia de produtos.","benefits":"Acesso rápido à fonte de verdade legal, suporte a responsabilidade técnica.","data":"Nome, categoria, URL da bula, lista de favoritos com timestamps.","themes":"Segurança de aplicação, conformidade, modo de uso, doses.","terms":"Bula, agrotóxico, registro, categoria.","positioning":"\"Acesso à bula oficial em tempo real\" — responsabilidade técnica e legal."},
+  {"id":"cropware-radar-previsao-climatica-de-16-dias-com-analise-agronomica","module":"Cropware Radar","name":"Previsão Climática de 16 Dias com Análise Agronômica","description":"Previsão climática detalhada de 16 dias (Open-Meteo) com cálculos agronômicos (GDD, ET0, índice de pulverização, riscos de doenças) e exportação PDF.","userActions":"Seleciona fazenda do cadastro ou cidade buscada; gera previsão; visualiza cards de hoje/amanhã/depois, grid de 16 dias, gráficos Recharts (temperatura, precipitação, ET0, balanço hídrico), alertas; acessa histórico de previsões (30 por localização); exporta PDF.","screens":"Seletor produtor → fazenda, fallback para cidade, indicador de localização sincronizado com Notificações, cards diários, grid 16 dias (máx/mín, chuva, vento, UR, ET0, UV, código WMO), gráficos multilinha, balanço hídrico, alertas automáticos.","examples":"RTV consulta previsão antes da visita e identifica \"chuva amanhã\" para reprogramar pulverização; gestor vê janela ideal (vento <10km/h, sem chuva, UR 55-85%) nos próximos 3 dias.","benefits":"Decisão de momento operacional, rastreabilidade de consultas (histórico), alertas evitam aplicação malsucedida, comunicação por PDF.","data":"Forecast no Supabase (lat, lng, weather_data JSON, alerts, precip_total, temp_avg, gdd10, spray_ideal), cache local 12h, histórico por farm.","themes":"Janela de aplicação, risco fitossanitário, eficiência hídrica, GDD/fenologia, clima extremo.","terms":"WMO weather codes, ET0, GDD10, índice de pulverização, ferrugem/cercosporiose/míldio.","positioning":"NÃO é \"app de clima genérico\" — é janela operacional para o técnico-comercial. Para RTV/DM: \"cobertura técnica\" com GDD em tempo real para justificar recomendação. Para promotor de defensivo: responde a pergunta #1 do produtor (\"quando aplicar?\") com data/hora ideal."},
+  {"id":"cropware-radar-boletins-climaticos-em-lote","module":"Cropware Radar","name":"Boletins Climáticos em Lote","description":"Gerador de boletins climáticos compilados (16 dias + análise IA agronômica) em lote para múltiplas localizações; até 50 boletins por geração (5 grupos × 10 slots), com HTML profissional, gráfico SVG, resumo IA e log de compartilhamento (WhatsApp/Email/SMS).","userActions":"Define slots (vazios/preenchidos), agrupa, busca cidade ou fazenda do cadastro, gera boletim individual ou em lote, acompanha status (Vazio/Gerando/Gerado/Erro), abre HTML, registra compartilhamento por canal.","screens":"Aba de Grupos (cards de slots), dialog de adicionar/editar slot, badges de status, botões (gerar, exportar, compartilhar, apagar), histórico de boletins filtrável.","examples":"Promotor cria \"Boletim Semanal\" com 5 fazendas-chave do sul de GO, gera todos de uma vez, compartilha por WhatsApp (rastreado); gestor regional gera 20 boletins em <2 min; RTV mostra histórico de compartilhamentos como prova de acompanhamento técnico contínuo.","benefits":"Geração em lote economiza horas; rastreabilidade total (audit trail); HTML profissional pronto pra compartilhar; prova de cobertura técnica.","data":"RadarSlot, RadarGroup, RadarBriefing (quick_reports), payload com métricas (precip, ET0, GDD, balanço, temp max/min), dailyRows, shareLog.","themes":"Cobertura técnica regional, boletim agroclimático semanal/quinzenal, documentação de recomendação, análise comparativa regional.","terms":"Slot, grupo, batch generation, share log.","positioning":"Para DM/RTV regional: \"ferramenta de cobertura\" — 1 clique = 50 boletins. Para consultoria: terceiriza produção de boletim (Radar gera, consultor revisa). Diferencial vs Climatempo: customizado para sua região/fazenda."},
+  {"id":"cropware-radar-alertas-climaticos-via-whatsapp","module":"Cropware Radar","name":"Alertas Climáticos via WhatsApp","description":"Sistema de alertas climáticos proativos via WhatsApp (chuva intensa, vento forte, geada, calor extremo) com limiares customizáveis, previsão diária automática e resumo agronômico recorrente.","userActions":"Define localização padrão (fazenda ou cidade), ativa alertas, ajusta 4 limiares (chuva mm, vento km/h, geada °C, calor °C), ativa previsão diária (horário BRT), ativa resumo recorrente (diário/2 dias/semanal) incluindo plantios atuais, atividades agendadas e alertas críticos. Testa via \"Enviar alerta de teste\".","screens":"Card de Localização Padrão (modo Fazendas / Personalizado), Card de Alertas WhatsApp (toggle + 4 thresholds), Card de Previsão Diária (toggle + time picker), Card de Resumo Recorrente (toggle + frequência + horário + checkboxes), histórico de alertas.","examples":"Produtor recebe \"CHUVA INTENSA: 75mm previsto para 12/05 - adie pulverização\"; DM configura para 3 propriedades-chave; técnico recebe resumo às 6h com GDD da soja + alertas dos próximos 3 dias; produtor liga ao RTV após alerta de geada e ambos consultam histórico para validar medida preventiva.","benefits":"Alertas proativos (não precisa consultar app), relevância por limiares customizados, rastreabilidade (defesa legal), uso de canal que o produtor já tem (WhatsApp), integração com cronograma agronômico do Cropware.","data":"RadarAlertConfig (thresholds, locationType, dailyForecast, summaryDigest), RadarAlert emitido (type, severity, message), log de WhatsApp.","themes":"Timing de aplicação, proteção contra geada/vento, gestão hídrica, calendário agronômico integrado.","terms":"Threshold customizável, severity (critical/warning), summary digest, locationType (farm/custom).","positioning":"vs Climatempo: \"alerta técnico para SUA propriedade com limiares da SUA cultura, não notificação genérica\". Para RTV: evidência de acompanhamento contínuo. Para seguros agrícolas: documentação útil em sinistro."},
+  {"id":"cropware-radar-mapa-climatico-multi-camada","module":"Cropware Radar","name":"Mapa Climático Multi-Camada","description":"Mapa Leaflet full-screen com 9 camadas meteorológicas em tempo real (chuva, temperatura, sensação, umidade, UV, nuvens, vento, pressão) mais camada de Acumulado interpolado em 24/48/72h.","userActions":"Centraliza em localização padrão (sincronizada com Notificações), escolhe camada via combobox, ativa labels de temperatura em cidades próximas, clica em qualquer ponto para popover com dados (temp, sensação, chuva, UR, pressão, UV, vento, nuvens), busca cidade no city picker, ajusta slider de acumulado (24/48/72h).","screens":"Mapa Leaflet, header com combobox de camada, toggle de labels, city picker; controle de horizon do acumulado; popover ao clicar; cidades recentes (últimas 5).","examples":"RTV vê \"chuva esperada amanhã em faixa ao norte\" e avisa produtor vizinho; consultor identifica região seca no interior e recomenda irrigação; técnico clica no talhão e calcula \"28°C + 45% UR = subótimo para pulverização\"; cooperativa mostra em reunião \"essa faixa de chuva chega quinta\".","benefits":"Inteligência regional geoespacial (seca a 50km afeta visita); acumulado interpolado para irrigação; análise integrada multi-camada; labels de cidade contextualizam coordenadas.","data":"Tile layers OWM, Open-Meteo hourly, grid interpolado de acumulado, recent cities e camada ativa em localStorage.","themes":"Variabilidade microclimática regional, zoneamento agroclimático, planejamento de rota de visita, irrigação.","terms":"Tile OWM, interpolação de acumulado, BRAZILIAN_CITIES (5500+ municípios).","positioning":"vs Google Maps: \"mapa agroclimático\" curado para agricultura. Para RTV: inteligência regional que justifica roteiro de visita. Para trader: pode virar inteligência climática exportável."},
+  {"id":"cropware-radar-widget-weather-card-dashboard","module":"Cropware Radar","name":"Widget Weather Card (Dashboard)","description":"Card compacto no dashboard com previsão de hoje, amanhã e depois, sincronizado com localização padrão de Notificações.","userActions":"Visualiza ícone, temp atual/sensação, chuva%, UR, vento e UV; 3 cards de dias; clica \"Alterar Localização\" (vai para Notificações) ou \"Ver Previsão Completa\" (vai para Previsão 16D).","examples":"Gerente abre dashboard às 6h, vê \"chuva 85% amanhã\", reprograma equipe; RTV em escritório lê \"vento 35 km/h hoje\" e desaconselha pulverização.","benefits":"Acesso rápido sem abrir Radar inteiro; sincronizado automaticamente; entry point para análise detalhada.","data":"Edge function /weather (current + forecast 3 dias), useRadarDefaultCity (sincroniza com Notificações).","terms":"Hook de localização padrão, navigate-to-radar dispatch.","positioning":"Widget contextual, não app standalone. Aumenta frequência de consulta."},
+  {"id":"cropware-radar-analise-de-risco-fitossanitario","module":"Cropware Radar","name":"Análise de Risco Fitossanitário","description":"Detector automático de risco de doença por fenologia climática — streaks de UR + temperatura para ferrugem asiática, cercosporiose, míldio.","userActions":"Após carregar previsão, visualiza seção \"Riscos de Doenças\" com cards (cor por severidade, cultura, data de início, dias consecutivos, descrição fenológica, sugestão de manejo).","examples":"RTV vê \"Ferrugem Asiática - ALTO - 15/05 por 3 dias consecutivos\" e recomenda fungicida preventivo; consultor exporta PDF com risco e agenda visita; promotor de fungicida dispara campanha direcionada para a região.","benefits":"Prevenção ativa antes do sintoma; especificidade regional; descrição científica = credibilidade.","data":"DiseaseRisk (name, crop, severity, startDate, days, description, color).","themes":"MIP, previsão de epidemia, pulverização preventiva.","terms":"Fenologia climática, streak, ferrugem asiática (UR≥75%, 18-28°C, 3+ dias), cercosporiose (UR≥80%, 20-30°C, 2+ dias), míldio (UR≥85%, 15-22°C, 2+ dias).","positioning":"Para consultoria: boletim de doença proativo. Para biológicos/fungicidas: janela preventiva = oportunidade de venda. Vs sintoma-reativo: \"não espera ferrugem brotar — Radar avisa 5 dias antes\"."},
+  {"id":"cropware-radar-assistente-ia-agronomico-analise-claude","module":"Cropware Radar","name":"Assistente IA Agronômico (Análise Claude)","description":"Análise textual gerada por IA Claude que combina previsão de 16 dias com contexto agrário; gera 4 saídas — Boletim Climático, Análise Agronômica, Resumo 3 dias e Resumo 16 dias — em markdown leve renderizado com ícones.","userActions":"Carrega previsão, clica \"Gerar Análise IA\", aguarda 5-10s, alterna entre 4 abas (Boletim/Análise/3D/16D), copia para WhatsApp/email ou exporta PDF.","screens":"4 abas (Boletim, Análise Agronômica, Resumo 3D, Resumo 16D), AiMarkdownContent com ícones contextuais, botão Copiar, botão Gerar novamente.","examples":"RTV gera análise para soja e recebe \"## Janela de Aplicação - recomenda fungicida em 12/05 (3 dias favoráveis seguidos)\"; DM apresenta Resumo 16D em reunião regional (\"prognóstico GDD: +120 dias à colheita\"); consultor cola Resumo 3D em email para produtor (prova de análise técnica datada).","benefits":"Escala (1 clique = análise para 50 boletins), especificidade (contexto de fazenda), linguagem agronômica natural, rastreabilidade (data + versionado por forecast).","data":"Edge function /radar/ai-analysis (entrada weatherData + farmName, saída analysis + bulletin + summary3Days + summary16Days + summaryPanorama), cache local, persistido em radar_forecasts.","themes":"Recomendação por stage (semeadura, V-stage, floração, enchimento), otimização de inputs, planejamento logístico.","terms":"Markdown leve (## título, **negrito**, - bullet), prompt com farm context, cache até mudança de previsão.","positioning":"\"Análise human-like\" gerada por IA = credibilidade diferencial. Para consultoria: análise automatizada reduz custo de produção. Para RTV: recomendação datada vira documentação legal. Para biológicos: Claude pode ser tunada com base de conhecimento de produto."}
+];
+
+function getFeatureById(id) {
+  return CROPWARE_FEATURE_CATALOG.find(f => f.id === id) || null;
+}
+
+function populateFeatureSelect() {
+  const select = document.getElementById('genFeatureSelect');
+  if (!select || select.dataset.ready === 'true') return;
+  const modules = [...new Set(CROPWARE_FEATURE_CATALOG.map(f => f.module))];
+  select.innerHTML = '<option value="">Selecione uma funcionalidade</option>';
+  modules.forEach(moduleName => {
+    const group = document.createElement('optgroup');
+    group.label = moduleName.replace('Cropware ', '');
+    CROPWARE_FEATURE_CATALOG
+      .filter(f => f.module === moduleName)
+      .forEach(feature => {
+        const opt = document.createElement('option');
+        opt.value = feature.id;
+        opt.textContent = feature.name;
+        group.appendChild(opt);
+      });
+    select.appendChild(group);
+  });
+  select.dataset.ready = 'true';
+}
+
+function getSelectedFeatureForGeneration() {
+  const select = document.getElementById('genFeatureSelect');
+  return getFeatureById(select ? select.value : '');
+}
+
+function formatFeaturePromptContext(feature, theme) {
+  if (!feature) return '';
+  const optionalTheme = (theme || '').trim() || 'sem tema/cultura específico informado';
+  return [
+    `Funcionalidade selecionada: ${feature.name}`,
+    `Módulo: ${feature.module}`,
+    `Contexto agrícola opcional informado pelo usuário: ${optionalTheme}`,
+    `Descrição: ${feature.description || ''}`,
+    `O que o usuário faz nela: ${feature.userActions || ''}`,
+    `Telas/campos/ações: ${feature.screens || ''}`,
+    `Exemplos práticos do app: ${feature.examples || ''}`,
+    `Benefícios: ${feature.benefits || ''}`,
+    `Dados gerados/organizados: ${feature.data || ''}`,
+    `Temas agrícolas relacionados: ${feature.themes || ''}`,
+    `Termos técnicos: ${feature.terms || ''}`,
+    `Posicionamento: ${feature.positioning || ''}`,
+  ].filter(Boolean).join('\n');
 }
 
 // Multiplicador automático de escala de texto baseado no formato.
@@ -7547,6 +7871,9 @@ function applyScaleVars(postEl, postData) {
 function getModeItems() {
   switch (activeMode) {
     case 'carousel':                  return carousels;
+    case 'funcionalidades-post':       return featurePosts;
+    case 'funcionalidades-carousel':   return featureCarousels;
+    case 'previsao-carrossel':         return weatherCarousels;
     case 'news-post':                 return newsPosts;
     case 'tendencia-carrossel':       return newsCarousels;
     case 'opiniao-carrossel':         return opinionCarousels;
@@ -7563,6 +7890,9 @@ function getModeItems() {
 function getModeLegends() {
   switch (activeMode) {
     case 'carousel':                  return carouselLegends;
+    case 'funcionalidades-post':       return featureLegends;
+    case 'funcionalidades-carousel':   return featureCarouselLegends;
+    case 'previsao-carrossel':         return weatherCarouselLegends;
     case 'news-post':                 return newsLegends;
     case 'tendencia-carrossel':       return newsCarouselLegends;
     case 'opiniao-carrossel':         return opinionCarouselLegends;
@@ -7579,6 +7909,9 @@ function getModeLegends() {
 function getModeCurrentIdx() {
   switch (activeMode) {
     case 'carousel':                  return currentCarousel;
+    case 'funcionalidades-post':       return featureCurrentPost;
+    case 'funcionalidades-carousel':   return featureCurrentCarousel;
+    case 'previsao-carrossel':         return currentWeatherCarousel;
     case 'news-post':                 return newsCurrentPost;
     case 'tendencia-carrossel':       return currentNewsCarousel;
     case 'opiniao-carrossel':         return currentOpinionCarousel;
@@ -7595,6 +7928,9 @@ function getModeCurrentIdx() {
 function setModeCurrentIdx(idx) {
   switch (activeMode) {
     case 'carousel':                  currentCarousel = idx; break;
+    case 'funcionalidades-post':       featureCurrentPost = idx; break;
+    case 'funcionalidades-carousel':   featureCurrentCarousel = idx; break;
+    case 'previsao-carrossel':         currentWeatherCarousel = idx; break;
     case 'news-post':                 newsCurrentPost = idx; break;
     case 'tendencia-carrossel':       currentNewsCarousel = idx; break;
     case 'opiniao-carrossel':         currentOpinionCarousel = idx; break;
@@ -7612,6 +7948,8 @@ function getCurrentSlide() {
   if (activeMode === 'linkedin-carousel') return linkedinCurrentSlide;
   if (activeMode === 'linkedin-pessoal-carousel') return linkedinPessoalCurrentSlide;
   if (activeMode === 'presentation') return presentationCurrentSlide;
+  if (activeMode === 'funcionalidades-carousel') return featureCurrentSlide;
+  if (activeMode === 'previsao-carrossel') return weatherCarouselCurrentSlide;
   if (activeMode === 'instagram-ads-carousel') return instagramAdsCurrentSlide;
   if (activeMode === 'tendencia-carrossel') return newsCarouselCurrentSlide;
   if (activeMode === 'opiniao-carrossel') return opinionCarouselCurrentSlide;
@@ -7621,6 +7959,8 @@ function setCurrentSlide(idx) {
   if (activeMode === 'linkedin-carousel') linkedinCurrentSlide = idx;
   else if (activeMode === 'linkedin-pessoal-carousel') linkedinPessoalCurrentSlide = idx;
   else if (activeMode === 'presentation') presentationCurrentSlide = idx;
+  else if (activeMode === 'funcionalidades-carousel') featureCurrentSlide = idx;
+  else if (activeMode === 'previsao-carrossel') weatherCarouselCurrentSlide = idx;
   else if (activeMode === 'instagram-ads-carousel') instagramAdsCurrentSlide = idx;
   else if (activeMode === 'tendencia-carrossel') newsCarouselCurrentSlide = idx;
   else if (activeMode === 'opiniao-carrossel') opinionCarouselCurrentSlide = idx;
@@ -7659,6 +7999,8 @@ function switchMode(mode) {
     if (isCarouselMode()) {
       setModeCurrentIdx(newestIdx);
       currentSlide = 0;
+      featureCurrentSlide = 0;
+      weatherCarouselCurrentSlide = 0;
       linkedinCurrentSlide = 0;
       linkedinPessoalCurrentSlide = 0;
       goTo(newestIdx);
@@ -8558,6 +8900,14 @@ const _saveSessionCore = async function() {
     .map((c, i) => ({ post: c, legend: instagramAdsCarouselLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
+  const generatedFeaturePosts = featurePosts
+    .map((p, i) => ({ post: p, legend: featureLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
+  const generatedFeatureCarousels = featureCarousels
+    .map((c, i) => ({ post: c, legend: featureCarouselLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
   const generatedNewsPosts = newsPosts
     .map((p, i) => ({ post: p, legend: newsLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
@@ -8568,6 +8918,10 @@ const _saveSessionCore = async function() {
 
   const generatedOpinionCarousels = opinionCarousels
     .map((c, i) => ({ post: c, legend: opinionCarouselLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
+  const generatedWeatherCarousels = weatherCarousels
+    .map((c, i) => ({ post: c, legend: weatherCarouselLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
   const generatedLinkedinPosts = linkedinPosts
@@ -8590,7 +8944,7 @@ const _saveSessionCore = async function() {
     .map((p, i) => ({ post: p, legend: presentationLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
-  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedOpinionCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
+  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedFeaturePosts, ...generatedFeatureCarousels, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedOpinionCarousels, ...generatedWeatherCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
   if (!allRows.length) return;
   const sid = getSessionId();
   const now = new Date().toISOString();
@@ -8647,7 +9001,7 @@ async function loadSession() {
         const type = postData.type;
         if (type === 'presentation') {
           renderGeneratedPresentation(postData, row.legend || '');
-        } else if (type === 'carousel' || type === 'linkedin-carousel' || type === 'linkedin-pessoal-carousel' || type === 'instagram-ads-carousel' || type === 'news-carousel-post' || type === 'opinion-carousel-post') {
+        } else if (type === 'carousel' || type === 'feature-carousel' || type === 'weather-carousel' || type === 'linkedin-carousel' || type === 'linkedin-pessoal-carousel' || type === 'instagram-ads-carousel' || type === 'news-carousel-post' || type === 'opinion-carousel-post') {
           renderGeneratedCarousel(postData, row.legend || '');
         } else {
           renderGeneratedPost(postData, row.legend || '');
@@ -8889,6 +9243,69 @@ function ensureSignalVisualDefaults(postData) {
   return migrated;
 }
 
+const WEATHER_FORECAST_VISUAL_DEFAULTS = {
+  accent: '#8bf592',
+  overlayColor: 'transparent',
+  overlayOpacity: 0,
+  overlayDirection: 'full',
+  frameColor: '#1a1b1a',
+  frameTextMode: 'light',
+  glassOpacity: 0,
+  glassBlur: 26,
+  logoEnabled: true,
+  logoPos: 'br',
+  logoScale: 1,
+  logoOffsetX: 0,
+  logoOffsetY: 0,
+  brandMode: 'light',
+  siteEnabled: true,
+  siteMode: 'light',
+  siteText: 'cropware.app',
+  sitePos: 'bl',
+  siteScale: 1,
+  siteOffsetX: 0,
+  siteOffsetY: 0,
+  siteColor: null,
+  accentBarEnabled: true,
+  accentBarPos: 'tl',
+  accentBarOffsetX: 0,
+  accentBarOffsetY: 0,
+  stripEnabled: true,
+  stripHeight: 6,
+  stripPos: 'bottom',
+  signalPhotoTexture: 'assets/13-texture.webp',
+  signalPhotoTextureIntensity: 50,
+  signalPhotoTextureInvert: false,
+  signalPhotoTextureBlendMode: 'overlay',
+  hookVisible: true,
+  complementVisible: true,
+  bulletsVisible: true,
+  bulletIconsVisible: false,
+  hookScale: 1,
+  complementScale: 1,
+  bulletsScale: 1,
+  bulletIconScale: 1,
+  signalAlign: 'left',
+};
+
+function applyWeatherForecastVisualDefaults(postData, { force = false, chartType = '' } = {}) {
+  if (!postData || postData.type !== 'weather-carousel-slide') return;
+  Object.entries(WEATHER_FORECAST_VISUAL_DEFAULTS).forEach(([key, value]) => {
+    if (force || postData[key] == null) postData[key] = value;
+  });
+  if (chartType) {
+    postData.glassOpacity = 0;
+    postData.glassBlur = 26;
+    postData.signalPhotoTextureIntensity = 50;
+    postData.hookScale = 1;
+    postData.complementScale = 1;
+    postData.bulletsScale = 1;
+    postData.bulletIconScale = 1;
+  }
+  postData._molduraInitialized = true;
+  postData._weatherVisualDefaultsApplied = true;
+}
+
 // Constrói o DOM de um post gerado e o adiciona a posts[]/legends[].
 // Usado tanto por generatePost() (novo post) quanto loadSession() (rehidratação).
 function renderGeneratedPost(postData, legendText) {
@@ -9016,11 +9433,12 @@ function renderGeneratedPost(postData, legendText) {
   }
 
   const isInstagramAds = postData.type === 'instagram-ads-post';
+  const isFeaturePost = postData.type === 'feature-post';
   const isNews = postData.type === 'news-post';
   const isLinkedinPessoal = postData.type === 'linkedin-pessoal-post';
   const isLinkedin = postData.type === 'linkedin-post';
-  const targetPosts = isInstagramAds ? instagramAdsPosts : isNews ? newsPosts : isLinkedinPessoal ? linkedinPessoalPosts : isLinkedin ? linkedinPosts : posts;
-  const targetLegends = isInstagramAds ? instagramAdsLegends : isNews ? newsLegends : isLinkedinPessoal ? linkedinPessoalLegends : isLinkedin ? linkedinLegends : legends;
+  const targetPosts = isInstagramAds ? instagramAdsPosts : isFeaturePost ? featurePosts : isNews ? newsPosts : isLinkedinPessoal ? linkedinPessoalPosts : isLinkedin ? linkedinPosts : posts;
+  const targetLegends = isInstagramAds ? instagramAdsLegends : isFeaturePost ? featureLegends : isNews ? newsLegends : isLinkedinPessoal ? linkedinPessoalLegends : isLinkedin ? linkedinLegends : legends;
 
   targetPosts.push(postData);
   targetLegends.push(normalizePanelText(legendText || '', postData.type));
@@ -9145,6 +9563,7 @@ function renderGeneratedCarousel(carouselData, legendText) {
     if (slideData.bulletIconsVisible == null) slideData.bulletIconsVisible = true;
     if (slideData.bulletIconScale == null)    slideData.bulletIconScale    = 1;
     if (slideData.signalCardHeight == null)   slideData.signalCardHeight   = 1;
+    applyWeatherForecastVisualDefaults(slideData, { force: false, chartType: slideData.weatherChartSvg ? 'tempRain' : '' });
     slideData.isGenerated = true;
     slideData.slideIndex = i;
 
@@ -9165,12 +9584,14 @@ function renderGeneratedCarousel(carouselData, legendText) {
   });
 
   const isInstagramAdsCarousel = carouselData.type === 'instagram-ads-carousel';
+  const isFeatureCarousel = carouselData.type === 'feature-carousel';
+  const isWeatherCarousel = carouselData.type === 'weather-carousel';
   const isLinkedinPessoal = carouselData.type === 'linkedin-pessoal-carousel';
   const isLinkedin = carouselData.type === 'linkedin-carousel';
   const isNewsCarousel = carouselData.type === 'news-carousel-post';
   const isOpinionCarousel = carouselData.type === 'opinion-carousel-post' || carouselData.editorialFlavor === 'opinion';
-  const targetArr = isOpinionCarousel ? opinionCarousels : isNewsCarousel ? newsCarousels : isInstagramAdsCarousel ? instagramAdsCarousels : isLinkedinPessoal ? linkedinPessoalCarousels : isLinkedin ? linkedinCarousels : carousels;
-  const targetLeg = isOpinionCarousel ? opinionCarouselLegends : isNewsCarousel ? newsCarouselLegends : isInstagramAdsCarousel ? instagramAdsCarouselLegends : isLinkedinPessoal ? linkedinPessoalCarouselLegends : isLinkedin ? linkedinCarouselLegends : carouselLegends;
+  const targetArr = isOpinionCarousel ? opinionCarousels : isNewsCarousel ? newsCarousels : isInstagramAdsCarousel ? instagramAdsCarousels : isFeatureCarousel ? featureCarousels : isWeatherCarousel ? weatherCarousels : isLinkedinPessoal ? linkedinPessoalCarousels : isLinkedin ? linkedinCarousels : carousels;
+  const targetLeg = isOpinionCarousel ? opinionCarouselLegends : isNewsCarousel ? newsCarouselLegends : isInstagramAdsCarousel ? instagramAdsCarouselLegends : isFeatureCarousel ? featureCarouselLegends : isWeatherCarousel ? weatherCarouselLegends : isLinkedinPessoal ? linkedinPessoalCarouselLegends : isLinkedin ? linkedinCarouselLegends : carouselLegends;
 
   targetArr.push(carouselData);
   targetLeg.push(isInstagramAdsCarousel ? (legendText || '').trim() : sanitizeLegend(legendText || ''));
@@ -9793,6 +10214,94 @@ const LIQUID_GLASS_HTML = `
     <div class="lg-layer lg-12"></div>
     <div class="lg-layer lg-13"></div>`;
 
+function normalizeWeatherChartSvg(svg) {
+  return String(svg || '')
+    .replace(/<rect\s+width="\d+"\s+height="\d+"\s+rx="\d+"\s+fill="rgba\(3,12,8,\.24\)"\s*\/>\s*/i, '')
+    .replace(/<rect\s+width="\d+"\s+height="\d+"\s+rx="\d+"\s+fill="rgba\(255,255,255,\.08\)"\s*\/>\s*/i, '')
+    .replace(/<g><rect\b[^>]*fill="rgba\(5,18,10,\.38\)"[^>]*\/>(<text\b[^>]*>[^<]+<\/text>)<\/g>/g, '$1')
+    .replace(/<rect\b[^>]*fill="rgba\(5,18,10,\.38\)"[^>]*\/>/g, '')
+    .replace(/font-size="18"/g, 'font-size="24"')
+    .replace(/font-size="22"/g, 'font-size="26"')
+    .replace(/r="5"/g, 'r="6"')
+    .replace(/<text\b[^>]*>\s*Previsão de temperatura e chuva nos próximos 7 dias\s*<\/text>\s*/gi, '')
+    .replace(/<text\b[^>]*>\s*Previsão de chuva e rajadas nos próximos 7 dias\s*<\/text>\s*/gi, '')
+    .replace(/<text\b[^>]*>\s*barras\s*=\s*chuva\s*<\/text>\s*/gi, '')
+    .replace(/<text\b[^>]*>\s*BARRAS\s*=\s*CHUVA\s*<\/text>\s*/gi, '')
+    .replace(/<text\b[^>]*>\s*máx\/min\s*<\/text>\s*/gi, '')
+    .replace(/<text\b[^>]*>\s*max\/min\s*<\/text>\s*/gi, '')
+    .replace(/<text\b[^>]*>\s*rajadas\s*<\/text>\s*/gi, '');
+}
+
+function shouldRenderWeatherChart(postData) {
+  if (!postData?.weatherChartSvg) return false;
+  if (postData.type === 'weather-carousel-slide' && postData.weatherConclusionHTML) return false;
+  return true;
+}
+
+function getWeatherChartTitle(svg) {
+  return /rajadas/i.test(String(svg || ''))
+    ? 'Previsão de chuva e rajadas nos próximos 7 dias:'
+    : 'Previsão de temperatura e chuva nos próximos 7 dias:';
+}
+
+function renderWeatherChartLegend(svg) {
+  const isWindChart = /rajadas/i.test(String(svg || ''));
+  const items = isWindChart
+    ? [
+        { label: 'chuva', color: '#7AB87E', kind: 'bar' },
+        { label: 'rajadas', color: '#ffffff', kind: 'line' },
+      ]
+    : [
+        { label: 'chuva', color: '#7AB87E', kind: 'bar' },
+        { label: 'máx', color: '#ffffff', kind: 'line' },
+        { label: 'mín', color: '#9FE3A6', kind: 'line' },
+      ];
+  return `<div class="moldura-chart-legend-card" aria-hidden="true">
+    ${items.map(item => `<span class="moldura-chart-legend-item"><span class="moldura-chart-legend-mark ${item.kind === 'bar' ? 'bar' : ''}" style="--legend-color:${item.color}"></span>${escapeHTML(item.label)}</span>`).join('')}
+  </div>`;
+}
+
+function isWeatherConclusionSlide(postData) {
+  return postData?.type === 'weather-carousel-slide' && !!postData.weatherConclusionHTML;
+}
+
+function getWeatherSlideIconName(postData) {
+  if (postData?.type !== 'weather-carousel-slide') return '';
+  const icons = ['cloud-sun', 'calendar-check', 'cloud-rain', 'thermometer', 'cloud-rain', 'calendar', 'warning-circle', 'compass'];
+  const idx = Math.max(0, Math.min(icons.length - 1, Number(postData.slideIndex) || 0));
+  return icons[idx];
+}
+
+function renderWeatherSlideIcon(postData) {
+  const icon = getWeatherSlideIconName(postData);
+  return icon ? `<div class="moldura-weather-slide-icon" aria-hidden="true"><i class="ph ph-${escapeHTML(icon)}"></i></div>` : '';
+}
+
+function getMolduraBulletIconName(postData, bullet) {
+  if (postData?.type === 'weather-carousel-slide') return 'hash';
+  return resolveIconName(bullet?.icon);
+}
+
+function renderMolduraBulletMarker(postData, bullet, idx, showBulletIcons) {
+  if (postData?.type === 'weather-carousel-slide') {
+    return `<span class="moldura-bullet-dash" aria-hidden="true"></span>`;
+  }
+  if (!showBulletIcons) return '';
+  return `<button type="button" class="moldura-bullet-icon" data-bullet-icon="${idx}" title="Trocar ícone"><i class="ph ph-${escapeHTML(getMolduraBulletIconName(postData, bullet))}"></i></button>`;
+}
+
+function buildWeatherConclusionHTMLFromPost(postData) {
+  if (postData.weatherConclusionHTML) return postData.weatherConclusionHTML;
+  const parts = [
+    stripHTML(postData.hookHTML),
+    stripHTML(postData.complementHTML),
+    ...(Array.isArray(postData.bullets) ? postData.bullets.map(b => b?.text || '') : []),
+  ]
+    .map(part => String(part || '').trim())
+    .filter(Boolean);
+  return escapeHTML(parts.join(' '));
+}
+
 function renderMolduraStyle(postData) {
   const hookHTML       = postData.hookHTML       || '';
   const complementHTML = postData.complementHTML || '';
@@ -9804,20 +10313,30 @@ function renderMolduraStyle(postData) {
   const showComplement  = postData.complementVisible  !== false;
   const showBullets     = postData.bulletsVisible     !== false;
   const showBulletIcons = postData.bulletIconsVisible !== false;
+  const isConclusion    = isWeatherConclusionSlide(postData);
 
-  const hookBlock = showHook
+  const hookBlock = (!isConclusion && showHook)
     ? `<div class="moldura-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>`
     : '';
-  const complementBlock = showComplement
+  const complementBlock = (!isConclusion && showComplement)
     ? `<div class="moldura-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>`
     : '';
+  const conclusionBlock = isConclusion
+    ? `<div class="moldura-conclusion-text weather-conclusion-text" contenteditable="true" spellcheck="false">${buildWeatherConclusionHTMLFromPost(postData)}</div>`
+    : '';
+  const renderWeatherChart = shouldRenderWeatherChart(postData);
+  const chartBlock = renderWeatherChart
+    ? `<div class="moldura-weather-chart">${normalizeWeatherChartSvg(postData.weatherChartSvg)}</div>`
+    : '';
+  const chartLegendBlock = '';
+  const weatherSlideIconBlock = renderWeatherSlideIcon(postData);
 
   const bullets = Array.isArray(postData.bullets) ? postData.bullets.slice(0, 3) : [];
-  const bulletsHTML = (showBullets && bullets.length) ? `
+  const bulletsHTML = (!isConclusion && showBullets && bullets.length) ? `
       <div class="moldura-bullets">
         ${bullets.map((b, i) => `
           <div class="moldura-bullet" data-bullet-idx="${i}">
-            ${showBulletIcons ? `<button type="button" class="moldura-bullet-icon" data-bullet-icon="${i}" title="Trocar ícone"><i class="ph ph-${escapeHTML(resolveIconName(b.icon))}"></i></button>` : ''}
+            ${renderMolduraBulletMarker(postData, b, i, showBulletIcons)}
             <span class="post-bullet-text" contenteditable="true" spellcheck="false" data-bullet-text="${i}">${escapeHTML(b.text || '')}</span>
           </div>
         `).join('')}
@@ -9842,11 +10361,15 @@ function renderMolduraStyle(postData) {
       <div class="moldura-glass-accent"></div>
       <div class="moldura-glass-line-top"></div>
       <div class="moldura-glass-sidebar"></div>
+      ${weatherSlideIconBlock}
+      ${conclusionBlock}
       ${hookBlock}
-      ${(showHook && showComplement) ? '<div class="moldura-divider"></div>' : ''}
+      ${(!isConclusion && showHook && showComplement) ? '<div class="moldura-divider"></div>' : ''}
       ${complementBlock}
-      ${(showBullets && bullets.length && (showHook || showComplement)) ? '<div class="moldura-divider"></div>' : ''}
+      ${chartBlock}
+      ${(showBullets && bullets.length && (showHook || showComplement || chartBlock)) ? '<div class="moldura-divider"></div>' : ''}
       ${bulletsHTML}
+      ${chartLegendBlock}
       <div class="moldura-glass-line"></div>
     </div>
     ${postData.logoEnabled !== false ? '<img class="moldura-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
@@ -10041,8 +10564,10 @@ function applyPostVariant(postEl, postData) {
   postEl.style.setProperty('--site-offset-x', (postData.siteOffsetX == null ? 0 : postData.siteOffsetX) + 'px');
   postEl.style.setProperty('--site-offset-y', (postData.siteOffsetY == null ? 0 : postData.siteOffsetY) + 'px');
   postEl.dataset.style   = style;
+  postEl.dataset.type    = postData.type || '';
   postEl.dataset.layout  = layout;
   postEl.dataset.logoPos = logoPos;
+  postEl.dataset.weatherChart = shouldRenderWeatherChart(postData) ? 'true' : 'false';
   postEl.dataset.newsContext = postData.type === 'news-carousel-slide' ? 'carousel' : (postData.type === 'news-post' ? 'single' : '');
   postEl.dataset.brand    = postData.brandMode || 'light';
   postEl.dataset.siteMode = postData.siteMode || 'light';
@@ -10262,8 +10787,12 @@ function updatePostControls(idx) {
   const currentStyle = post.style || 'classic';
   const presMode = isPresentationMode();
   const newsMode = isAnyNewsKind(post);
+  const weatherMode = post.type === 'weather-carousel-slide';
   const styleSelect = document.getElementById('pcStyleSelect');
   if (styleSelect) {
+    if (weatherMode && post.style !== 'moldura') {
+      post.style = 'moldura';
+    }
     styleSelect.value = currentStyle;
     // Renomeia o label da opção news-editorial conforme o contexto.
     const newsOpt = styleSelect.querySelector('option[value="news-editorial"]');
@@ -10272,8 +10801,14 @@ function updatePostControls(idx) {
         ? (post.editorialFlavor === 'opinion' ? 'Opinião' : 'Tendências')
         : 'Notícia';
     }
+    const molduraOpt = styleSelect.querySelector('option[value="moldura"]');
+    if (molduraOpt) molduraOpt.textContent = weatherMode ? 'Previsão' : 'Especial';
     styleSelect.querySelectorAll('option').forEach(opt => {
-      if (newsMode) {
+      if (weatherMode) {
+        const isWeatherOpt = opt.value === 'moldura';
+        opt.hidden = !isWeatherOpt;
+        opt.disabled = !isWeatherOpt;
+      } else if (newsMode) {
         // Só "news-editorial" disponível em news-post
         const isNewsOpt = opt.value === 'news-editorial';
         opt.hidden   = !isNewsOpt;
@@ -10292,6 +10827,7 @@ function updatePostControls(idx) {
         }
       }
     });
+    if (weatherMode) styleSelect.value = 'moldura';
     if (newsMode) styleSelect.value = 'news-editorial';
   }
 
@@ -11068,13 +11604,13 @@ const BULLET_ICONS = [
   // Segurança / privacidade
   'eye', 'eye-slash', 'shield', 'shield-check', 'shield-warning', 'lock-key', 'key',
   // Tech / dispositivos
-  'cell-signal-medium', 'wifi-high', 'broadcast', 'monitor', 'laptop', 'device-mobile',
+  'cell-signal-medium', 'wifi-high', 'broadcast', 'rss', 'monitor', 'laptop', 'device-mobile',
   'gauge', 'cpu', 'database', 'cloud-check',
   // IA / ciência
   'brain', 'robot', 'target', 'crosshair', 'scan', 'magnifying-glass',
   'test-tube', 'flask', 'atom', 'dna', 'microscope',
   // Fluxo / estrutura
-  'graph', 'share-network', 'tree-structure', 'git-branch', 'path', 'flow-arrow',
+  'graph', 'share-network', 'tree-structure', 'git-branch', 'path', 'flow-arrow', 'hash',
   'list', 'list-checks',
   // Pessoas / comunicação
   'user', 'users', 'user-circle', 'users-three', 'handshake',
@@ -12744,6 +13280,12 @@ function _resetPostStyleSingle(post) {
     post.signalPhotoTextureIntensity  = 55;
     post._molduraInitialized          = true;
   }
+  if (post.type === 'weather-carousel-slide') {
+    applyWeatherForecastVisualDefaults(post, {
+      force: true,
+      chartType: shouldRenderWeatherChart(post) ? 'tempRain' : '',
+    });
+  }
   // Textura padrão por tipo: news-post → 04, carrossel/tendência → 01.
   if (post.type === 'news-post') {
     post.newsTexture = 'assets/04-texture.webp';
@@ -12824,7 +13366,13 @@ function findPostDataById(elementId) {
   if (p) return p;
   const ad = instagramAdsPosts.find(p => p.id === elementId);
   if (ad) return ad;
+  const fp = featurePosts.find(p => p.id === elementId);
+  if (fp) return fp;
   for (const c of carousels) {
+    const s = c.slides.find(s => s.id === elementId);
+    if (s) return s;
+  }
+  for (const c of featureCarousels) {
     const s = c.slides.find(s => s.id === elementId);
     if (s) return s;
   }
@@ -12854,6 +13402,10 @@ function findPostDataById(elementId) {
     const s = c.slides.find(s => s.id === elementId);
     if (s) return s;
   }
+  for (const c of weatherCarousels) {
+    const s = c.slides.find(s => s.id === elementId);
+    if (s) return s;
+  }
   return null;
 }
 
@@ -12861,6 +13413,20 @@ function findPostDataById(elementId) {
 document.addEventListener('blur', function(e) {
   const target = e.target;
   if (!target || !target.classList) return;
+
+  if (target.classList.contains('weather-conclusion-text')) {
+    if (!target.isContentEditable) return;
+    const postEl = target.closest('.post');
+    if (!postEl) return;
+    const postData = findPostDataById(postEl.id);
+    if (!postData || !postData.isGenerated) return;
+
+    const clean = sanitizeEditable(target.innerHTML);
+    if (clean !== target.innerHTML) target.innerHTML = clean;
+    postData.weatherConclusionHTML = clean;
+    saveSession();
+    return;
+  }
 
   // Hook / Complement de posts gerados
   if (target.classList.contains('hook') || target.classList.contains('complement')) {
@@ -13638,7 +14204,7 @@ async function bootStudio() {
   // Restaura último modo selecionado (persistido no localStorage)
   try {
     const savedMode = localStorage.getItem('cropware-active-mode');
-    const validModes = ['post','carousel','news-post','tendencia-carrossel','opiniao-carrossel','instagram-ads-post','instagram-ads-carousel',
+    const validModes = ['post','carousel','funcionalidades-post','funcionalidades-carousel','previsao-carrossel','news-post','tendencia-carrossel','opiniao-carrossel','instagram-ads-post','instagram-ads-carousel',
                         'linkedin-post','linkedin-carousel','linkedin-pessoal-post','linkedin-pessoal-carousel',
                         'presentation'];
     if (savedMode && validModes.includes(savedMode) && savedMode !== activeMode) {
@@ -14404,10 +14970,16 @@ function openGenerator() {
   const platform = getPlatform();
   const isAds = isInstagramAdsMode();
   const isNews = isNewsMode();
+  const isFeature = isFeatureMode();
+  const isWeather = isWeatherMode();
   const isOpinion = isOpinionCarouselMode();
   document.getElementById('genModal').classList.add('open');
   wireGenChipsOnce();
   resetGenChips();
+  if (isWeather) {
+    const noPeopleChip = document.querySelector('#genChips .gen-chip[data-chip="no-people"]');
+    if (noPeopleChip) noPeopleChip.classList.add('active');
+  }
   const headerSpan = document.querySelector('#genModal .gen-modal-header > span');
   if (headerSpan) {
     const prefix = platform === 'linkedin-pessoal' ? 'LinkedIn Pessoal — ' : platform === 'linkedin' ? 'LinkedIn — ' : '';
@@ -14415,6 +14987,9 @@ function openGenerator() {
   }
   if (isAds && isCarousel) headerSpan.textContent = 'Instagram Ads — Gerar Carrossel com IA';
   else if (isAds) headerSpan.textContent = 'Instagram Ads — Gerar Anuncio com IA';
+  else if (isFeature && isCarousel && headerSpan) headerSpan.textContent = 'Funcionalidades — Gerar Carrossel';
+  else if (isFeature && headerSpan) headerSpan.textContent = 'Funcionalidades — Gerar Post';
+  else if (isWeather && headerSpan) headerSpan.textContent = 'Previsão — Gerar Carrossel';
   else if (isOpinion && headerSpan) headerSpan.textContent = 'Carrossel de Opinião';
   else if (isNews && isCarousel && headerSpan) headerSpan.textContent = 'Carrossel de Tendência';
   else if (isNews && headerSpan) headerSpan.textContent = 'Post Notícia';
@@ -14422,24 +14997,38 @@ function openGenerator() {
   if (genBtn) genBtn.textContent = isCarousel ? 'Gerar Carrossel' : 'Gerar Post';
   if (genBtn && isAds && !isCarousel) genBtn.textContent = 'Gerar Anuncio';
   if (genBtn && isAds && isCarousel) genBtn.textContent = 'Gerar Carrossel de Anuncios';
+  if (genBtn && isFeature && isCarousel) genBtn.textContent = 'Gerar Carrossel';
+  else if (genBtn && isFeature) genBtn.textContent = 'Gerar Post';
+  if (genBtn && isWeather) genBtn.textContent = 'Gerar Previsão';
   if (genBtn && isOpinion) genBtn.textContent = 'Gerar Carrossel de Opinião';
   else if (genBtn && isNews && isCarousel) genBtn.textContent = 'Gerar Carrossel de Tendência';
   else if (genBtn && isNews) genBtn.textContent = 'Gerar Notícia';
   const themeLabel = document.getElementById('genThemeLabel');
   const themeInput = document.getElementById('genTheme');
   if (themeLabel) {
-    if (isOpinion) themeLabel.textContent = 'Tema da análise';
+    if (isWeather) themeLabel.textContent = 'Local da previsão';
+    else if (isFeature) themeLabel.textContent = 'Tema / Cultura / Contexto (opcional)';
+    else if (isOpinion) themeLabel.textContent = 'Tema da análise';
     else if (isNews && isCarousel) themeLabel.textContent = 'Tema da tendência';
     else if (isNews) themeLabel.textContent = 'Tema da notícia';
     else themeLabel.textContent = 'Tema / Contexto do Post';
   }
-  if (themeInput) themeInput.placeholder = isOpinion
+  if (themeInput) themeInput.placeholder = isWeather
+    ? 'Ex: Rio Verde, GO; Triângulo Mineiro; Sudoeste Goiano; Goiás; MT; MS...'
+    : isFeature
+    ? 'Ex: soja, área de GD em milho, rotina de consultoria, safra de algodão...'
+    : isOpinion
     ? 'Ex: o que a alta dos defensivos revela sobre a safra, por que a soja perdeu margem, leitura sobre crédito rural...'
     : isNews
     ? 'Ex: preço da soja em Mato Grosso, exportação de milho para a China, clima na safra de cana, política agrícola...'
     : 'Ex: colheita de soja com variação por talhão, foco em decisão baseada em dado...';
+  const featureGroup = document.getElementById('genFeatureGroup');
+  if (featureGroup) featureGroup.style.display = isFeature ? '' : 'none';
+  if (isFeature) populateFeatureSelect();
+  const weatherContextGroup = document.getElementById('genWeatherContextGroup');
+  if (weatherContextGroup) weatherContextGroup.style.display = isWeather ? '' : 'none';
   const slideCountGroup = document.getElementById('genSlideCountGroup');
-  if (slideCountGroup) slideCountGroup.style.display = isCarousel ? '' : 'none';
+  if (slideCountGroup) slideCountGroup.style.display = isCarousel && !isWeather ? '' : 'none';
   // News-carousel só aceita 3 / 5 / 7. Default 5.
   const slideCountSelect = document.getElementById('genSlideCount');
   if (slideCountSelect) {
@@ -15431,6 +16020,84 @@ Responda APENAS em JSON válido, sem texto fora do JSON:
 }`;
 }
 
+function buildFeaturePostSystemPrompt(tone) {
+  const toneDirectives = {
+    casual:      'TOM: claro, próximo e prático, sem parecer tutorial longo.',
+    tecnico:     'TOM: técnico e consultivo, com termos reais de campo, GD, DM, talhão, atividade, avaliação, rastreabilidade.',
+    inspirador:  'TOM: estratégico, mostrando como a rotina ganha método e inteligência.',
+    provocativo: 'TOM: direto, com tese forte sobre sair do improviso e organizar evidência de campo.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
+
+  return `Você é copywriter da Cropware criando conteúdo de FUNCIONALIDADES do app.
+
+OBJETIVO:
+- Mostrar uma funcionalidade específica do Cropware aplicada na prática.
+- O post deve parecer uma peça editorial/produto com uso real, não uma propaganda genérica.
+- Use o contexto da funcionalidade selecionada e, se houver, conecte ao tema/cultura informado pelo usuário.
+
+REGRAS:
+- Não invente números, percentuais, prazos ou estatísticas.
+- Pode citar números apenas quando vierem do contexto fornecido pelo usuário ou do catálogo da funcionalidade.
+- Dê exemplos operacionais concretos: cadastrar, comparar, registrar, acompanhar, anexar, gerar relatório, visualizar mapa, exportar, consultar histórico.
+- Evite frases vazias como "revolucione sua gestão" ou "aumente sua produtividade" sem explicar a ação prática.
+- O foco é demonstrar como a ferramenta ajuda quem acompanha campo, GD, DM, consultoria, assistência técnica, revenda, produtor ou equipe comercial.
+
+${buildCropwarePositioningContext('instagram')}
+
+HOOK:
+- 1 ou 2 linhas no total
+- A última parte obrigatoriamente em <em>...</em>
+- Frase afirmativa, concreta, com pontuação natural e ponto final
+- Máximo 6 palavras por linha
+- Não use "funcionalidade", "feature" ou "módulo" no hook se puder falar do uso prático
+
+COMPLEMENT:
+- 1-2 linhas, máximo 36 caracteres cada
+- Use <strong> para destacar a ação/benefício principal
+- Deve explicar o uso real da funcionalidade
+
+BULLETS:
+- Exatamente 3 bullets
+- Cada text com máximo 6 palavras e ponto final
+- Cada bullet deve ser uma ação/resultado prático dentro do app
+- Ícones permitidos:
+check_circle, task_alt, trending_up, trending_down, schedule, bolt, savings,
+insights, analytics, agriculture, eco, grass, water_drop, sunny, landscape,
+sensors, visibility, shield, speed, psychology, hub, timeline, query_stats,
+monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturing
+
+LEGENDA:
+- 3-5 frases curtas, até 90 palavras
+- Explique a situação prática, a funcionalidade e o ganho operacional
+- Se houver cultura/tema, conecte de forma natural
+- Sem CTA, sem emoji, sem pergunta final
+- 3 hashtags relevantes em linha separada
+
+${toneBlock}
+${buildDesignContext()}
+
+IMAGE_PROMPT:
+- Foto ultra-realista editorial premium, agro brasileiro, com espaço negativo para texto
+- Deve refletir o uso prático da funcionalidade: técnico em campo, mapa/talhão, avaliação, relatório, equipe analisando dados, lavoura monitorada, revenda, fazenda, tablet/celular sem texto legível
+- Sem logos, marcas ou texto visível
+
+Responda APENAS em JSON válido:
+{
+  "hook": "primeira linha<br><em>remate prático.</em>",
+  "complement": "apoio curto<br><strong>destaque</strong>",
+  "bullets": [
+    {"icon": "check_circle", "text": "Ação prática."},
+    {"icon": "analytics", "text": "Resultado visível."},
+    {"icon": "schedule", "text": "Rotina organizada."}
+  ],
+  "title": "título curto para sidebar",
+  "legend": "legenda completa",
+  "hashtags": "#tag1 #tag2 #tag3",
+  "imagePrompt": "photorealistic image prompt in english"
+}`;
+}
+
 // Chama o Gemini texto (2.5 Flash) e retorna o objeto JSON parseado.
 // Fetch com retry e backoff exponencial pra erros transitórios do Gemini
 // (overloaded/503, rate limit/429, 500). Delays: 1.5s, 3s, 6s.
@@ -15471,14 +16138,17 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
     ? buildLinkedInSystemPrompt(tone)
     : platform === 'news'
     ? buildNewsPostSystemPrompt(tone)
+    : platform === 'features'
+    ? buildFeaturePostSystemPrompt(tone)
     : buildSystemPrompt(tone);
-  const platformLabel = platform === 'linkedin-pessoal' ? 'LinkedIn' : platform === 'linkedin' ? 'LinkedIn' : platform === 'news' ? 'Post Notícia' : 'Instagram';
+  const platformLabel = platform === 'linkedin-pessoal' ? 'LinkedIn' : platform === 'linkedin' ? 'LinkedIn' : platform === 'news' ? 'Post Notícia' : platform === 'features' ? 'Instagram' : 'Instagram';
   const brandLabel = platform === 'linkedin-pessoal' ? '' : ' da Cropware';
   const directionSuffix = extraDirection && extraDirection.trim()
     ? `\n\nDireção adicional do usuário: ${extraDirection.trim()}`
     : '';
   const adContext = (options && options.adContext) || null;
   const newsContext = (options && options.newsContext) || null;
+  const featureContext = (options && options.featureContext) || null;
   const newsSuffix = newsContext
     ? `\n\nPAUTA CONSOLIDADA (use APENAS estes fatos — NÃO invente, NÃO arredonde, NÃO parafraseie a ponto de perder precisão):\nKicker sugerido: ${newsContext.kicker || ''}\nManchete sugerida: ${newsContext.manchete || ''}\nLead jornalístico: ${newsContext.lead || ''}\nFatos preservados (use pelo menos 2 LITERALMENTE na legenda):\n${(newsContext.fatos || []).map((f, i) => `  ${i + 1}. ${f}`).join('\n') || '  (nenhum fato disponível)'}\nContexto: ${newsContext.contexto || ''}\nFontes consultadas: ${(newsContext.fontes || []).join(', ') || 'não informadas'}`
     : '';
@@ -15509,6 +16179,19 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
         ]
       : [
           { text: `Crie um anuncio patrocinado estatico para ${platformLabelResolved}${brandLabel} sobre o seguinte tema:\n\n${theme}${directionSuffix}${adContextSuffix}` }
+        ];
+  }
+  if (platform === 'features') {
+    const featureBlock = featureContext
+      ? `\n\nCONTEXTO DA FUNCIONALIDADE (use como fonte principal; não invente recursos fora disso):\n${featureContext}`
+      : '';
+    userPartsResolved = userImageBase64
+      ? [
+          { inlineData: { mimeType: userImageMime || 'image/jpeg', data: userImageBase64 } },
+          { text: `Analise esta imagem agrícola e crie um post de funcionalidade para Instagram da Cropware.${featureBlock}${directionSuffix}` }
+        ]
+      : [
+          { text: `Crie um post de funcionalidade para Instagram da Cropware.${featureBlock}${directionSuffix}` }
         ];
   }
 
@@ -15601,7 +16284,8 @@ async function callGeminiImage(imagePrompt, extraDirection, aspectRatio) {
 }
 
 function handleGenerate() {
-  if (isCarouselMode() && getPlatform() === 'news') generateNewsCarousel();
+  if (isWeatherMode()) generateWeatherCarousel();
+  else if (isCarouselMode() && getPlatform() === 'news') generateNewsCarousel();
   else if (isCarouselMode()) generateCarousel();
   else generatePost();
 }
@@ -15611,6 +16295,7 @@ async function generatePost() {
   const platform  = getPlatform();
   const isAds     = platform === 'instagram-ads';
   const isNews    = platform === 'news';
+  const isFeature = platform === 'features';
   const cfg       = getActiveDesignConfig();
   const tone      = cfg.tone || 'casual';
   const btn       = document.getElementById('genBtn');
@@ -15622,9 +16307,15 @@ async function generatePost() {
   } : null;
   // Links de referência (só fazem sentido em news mode)
   const refLinks = isNews ? parseReferenceLinks(getGenLinkValues().join('\n')) : [];
+  const selectedFeature = isFeature ? getSelectedFeatureForGeneration() : null;
+  const featureContext = selectedFeature ? formatFeaturePromptContext(selectedFeature, theme) : null;
 
   // News aceita gerar a partir só de links (sem tema). Outros modos exigem tema.
-  if (!theme && !(isNews && refLinks.length)) {
+  if (isFeature && !selectedFeature) {
+    setGenStatus('Selecione uma funcionalidade.', 'error');
+    return;
+  }
+  if (!isFeature && !theme && !(isNews && refLinks.length)) {
     setGenStatus(isNews ? 'Descreva o tema ou cole pelo menos 1 link de referência.' : 'Descreva o tema do post.', 'error');
     return;
   }
@@ -15664,7 +16355,7 @@ async function generatePost() {
     }
 
     // Passo 1: Gemini texto (prompt varia por plataforma)
-    const parsed = await callGeminiText(theme, tone, genImageBase64, genImageMime, null, platform, { adContext, newsContext: newsContextForGen || selectedNewsPauta });
+    const parsed = await callGeminiText(theme, tone, genImageBase64, genImageMime, null, platform, { adContext, newsContext: newsContextForGen || selectedNewsPauta, featureContext });
 
     // Passo 2: Gemini imagem (se não houver upload)
     let finalImgBase64 = genImageBase64;
@@ -15673,7 +16364,8 @@ async function generatePost() {
     if (needImage) {
       const imgStepLabel = isNews ? 'Passo 3/3 — Nano Banana gerando foto editorial...' : 'Passo 2/2 — Nano Banana gerando imagem...';
       setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>${imgStepLabel}`, '');
-      const imgPrompt = parsed.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
+      const imageTopic = isFeature && selectedFeature ? `${selectedFeature.name} ${theme}`.trim() : theme;
+      const imgPrompt = parsed.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${imageTopic}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
       const chipDirectives = getActiveChipDirectives().join(' ');
       const img = await callGeminiImage(imgPrompt, chipDirectives);
       finalImgBase64 = img.base64;
@@ -15701,9 +16393,9 @@ async function generatePost() {
       id:       `post-gen-${timestamp}`,
       bg:       `bg-gen-${timestamp}`,
       slideId:  `slide-gen-${timestamp}`,
-      title:    parsed.title || (isAds ? 'Anuncio gerado' : isNews ? 'Post Notícia gerado' : 'Post gerado'),
-      sub:      isAds ? 'Instagram Ads' : isNews ? 'Post Notícia' : 'Gerado por IA',
-      filename: isAds ? `cropware_ad_${timestamp}.jpg` : isNews ? `cropware_noticia_${timestamp}.jpg` : `cropware_gerado_${timestamp}.jpg`,
+      title:    parsed.title || (isAds ? 'Anuncio gerado' : isNews ? 'Post Notícia gerado' : isFeature ? selectedFeature.name : 'Post gerado'),
+      sub:      isAds ? 'Instagram Ads' : isNews ? 'Post Notícia' : isFeature ? 'Funcionalidade' : 'Gerado por IA',
+      filename: isAds ? `cropware_ad_${timestamp}.jpg` : isNews ? `cropware_noticia_${timestamp}.jpg` : isFeature ? `cropware_funcionalidade_${timestamp}.jpg` : `cropware_gerado_${timestamp}.jpg`,
       createdAt:      timestamp,
       isGenerated:    true,
       bgImage:        `data:${finalImgMime};base64,${finalImgBase64}`,
@@ -15715,6 +16407,12 @@ async function generatePost() {
       bullets:        Array.isArray(parsed.bullets) ? parsed.bullets.slice(0, 3) : [],
     };
     if (platform === 'instagram-ads') postData.type = 'instagram-ads-post';
+    else if (platform === 'features') {
+      postData.type = 'feature-post';
+      postData.featureId = selectedFeature.id;
+      postData.featureName = selectedFeature.name;
+      postData.featureModule = selectedFeature.module;
+    }
     else if (platform === 'news') {
       postData.type = 'news-post';
       postData.style = 'news-editorial';
@@ -15848,6 +16546,90 @@ Responda APENAS em JSON válido:
         {"icon": "schedule", "text": "Afirmação curta."}
       ],
       "imagePrompt": "english image prompt for this slide"
+    }
+  ]
+}`;
+}
+
+function buildFeatureCarouselSystemPrompt(tone, slideCount) {
+  const toneDirectives = {
+    casual:      'TOM: claro e direto, com linguagem de rotina de campo.',
+    tecnico:     'TOM: técnico e consultivo, com vocabulário real de GD, talhão, avaliação, produtividade, relatório e rastreabilidade.',
+    inspirador:  'TOM: estratégico, mostrando maturidade operacional e inteligência de campo.',
+    provocativo: 'TOM: assertivo, mostrando o custo de operar sem histórico e sem método.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
+
+  return `Você é copywriter da Cropware criando um CARROSSEL DE FUNCIONALIDADE do app.
+
+OBJETIVO:
+- Explicar uma funcionalidade específica do Cropware na prática, em ${slideCount} slides.
+- Conectar a funcionalidade ao tema/cultura informado quando existir.
+- Mostrar fluxo operacional real: problema de campo → ação dentro do app → evidência organizada → decisão/uso comercial.
+
+REGRAS:
+- Não invente números, percentuais, prazos ou estatísticas.
+- Use o catálogo da funcionalidade como fonte principal.
+- Cada slide deve avançar a narrativa e demonstrar um uso concreto.
+- Evite discurso publicitário genérico. Prefira ação prática, telas, campos, dados e decisões.
+
+${buildCropwarePositioningContext('instagramCarousel')}
+
+ESTRUTURA:
+- Slide 1: problema prático ou oportunidade de uso.
+- Slides do meio: passos/benefícios concretos da funcionalidade.
+- Último slide: síntese do ganho operacional para quem acompanha campo, GD, DM, consultoria, revenda ou produtor.
+
+PARA CADA SLIDE:
+HOOK:
+- 1 ou 2 linhas
+- Última parte em <em>...</em>
+- Máximo 6 palavras por linha
+- Frase afirmativa, com pontuação natural e ponto final
+
+COMPLEMENT:
+- 1-2 linhas, máximo 36 caracteres cada
+- Use <strong> para destacar ação ou benefício
+
+BULLETS:
+- Exatamente 3 bullets curtos
+- Cada text termina com "."
+- Cada bullet deve citar uma ação, dado, etapa ou benefício prático no app
+- Ícones permitidos:
+check_circle, task_alt, trending_up, trending_down, schedule, bolt, savings,
+insights, analytics, agriculture, eco, grass, water_drop, sunny, landscape,
+sensors, visibility, shield, speed, psychology, hub, timeline, query_stats,
+monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturing
+
+LEGENDA:
+- 80 a 130 palavras
+- Explique a situação prática e amarre a funcionalidade ao ganho de rotina
+- Sem pergunta final, sem CTA, sem emoji
+- 4 hashtags relevantes em linha separada
+
+${toneBlock}
+${buildDesignContext()}
+
+IMAGE_PROMPT:
+- Um prompt em inglês por slide
+- Foto ultra-realista editorial premium do agro brasileiro, espaço negativo para texto, sem marcas/texto visível
+- Varie cenas coerentes: técnico em campo, talhão, tablet/celular sem texto legível, mapa, equipe técnica, relatório em notebook sem texto legível, lavoura, armazém, fazenda
+
+Responda APENAS em JSON válido:
+{
+  "title": "título curto do carrossel",
+  "legend": "legenda compartilhada",
+  "hashtags": "#tag1 #tag2 #tag3 #tag4",
+  "slides": [
+    {
+      "hook": "primeira linha<br><em>remate prático.</em>",
+      "complement": "apoio curto<br><strong>destaque</strong>",
+      "bullets": [
+        {"icon": "check_circle", "text": "Ação prática."},
+        {"icon": "analytics", "text": "Dado organizado."},
+        {"icon": "schedule", "text": "Rotina clara."}
+      ],
+      "imagePrompt": "photorealistic image prompt in english"
     }
   ]
 }`;
@@ -16462,19 +17244,28 @@ async function callGeminiNewsCarouselText(theme, tone, slideCount, newsContext, 
 }
 
 async function callGeminiCarouselText(theme, tone, slideCount, userImageBase64, userImageMime, platform, adContext) {
+  const featureContext = platform === 'features' && adContext ? adContext.featureContext : null;
+  const adsContext = platform === 'instagram-ads' ? adContext : null;
   const systemPrompt = platform === 'linkedin-pessoal'
     ? buildLinkedInPessoalCarouselSystemPrompt(tone, slideCount)
     : platform === 'linkedin'
     ? buildLinkedInCarouselSystemPrompt(tone, slideCount)
     : platform === 'instagram-ads'
     ? buildInstagramAdsCarouselSystemPrompt(tone, slideCount)
+    : platform === 'features'
+    ? buildFeatureCarouselSystemPrompt(tone, slideCount)
     : buildCarouselSystemPrompt(tone, slideCount);
   const platformLabel = (platform === 'linkedin' || platform === 'linkedin-pessoal') ? 'LinkedIn' : 'Instagram';
   const brandLabel = platform === 'linkedin-pessoal' ? '' : ' da Cropware';
-  const adContextSuffix = platform === 'instagram-ads' && adContext
-    ? `\n\nObjetivo da campanha: ${adContext.objective || 'trafego'}\nPublico: ${adContext.audience || 'profissionais de campo, DMs, GDs, promotores e assistentes tecnicos'}\nCTA preferido: ${adContext.cta || 'Saiba mais'}`
+  const adContextSuffix = platform === 'instagram-ads' && adsContext
+    ? `\n\nObjetivo da campanha: ${adsContext.objective || 'trafego'}\nPublico: ${adsContext.audience || 'profissionais de campo, DMs, GDs, promotores e assistentes tecnicos'}\nCTA preferido: ${adsContext.cta || 'Saiba mais'}`
     : '';
-  const baseText = `Crie um carrossel de ${slideCount} slides para ${platformLabel}${brandLabel} sobre:\n\n${theme}${adContextSuffix}`;
+  const featureSuffix = platform === 'features' && featureContext
+    ? `\n\nCONTEXTO DA FUNCIONALIDADE (use como fonte principal; não invente recursos fora disso):\n${featureContext}`
+    : '';
+  const baseText = platform === 'features'
+    ? `Crie um carrossel de ${slideCount} slides de funcionalidade para ${platformLabel}${brandLabel}.${featureSuffix}`
+    : `Crie um carrossel de ${slideCount} slides para ${platformLabel}${brandLabel} sobre:\n\n${theme}${adContextSuffix}`;
   const userParts = userImageBase64
     ? [
         { inlineData: { mimeType: userImageMime || 'image/jpeg', data: userImageBase64 } },
@@ -16509,6 +17300,790 @@ async function callGeminiCarouselText(theme, tone, slideCount, userImageBase64, 
   const match = raw.match(/\{[\s\S]*\}/);
   if (!match) throw new Error('Gemini texto: resposta não contém JSON válido.');
   return JSON.parse(match[0]);
+}
+
+const WEATHER_DEFAULT_LOCATION = { name: 'Rio Verde, GO', lat: -17.7944, lng: -50.9264 };
+const BRAZIL_STATE_BY_UF = {
+  AC: 'Acre', AL: 'Alagoas', AP: 'Amapá', AM: 'Amazonas', BA: 'Bahia',
+  CE: 'Ceará', DF: 'Distrito Federal', ES: 'Espírito Santo', GO: 'Goiás',
+  MA: 'Maranhão', MT: 'Mato Grosso', MS: 'Mato Grosso do Sul', MG: 'Minas Gerais',
+  PA: 'Pará', PB: 'Paraíba', PR: 'Paraná', PE: 'Pernambuco', PI: 'Piauí',
+  RJ: 'Rio de Janeiro', RN: 'Rio Grande do Norte', RS: 'Rio Grande do Sul',
+  RO: 'Rondônia', RR: 'Roraima', SC: 'Santa Catarina', SP: 'São Paulo',
+  SE: 'Sergipe', TO: 'Tocantins',
+};
+const WEATHER_REGION_TARGETS = [
+  {
+    name: 'Triângulo Mineiro',
+    aliases: ['triangulo mineiro', 'triângulo mineiro', 'regiao do triangulo mineiro', 'região do triângulo mineiro'],
+    points: [
+      { name: 'Uberlândia, MG', lat: -18.9186, lng: -48.2772 },
+      { name: 'Uberaba, MG', lat: -19.7472, lng: -47.9381 },
+      { name: 'Ituiutaba, MG', lat: -18.9743, lng: -49.4621 },
+      { name: 'Araxá, MG', lat: -19.5902, lng: -46.9438 },
+      { name: 'Frutal, MG', lat: -20.0259, lng: -48.9405 },
+    ],
+  },
+  {
+    name: 'Sudoeste Goiano',
+    aliases: ['sudoeste goiano', 'sudoesto goaino', 'sudoeste de goias', 'sudoeste de goiás', 'regiao sudoeste goiana', 'região sudoeste goiana'],
+    points: [
+      { name: 'Rio Verde, GO', lat: -17.7981, lng: -50.9281 },
+      { name: 'Jataí, GO', lat: -17.8794, lng: -51.7217 },
+      { name: 'Mineiros, GO', lat: -17.5698, lng: -52.5510 },
+      { name: 'Montividiu, GO', lat: -17.4439, lng: -51.1728 },
+      { name: 'Chapadão do Céu, GO', lat: -18.4073, lng: -52.5490 },
+    ],
+  },
+  {
+    name: 'Goiás',
+    aliases: ['goias', 'goiás', 'go', 'estado de goias', 'estado de goiás'],
+    points: [
+      { name: 'Goiânia, GO', lat: -16.6869, lng: -49.2648 },
+      { name: 'Rio Verde, GO', lat: -17.7981, lng: -50.9281 },
+      { name: 'Jataí, GO', lat: -17.8794, lng: -51.7217 },
+      { name: 'Cristalina, GO', lat: -16.7677, lng: -47.6131 },
+      { name: 'Catalão, GO', lat: -18.1658, lng: -47.9464 },
+      { name: 'Porangatu, GO', lat: -13.4403, lng: -49.1486 },
+    ],
+  },
+  {
+    name: 'Mato Grosso do Sul',
+    aliases: ['ms', 'mato grosso do sul', 'estado de ms', 'estado de mato grosso do sul'],
+    points: [
+      { name: 'Campo Grande, MS', lat: -20.4697, lng: -54.6201 },
+      { name: 'Dourados, MS', lat: -22.2231, lng: -54.8120 },
+      { name: 'Maracaju, MS', lat: -21.6144, lng: -55.1681 },
+      { name: 'Chapadão do Sul, MS', lat: -18.7880, lng: -52.6263 },
+      { name: 'Três Lagoas, MS', lat: -20.7849, lng: -51.7007 },
+      { name: 'Corumbá, MS', lat: -19.0078, lng: -57.6517 },
+    ],
+  },
+  {
+    name: 'Mato Grosso',
+    aliases: ['mt', 'mato grosso', 'estado de mt', 'estado de mato grosso'],
+    points: [
+      { name: 'Sorriso, MT', lat: -12.5453, lng: -55.7114 },
+      { name: 'Sinop, MT', lat: -11.8604, lng: -55.5091 },
+      { name: 'Rondonópolis, MT', lat: -16.4673, lng: -54.6372 },
+      { name: 'Campo Novo do Parecis, MT', lat: -13.6587, lng: -57.8907 },
+      { name: 'Primavera do Leste, MT', lat: -15.5606, lng: -54.2977 },
+      { name: 'Querência, MT', lat: -12.6093, lng: -52.1821 },
+      { name: 'Cuiabá, MT', lat: -15.6014, lng: -56.0979 },
+    ],
+  },
+];
+
+function normalizeWeatherQuery(str) {
+  return String(str || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function resolveWeatherRegionTarget(raw) {
+  const q = normalizeWeatherQuery(raw);
+  if (!q) return null;
+  return WEATHER_REGION_TARGETS.find(region =>
+    region.aliases.some(alias => {
+      const a = normalizeWeatherQuery(alias);
+      return q === a || q === `regiao ${a}` || q === `regiao do ${a}` || q === `regiao da ${a}`;
+    })
+  ) || null;
+}
+
+function weatherCodeLabel(code) {
+  const labels = {
+    0: 'céu limpo', 1: 'predomínio de sol', 2: 'parcialmente nublado', 3: 'nublado',
+    45: 'nevoeiro', 48: 'nevoeiro com depósito',
+    51: 'garoa fraca', 53: 'garoa moderada', 55: 'garoa forte',
+    61: 'chuva fraca', 63: 'chuva moderada', 65: 'chuva forte',
+    71: 'neve fraca', 73: 'neve moderada', 75: 'neve forte',
+    80: 'pancadas fracas', 81: 'pancadas moderadas', 82: 'pancadas fortes',
+    95: 'risco de temporal', 96: 'temporal com granizo', 99: 'temporal forte com granizo',
+  };
+  return labels[Number(code)] || 'condição variável';
+}
+
+function round1(n) {
+  return Math.round((Number(n) || 0) * 10) / 10;
+}
+
+function formatMm(n) {
+  return `${round1(n).toLocaleString('pt-BR')} mm`;
+}
+
+function formatTemp(n) {
+  return `${round1(n).toLocaleString('pt-BR')}°C`;
+}
+
+function formatDateBRShort(dateStr) {
+  const d = new Date(`${dateStr}T12:00:00`);
+  if (isNaN(d.getTime())) return dateStr || '';
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+}
+
+async function geocodeWeatherLocation(query) {
+  const raw = (query || '').trim();
+  if (!raw) return { ...WEATHER_DEFAULT_LOCATION };
+  const region = resolveWeatherRegionTarget(raw);
+  if (region) {
+    return {
+      type: 'region',
+      name: region.name,
+      points: region.points.map(p => ({ ...p })),
+      lat: round1(region.points.reduce((s, p) => s + p.lat, 0) / region.points.length),
+      lng: round1(region.points.reduce((s, p) => s + p.lng, 0) / region.points.length),
+    };
+  }
+  const coordMatch = raw.match(/^\s*(-?\d+(?:[.,]\d+)?)\s*,\s*(-?\d+(?:[.,]\d+)?)\s*$/);
+  if (coordMatch) {
+    return {
+      name: `Lat ${coordMatch[1].replace(',', '.')}, Lng ${coordMatch[2].replace(',', '.')}`,
+      lat: Number(coordMatch[1].replace(',', '.')),
+      lng: Number(coordMatch[2].replace(',', '.')),
+    };
+  }
+  const ufMatch = raw.match(/,\s*([a-z]{2})\s*$/i);
+  const uf = ufMatch ? ufMatch[1].toUpperCase() : '';
+  const searchName = ufMatch ? raw.replace(/,\s*[a-z]{2}\s*$/i, '').trim() : raw;
+  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchName)}&count=10&language=pt&format=json`;
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error(`Geocoding Open-Meteo: HTTP ${resp.status}`);
+  const data = await resp.json();
+  const results = Array.isArray(data.results) ? data.results : [];
+  if (!results.length) throw new Error('Não encontrei essa cidade/região no Open-Meteo.');
+  const stateName = BRAZIL_STATE_BY_UF[uf] || '';
+  const picked = (uf && stateName)
+    ? (results.find(r => r.country_code === 'BR' && r.admin1 === stateName) || results.find(r => r.country_code === 'BR') || results[0])
+    : (results.find(r => r.country_code === 'BR') || results[0]);
+  const admin = picked.admin1 ? `, ${picked.admin1_code || uf || picked.admin1}` : '';
+  return {
+    name: `${picked.name}${admin}`,
+    lat: Number(picked.latitude),
+    lng: Number(picked.longitude),
+    municipality: picked.name,
+  };
+}
+
+async function fetchWeatherForecast(location) {
+  if (location && location.type === 'region' && Array.isArray(location.points) && location.points.length) {
+    return fetchRegionalWeatherForecast(location);
+  }
+  const params = new URLSearchParams({
+    latitude: String(location.lat),
+    longitude: String(location.lng),
+    daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code,wind_speed_10m_max,wind_gusts_10m_max,et0_fao_evapotranspiration,sunrise,sunset,uv_index_max,relative_humidity_2m_max,relative_humidity_2m_min',
+    current: 'temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,precipitation',
+    timezone: 'America/Sao_Paulo',
+    forecast_days: '7',
+  });
+  const resp = await fetch(`https://api.open-meteo.com/v1/forecast?${params.toString()}`);
+  if (!resp.ok) throw new Error(`Open-Meteo forecast: HTTP ${resp.status}`);
+  const data = await resp.json();
+  const daily = data.daily || {};
+  const times = daily.time || [];
+  return {
+    current: {
+      temperature: round1(data.current?.temperature_2m),
+      humidity: Math.round(Number(data.current?.relative_humidity_2m) || 0),
+      weatherCode: Number(data.current?.weather_code) || 0,
+      windSpeed: round1(data.current?.wind_speed_10m),
+      precipitation: round1(data.current?.precipitation),
+    },
+    daily: times.map((date, i) => ({
+      date,
+      weatherCode: Number(daily.weather_code?.[i]) || 0,
+      tempMax: round1(daily.temperature_2m_max?.[i]),
+      tempMin: round1(daily.temperature_2m_min?.[i]),
+      precipitation: round1(daily.precipitation_sum?.[i]),
+      windMax: round1(daily.wind_speed_10m_max?.[i]),
+      windGusts: round1(daily.wind_gusts_10m_max?.[i]),
+      humidityMax: Math.round(Number(daily.relative_humidity_2m_max?.[i]) || 0),
+      humidityMin: Math.round(Number(daily.relative_humidity_2m_min?.[i]) || 0),
+      uvIndex: round1(daily.uv_index_max?.[i]),
+      sunrise: daily.sunrise?.[i] || '',
+      sunset: daily.sunset?.[i] || '',
+      et0: round1(daily.et0_fao_evapotranspiration?.[i]),
+    })),
+    fetchedAt: new Date().toISOString(),
+    location: { ...location, savedAt: new Date().toISOString() },
+  };
+}
+
+function mostFrequentWeatherCode(codes) {
+  const counts = new Map();
+  (codes || []).forEach(code => counts.set(code, (counts.get(code) || 0) + 1));
+  let best = 0;
+  let bestCount = -1;
+  counts.forEach((count, code) => {
+    if (count > bestCount) {
+      best = code;
+      bestCount = count;
+    }
+  });
+  return Number(best) || 0;
+}
+
+async function fetchRegionalWeatherForecast(region) {
+  const pointForecasts = await Promise.all(region.points.map(point => fetchWeatherForecast({ ...point, type: 'point' })));
+  const first = pointForecasts[0];
+  const dayCount = Math.min(...pointForecasts.map(f => (f.daily || []).length));
+  const avg = arr => arr.length ? arr.reduce((s, v) => s + Number(v || 0), 0) / arr.length : 0;
+  const daily = Array.from({ length: dayCount }).map((_, i) => {
+    const rows = pointForecasts.map(f => f.daily[i]).filter(Boolean);
+    return {
+      date: rows[0]?.date || '',
+      weatherCode: mostFrequentWeatherCode(rows.map(r => r.weatherCode)),
+      tempMax: round1(avg(rows.map(r => r.tempMax))),
+      tempMin: round1(avg(rows.map(r => r.tempMin))),
+      precipitation: round1(avg(rows.map(r => r.precipitation))),
+      windMax: round1(avg(rows.map(r => r.windMax))),
+      windGusts: round1(Math.max(...rows.map(r => r.windGusts))),
+      humidityMax: Math.round(avg(rows.map(r => r.humidityMax))),
+      humidityMin: Math.round(avg(rows.map(r => r.humidityMin))),
+      uvIndex: round1(Math.max(...rows.map(r => r.uvIndex))),
+      sunrise: rows[0]?.sunrise || '',
+      sunset: rows[0]?.sunset || '',
+      et0: round1(avg(rows.map(r => r.et0))),
+    };
+  });
+  const pointTotals = pointForecasts.map(f => ({
+    name: f.location.name,
+    precipTotal7d: round1((f.daily || []).reduce((s, d) => s + d.precipitation, 0)),
+    tempMaxAbs: Math.max(...(f.daily || []).map(d => d.tempMax)),
+    tempMinAbs: Math.min(...(f.daily || []).map(d => d.tempMin)),
+  }));
+  const wettest = pointTotals.reduce((max, p) => p.precipTotal7d > (max?.precipTotal7d ?? -Infinity) ? p : max, null);
+  const driest = pointTotals.reduce((min, p) => p.precipTotal7d < (min?.precipTotal7d ?? Infinity) ? p : min, null);
+  return {
+    current: {
+      temperature: round1(avg(pointForecasts.map(f => f.current.temperature))),
+      humidity: Math.round(avg(pointForecasts.map(f => f.current.humidity))),
+      weatherCode: mostFrequentWeatherCode(pointForecasts.map(f => f.current.weatherCode)),
+      windSpeed: round1(avg(pointForecasts.map(f => f.current.windSpeed))),
+      precipitation: round1(avg(pointForecasts.map(f => f.current.precipitation))),
+    },
+    daily,
+    fetchedAt: new Date().toISOString(),
+    location: {
+      type: 'region',
+      name: region.name,
+      lat: region.lat,
+      lng: region.lng,
+      savedAt: new Date().toISOString(),
+      points: region.points,
+    },
+    regionSummary: {
+      points: pointTotals,
+      wettest,
+      driest,
+      sourceCities: region.points.map(p => p.name),
+    },
+  };
+}
+
+function getSprayIndex(day) {
+  if (!day) return 'Inadequado';
+  if (day.precipitation > 2 || day.windMax > 20 || day.humidityMin < 45) return 'Inadequado';
+  if (day.precipitation > 0.5 || day.windMax > 12 || day.humidityMin < 55 || day.humidityMax > 95) return 'Marginal';
+  return 'Ideal';
+}
+
+function detectWeatherAlerts(daily) {
+  const alerts = [];
+  (daily || []).forEach(day => {
+    if (day.precipitation >= 80) alerts.push({ type: 'rain', severity: 'critical', title: 'Chuva crítica', message: `${formatMm(day.precipitation)} previstos em ${formatDateBRShort(day.date)}.`, date: day.date });
+    else if (day.precipitation >= 50) alerts.push({ type: 'rain', severity: 'warning', title: 'Chuva forte', message: `${formatMm(day.precipitation)} previstos em ${formatDateBRShort(day.date)}.`, date: day.date });
+    if (day.windGusts >= 60) alerts.push({ type: 'wind', severity: 'critical', title: 'Rajadas críticas', message: `Rajadas de ${round1(day.windGusts)} km/h em ${formatDateBRShort(day.date)}.`, date: day.date });
+    else if (day.windGusts >= 40) alerts.push({ type: 'wind', severity: 'warning', title: 'Vento forte', message: `Rajadas de ${round1(day.windGusts)} km/h em ${formatDateBRShort(day.date)}.`, date: day.date });
+    if (day.tempMin <= 0) alerts.push({ type: 'frost', severity: 'critical', title: 'Geada crítica', message: `Mínima de ${formatTemp(day.tempMin)} em ${formatDateBRShort(day.date)}.`, date: day.date });
+    else if (day.tempMin <= 5) alerts.push({ type: 'frost', severity: 'warning', title: 'Risco de geada', message: `Mínima de ${formatTemp(day.tempMin)} em ${formatDateBRShort(day.date)}.`, date: day.date });
+    if (day.tempMax >= 45) alerts.push({ type: 'heat', severity: 'critical', title: 'Calor crítico', message: `Máxima de ${formatTemp(day.tempMax)} em ${formatDateBRShort(day.date)}.`, date: day.date });
+    else if (day.tempMax >= 40) alerts.push({ type: 'heat', severity: 'warning', title: 'Calor extremo', message: `Máxima de ${formatTemp(day.tempMax)} em ${formatDateBRShort(day.date)}.`, date: day.date });
+  });
+  return alerts.slice(0, 6);
+}
+
+function buildWeatherMetrics(weatherData) {
+  const daily = weatherData.daily || [];
+  const first3 = daily.slice(0, 3);
+  const precipTotal7d = daily.reduce((s, d) => s + d.precipitation, 0);
+  const precipTotal3d = first3.reduce((s, d) => s + d.precipitation, 0);
+  const tempAvg7d = daily.length ? daily.reduce((s, d) => s + (d.tempMax + d.tempMin) / 2, 0) / daily.length : 0;
+  const tempMaxAbs = daily.length ? Math.max(...daily.map(d => d.tempMax)) : 0;
+  const tempMinAbs = daily.length ? Math.min(...daily.map(d => d.tempMin)) : 0;
+  const uvMax = daily.length ? Math.max(...daily.map(d => d.uvIndex)) : 0;
+  const amplitudes = daily.map(d => d.tempMax - d.tempMin);
+  const avgThermalAmplitude = amplitudes.length ? amplitudes.reduce((s, a) => s + a, 0) / amplitudes.length : 0;
+  const maxThermalAmplitude = amplitudes.length ? Math.max(...amplitudes) : 0;
+  const highAfternoonDays = daily.filter(d => d.tempMax >= 32).length;
+  const warmAfternoonDays = daily.filter(d => d.tempMax >= 29).length;
+  const coolMorningDays = daily.filter(d => d.tempMin <= 16).length;
+  const coldMorningDays = daily.filter(d => d.tempMin <= 12).length;
+  const sprayCounts = daily.reduce((acc, d) => {
+    acc[getSprayIndex(d)] = (acc[getSprayIndex(d)] || 0) + 1;
+    return acc;
+  }, { Ideal: 0, Marginal: 0, Inadequado: 0 });
+  const wetDays = daily.filter(d => d.precipitation >= 1).length;
+  const dryDays = daily.length - wetDays;
+  const alerts = detectWeatherAlerts(daily);
+  const peakRainDay = daily.reduce((max, d) => d.precipitation > (max?.precipitation || -1) ? d : max, null);
+  const peakWindDay = daily.reduce((max, d) => d.windGusts > (max?.windGusts || -1) ? d : max, null);
+  return { precipTotal7d, precipTotal3d, tempAvg7d, tempMaxAbs, tempMinAbs, uvMax, avgThermalAmplitude, maxThermalAmplitude, highAfternoonDays, warmAfternoonDays, coolMorningDays, coldMorningDays, sprayCounts, wetDays, dryDays, alerts, peakRainDay, peakWindDay };
+}
+
+function buildWeatherExpertReading(weatherData, metrics) {
+  const daily = weatherData.daily || [];
+  const first3 = daily.slice(0, 3);
+  const last4 = daily.slice(3);
+  const avg = list => list.length ? list.reduce((s, v) => s + v, 0) / list.length : 0;
+  const first3Rain = first3.reduce((s, d) => s + d.precipitation, 0);
+  const last4Rain = last4.reduce((s, d) => s + d.precipitation, 0);
+  const first3MaxAvg = avg(first3.map(d => d.tempMax));
+  const last4MaxAvg = avg(last4.map(d => d.tempMax));
+  const first3MinAvg = avg(first3.map(d => d.tempMin));
+  const last4MinAvg = avg(last4.map(d => d.tempMin));
+  const fieldDays = metrics.sprayCounts.Ideal || 0;
+  const attentionDays = (metrics.sprayCounts.Marginal || 0) + (metrics.sprayCounts.Inadequado || 0);
+
+  let thermalPattern;
+  if (metrics.coldMorningDays >= 2 && metrics.warmAfternoonDays >= 2) {
+    thermalPattern = `manhãs frias com tardes mais aquecidas; a leitura correta é de alta amplitude térmica, não de calor persistente.`;
+  } else if (metrics.coolMorningDays >= 2 && metrics.highAfternoonDays >= 1) {
+    thermalPattern = `manhãs amenas/frias contrastando com tardes mais quentes; destaque a amplitude térmica antes de falar em calor.`;
+  } else if (metrics.highAfternoonDays >= 4 && metrics.tempMinAbs >= 20) {
+    thermalPattern = `calor mais persistente, com máximas altas e mínimas também elevadas.`;
+  } else if (metrics.warmAfternoonDays >= 3) {
+    thermalPattern = `tardes mais quentes, mas sem caracterizar a semana inteira como quente se as mínimas forem baixas.`;
+  } else if (metrics.coolMorningDays >= 3) {
+    thermalPattern = `predomínio de manhãs amenas/frias, com aquecimento gradual ao longo do dia.`;
+  } else {
+    thermalPattern = `temperaturas sem extremo dominante, pedindo leitura por variação diária e não por rótulo genérico.`;
+  }
+
+  let rainPattern;
+  if (metrics.precipTotal7d < 5) {
+    rainPattern = `chuva baixa ou quase ausente; o ponto principal é intervalo seco e boa previsibilidade para agenda.`;
+  } else if (metrics.wetDays <= 2) {
+    rainPattern = `chuva concentrada em poucos dias; o impacto está mais no timing dos eventos do que no número de dias chuvosos.`;
+  } else if (metrics.wetDays >= 5) {
+    rainPattern = `chuva recorrente ao longo da semana; agenda deve ser acompanhada dia a dia.`;
+  } else {
+    rainPattern = `chuva distribuída em parte da semana, alternando momentos de atenção e intervalos mais úteis para campo.`;
+  }
+
+  let sequencePattern;
+  if (first3Rain >= metrics.precipTotal7d * 0.6 && metrics.precipTotal7d >= 5) {
+    sequencePattern = `a primeira metade concentra a maior parte da chuva prevista.`;
+  } else if (last4Rain > first3Rain && metrics.precipTotal7d >= 5) {
+    sequencePattern = `a chuva ganha mais peso depois dos primeiros dias.`;
+  } else if (Math.abs(first3Rain - last4Rain) <= 5 && metrics.precipTotal7d >= 5) {
+    sequencePattern = `a chuva aparece sem concentração muito forte em um único bloco.`;
+  } else {
+    sequencePattern = `o período exige mais atenção à temperatura, vento e intervalos secos do que à chuva acumulada.`;
+  }
+
+  const tempTrend = last4.length
+    ? `${first3MaxAvg && last4MaxAvg ? `máximas médias passam de ${formatTemp(first3MaxAvg)} nos primeiros dias para ${formatTemp(last4MaxAvg)} no restante da semana` : 'sem mudança térmica clara'}; mínimas médias passam de ${formatTemp(first3MinAvg)} para ${formatTemp(last4MinAvg)}.`
+    : `sem comparação entre blocos por falta de dias suficientes.`;
+  const windPattern = metrics.peakWindDay && metrics.peakWindDay.windGusts >= 40
+    ? `vento/rajadas entram como ponto de atenção, com pico previsto de ${round1(metrics.peakWindDay.windGusts)} km/h em ${formatDateBRShort(metrics.peakWindDay.date)}.`
+    : `vento sem sinal de protagonismo forte pelos limites analisados.`;
+  const thesis = `A tese central da semana é: ${thermalPattern} Em paralelo, ${rainPattern}`;
+  const agenda = fieldDays >= attentionDays
+    ? `${fieldDays} dias parecem mais favoráveis para visitas e rotina de campo, mas ainda devem ser escolhidos olhando chuva e vento do dia.`
+    : `${attentionDays} dias pedem algum cuidado antes de organizar visitas e operações, principalmente por chuva, vento ou combinação de fatores.`;
+
+  return `LEITURA METEOROLÓGICA PRÉVIA:
+- Tese central: ${thesis}
+- Temperatura: maior máxima ${formatTemp(metrics.tempMaxAbs)}, menor mínima ${formatTemp(metrics.tempMinAbs)}, amplitude média de ${formatTemp(metrics.avgThermalAmplitude)} e pico de amplitude de ${formatTemp(metrics.maxThermalAmplitude)}. ${tempTrend}
+- Chuva: ${rainPattern} Maior evento diário previsto: ${metrics.peakRainDay ? `${formatMm(metrics.peakRainDay.precipitation)} em ${formatDateBRShort(metrics.peakRainDay.date)}` : 'sem dado'}.
+- Sequência da semana: ${sequencePattern}
+- Vento: ${windPattern}
+- Agenda: ${agenda}
+- Regra editorial: se houver mínima baixa/amenas e máxima relativamente alta, escreva como "manhãs amenas/frias e tardes mais quentes" ou "amplitude térmica". Não simplifique para "temperaturas elevadas", "calor forte" ou "semana quente".`;
+}
+
+function buildWeatherPromptContext(weatherData, metrics, context) {
+  const dailyLines = weatherData.daily.map(d =>
+    `${d.date} (previsão futura): ${weatherCodeLabel(d.weatherCode)}, max ${formatTemp(d.tempMax)}, min ${formatTemp(d.tempMin)}, chuva prevista ${formatMm(d.precipitation)}, vento previsto ${round1(d.windMax)} km/h, rajada prevista ${round1(d.windGusts)} km/h, UV previsto ${round1(d.uvIndex)}, condição geral prevista para campo ${getSprayIndex(d) === 'Ideal' ? 'favorável' : getSprayIndex(d) === 'Marginal' ? 'atenção' : 'restrita'}`
+  );
+  const regionBlock = weatherData.location?.type === 'region' && weatherData.regionSummary
+    ? `\nPANORAMA REGIONAL:\n- Tipo: região/estado agregado, não cidade única.\n- Cidades-base consultadas: ${weatherData.regionSummary.sourceCities.join(', ')}\n- Maior acumulado previsto entre as cidades-base: ${weatherData.regionSummary.wettest ? `${weatherData.regionSummary.wettest.name} (${formatMm(weatherData.regionSummary.wettest.precipTotal7d)})` : 'sem dado'}\n- Menor acumulado previsto entre as cidades-base: ${weatherData.regionSummary.driest ? `${weatherData.regionSummary.driest.name} (${formatMm(weatherData.regionSummary.driest.precipTotal7d)})` : 'sem dado'}`
+    : '';
+  return `LOCAL: ${weatherData.location.name} (${weatherData.location.lat}, ${weatherData.location.lng})
+NATUREZA DOS DADOS: todos os dados abaixo são PREVISÃO FUTURA para os próximos 7 dias. Não são histórico, não são últimos dias, não são dados observados.
+CONTEXTO OPCIONAL: ${(context || '').trim() || 'não informado'}
+AGORA: ${formatTemp(weatherData.current.temperature)}, UR ${weatherData.current.humidity}%, vento ${round1(weatherData.current.windSpeed)} km/h, ${weatherCodeLabel(weatherData.current.weatherCode)}
+AGREGADOS DA SEMANA:
+- Chuva total da semana: ${formatMm(metrics.precipTotal7d)}
+- Chuva próximos 3 dias: ${formatMm(metrics.precipTotal3d)}
+- Média térmica da semana: ${formatTemp(metrics.tempAvg7d)}
+- Maior máxima: ${formatTemp(metrics.tempMaxAbs)}
+- Menor mínima: ${formatTemp(metrics.tempMinAbs)}
+- UV máximo: ${round1(metrics.uvMax)}
+- Dias com chuva >=1mm: ${metrics.wetDays}
+- Dias secos: ${metrics.dryDays}
+- Dias mais favoráveis para agenda de campo: ${metrics.sprayCounts.Ideal || 0}
+- Dias que pedem atenção antes de ir a campo: ${(metrics.sprayCounts.Marginal || 0) + (metrics.sprayCounts.Inadequado || 0)}
+- Maior chuva diária: ${metrics.peakRainDay ? `${formatMm(metrics.peakRainDay.precipitation)} em ${formatDateBRShort(metrics.peakRainDay.date)}` : 'sem dado'}
+- Maior rajada: ${metrics.peakWindDay ? `${round1(metrics.peakWindDay.windGusts)} km/h em ${formatDateBRShort(metrics.peakWindDay.date)}` : 'sem dado'}
+ALERTAS:
+${metrics.alerts.length ? metrics.alerts.map(a => `- ${a.title}: ${a.message}`).join('\n') : '- Sem alertas críticos pelos limites do Radar.'}
+${buildWeatherExpertReading(weatherData, metrics)}
+${regionBlock}
+SÉRIE DIÁRIA:
+${dailyLines.join('\n')}`;
+}
+
+function buildWeatherImageMoodPrompt(weatherData, metrics) {
+  const locationName = weatherData.location?.name || 'Brazilian farmland';
+  const rainy = metrics.precipTotal7d >= 30 || (metrics.peakRainDay && metrics.peakRainDay.precipitation >= 20);
+  const stormy = metrics.alerts.some(a => a.type === 'rain' && a.severity === 'critical');
+  const windy = metrics.alerts.some(a => a.type === 'wind') || (metrics.peakWindDay && metrics.peakWindDay.windGusts >= 42);
+  const cold = metrics.tempMinAbs <= 10;
+  const frost = metrics.alerts.some(a => a.type === 'frost');
+  const hot = metrics.tempMaxAbs >= 34;
+  const dry = metrics.dryDays >= 5 && metrics.precipTotal7d < 15;
+
+  let mood;
+  if (frost || cold) {
+    mood = 'cool early morning atmosphere, pale blue-gray light, visible dew on crop leaves, light mist over the field, calm cold-front feeling, no people in the scene';
+  } else if (stormy || rainy) {
+    mood = 'rainy-season atmosphere, dark but natural rain clouds in the distance, wet soil, crop leaves with water droplets, humid air, soft diffused light after rainfall';
+  } else if (windy) {
+    mood = 'windy rural atmosphere, moving crop leaves, expressive sky with layered clouds, open field perspective, natural dynamic light, no people in the scene';
+  } else if (hot) {
+    mood = 'hot sunny agricultural day, strong warm sunlight, dry haze on the horizon, crop field under clear sky, golden light, heat-wave feeling without drought damage';
+  } else if (dry) {
+    mood = 'stable dry-weather window, clear sky, bright but soft sun, organized crop rows, open field visibility, practical planning mood';
+  } else {
+    mood = 'balanced weather outlook, partly cloudy sky, soft sunlight, healthy Brazilian crop field, calm planning atmosphere';
+  }
+
+  return `Ultra-realistic editorial photograph of Brazilian agribusiness weather planning near ${locationName}. The scene MUST visually reflect the forecast mood for the next days: ${mood}. Show well-managed soybean, corn or cotton fields, open rural landscape, crop rows, sky, soil, water droplets or light conditions when relevant, and optional generic field-planning objects such as a tablet, notebook or weather station with no readable text. Premium documentary photography, natural colors, negative space for text, no text, no logos, no brand marks.`;
+}
+
+function buildWeatherCarouselSystemPrompt(tone) {
+  const toneDirectives = {
+    casual: 'TOM: acessível, claro e útil para quem precisa planejar a semana no agro.',
+    tecnico: 'TOM: técnico leve, explicando impacto operacional sem excesso de jargão.',
+    inspirador: 'TOM: estratégico, conectando clima a organização de agenda e cobertura técnica.',
+    provocativo: 'TOM: direto, mostrando que clima mal lido vira agenda perdida e aplicação mal planejada.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.casual;
+  return `Você é meteorologista e editor de clima agro da Cropware. Gere um carrossel de PREVISÃO DO TEMPO com 8 slides fixos, linguagem acessível, sem excesso técnico.
+
+REGRAS IMPORTANTES:
+- Use APENAS os dados fornecidos. Não invente números, datas, percentuais, alertas ou recomendações.
+- Todos os dados são PREVISÃO FUTURA a partir de hoje. Nunca trate como histórico ou dado observado.
+- Proibido usar expressões como "últimos dias", "dias anteriores", "passado", "histórico", "o que aconteceu" ou "foi registrado".
+- Nos slides com gráficos, diga "próximos 7 dias", "semana prevista", "tendência prevista" ou "cenário esperado".
+- Antes de escrever, estabeleça uma tese meteorológica única para a semana e faça os 8 slides avançarem essa mesma leitura. Os slides precisam conversar entre si.
+- Use a LEITURA METEOROLÓGICA PRÉVIA como guia editorial. Ela é a interpretação prioritária dos dados.
+- Não trate máxima alta isolada como "temperaturas elevadas" quando houver mínimas baixas ou amenas. Nesse caso, escreva "manhãs amenas/frias e tardes mais quentes", "contraste térmico" ou "amplitude térmica".
+- Evite rótulos genéricos como "calor forte", "frio intenso" ou "tempo instável" se os dados pedirem uma leitura mais específica.
+- Cada slide deve trazer um insight, não apenas repetir um dado. Explique o que o dado muda na leitura da semana.
+- Nome do local/região/cidade: use apenas no slide 1. Nos slides 2 a 8, NÃO repita o nome do local; use "na semana", "na região", "no campo" ou "no período previsto".
+- Se o input for região/estado agregado, escreva como panorama regional. Não trate como cidade única.
+- Evite evapotranspiração, GDD, UR, índice de pulverização, risco fitossanitário, threshold, severidade e jargões muito técnicos.
+- Não use "janela de pulverização" no texto final. Traduza isso para "dias mais favoráveis", "agenda de campo", "visitas", "operações" ou "pontos de atenção".
+- Fale para público amplo do agro no Instagram: quem acompanha lavoura, planeja visita, organiza equipe, olha chuva, vento e temperatura para decidir a semana.
+- Sem emojis.
+- Os slides 4 e 5 terão gráficos determinísticos separados renderizados pelo Studio.
+- O slide 4 é apenas sobre temperatura: explique máximas, mínimas, amplitude térmica e tendência térmica prevista. Não fale de chuva como foco desse slide.
+- O slide 5 é apenas sobre chuva: explique acumulado, distribuição e timing da chuva prevista. Não fale de temperatura como foco desse slide.
+- O slide 8 NÃO terá gráfico: ele deve fechar o carrossel como conclusão editorial, reunindo a leitura dos 7 slides anteriores.
+- Se vento, rajadas ou outro dado específico for relevante, distribua isso nos slides 6 ou 7. Não deixe uma informação nova depender do slide 8.
+
+ESTRUTURA OBRIGATÓRIA:
+1. Capa: tese central do cenário para o local.
+2. Próximos 3 dias: início da sequência e como ele confirma ou contrasta com a tese.
+3. Chuva: distribuição e timing, conectando com a tese.
+4. Gráfico de temperatura: leitura de máximas, mínimas e amplitude térmica, sustentando a tese.
+5. Gráfico de chuva: leitura de acumulado, distribuição e timing da chuva prevista.
+6. Agenda da semana: melhores dias para visitas e campo, explicando o porquê em linguagem simples.
+7. Pontos de atenção: chuva forte, vento, frio, calor ou amplitude térmica, sem tom alarmista.
+8. Conclusão: apanhado geral dos primeiros 7 slides, reforçando a tese central e o que a semana pede de leitura. Este slide deve usar texto corrido, não estrutura de hook + bullets.
+
+PARA CADA SLIDE:
+- hook: 1 ou 2 linhas, última parte em <em>...</em>, com ponto final. Nos slides 4 e 5, use hook mais curto.
+- complement: 1-2 linhas, use <strong> para destacar dado importante. Nos slides 4 e 5, máximo 85 caracteres no total.
+- bullets: 2 ou 3 bullets muito curtos, cada um com ponto final.
+- Cada bullet deve ter no máximo 9 palavras. Nos slides 4 e 5, máximo 8 palavras. Evite frases longas, vírgulas e conectivos.
+- Bullets devem ser frases curtas e úteis, não explicações longas. Exemplos bons: "Manhãs mais frias no início.", "Tardes ganham força gradual.", "Chuva concentrada em poucos dias.", "Baixo acumulado na semana."
+- No slide 8, preencha também "conclusion" com um texto corrido de 70 a 105 palavras. Use linguagem de meteorologista, acessível, em tom de fechamento. Pode usar <strong> em 1 ou 2 trechos. Não use bullets como informação principal no slide 8.
+- icon: escolha em check_circle, task_alt, trending_up, trending_down, schedule, bolt, insights, analytics, agriculture, water_drop, sunny, shield, speed, timeline, query_stats, monitoring, map, radar.
+- imagePrompt: em inglês, foto realista de agro brasileiro com espaço para texto; nos slides 4 e 5 pode ser vazio.
+- Vocabulário preferido: semana, chuva, calor, frio, vento, campo, visita, agenda, atenção, intervalo seco, acumulado, mudança no tempo.
+- Vocabulário proibido no texto final: evapotranspiração, GDD, UR, índice, pulverização, fitossanitário, threshold, severidade, fenologia.
+- Vocabulário proibido por temporalidade: últimos dias, dias anteriores, passado, histórico, registrado, aconteceu.
+
+LEGENDA:
+- 90 a 140 palavras.
+- Resumo claro do período e principais riscos/oportunidades operacionais.
+- Sem CTA explícito, sem pergunta final, sem emoji.
+- 4 hashtags em minúsculas.
+
+${toneBlock}
+
+Responda APENAS em JSON válido:
+{
+  "title": "Previsão - Local",
+  "legend": "legenda compartilhada",
+  "hashtags": "#clima #agro #previsao #cropware",
+  "slides": [
+    {
+      "hook": "texto<br><em>remate.</em>",
+      "complement": "apoio curto<br><strong>dado</strong>",
+      "conclusion": "apenas no slide 8, texto corrido de fechamento",
+      "bullets": [{"icon":"water_drop","text":"Chuva prevista."}],
+      "imagePrompt": "photorealistic image prompt in English"
+    }
+  ]
+}`;
+}
+
+async function callGeminiWeatherCarouselText(weatherData, metrics, context, tone) {
+  const promptContext = buildWeatherPromptContext(weatherData, metrics, context);
+  const resp = await fetchGeminiWithRetry(
+    `${SUPABASE_URL}/functions/v1/gemini`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+      },
+      body: JSON.stringify({
+        model: 'gemini-2.5-flash',
+        body: {
+          contents: [{ parts: [{ text: `Monte o carrossel de 8 slides com base nestes dados:\n\n${promptContext}` }] }],
+          systemInstruction: { parts: [{ text: buildWeatherCarouselSystemPrompt(tone) }] },
+          generationConfig: { responseMimeType: 'application/json', temperature: 0.35 }
+        }
+      })
+    },
+    'Gemini texto (previsão)'
+  );
+  const data = await resp.json();
+  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const match = raw.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('Gemini previsão: resposta não contém JSON válido.');
+  return JSON.parse(match[0]);
+}
+
+function escapeRegExp(str) {
+  return String(str || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function sanitizeWeatherLocationMentions(slides, weatherData) {
+  if (!Array.isArray(slides) || !weatherData?.location?.name) return slides;
+  const variants = new Set();
+  const addVariant = value => {
+    const clean = String(value || '').trim();
+    if (clean && clean.length >= 3) variants.add(clean);
+    const cityOnly = clean.split(',')[0]?.trim();
+    if (cityOnly && cityOnly.length >= 3) variants.add(cityOnly);
+  };
+  addVariant(weatherData.location.name);
+  addVariant(weatherData.location.municipality);
+  (weatherData.location.points || []).forEach(p => addVariant(p.name));
+  (weatherData.regionSummary?.sourceCities || []).forEach(addVariant);
+  const ordered = Array.from(variants).sort((a, b) => b.length - a.length);
+  if (!ordered.length) return slides;
+  const replacement = weatherData.location.type === 'region' ? 'a região' : 'a área';
+  const apply = value => {
+    let out = String(value || '');
+    ordered.forEach(v => {
+      out = out.replace(new RegExp(escapeRegExp(v), 'gi'), replacement);
+    });
+    return out
+      .replace(/\bem a região\b/gi, 'na região')
+      .replace(/\bem a área\b/gi, 'na área')
+      .replace(/\bpara a região\b/gi, 'para a região')
+      .replace(/\bpara a área\b/gi, 'para a área');
+  };
+  slides.forEach((slide, idx) => {
+    if (!slide || idx === 0) return;
+    ['hook', 'complement'].forEach(field => {
+      if (slide[field]) slide[field] = apply(slide[field]);
+    });
+    if (Array.isArray(slide.bullets)) {
+      slide.bullets.forEach(b => {
+        if (b && b.text) b.text = apply(b.text);
+      });
+    }
+  });
+  return slides;
+}
+
+function sanitizeWeatherExpertLanguage(slides, metrics) {
+  if (!Array.isArray(slides) || !metrics) return slides;
+  const hasCoolMornings = (metrics.coolMorningDays || 0) >= 2 || metrics.tempMinAbs <= 16;
+  const hasPersistentHeat = (metrics.highAfternoonDays || 0) >= 4 && metrics.tempMinAbs >= 20;
+  if (!hasCoolMornings || hasPersistentHeat) return slides;
+
+  const contrastPhrase = 'manhãs amenas e tardes mais quentes';
+  const replacements = [
+    [/temperaturas elevadas/gi, contrastPhrase],
+    [/temperatura elevada/gi, contrastPhrase],
+    [/temperaturas altas/gi, contrastPhrase],
+    [/semana quente/gi, 'semana de maior contraste térmico'],
+    [/calor intenso/gi, 'aquecimento mais forte à tarde'],
+    [/calor forte/gi, 'aquecimento mais forte à tarde'],
+  ];
+  const apply = value => {
+    let out = String(value || '');
+    replacements.forEach(([pattern, replacement]) => {
+      out = out.replace(pattern, replacement);
+    });
+    return out;
+  };
+
+  slides.forEach(slide => {
+    if (!slide) return;
+    ['hook', 'complement'].forEach(field => {
+      if (slide[field]) slide[field] = apply(slide[field]);
+    });
+    if (Array.isArray(slide.bullets)) {
+      slide.bullets.forEach(b => {
+        if (b && b.text) b.text = apply(b.text);
+      });
+    }
+  });
+  return slides;
+}
+
+function sanitizeWeatherConclusionSlide(slides) {
+  if (!Array.isArray(slides) || !slides.length) return slides;
+  const slide = slides[slides.length - 1];
+  const apply = value => String(value || '')
+    .replace(/\b[Ee]ste gráfico resume\b/g, 'A previsão resume')
+    .replace(/\b[Oo] gráfico resume\b/g, 'A previsão resume')
+    .replace(/\b[Oo] gráfico mostra\b/g, 'A leitura mostra')
+    .replace(/\b[Ee]ste gráfico mostra\b/g, 'A leitura mostra')
+    .replace(/\b[Nn]o gráfico\b/g, 'Na leitura')
+    .replace(/\b[Gg]ráfico\b/g, 'panorama');
+
+  ['hook', 'complement'].forEach(field => {
+    if (slide[field]) slide[field] = apply(slide[field]);
+  });
+  if (Array.isArray(slide.bullets)) {
+    slide.bullets.forEach(b => {
+      if (b && b.text) b.text = apply(b.text);
+    });
+  }
+  return slides;
+}
+
+function buildWeatherConclusionHTMLFromSlide(slide) {
+  if (!slide) return '';
+  if (slide.conclusion) return String(slide.conclusion || '').replace(/\n{2,}/g, '<br><br>').replace(/\n/g, '<br>');
+  const parts = [
+    stripHTML(slide.hook || ''),
+    stripHTML(slide.complement || ''),
+    ...(Array.isArray(slide.bullets) ? slide.bullets.map(b => b?.text || '') : []),
+  ]
+    .map(part => String(part || '').trim())
+    .filter(Boolean);
+  return escapeHTML(parts.join(' '));
+}
+
+function compactWeatherBulletText(text, maxWords = 4) {
+  const clean = String(text || '').replace(/\s+/g, ' ').trim();
+  if (!clean) return '';
+  const end = /[.!?]$/.test(clean) ? clean.slice(-1) : '.';
+  const body = clean.replace(/[.!?]+$/g, '');
+  const words = body.split(' ').filter(Boolean);
+  if (words.length <= maxWords) return body + end;
+  return words.slice(0, maxWords).join(' ').replace(/[,;:]+$/g, '') + '.';
+}
+
+function buildWeatherBackgroundDataUrl(weatherData) {
+  const metrics = buildWeatherMetrics(weatherData);
+  const rainy = metrics.precipTotal7d > 30;
+  const hot = metrics.tempMaxAbs >= 34;
+  const c1 = rainy ? '#365166' : hot ? '#6b5b35' : '#2e4f3d';
+  const c2 = rainy ? '#102032' : hot ? '#17251a' : '#0d1f17';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="1080" height="1350" fill="url(#g)"/><g opacity=".13" fill="none" stroke="#ffffff" stroke-width="2">${Array.from({length: 16}).map((_,i)=>`<path d="M${-160+i*92} ${120+i*48} C ${150+i*18} ${40+i*34}, ${470-i*12} ${300+i*30}, ${1220-i*70} ${120+i*82}"/>`).join('')}</g><g opacity=".12">${(weatherData.daily||[]).slice(0,16).map((d,i)=>`<rect x="${60+i*60}" y="${980-Math.min(360,d.precipitation*6)}" width="34" height="${Math.max(16,Math.min(360,d.precipitation*6))}" rx="17" fill="#7AB87E"/>`).join('')}</g></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
+function buildWeatherChartSvg(weatherData, type) {
+  const daily = (weatherData.daily || []).slice(0, 7);
+  const w = 900, h = 350, padL = 56, padR = 28, padT = 34, padB = 54;
+  const isTempOnly = type === 'tempOnly';
+  const isRainOnly = type === 'rainOnly';
+  const isWindChart = type === 'precipWind';
+  const plotW = w - padL - padR, plotH = h - padT - padB;
+  const temps = daily.flatMap(d => [d.tempMax, d.tempMin]);
+  const tMin = Math.floor(Math.min(...temps) - 2);
+  const tMax = Math.ceil(Math.max(...temps) + 2);
+  const rainMax = Math.max(10, Math.ceil(Math.max(...daily.map(d => d.precipitation)) / 10) * 10);
+  const windMax = Math.max(20, Math.ceil(Math.max(...daily.map(d => d.windGusts)) / 10) * 10);
+  const x = i => padL + (daily.length <= 1 ? 0 : (i / (daily.length - 1)) * plotW);
+  const yTemp = v => padT + (1 - ((v - tMin) / Math.max(1, tMax - tMin))) * plotH;
+  const yRain = v => padT + (1 - (v / rainMax)) * plotH;
+  const yWind = v => padT + (1 - (v / windMax)) * plotH;
+  const maxLine = daily.map((d, i) => `${x(i)},${yTemp(d.tempMax)}`).join(' ');
+  const minLine = daily.map((d, i) => `${x(i)},${yTemp(d.tempMin)}`).join(' ');
+  const windLine = daily.map((d, i) => `${x(i)},${yWind(d.windGusts)}`).join(' ');
+  const title = isRainOnly ? 'Previsão de chuva nos próximos 7 dias' : isWindChart ? 'Previsão de chuva e rajadas nos próximos 7 dias' : 'Previsão de temperatura nos próximos 7 dias';
+  const valueLabel = ({ x: lx, y: ly, text, color = '#ffffff', opacity = 1 }) => {
+    const label = String(text || '');
+    return `<text x="${lx}" y="${ly}" text-anchor="middle" fill="${color}" opacity="${opacity}" font-family="Space Mono, monospace" font-size="24" font-weight="700">${escapeHTML(label)}</text>`;
+  };
+  const bars = daily.map((d, i) => {
+      const val = d.precipitation;
+    const bh = Math.max(2, (val / rainMax) * plotH);
+    const bw = Math.max(16, plotW / daily.length - 16);
+    const opacity = d.precipitation < 1 ? (isRainOnly ? '.36' : '.22') : (isRainOnly ? '.86' : '.62');
+    return `<rect x="${x(i) - bw / 2}" y="${padT + plotH - bh}" width="${bw}" height="${bh}" rx="7" fill="#7AB87E" opacity="${opacity}"/>`;
+  }).join('');
+  const rainValueLabels = daily.map((d, i) => {
+    const bh = Math.max(2, (d.precipitation / rainMax) * plotH);
+    const y = Math.min(padT + plotH - 12, padT + plotH - bh - 12);
+    const opacity = d.precipitation < 1 ? 0.45 : 1;
+    const label = d.precipitation < 1 ? '0mm' : `${round1(d.precipitation)}mm`;
+    return valueLabel({ x: x(i), y, text: label, color: '#B8F1BE', opacity });
+  }).join('');
+  const maxValueLabels = daily.map((d, i) => {
+    const px = x(i);
+    const py = yTemp(d.tempMax);
+    const rainTop = padT + plotH - Math.max(2, (d.precipitation / rainMax) * plotH);
+    let labelY = Math.max(padT + 24, py - 18);
+    if (Math.abs(labelY - rainTop) < 34) labelY = Math.max(padT + 24, labelY - 30);
+    return `<g><circle cx="${px}" cy="${py}" r="6" fill="#ffffff"/>${valueLabel({ x: px, y: labelY, text: `${Math.round(d.tempMax)}°`, color: '#ffffff' })}</g>`;
+  }).join('');
+  const minValueLabels = daily.map((d, i) => {
+    const px = x(i);
+    const py = yTemp(d.tempMin);
+    const rainTop = padT + plotH - Math.max(2, (d.precipitation / rainMax) * plotH);
+    let labelY = Math.min(padT + plotH - 8, py + 34);
+    if (Math.abs(labelY - rainTop) < 34) labelY = Math.min(padT + plotH - 8, labelY + 30);
+    return `<g><circle cx="${px}" cy="${py}" r="6" fill="#9FE3A6"/>${valueLabel({ x: px, y: labelY, text: `${Math.round(d.tempMin)}°`, color: '#9FE3A6' })}</g>`;
+  }).join('');
+  const windValueLabels = daily.map((d, i) => {
+    const px = x(i);
+    const py = yWind(d.windGusts);
+    const rainTop = padT + plotH - Math.max(2, (d.precipitation / rainMax) * plotH);
+    let labelY = Math.max(padT + 24, py - 18);
+    if (Math.abs(labelY - rainTop) < 34) labelY = Math.max(padT + 24, labelY - 30);
+    return `<g><circle cx="${px}" cy="${py}" r="6" fill="#ffffff"/>${valueLabel({ x: px, y: labelY, text: Math.round(d.windGusts), color: '#ffffff' })}</g>`;
+  }).join('');
+  const labels = daily.map((d, i) => i % 2 === 0 ? `<text x="${x(i)}" y="${h - 22}" text-anchor="middle" fill="rgba(255,255,255,.72)" font-family="Inter, sans-serif" font-size="26">${formatDateBRShort(d.date)}</text>` : '').join('');
+  return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${escapeHTML(title)}">
+    <g stroke="rgba(255,255,255,.14)" stroke-width="1">${[0,1,2,3].map(i=>`<line x1="${padL}" y1="${padT+i*plotH/3}" x2="${w-padR}" y2="${padT+i*plotH/3}"/>`).join('')}</g>
+    ${!isTempOnly ? bars : ''}
+    ${!isTempOnly ? rainValueLabels : ''}
+    ${isWindChart
+      ? `<polyline points="${windLine}" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>${windValueLabels}`
+      : !isRainOnly ? `<polyline points="${maxLine}" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${minLine}" fill="none" stroke="#9FE3A6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>${maxValueLabels}${minValueLabels}` : ''}
+    ${labels}
+  </svg>`;
 }
 
 function stripHTML(html) {
@@ -16802,6 +18377,7 @@ async function generateCarousel() {
   const theme      = document.getElementById('genTheme').value.trim();
   const platform   = getPlatform();
   const isAds      = isInstagramAdsMode();
+  const isFeature  = platform === 'features';
   const cfg        = getActiveDesignConfig();
   const tone       = cfg.tone || 'casual';
   const slideCount = Number(document.getElementById('genSlideCount').value) || 4;
@@ -16812,8 +18388,11 @@ async function generateCarousel() {
     audience:  ((document.getElementById('genAdsAudience') || {}).value || '').trim(),
     cta:       (document.getElementById('genAdsCTA') || {}).value || 'Saiba mais',
   } : null;
+  const selectedFeature = isFeature ? getSelectedFeatureForGeneration() : null;
+  const featureContext = selectedFeature ? formatFeaturePromptContext(selectedFeature, theme) : null;
 
-  if (!theme) { setGenStatus('Descreva o tema do carrossel.', 'error'); return; }
+  if (isFeature && !selectedFeature) { setGenStatus('Selecione uma funcionalidade.', 'error'); return; }
+  if (!isFeature && !theme) { setGenStatus('Descreva o tema do carrossel.', 'error'); return; }
 
   btn.disabled = true;
   btn.textContent = 'Gerando...';
@@ -16822,7 +18401,7 @@ async function generateCarousel() {
 
   try {
     // Step 1: Generate all text at once (prompt varia por plataforma)
-    const parsed = await callGeminiCarouselText(theme, tone, slideCount, genImageBase64, genImageMime, platform, adContext);
+    const parsed = await callGeminiCarouselText(theme, tone, slideCount, genImageBase64, genImageMime, platform, isFeature ? { featureContext } : adContext);
     const slides = Array.isArray(parsed.slides) ? parsed.slides : [];
     if (slides.length === 0) throw new Error('Gemini não retornou slides.');
 
@@ -16837,7 +18416,8 @@ async function generateCarousel() {
 
       if (needImage) {
         setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo ${i + 2}/${totalSteps} — Gerando imagem ${i + 1}/${slides.length}...`, '');
-        const imgPrompt = s.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
+        const imageTopic = isFeature && selectedFeature ? `${selectedFeature.name} ${theme}`.trim() : theme;
+        const imgPrompt = s.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${imageTopic}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
         const img = await callGeminiImage(imgPrompt, getActiveChipDirectives().join(' '));
         imgBase64 = img.base64;
         imgMime = img.mime;
@@ -16849,10 +18429,14 @@ async function generateCarousel() {
         slideId:  `slide-carousel-${timestamp}-${i}`,
         title:    `Slide ${i + 1}`,
         sub:      'Carrossel',
-        filename: `cropware_carrossel_${timestamp}_${i + 1}.jpg`,
+        filename: isFeature ? `cropware_funcionalidade_${timestamp}_${i + 1}.jpg` : `cropware_carrossel_${timestamp}_${i + 1}.jpg`,
+        type:     isFeature ? 'feature-carousel-slide' : undefined,
         isGenerated:    true,
         bgImage:        `data:${imgMime};base64,${imgBase64}`,
         theme:          theme,
+        featureId:      selectedFeature ? selectedFeature.id : undefined,
+        featureName:    selectedFeature ? selectedFeature.name : undefined,
+        featureModule:  selectedFeature ? selectedFeature.module : undefined,
         tone:           tone,
         imagePrompt:    s.imagePrompt || '',
         hookHTML:       (s.hook       || '').replace(/\n/g, '<br>'),
@@ -16879,12 +18463,15 @@ async function generateCarousel() {
       legendsArr.splice(oldestIdx, 1);
     }
 
-    const carouselType = platform === 'instagram-ads' ? 'instagram-ads-carousel' : platform === 'linkedin-pessoal' ? 'linkedin-pessoal-carousel' : platform === 'linkedin' ? 'linkedin-carousel' : 'carousel';
+    const carouselType = platform === 'instagram-ads' ? 'instagram-ads-carousel' : platform === 'features' ? 'feature-carousel' : platform === 'linkedin-pessoal' ? 'linkedin-pessoal-carousel' : platform === 'linkedin' ? 'linkedin-carousel' : 'carousel';
     const carouselData = {
       id:          `carousel-gen-${timestamp}`,
       type:        carouselType,
-      title:       parsed.title || (isAds ? 'Anuncio gerado' : 'Carrossel gerado'),
+      title:       parsed.title || (isAds ? 'Anuncio gerado' : isFeature ? selectedFeature.name : 'Carrossel gerado'),
       theme:       theme,
+      featureId:   selectedFeature ? selectedFeature.id : undefined,
+      featureName: selectedFeature ? selectedFeature.name : undefined,
+      featureModule: selectedFeature ? selectedFeature.module : undefined,
       tone:        tone,
       isGenerated: true,
       slides:      carouselSlides,
@@ -16921,6 +18508,183 @@ async function generateCarousel() {
     setGenStatus('<i class="ph ph-warning-octagon sz-18" style="margin-right:6px"></i>Erro: ' + e.message, 'error');
     btn.disabled = false;
     btn.innerHTML = '<i class="ph ph-sparkle sz-18"></i>Gerar Carrossel';
+  }
+}
+
+async function generateWeatherCarousel() {
+  let locationQuery = document.getElementById('genTheme').value.trim();
+  const context     = ((document.getElementById('genWeatherContext') || {}).value || '').trim();
+  const cfg         = getActiveDesignConfig();
+  const tone        = cfg.tone || 'casual';
+  const slideCount  = 8;
+  const btn         = document.getElementById('genBtn');
+
+  if (!locationQuery) locationQuery = WEATHER_DEFAULT_LOCATION.name;
+
+  btn.disabled = true;
+  btn.textContent = 'Gerando...';
+  setGenStatus('<i class="ph ph-radar sz-18" style="margin-right:6px"></i>Passo 1/4 — Localizando e buscando previsão no Open-Meteo...', '');
+
+  try {
+    const location = await geocodeWeatherLocation(locationQuery);
+    const weatherData = await fetchWeatherForecast(location);
+    const metrics = buildWeatherMetrics(weatherData);
+
+    setGenStatus('<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 2/4 — Gemini resumindo a previsão em 8 slides...', '');
+    const parsed = await callGeminiWeatherCarouselText(weatherData, metrics, context, tone);
+    const parsedSlides = Array.isArray(parsed.slides) ? parsed.slides.slice(0, slideCount) : [];
+    if (!parsedSlides.length) throw new Error('Gemini não retornou slides de previsão.');
+
+    while (parsedSlides.length < slideCount) {
+      parsedSlides.push({
+        hook: `Previsão em ${weatherData.location.name}<br><em>segue no radar.</em>`,
+        complement: `Chuva da semana: <strong>${formatMm(metrics.precipTotal7d)}</strong>`,
+        bullets: [
+          { icon: 'water_drop', text: `${formatMm(metrics.precipTotal7d)} em 7 dias.` },
+          { icon: 'schedule', text: `${metrics.sprayCounts.Ideal || 0} dias mais favoráveis.` },
+        ],
+        imagePrompt: '',
+      });
+    }
+    sanitizeWeatherLocationMentions(parsedSlides, weatherData);
+    sanitizeWeatherExpertLanguage(parsedSlides, metrics);
+    sanitizeWeatherConclusionSlide(parsedSlides);
+
+    const timestamp = Date.now();
+    const carouselSlides = [];
+    const fallbackBg = buildWeatherBackgroundDataUrl(weatherData);
+    const chipDirectives = getActiveChipDirectives().join(' ');
+    let sharedBgImage = genImageBase64 ? `data:${genImageMime || 'image/jpeg'};base64,${genImageBase64}` : fallbackBg;
+    let sharedImagePrompt = '';
+    if (!genImageBase64) {
+      const firstSlidePrompt = parsedSlides[0] && parsedSlides[0].imagePrompt ? parsedSlides[0].imagePrompt : '';
+      const weatherMoodPrompt = buildWeatherImageMoodPrompt(weatherData, metrics);
+      sharedImagePrompt = firstSlidePrompt
+        ? `${weatherMoodPrompt}\n\nAdditional composition idea from the slide copy: ${firstSlidePrompt}`
+        : weatherMoodPrompt;
+      setGenStatus('<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 3/4 — Gerando uma imagem base para o carrossel...', '');
+      const img = await callGeminiImage(sharedImagePrompt, chipDirectives);
+      sharedBgImage = `data:${img.mime};base64,${img.base64}`;
+    } else {
+      sharedImagePrompt = 'Imagem enviada pelo usuário.';
+    }
+
+    for (let i = 0; i < parsedSlides.length; i++) {
+      const s = parsedSlides[i];
+      const chartType = i === 3 ? 'tempOnly' : (i === 4 ? 'rainOnly' : '');
+      const isConclusion = i === slideCount - 1;
+      const bgImage = sharedBgImage || fallbackBg;
+      const imagePrompt = i === 0 ? sharedImagePrompt : `Imagem base reaproveitada do slide 1. ${sharedImagePrompt}`;
+
+      carouselSlides.push({
+        id:       `weather-carousel-slide-${timestamp}-${i}`,
+        bg:       `bg-weather-carousel-${timestamp}-${i}`,
+        slideId:  `slide-weather-carousel-${timestamp}-${i}`,
+        title:    `Slide ${i + 1}`,
+        sub:      'Previsão',
+        filename: `cropware_previsao_${timestamp}_${i + 1}.jpg`,
+        type:     'weather-carousel-slide',
+        style:    'moldura',
+        accent:   '#8bf592',
+        format:   'feed',
+        isGenerated: true,
+        bgImage,
+        theme: weatherData.location.name,
+        tone,
+        imagePrompt,
+        hookHTML:       (s.hook || '').replace(/\n/g, '<br>'),
+        complementHTML: (s.complement || '').replace(/\n/g, '<br>'),
+        weatherConclusionHTML: isConclusion ? buildWeatherConclusionHTMLFromSlide(s) : '',
+        bullets:        Array.isArray(s.bullets) ? s.bullets.slice(0, 3).map(b => ({ ...b, text: compactWeatherBulletText(b.text, chartType ? 8 : 9) })) : [],
+        slideIndex:     i,
+        weatherChartSvg: chartType ? buildWeatherChartSvg(weatherData, chartType) : '',
+        overlayColor: 'transparent',
+        overlayOpacity: 0,
+        overlayDirection: 'full',
+        frameColor: '#1a1b1a',
+        frameTextMode: 'light',
+        glassOpacity: 0,
+        glassBlur: 26,
+        logoEnabled: true,
+        logoPos: 'br',
+        siteEnabled: true,
+        sitePos: 'bl',
+        brandMode: 'light',
+        siteMode: 'light',
+        signalPhotoTexture: 'assets/13-texture.webp',
+        signalPhotoTextureIntensity: 50,
+        signalPhotoTextureInvert: false,
+        signalPhotoTextureBlendMode: 'overlay',
+        hookScale: 1,
+        complementScale: 1,
+        bulletsScale: 1,
+        bulletIconScale: 1,
+        bulletIconsVisible: false,
+        signalAlign: 'left',
+      });
+      applyWeatherForecastVisualDefaults(carouselSlides[carouselSlides.length - 1], { force: true, chartType });
+    }
+
+    setGenStatus('<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>Passo 4/4 — Montando carrossel de previsão...', 'success');
+
+    const items = getModeItems();
+    const legendsArr = getModeLegends();
+    const oldestIdx = items.findIndex(c => c.isGenerated);
+    if (oldestIdx >= 0 && items.filter(c => c.isGenerated).length >= MAX_POSTS) {
+      const oldCarousel = items[oldestIdx];
+      deletePostFromSupabase(oldCarousel.id);
+      oldCarousel.slides.forEach(s => {
+        const el = document.getElementById(s.slideId);
+        if (el) el.remove();
+      });
+      items.splice(oldestIdx, 1);
+      legendsArr.splice(oldestIdx, 1);
+    }
+
+    const hashtagsLower = (parsed.hashtags || '#clima #agro #previsao #cropware').toLowerCase();
+    const legendText = (parsed.legend || '') + (hashtagsLower ? '\n\n' + hashtagsLower : '');
+    const carouselData = {
+      id:          `weather-carousel-gen-${timestamp}`,
+      type:        'weather-carousel',
+      title:       parsed.title || `Previsão - ${weatherData.location.name}`,
+      theme:       weatherData.location.name,
+      tone,
+      isGenerated: true,
+      slides:      carouselSlides,
+      currentSlide: 0,
+      createdAt:   timestamp,
+      weatherData,
+      weatherMetrics: metrics,
+      weatherContext: context,
+      slideCount,
+    };
+
+    const newIdx = renderGeneratedCarousel(carouselData, legendText);
+    saveSession();
+
+    setTimeout(() => {
+      closeGenerator();
+      setCurrentSlide(0);
+      buildSidebar();
+      buildDots();
+      goTo(newIdx);
+      document.getElementById('genTheme').value = '';
+      const ctxEl = document.getElementById('genWeatherContext');
+      if (ctxEl) ctxEl.value = '';
+      document.getElementById('genPreview').style.display = 'none';
+      document.getElementById('genPreview').src = '';
+      const inner = document.querySelector('.gen-dropzone-inner');
+      if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
+      genImageBase64 = null;
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ph ph-sparkle sz-18"></i>Gerar Previsão';
+      setGenStatus('', '');
+    }, 600);
+  } catch (e) {
+    console.error('generateWeatherCarousel error:', e);
+    setGenStatus('<i class="ph ph-warning-octagon sz-18" style="margin-right:6px"></i>Erro: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ph ph-sparkle sz-18"></i>Gerar Previsão';
   }
 }
 
@@ -17208,7 +18972,9 @@ async function regenerateText() {
     const adContext = platform === 'instagram-ads'
       ? { objective: post.adObjective, audience: post.adAudience, cta: post.adPreferredCTA || post.adCTA }
       : null;
-    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction, platform, { adContext });
+    const feature = platform === 'features' ? getFeatureById(post.featureId) : null;
+    const featureContext = feature ? formatFeaturePromptContext(feature, post.theme || '') : null;
+    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction, platform, { adContext, featureContext });
     pushUndoSnapshot(post, {
       kind: 'text',
       hookHTML:       post.hookHTML,
@@ -17277,10 +19043,12 @@ async function regenerateLegend() {
       : null;
     // News-post: passa a pauta consolidada salva pra que o prompt tenha os fatos preservados
     const newsContext = platform === 'news' ? (post.newsPauta || null) : null;
+    const feature = platform === 'features' ? getFeatureById(post.featureId) : null;
+    const featureContext = feature ? formatFeaturePromptContext(feature, post.theme || '') : null;
     const themeForRegen = platform === 'news' && post.newsPauta && post.newsPauta.manchete
       ? post.newsPauta.manchete
       : (post.theme || post.title || '');
-    const parsed = await callGeminiText(themeForRegen, post.tone || 'casual', null, null, direction, platform, { adContext, newsContext });
+    const parsed = await callGeminiText(themeForRegen, post.tone || 'casual', null, null, direction, platform, { adContext, newsContext, featureContext });
     pushUndoSnapshot(post, { kind: 'legend', legend: getActiveLegend() });
     applyInstagramAdsFields(post, parsed, adContext);
     setActiveLegend(normalizePanelText(buildPanelTextFromParsed(parsed, platform), post.type));
@@ -17420,6 +19188,11 @@ function hideDownloadLoading() {
       <button class="gen-close" onclick="closeGenerator()"><i class="ph ph-x"></i></button>
     </div>
     <div class="gen-body">
+      <div class="gen-group" id="genFeatureGroup" style="display:none">
+        <label>Funcionalidade</label>
+        <select id="genFeatureSelect" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:14px;font-family:'Inter Tight',sans-serif;"></select>
+      </div>
+
       <div class="gen-group">
         <label id="genThemeLabel">Tema / Contexto do Post</label>
         <textarea id="genTheme" rows="3" placeholder="Ex: colheita de soja com variação por talhão, foco em decisão baseada em dado..."></textarea>
@@ -17429,6 +19202,11 @@ function hideDownloadLoading() {
           <button type="button" class="gen-chip" data-chip="close-up">Plano Fechado</button>
           <button type="button" class="gen-chip" data-chip="institutional">Cena Institucional</button>
         </div>
+      </div>
+
+      <div class="gen-group" id="genWeatherContextGroup" style="display:none">
+        <label>Contexto agrícola <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;">(opcional)</span></label>
+        <textarea id="genWeatherContext" rows="2" placeholder="Ex: soja em fase vegetativa, planejamento de visitas, semana de campo, acompanhamento de áreas..."></textarea>
       </div>
 
       <div class="gen-group" id="genLinksGroup" style="display:none">
