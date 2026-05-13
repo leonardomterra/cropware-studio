@@ -5344,27 +5344,37 @@
   .legend-title-copy {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    flex-direction: row-reverse;
     gap: 6px;
     min-height: 34px;
-    background: #ffffff;
+    background: transparent;
     color: #64748b;
-    border: 1px solid rgba(203, 213, 225, 0.58);
+    border: 0;
     font-family: 'Inter Tight', sans-serif;
     font-size: 13px;
     font-weight: 400;
-    padding: 8px 14px;
+    padding: 6px 0;
     border-radius: 4px;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    transition: color 0.15s, text-decoration-color 0.15s;
     white-space: nowrap;
+    text-decoration: none;
   }
-  .legend-title-copy:hover { background: #f8fafc; border-color: rgba(148, 163, 184, 0.32); color: #334155; }
-  .legend-title-copy.copied { color: var(--green); background: #fff; border-color: rgba(74,162,118,0.24); }
+  .legend-title-copy span {
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .legend-title-copy:hover { background: transparent; color: #334155; }
+  .legend-title-copy:hover span { border-bottom-color: currentColor; }
+  .legend-title-copy.copied { color: var(--green); background: transparent; }
   .legend-copy-row {
     display: flex;
-    justify-content: center;
-    padding-top: 8px;
+    justify-content: flex-end;
+    padding-top: 10px;
+  }
+  #legendTitlePanel .legend-copy-row {
+    padding-bottom: 12px;
   }
   .legend-modal .gen-actions { display: none; }
 
@@ -6154,7 +6164,6 @@
   }
 
   .cw-btn--light,
-  .legend-title-copy,
   .btn-ghost,
   .pc-upload-btn {
     background: var(--btn-light-bg);
@@ -6163,7 +6172,6 @@
   }
 
   .cw-btn--light:hover,
-  .legend-title-copy:hover,
   .btn-ghost:hover,
   .pc-upload-btn:hover {
     background: var(--btn-light-bg-hover);
@@ -8592,7 +8600,7 @@ function updateCarouselLegend() {
   if (hashtagsContainer) hashtagsContainer.innerHTML = '';
   const btn = document.getElementById('copyBtn');
   if (btn) {
-    btn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
+    btn.innerHTML = '<i class="ph ph-copy sz-16"></i><span>Copiar</span>';
     btn.classList.remove('copied');
   }
 }
@@ -14804,7 +14812,7 @@ function updateLegend(idx) {
   if (hashtagsContainer) hashtagsContainer.innerHTML = '';
   const btn = document.getElementById('copyBtn');
   if (btn) {
-    btn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
+    btn.innerHTML = '<i class="ph ph-copy sz-16"></i><span>Copiar</span>';
     btn.classList.remove('copied');
   }
   // Painel de título de carrossel — só aparece em modos LinkedIn (tradicional/pessoal) e Tendência.
@@ -14825,7 +14833,7 @@ function updateLegend(idx) {
     titleText.textContent = (carousel && (carousel.title || carousel.theme)) || '';
   }
   if (titleBtn) {
-    titleBtn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
+    titleBtn.innerHTML = '<i class="ph ph-copy sz-16"></i><span>Copiar</span>';
     titleBtn.classList.remove('copied');
   }
 }
@@ -14847,7 +14855,7 @@ function copyCarouselTitle() {
     btn.innerHTML = '<i class="ph ph-check sz-16"></i>Copiado';
     btn.classList.add('copied');
     setTimeout(() => {
-      btn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
+      btn.innerHTML = '<i class="ph ph-copy sz-16"></i><span>Copiar</span>';
       btn.classList.remove('copied');
     }, 2000);
   });
@@ -14862,7 +14870,7 @@ function copyLegend() {
     btn.innerHTML = '<i class="ph ph-check sz-16"></i>Copiado';
     btn.classList.add('copied');
     setTimeout(() => {
-      btn.innerHTML = '<i class="ph ph-copy sz-16"></i>Copiar';
+      btn.innerHTML = '<i class="ph ph-copy sz-16"></i><span>Copiar</span>';
       btn.classList.remove('copied');
     }, 2000);
   });
@@ -15712,9 +15720,11 @@ function buildCropwarePositioningContext(channel) {
 - Fale com profissionais de geracao de demanda, desenvolvimento de mercado, promotoria tecnica, assistencia tecnica comercial, consultoria tecnica de campo, analise de mercado/campo e validacao de tecnologias agricolas.
 - Contexto de empresas: sementes, especialidades, fertilizantes, defensivos, biologicos e tecnologias agricolas.
 - Comunique a Cropware como uma plataforma que transforma visitas, areas demonstrativas, avaliacoes e dados tecnicos em inteligencia de mercado.
-- Conceitos preferenciais: CRM tecnico do agro, sistema operacional de quem constroi mercado no campo, visitas tecnicas virando inteligencia, dados de campo sustentando decisoes comerciais, geracao de demanda com rastreabilidade, desenvolvimento de mercado com organizacao, menos informacao perdida em WhatsApp, planilhas e fotos soltas.
-- Evite posicionar como software para fazenda, aplicativo para produtor, controle da propriedade ou gestao agricola generica.
-- Prefira: geracao de demanda, desenvolvimento de mercado, visitas tecnicas, areas demonstrativas, validacao tecnica, inteligencia de campo, dados de campo, evidencias tecnicas, historico por cliente/regiao/talhao, posicionamento tecnico, suporte a decisao comercial e CRM tecnico do agro.
+- Conceito central: CDM (Customer Development Management) para o agro, ou seja, gestao do desenvolvimento de mercado no campo.
+- Conceitos preferenciais: CDM agro, desenvolvimento de mercado, geracao de demanda com rastreabilidade, sistema operacional de quem constroi mercado no campo, visitas tecnicas virando inteligencia, dados de campo sustentando decisoes comerciais, menos informacao perdida em WhatsApp, planilhas e fotos soltas.
+- Evite posicionar como CRM, software para fazenda, aplicativo para produtor, controle da propriedade ou gestao agricola generica.
+- Prefira: CDM, desenvolvimento de mercado, geracao de demanda, visitas tecnicas, areas demonstrativas, validacao tecnica, inteligencia de campo, dados de campo, evidencias tecnicas, historico por cliente/regiao/talhao, posicionamento tecnico e suporte a decisao comercial.
+- PROIBIDO usar "CRM tecnico", "CRM do agro", "CRM agricola", "CRM tecnico do agro" ou hashtags derivadas como #CRMTecnicoAgro. Se precisar de hashtag conceitual, prefira #CDM, #DesenvolvimentoDeMercado, #GeracaoDeDemanda, #InteligenciaDeCampo ou #DadosDeCampo.
 - Respeite sempre o tema informado pelo usuario. A Cropware deve entrar como analogia natural ou solucao coerente, nunca como encaixe artificial.`;
 
   const contexts = {
@@ -15795,18 +15805,18 @@ HOOK (texto grande do criativo):
 - 1 ou 2 linhas no total
 - A ultima parte OBRIGATORIAMENTE envolvida em <em>...</em>
 - Frase curta, beneficio claro, leitura imediata
-- Maximo 6 palavras por linha
+- Maximo 8 palavras por linha
 - Sem hashtags, sem emoji, sem tom de legenda
 - Sempre terminar com ponto final
 
 COMPLEMENT (apoio menor):
-- 1-2 linhas, maximo 36 caracteres cada
+- 1-2 linhas, maximo 50 caracteres cada
 - Use <strong> para destacar palavras-chave
 - Complementa o hook com promessa, contexto ou desdobramento pratico
 
 BULLETS:
 - Exatamente 3 bullets
-- Cada text com no maximo 6 palavras
+- Cada text com no maximo 8 palavras
 - Cada bullet termina com ponto final
 - Sem repetir o hook
 - Escolha icones apenas desta lista:
@@ -15950,7 +15960,7 @@ HOOK (texto grande, impactante):
 - PONTO FINAL OBRIGATÓRIO: o hook SEMPRE termina com ponto final ("."). O último caractere dentro do </em> tem que ser um ".". Sem exceção. Se terminar sem ponto, o hook está ERRADO
 - Regra prática: se você lesse o hook em voz alta seguido, onde você pausaria naturalmente? Essa pausa vira vírgula. No final da frase, sempre ponto
 - NÃO precisa ser pergunta. Prefira afirmação que entrega valor
-- Máximo 6 palavras por linha
+- Máximo 8 palavras por linha
 - Exemplos BONS (note a pontuação natural, encadeamento, minúscula na continuação, e remate que vende o app):
   · "Cada talhão, <em>falando por si.</em>"
   · "A decisão certa <br><em>já tá no seu histórico.</em>"
@@ -15965,14 +15975,14 @@ HOOK (texto grande, impactante):
 - Tom direto, assertivo, concreto
 
 COMPLEMENT (texto de apoio menor):
-- 1-2 linhas, máximo 36 caracteres cada
+- 1-2 linhas, máximo 50 caracteres cada
 - Use <strong> para destacar palavras-chave
 - Complementa o hook com insight ou conclusão
 - NUNCA inclua números, porcentagens ou estatísticas inventadas
 
 BULLETS (3 pontos de apoio, iconizados — aparecem abaixo do complement):
 - Exatamente 3 bullets, curtos e diretos
-- Cada "text": máximo 6 palavras, afirmação concreta (benefício ou fato)
+- Cada "text": máximo 8 palavras, afirmação concreta (benefício ou fato)
 - PROIBIDO inventar estatísticas, porcentagens ou números sem fonte (ex: "80% do potencial", "3x mais rápido"). Use benefícios qualitativos
 - PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
 - NÃO repita palavras ou ideias do hook/complement
@@ -16049,17 +16059,17 @@ HOOK:
 - 1 ou 2 linhas no total
 - A última parte obrigatoriamente em <em>...</em>
 - Frase afirmativa, concreta, com pontuação natural e ponto final
-- Máximo 6 palavras por linha
+- Máximo 8 palavras por linha
 - Não use "funcionalidade", "feature" ou "módulo" no hook se puder falar do uso prático
 
 COMPLEMENT:
-- 1-2 linhas, máximo 36 caracteres cada
+- 1-2 linhas, máximo 50 caracteres cada
 - Use <strong> para destacar a ação/benefício principal
 - Deve explicar o uso real da funcionalidade
 
 BULLETS:
 - Exatamente 3 bullets
-- Cada text com máximo 6 palavras e ponto final
+- Cada text com máximo 8 palavras e ponto final
 - Cada bullet deve ser uma ação/resultado prático dentro do app
 - Ícones permitidos:
 check_circle, task_alt, trending_up, trending_down, schedule, bolt, savings,
@@ -16494,15 +16504,15 @@ HOOK (texto grande, impactante):
 - A última parte OBRIGATORIAMENTE envolvida em <em>...</em> (fica verde)
 - CAPITALIZAÇÃO: só a PRIMEIRA palavra do hook começa com maiúscula
 - PONTUAÇÃO NATURAL OBRIGATÓRIA: vírgula de respiro, ponto final no fim
-- Máximo 6 palavras por linha
+- Máximo 8 palavras por linha
 
 COMPLEMENT (texto de apoio menor):
-- 1-2 linhas, máximo 36 caracteres cada
+- 1-2 linhas, máximo 50 caracteres cada
 - Use <strong> para destacar palavras-chave
 
 BULLETS (3 pontos de apoio):
 - Exatamente 3 bullets, curtos e diretos
-- Cada "text": máximo 6 palavras
+- Cada "text": máximo 8 palavras
 - PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
 - Cada "icon": nome exato de Material Symbol da lista permitida
 
@@ -16584,11 +16594,11 @@ PARA CADA SLIDE:
 HOOK:
 - 1 ou 2 linhas
 - Última parte em <em>...</em>
-- Máximo 6 palavras por linha
+- Máximo 8 palavras por linha
 - Frase afirmativa, com pontuação natural e ponto final
 
 COMPLEMENT:
-- 1-2 linhas, máximo 36 caracteres cada
+- 1-2 linhas, máximo 50 caracteres cada
 - Use <strong> para destacar ação ou benefício
 
 BULLETS:
@@ -16662,16 +16672,16 @@ HOOK (texto grande):
 - 1 ou 2 linhas no total
 - A ultima parte OBRIGATORIAMENTE envolvida em <em>...</em>
 - Frase curta, beneficio claro, leitura imediata
-- Maximo 6 palavras por linha
+- Maximo 8 palavras por linha
 - Sem hashtags, sem emoji
 - Sempre terminar com ponto final
 
 COMPLEMENT (apoio menor):
-- 1-2 linhas, maximo 36 caracteres cada
+- 1-2 linhas, maximo 50 caracteres cada
 - Use <strong> para destacar palavras-chave
 
 BULLETS (3 pontos de apoio por slide):
-- Exatamente 3 bullets, cada text com no maximo 6 palavras
+- Exatamente 3 bullets, cada text com no maximo 8 palavras
 - Ponto final obrigatorio em cada bullet
 - Escolha icones apenas desta lista:
 check_circle, task_alt, trending_up, trending_down, schedule, bolt, savings,
@@ -16744,7 +16754,7 @@ HOOK (texto grande, impactante):
 - O hook inteiro é UMA frase afirmativa, lida de cima pra baixo como continuação natural
 - CAPITALIZAÇÃO: só a PRIMEIRA palavra do hook começa com maiúscula. A segunda linha começa com MINÚSCULA
 - PONTUAÇÃO NATURAL (OBRIGATÓRIA): vírgula de respiro, ponto final no fim
-- Máximo 6 palavras por linha
+- Máximo 8 palavras por linha
 - Tom consultivo e estratégico — foque em dados de campo, evidencias tecnicas, desenvolvimento de mercado e decisao comercial baseada em observacao real
 - Exemplos BONS para LinkedIn:
   · "O custo do achismo <br><em>aparece na colheita.</em>"
@@ -16752,13 +16762,13 @@ HOOK (texto grande, impactante):
   · "Gestão preditiva <br><em>já não é tendência — é padrão.</em>"
 
 COMPLEMENT (texto de apoio menor):
-- 1-2 linhas, máximo 36 caracteres cada
+- 1-2 linhas, máximo 50 caracteres cada
 - Use <strong> para destacar palavras-chave
 - Complementa o hook com insight tecnico, consequencia pratica ou leitura de mercado
 
 BULLETS (3 pontos de apoio, iconizados):
 - Exatamente 3 bullets, curtos e diretos
-- Cada "text": máximo 6 palavras, afirmação concreta com beneficio qualitativo ou evidencia tecnica
+- Cada "text": máximo 8 palavras, afirmação concreta com beneficio qualitativo ou evidencia tecnica
 - PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
 - NÃO repita palavras ou ideias do hook/complement
 - Cada "icon": nome exato de um Material Symbol da lista permitida
@@ -16835,16 +16845,16 @@ HOOK (texto grande, impactante):
 - A última parte OBRIGATORIAMENTE envolvida em <em>...</em> (fica verde)
 - CAPITALIZAÇÃO: só a PRIMEIRA palavra começa com maiúscula
 - PONTUAÇÃO NATURAL OBRIGATÓRIA
-- Máximo 6 palavras por linha
+- Máximo 8 palavras por linha
 - Tom consultivo — dados de campo, evidencia tecnica, organizacao da rotina e decisao comercial baseada em contexto
 
 COMPLEMENT (texto de apoio menor):
-- 1-2 linhas, máximo 36 caracteres cada
+- 1-2 linhas, máximo 50 caracteres cada
 - Use <strong> para destacar palavras-chave
 
 BULLETS (3 pontos de apoio):
 - Exatamente 3 bullets, curtos e diretos
-- Cada "text": máximo 6 palavras, com beneficio qualitativo, evidencia tecnica ou insight pratico
+- Cada "text": máximo 8 palavras, com beneficio qualitativo, evidencia tecnica ou insight pratico
 - PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
 - Cada "icon": nome exato de Material Symbol da lista permitida
 
@@ -16932,7 +16942,7 @@ HOOK (texto grande, impactante):
 - O hook inteiro é UMA frase afirmativa, lida de cima pra baixo como continuação natural
 - CAPITALIZAÇÃO: só a PRIMEIRA palavra do hook começa com maiúscula. A segunda linha começa com MINÚSCULA
 - PONTUAÇÃO NATURAL (OBRIGATÓRIA): vírgula de respiro, ponto final no fim
-- Máximo 6 palavras por linha
+- Máximo 8 palavras por linha
 - Tom de CONTEÚDO TÉCNICO — foque em insights do setor, tendências, provocações estratégicas
 - PROIBIDO primeira pessoa no hook
 - Exemplos BONS:
@@ -16946,14 +16956,14 @@ HOOK (texto grande, impactante):
   · "Venho observando que..." (narrador em 1ª pessoa)
 
 COMPLEMENT (texto de apoio menor):
-- 1-2 linhas, máximo 36 caracteres cada
+- 1-2 linhas, máximo 50 caracteres cada
 - Use <strong> para destacar palavras-chave
 - Complementa o hook com um dado qualitativo, uma consequência prática ou um desdobramento técnico
 - PROIBIDO primeira pessoa
 
 BULLETS (3 pontos de apoio, iconizados):
 - Exatamente 3 bullets, curtos e diretos
-- Cada "text": máximo 6 palavras, afirmação técnica ou insight prático
+- Cada "text": máximo 8 palavras, afirmação técnica ou insight prático
 - PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
 - NÃO repita palavras ou ideias do hook/complement
 - PROIBIDO primeira pessoa nos bullets
@@ -17048,18 +17058,18 @@ HOOK (texto grande, impactante):
 - A última parte OBRIGATORIAMENTE envolvida em <em>...</em> (fica verde)
 - CAPITALIZAÇÃO: só a PRIMEIRA palavra começa com maiúscula
 - PONTUAÇÃO NATURAL OBRIGATÓRIA
-- Máximo 6 palavras por linha
+- Máximo 8 palavras por linha
 - Tom de CONTEÚDO TÉCNICO — insights do setor, tendências, provocações estratégicas
 - PROIBIDO primeira pessoa nos hooks
 
 COMPLEMENT (texto de apoio menor):
-- 1-2 linhas, máximo 36 caracteres cada
+- 1-2 linhas, máximo 50 caracteres cada
 - Use <strong> para destacar palavras-chave
 - PROIBIDO primeira pessoa
 
 BULLETS (3 pontos de apoio):
 - Exatamente 3 bullets, curtos e diretos
-- Cada "text": máximo 6 palavras, insight técnico ou prático
+- Cada "text": máximo 8 palavras, insight técnico ou prático
 - PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
 - PROIBIDO primeira pessoa nos bullets
 - Cada "icon": nome exato de Material Symbol da lista permitida
@@ -18115,15 +18125,15 @@ HOOK (texto grande, impactante):
 - A última parte OBRIGATORIAMENTE envolvida em <em>...</em> (fica verde)
 - CAPITALIZAÇÃO: só a PRIMEIRA palavra do hook começa com maiúscula
 - PONTUAÇÃO NATURAL OBRIGATÓRIA: vírgula de respiro, ponto final no fim
-- Máximo 6 palavras por linha
+- Máximo 8 palavras por linha
 
 COMPLEMENT (texto de apoio menor):
-- 1-2 linhas, máximo 36 caracteres cada
+- 1-2 linhas, máximo 50 caracteres cada
 - Use <strong> para destacar palavras-chave
 
 BULLETS (3 pontos de apoio):
 - Exatamente 3 bullets, curtos e diretos
-- Cada "text": máximo 6 palavras
+- Cada "text": máximo 8 palavras
 - PONTO FINAL OBRIGATÓRIO: cada bullet SEMPRE termina com "." — sem exceção
 - Cada "icon": nome exato de Material Symbol da lista permitida
 
@@ -19162,7 +19172,7 @@ function hideDownloadLoading() {
           <div class="legend-title-text" id="legendTitleText" contenteditable="true" spellcheck="false"></div>
         </div>
         <div class="legend-copy-row">
-          <button type="button" class="legend-title-copy" id="copyTitleBtn" onclick="copyCarouselTitle()" title="Copiar título"><i class="ph ph-copy sz-16"></i>Copiar</button>
+          <button type="button" class="legend-title-copy" id="copyTitleBtn" onclick="copyCarouselTitle()" title="Copiar título"><i class="ph ph-copy sz-16"></i><span>Copiar</span></button>
         </div>
       </div>
       <div class="legend-panel">
@@ -19171,7 +19181,7 @@ function hideDownloadLoading() {
             <div class="legend-text" id="legendText"></div>
           </div>
           <div class="legend-copy-row">
-            <button type="button" class="legend-title-copy" id="copyBtn" onclick="copyLegend()" title="Copiar legenda"><i class="ph ph-copy sz-16"></i>Copiar</button>
+            <button type="button" class="legend-title-copy" id="copyBtn" onclick="copyLegend()" title="Copiar legenda"><i class="ph ph-copy sz-16"></i><span>Copiar</span></button>
           </div>
           <div class="hashtags" id="hashtagsContainer"></div>
         </div>
