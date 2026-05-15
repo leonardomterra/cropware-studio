@@ -166,8 +166,8 @@
     --muted: rgba(15,23,42,0.62);
     --btn-height: 36px;
     --btn-radius: 4px;
-    --btn-font-size: 12px;
-    --btn-font-weight: 400;
+    --btn-font-size: 14px;
+    --btn-font-weight: 300;
     --btn-pad-x: 13px;
     --btn-gap: 8px;
     --btn-dark-bg: #111827;
@@ -4615,6 +4615,18 @@
   .pc-logo-icon-preview .ph {
     font-size: 17px;
   }
+  .cw-brand-icon {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    flex-shrink: 0;
+    background: currentColor;
+    -webkit-mask: url('icon-cropware.svg') center / contain no-repeat;
+    mask: url('icon-cropware.svg') center / contain no-repeat;
+  }
+  .pc-logo-icon-preview .cw-brand-icon {
+    font-size: 17px;
+  }
   .pc-select {
     width: 100%;
     min-width: 0;
@@ -4626,7 +4638,7 @@
     border-radius: 4px;
     font-family: 'Inter Tight', sans-serif;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 300;
     color: var(--text);
     cursor: pointer;
     appearance: none;
@@ -4731,6 +4743,9 @@
     color: white;
   }
   .pc-icon-cell .ph {
+    font-size: 20px;
+  }
+  .pc-icon-cell .cw-brand-icon {
     font-size: 20px;
   }
 
@@ -4887,8 +4902,9 @@
     transition: all 140ms;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 5px;
+    text-align: left;
   }
   .pc-toggle button:hover { color: var(--text); }
   .pc-toggle button.active {
@@ -5622,8 +5638,8 @@
     border: none;
     border-radius: 6px;
     font-family: 'Inter Tight', sans-serif;
-    font-size: 13px;
-    font-weight: 400;
+    font-size: 14px;
+    font-weight: 300;
     cursor: pointer;
     transition: background 0.15s;
     display: inline-flex;
@@ -5681,8 +5697,8 @@
     background: transparent;
     color: #475569;
     font-family: 'Inter Tight', sans-serif;
-    font-size: 13px;
-    font-weight: 400;
+    font-size: 14px;
+    font-weight: 300;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -6218,18 +6234,18 @@
   .pc-upload-btn {
     min-height: var(--btn-height);
     border-radius: var(--btn-radius);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Inter Tight', sans-serif;
     font-size: var(--btn-font-size);
     font-weight: var(--btn-font-weight);
-    letter-spacing: 0.06em;
-    line-height: 1;
+    letter-spacing: 0;
+    line-height: 1.2;
     padding: 8px var(--btn-pad-x);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--btn-gap);
     cursor: pointer;
-    text-transform: uppercase;
+    text-transform: none;
     transition: background 140ms, border-color 140ms, color 140ms, opacity 140ms;
     box-sizing: border-box;
   }
@@ -6378,7 +6394,7 @@
     box-sizing: border-box;
     font-family: 'Inter Tight', sans-serif;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 300;
     color: var(--text);
     background: white;
     border: 1px solid var(--border);
@@ -6455,12 +6471,12 @@
   .studio-mode-menu-group {
     padding: 7px 9px 4px;
     color: #94a3b8;
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 12px;
     font-weight: 400;
-    letter-spacing: 0.08em;
-    line-height: 1;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    line-height: 1.2;
+    text-transform: none;
   }
   .studio-mode-menu-btn {
     width: 100%;
@@ -6560,12 +6576,12 @@
   .cw-select-menu-group {
     padding: 7px 9px 4px;
     color: #94a3b8;
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 12px;
     font-weight: 400;
-    letter-spacing: 0.08em;
-    line-height: 1;
-    text-transform: uppercase;
+    letter-spacing: 0;
+    line-height: 1.2;
+    text-transform: none;
   }
   .cw-select-option {
     width: 100%;
@@ -7490,7 +7506,7 @@
             <span class="pc-label">Escala do Ícone</span>
             <span class="pc-value-pill" id="pcLogoCropwareIconScaleValue">100%</span>
           </div>
-          <input type="range" class="pc-range" id="pcLogoCropwareIconScale" min="60" max="150" step="5" value="100" data-value-label="pcLogoCropwareIconScaleValue">
+          <input type="range" class="pc-range" id="pcLogoCropwareIconScale" min="60" max="140" step="5" value="100" data-value-label="pcLogoCropwareIconScaleValue">
         </div>
       </div>
     </div>
@@ -10803,7 +10819,7 @@ function renderClassicStyle(postData) {
       <div class="post-bullets">
         ${bullets.map((b, i) => `
           <div class="post-bullet" data-bullet-idx="${i}">
-            ${showBulletIcons ? `<button type="button" class="post-bullet-icon" data-bullet-icon="${i}" title="Trocar ícone">${LIQUID_GLASS_HTML}<i class="ph ph-${escapeHTML(resolveIconName(b.icon))}"></i></button>` : ''}
+            ${showBulletIcons ? `<button type="button" class="post-bullet-icon" data-bullet-icon="${i}" title="Trocar ícone">${LIQUID_GLASS_HTML}${renderIconMarkup(b.icon)}</button>` : ''}
             <span class="post-bullet-text" contenteditable="true" spellcheck="false" data-bullet-text="${i}">${escapeHTML(b.text || '')}</span>
           </div>
         `).join('')}
@@ -11401,7 +11417,7 @@ function renderSignalStyle(postData) {
           <div class="signal-card-inner-overlay" style="${overlayBg ? 'background:' + overlayBg : ''}"></div>
           <div class="signal-card-tint" style="background:${signalCardTint};"></div>
           ${liquidGlass}
-          ${showBulletIcons ? `<button type="button" class="signal-card-icon${iconExtraClass}" data-bullet-icon="${i}" title="Trocar ícone">${liquidGlass}<i class="ph ph-${escapeHTML(resolveIconName(b.icon))}"></i></button>` : ''}
+          ${showBulletIcons ? `<button type="button" class="signal-card-icon${iconExtraClass}" data-bullet-icon="${i}" title="Trocar ícone">${liquidGlass}${renderIconMarkup(b.icon)}</button>` : ''}
           <span class="signal-card-text${textExtraClass}" contenteditable="true" spellcheck="false" data-bullet-text="${i}">${escapeHTML(b.text || '')}</span>
         </div>
       `).join('')}
@@ -11719,8 +11735,8 @@ function syncLogoCropwareIconButton(post) {
   const iconName = resolveIconName((post && post.logoCropwareIcon) || 'sparkle');
   const preview = document.getElementById('pcLogoCropwareIconPreview');
   const label = document.getElementById('pcLogoCropwareIconLabel');
-  if (preview) preview.innerHTML = `<i class="ph ph-${escapeHTML(iconName)}"></i>`;
-  if (label) label.textContent = iconName;
+  if (preview) preview.innerHTML = renderIconMarkup(iconName);
+  if (label) label.textContent = isCropwareIconName(iconName) ? 'cropware' : iconName;
 }
 
 function getActiveLegend() {
@@ -12592,7 +12608,23 @@ function applyColorChoice(color, targetOverride) {
 }
 
 // ── ICON PICKER (bullets) ──
+const CROPWARE_ICON_NAME = 'cropware-logo';
+
+function isCropwareIconName(name) {
+  return resolveIconName(name) === CROPWARE_ICON_NAME;
+}
+
+function renderIconMarkup(iconName) {
+  const icon = resolveIconName(iconName || 'sparkle');
+  if (icon === CROPWARE_ICON_NAME) {
+    return `<span class="cw-brand-icon" aria-hidden="true"></span>`;
+  }
+  return `<i class="ph ph-${escapeHTML(icon)}"></i>`;
+}
+
 const BULLET_ICONS = [
+  // Marca
+  CROPWARE_ICON_NAME,
   // Status / feedback
   'check-circle', 'check-square', 'x-circle', 'warning', 'warning-circle', 'info', 'question', 'checks',
   // Dados / analytics
@@ -12632,6 +12664,8 @@ const BULLET_ICONS = [
 ];
 // Mapa de retrocompatibilidade: ícones antigos (Material) são remapeados ao renderizar
 const ICON_COMPAT = {
+  cropware: CROPWARE_ICON_NAME,
+  'icon-cropware': CROPWARE_ICON_NAME,
   check_circle: 'check-circle', task_alt: 'check-square',
   trending_up: 'trend-up', trending_down: 'trend-down',
   schedule: 'clock', bolt: 'lightning',
@@ -12736,7 +12770,7 @@ function buildIconDropdown() {
   if (!dd) return;
   dd.innerHTML = BULLET_ICONS.map(ic => `
     <button type="button" class="pc-icon-cell" data-icon="${ic}" title="${ic}">
-      <i class="ph ph-${ic}"></i>
+      ${renderIconMarkup(ic)}
     </button>
   `).join('');
   dd.addEventListener('click', e => {
@@ -12768,8 +12802,9 @@ function openIconDropdown(bulletIdx, anchorEl) {
   const currentIcon = bulletIdx === 'logoCropware'
     ? (post && post.logoCropwareIcon)
     : (post && post.bullets && post.bullets[bulletIdx] ? post.bullets[bulletIdx].icon : null);
+  const resolvedCurrentIcon = currentIcon ? resolveIconName(currentIcon) : null;
   dd.querySelectorAll('.pc-icon-cell').forEach(cell => {
-    cell.classList.toggle('active', currentIcon && cell.dataset.icon === currentIcon);
+    cell.classList.toggle('active', resolvedCurrentIcon && cell.dataset.icon === resolvedCurrentIcon);
   });
   setTimeout(() => {
     document.addEventListener('click', onOutsideClickIcon);
@@ -12824,10 +12859,9 @@ function applyIconChoice(icon) {
   post.bullets[idx].icon = icon;
   const postEl = document.getElementById(post.id);
   if (postEl) {
-    const iconEl = postEl.querySelector(`[data-bullet-icon="${idx}"] i.ph`);
+    const iconEl = postEl.querySelector(`[data-bullet-icon="${idx}"] i.ph, [data-bullet-icon="${idx}"] .cw-brand-icon`);
     if (iconEl) {
-      // Remove todas as classes ph-* e aplica a nova
-      iconEl.className = 'ph ph-' + resolveIconName(icon);
+      iconEl.outerHTML = renderIconMarkup(icon);
     }
   }
   syncCurrentStyleBucket(post);
@@ -13317,7 +13351,7 @@ function initPostControls() {
   wireScaleField('pcBulletsScale',    '--bullets-scale',     'bulletsScale',    30, 300, true);
   wireScaleField('pcBulletIconScale', '--bullet-icon-scale', 'bulletIconScale', 30, 300, true);
   wireScaleField('pcSignalCardHeight', '--signal-card-height', 'signalCardHeight', 60, 160);
-  wireScaleField('pcLogoCropwareIconScale', '--logo-cropware-icon-scale', 'logoCropwareIconScale', 60, 150);
+  wireScaleField('pcLogoCropwareIconScale', '--logo-cropware-icon-scale', 'logoCropwareIconScale', 60, 140);
   wireScaleField('pcLogoScale', '--logo-scale', 'logoScale', 60, 140);
   wireScaleField('pcSiteScale', '--site-scale', 'siteScale', 60, 160);
   wireScaleField('pcMockupScale', '--mockup-scale', 'mockupScale', 30, 200);
@@ -15197,6 +15231,7 @@ function composeLogoCropwareBackground(postData, w, h) {
 
 async function getPhosphorSvgMarkup(iconName, weight = 'regular') {
   const icon = resolveIconName(iconName || 'sparkle');
+  if (isCropwareIconName(icon)) return getCropwareIconSvgMarkup();
   const safeWeight = ['regular', 'bold', 'fill', 'duotone', 'light', 'thin'].includes(weight) ? weight : 'regular';
   const cacheKey = `${safeWeight}:${icon}`;
   if (PH_SVG_CACHE[cacheKey]) return PH_SVG_CACHE[cacheKey];
@@ -15211,6 +15246,19 @@ async function getPhosphorSvgMarkup(iconName, weight = 'regular') {
     }
   } catch (_) {}
   if (safeWeight !== 'regular') return getPhosphorSvgMarkup(icon, 'regular');
+  return '';
+}
+
+async function getCropwareIconSvgMarkup() {
+  const cacheKey = `asset:${CROPWARE_ICON_NAME}`;
+  if (PH_SVG_CACHE[cacheKey]) return PH_SVG_CACHE[cacheKey];
+  try {
+    const res = await fetch('icon-cropware.svg');
+    if (res.ok) {
+      PH_SVG_CACHE[cacheKey] = await res.text();
+      return PH_SVG_CACHE[cacheKey];
+    }
+  } catch (_) {}
   return '';
 }
 
@@ -15246,14 +15294,16 @@ function getLogoCropwareRenderMetrics(postData, w, h) {
     cy: h / 2,
     radius: diameter / 2,
     diameter,
-    iconSize: diameter * 0.68 * Math.max(0.4, Math.min(2, iconScale)),
+    iconSize: diameter * 1.46 * Math.max(0.4, Math.min(1.6, iconScale)),
   };
 }
 
 async function drawLogoCropwareIcon(ctx, postData, metrics) {
   const fallbackIcon = Array.isArray(postData.bullets) && postData.bullets[0] ? postData.bullets[0].icon : '';
   const icon = resolveIconName(postData.logoCropwareIcon || fallbackIcon || 'sparkle');
-  const rawSvg = await getPhosphorSvgMarkup(icon, 'regular');
+  const rawSvg = isCropwareIconName(icon)
+    ? await getCropwareIconSvgMarkup()
+    : await getPhosphorSvgMarkup(icon, 'regular');
   const color = postData.logoCropwareIconColor || '#ffffff';
   const { cx, cy, iconSize } = metrics;
 
