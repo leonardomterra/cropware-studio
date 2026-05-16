@@ -810,6 +810,36 @@
     text-shadow: none;
   }
 
+  /* App Store badge — "Disponível na App Store" (Apple guidelines: usar artwork oficial sem modificação) */
+  .post-app-store {
+    position: absolute;
+    display: inline-block;
+    width: calc(260px * var(--app-store-scale, 1));
+    height: auto;
+    z-index: 5;
+    pointer-events: none;
+    filter: drop-shadow(0 3px 10px rgba(0,0,0,0.4));
+  }
+  .post-app-store img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .post-app-store[data-pos="tl"] { top: calc(56px + var(--app-store-offset-y, 0px)); left: calc(64px + var(--app-store-offset-x, 0px)); }
+  .post-app-store[data-pos="tc"] { top: calc(56px + var(--app-store-offset-y, 0px)); left: 50%; transform: translateX(calc(-50% + var(--app-store-offset-x, 0px))); }
+  .post-app-store[data-pos="tr"] { top: calc(56px + var(--app-store-offset-y, 0px)); right: calc(64px + var(--app-store-offset-x, 0px)); }
+  .post-app-store[data-pos="bl"] { bottom: calc(44px + var(--app-store-offset-y, 0px)); left: calc(56px + var(--app-store-offset-x, 0px)); }
+  .post-app-store[data-pos="bc"] { bottom: calc(44px + var(--app-store-offset-y, 0px)); left: 50%; transform: translateX(calc(-50% + var(--app-store-offset-x, 0px))); }
+  .post-app-store[data-pos="br"] { bottom: calc(44px + var(--app-store-offset-y, 0px)); right: calc(56px + var(--app-store-offset-x, 0px)); }
+  /* Story safe-area — mesma lógica do .post-site, evita zona de UI da Instagram Story */
+  .post[data-format="story"] .post-app-store[data-pos="tl"],
+  .post[data-format="story"] .post-app-store[data-pos="tc"],
+  .post[data-format="story"] .post-app-store[data-pos="tr"] { top: calc(216px + var(--app-store-offset-y, 0px)); }
+  .post[data-format="story"] .post-app-store[data-pos="bl"],
+  .post[data-format="story"] .post-app-store[data-pos="bc"],
+  .post[data-format="story"] .post-app-store[data-pos="br"] { bottom: calc(244px + var(--app-store-offset-y, 0px)); }
+  .post[data-app-store-enabled="false"] .post-app-store { display: none !important; }
+
   /* Content bottom */
   .content-bottom {
     position: absolute;
@@ -6971,36 +7001,87 @@
      globais do app — o palco do Reel é um sub-sistema isolado. */
   .motion-reel-scaler {
     --mr-green: #47B482;
-    --mr-dark: #334155;
+    --mr-dark: #1F2937;
     --mr-cream: #F5F1EA;
     --mr-white: #FFFFFF;
     --mr-black: #0B1220;
 
-    --mr-font-display: 'Sora', system-ui, sans-serif;
-    --mr-weight-headline: 800;
+    /* Sistema tipográfico em 3 famílias:
+       - display: Inter Tight — impacto, headlines grandes, brand name.
+       - grotesk: Familjen Grotesk — prosa, sub-headlines, captions com humanidade.
+       - mono: Space Mono — labels, kickers, números, handles, "respiro" técnico. */
+    --mr-font-display: 'Inter Tight', system-ui, sans-serif;
+    --mr-font-grotesk: 'Familjen Grotesk', 'Inter Tight', system-ui, sans-serif;
+    --mr-font-mono: 'Space Mono', ui-monospace, monospace;
+    --mr-weight-headline: 700;
     --mr-weight-body: 500;
 
     --mr-size-headline: 180px;
     --mr-size-subheadline: 96px;
     --mr-size-body: 56px;
     --mr-size-caption: 42px;
+    --mr-size-kicker: 32px;
 
     --mr-gutter: 80px;
     --mr-accent-bar-width: 52px;
     --mr-accent-bar-height: 3px;
 
-    transform-origin: top center;
-    will-change: transform;
+    /* R12: layout em coluna — toggle Player/Grid no topo, stage abaixo.
+       Default = centralizar tudo. Override por data-view onde precisa. */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding-top: 8px;
   }
   .motion-reel-scaler[hidden] { display: none !important; }
 
-  /* Palco: dimensões 1080×1920 absolutas. Nunca usar vh/vw aqui — o palco
-     é renderizado em pixels reais e escalado via transform pelo scaler. */
+  /* Toggle Player ↔ Grid (R12). */
+  .mr-view-toggle {
+    display: flex;
+    gap: 4px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 10px;
+    padding: 4px;
+    flex-shrink: 0;
+  }
+  .mr-view-btn {
+    background: transparent;
+    color: #5C605D;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 120ms ease, color 120ms ease;
+  }
+  .mr-view-btn:hover { color: #1A1B1A; }
+  .mr-view-btn.active {
+    background: #FFFFFF;
+    color: #1A1B1A;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .mr-view-btn .ph { font-size: 14px; }
+
+  /* Palco: aspect 9:16 em player mode, full-size em grid mode. */
   .motion-reel-stage {
     position: relative;
-    width: 1080px;
-    height: 1920px;
     overflow: hidden;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .motion-reel-stage[data-view="player"] {
+    height: 100%;
+    max-height: 920px;
+    aspect-ratio: 9 / 16;
     background: var(--mr-cream);
     font-family: var(--mr-font-display);
     color: var(--mr-dark);
@@ -7009,10 +7090,77 @@
     text-rendering: geometricPrecision;
     backface-visibility: hidden;
   }
+  /* Grid mode: tira aspect-ratio constraint, ocupa toda a área disponível. */
+  .motion-reel-stage[data-view="grid"] {
+    align-self: stretch;       /* sobrescreve align-items: center do scaler */
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto;
+    background: transparent;
+  }
 
-  /* Cada cena ocupa o palco inteiro, empilhada por z-index.
-     A cena ativa fica visível; as outras ficam display:none para não
-     interferir no layout/paint. */
+  /* Modal de preview de cena individual (R12). Sem scroll, sem max-height. */
+  .mr-preview-modal.gen-modal {
+    /* Override: gen-modal por padrão tem padding/max-height que cortam o
+       conteúdo. Aqui queremos um overlay full-screen limpo com o card no centro. */
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(6px);
+  }
+  .mr-preview-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    /* Sem overflow / max-height — deixa o conteúdo do tamanho intrínseco. */
+  }
+  .mr-preview-mount {
+    width: 360px;
+    height: 640px;
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6);
+  }
+  .mr-preview-label {
+    color: #fff;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-align: center;
+    opacity: 0.85;
+  }
+  .mr-preview-close {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    color: #1A1B1A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    transition: transform 120ms ease, background 120ms ease;
+    z-index: 10;
+  }
+  .mr-preview-close:hover {
+    transform: scale(1.05);
+    background: #F5F1EA;
+  }
+  .mr-preview-close .ph { font-size: 22px; }
+
+  /* Cada cena ocupa o palco inteiro, empilhada por z-index. Durante uma
+     transição, duas cenas ficam visíveis ao mesmo tempo (entrada + saída).
+     O motor controla display/z-index/transform via inline style. */
   .mr-scene {
     position: absolute;
     inset: 0;
@@ -7021,45 +7169,114 @@
     justify-content: center;
     padding: 0 var(--mr-gutter);
     box-sizing: border-box;
+    overflow: hidden;
+    /* Conteúdo da cena fica acima da camada de background image (se houver). */
+    isolation: isolate;
   }
   .mr-scene.is-active { display: flex; }
 
-  /* Cena KEYWORD: palavra grande centralizada com mask-reveal vertical. */
+  /* Background image opcional por cena (foto com Ken Burns). O motor
+     anima --mr-kb-scale e --mr-kb-pos via inline style. O overlay tint
+     fica num pseudo-elemento por cima da foto. */
+  .mr-scene-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: var(--mr-kb-pos, 50% 50%);
+    transform: scale(var(--mr-kb-scale, 1));
+    transform-origin: center;
+    z-index: 0;
+    will-change: transform, background-position;
+  }
+  .mr-scene-bg-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: var(--mr-bg-overlay, transparent);
+  }
+  /* Quando a cena tem background image, o conteúdo central sobe pro topo
+     do z-stack e ganha text-shadow leve pra contraste em fotos. */
+  .mr-scene[data-has-bg="true"] > *:not(.mr-scene-bg):not(.mr-scene-bg-overlay) {
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Overlay full-frame usado nas transições tipo "flash". O motor anima
+     --mr-flash-opacity e --mr-flash-color via inline style. */
+  .motion-reel-flash {
+    position: absolute;
+    inset: 0;
+    z-index: 99;
+    pointer-events: none;
+    background: var(--mr-flash-color, #fff);
+    opacity: var(--mr-flash-opacity, 0);
+    mix-blend-mode: normal;
+  }
+
+  /* Cena KEYWORD: palavra grande centralizada com mask-reveal vertical.
+     Inter Tight 700, kerning negativo pra impacto. */
+  .mr-scene[data-type="keyword"] {
+    flex-direction: column;
+    gap: 32px;
+  }
   .mr-scene[data-type="keyword"] .mr-keyword {
+    font-family: var(--mr-font-display);
     font-size: var(--mr-size-headline);
     font-weight: var(--mr-weight-headline);
-    line-height: 0.95;
-    letter-spacing: -0.02em;
+    line-height: 0.92;
+    letter-spacing: -0.035em;
     text-align: center;
-    /* `inset(0 0 100% 0)` = visível 0% (oculto pela parte de baixo).
-       `inset(0)` = totalmente visível. setFrame faz a interpolação. */
     clip-path: inset(0 0 100% 0);
     will-change: clip-path;
+    max-width: 920px;
   }
   .mr-scene[data-type="keyword"] .mr-keyword-dot {
     color: var(--mr-green);
   }
+  /* Sublinha animada que entra por baixo do keyword (controlada por setFrame). */
+  .mr-scene[data-type="keyword"] .mr-keyword-underline {
+    width: var(--mr-accent-bar-width);
+    height: 4px;
+    background: currentColor;
+    transform-origin: left center;
+    transform: scaleX(0);
+    opacity: 0.85;
+    will-change: transform;
+  }
 
-  /* Cena BRAND-INTRO: pre-headline + marca grande + barra de acento.
-     setFrame controla translate/opacity/scale/width via inline styles. */
+  /* Cena BRAND-INTRO: kicker (mono) + pre-headline (grotesk) + brand (display). */
   .mr-scene[data-type="brand-intro"] {
     flex-direction: column;
-    gap: 28px;
+    gap: 24px;
+  }
+  .mr-scene[data-type="brand-intro"] .mr-kicker {
+    font-family: var(--mr-font-mono);
+    font-size: var(--mr-size-kicker);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    opacity: 0;
+    will-change: opacity, letter-spacing;
   }
   .mr-scene[data-type="brand-intro"] .mr-pre-headline {
+    font-family: var(--mr-font-grotesk);
     font-size: var(--mr-size-subheadline);
-    font-weight: 600;
+    font-weight: 500;
     line-height: 1;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
     opacity: 0;
     transform: translateY(40px);
     will-change: transform, opacity;
   }
   .mr-scene[data-type="brand-intro"] .mr-brand-name {
-    font-size: 240px;
+    font-family: var(--mr-font-display);
+    font-size: 260px;
     font-weight: var(--mr-weight-headline);
-    line-height: 0.95;
-    letter-spacing: -0.025em;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
     opacity: 0;
     transform: scale(1.05);
     transform-origin: center;
@@ -7083,10 +7300,11 @@
     justify-content: flex-start;
   }
   .mr-scene[data-type="product-mockup"] .mr-caption {
+    font-family: var(--mr-font-grotesk);
     font-size: var(--mr-size-body);
-    font-weight: 600;
+    font-weight: 500;
     line-height: 1.1;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
     text-align: center;
     max-width: 880px;
     opacity: 0;
@@ -7127,17 +7345,17 @@
     text-transform: uppercase;
   }
 
-  /* Cena CTA: logo no topo + headline + sublabel. */
+  /* Cena CTA: logo no topo + headline + sublabel + handle (mono). */
   .mr-scene[data-type="cta"] {
     flex-direction: column;
     gap: 36px;
-    padding-top: 280px;
-    padding-bottom: 280px;
+    padding-top: 240px;
+    padding-bottom: 240px;
     justify-content: space-between;
   }
   .mr-scene[data-type="cta"] .mr-logo {
-    width: 280px;
-    height: 80px;
+    width: 460px;
+    height: 110px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -7150,31 +7368,251 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
+    filter: brightness(0) invert(1);
   }
   .mr-scene[data-type="cta"] .mr-cta-body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 32px;
+    gap: 36px;
     text-align: center;
   }
   .mr-scene[data-type="cta"] .mr-cta-headline {
+    font-family: var(--mr-font-display);
     font-size: 156px;
     font-weight: var(--mr-weight-headline);
-    line-height: 0.95;
-    letter-spacing: -0.025em;
+    line-height: 0.92;
+    letter-spacing: -0.04em;
     clip-path: inset(0 0 100% 0);
     will-change: clip-path;
   }
   .mr-scene[data-type="cta"] .mr-cta-sublabel {
+    font-family: var(--mr-font-grotesk);
     font-size: var(--mr-size-body);
     font-weight: 500;
     line-height: 1.2;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.01em;
+    opacity: 0;
+    will-change: opacity;
+    max-width: 820px;
+  }
+  .mr-scene[data-type="cta"] .mr-cta-handle {
+    font-family: var(--mr-font-mono);
+    font-size: var(--mr-size-kicker);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
     opacity: 0;
     will-change: opacity;
   }
   .mr-scene[data-type="cta"] .mr-cta-spacer { flex: 1; }
+
+  /* ── Cena STAT-CARD ── número grande animável + label + descrição.
+     Tipografia em camadas: kicker mono em cima, número display gigante no centro,
+     label grotesk abaixo. */
+  .mr-scene[data-type="stat-card"] {
+    flex-direction: column;
+    gap: 28px;
+  }
+  .mr-scene[data-type="stat-card"] .mr-stat-kicker {
+    font-family: var(--mr-font-mono);
+    font-size: var(--mr-size-kicker);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    opacity: 0;
+    will-change: opacity, letter-spacing;
+  }
+  .mr-scene[data-type="stat-card"] .mr-stat-number {
+    font-family: var(--mr-font-display);
+    font-size: 360px;
+    font-weight: var(--mr-weight-headline);
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    opacity: 0;
+    transform: translateY(40px);
+    will-change: transform, opacity;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .mr-scene[data-type="stat-card"] .mr-stat-suffix {
+    font-family: var(--mr-font-display);
+    font-size: 200px;
+    font-weight: 600;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--mr-green);
+  }
+  .mr-scene[data-type="stat-card"] .mr-stat-label {
+    font-family: var(--mr-font-grotesk);
+    font-size: var(--mr-size-body);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-align: center;
+    max-width: 800px;
+    opacity: 0;
+    transform: translateY(20px);
+    will-change: transform, opacity;
+  }
+
+  /* ── Cena QUOTE ── aspas gigantes + frase + autor. */
+  .mr-scene[data-type="quote"] {
+    flex-direction: column;
+    gap: 32px;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
+  }
+  .mr-scene[data-type="quote"] .mr-quote-marks {
+    font-family: var(--mr-font-display);
+    font-size: 280px;
+    font-weight: var(--mr-weight-headline);
+    line-height: 0.8;
+    color: var(--mr-green);
+    opacity: 0;
+    transform: translateX(-30px);
+    will-change: transform, opacity;
+  }
+  .mr-scene[data-type="quote"] .mr-quote-text {
+    font-family: var(--mr-font-grotesk);
+    font-size: 96px;
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    max-width: 880px;
+    opacity: 0;
+    will-change: opacity, clip-path;
+    clip-path: inset(0 100% 0 0);
+  }
+  .mr-scene[data-type="quote"] .mr-quote-author {
+    font-family: var(--mr-font-mono);
+    font-size: 36px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    opacity: 0;
+    will-change: opacity;
+  }
+
+  /* ── Cena FEATURE-LIST ── título + 3-4 itens com bullet, aparecendo um por vez. */
+  .mr-scene[data-type="feature-list"] {
+    flex-direction: column;
+    gap: 48px;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
+  }
+  .mr-scene[data-type="feature-list"] .mr-feature-kicker {
+    font-family: var(--mr-font-mono);
+    font-size: var(--mr-size-kicker);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    color: var(--mr-green);
+    opacity: 0;
+    will-change: opacity;
+  }
+  .mr-scene[data-type="feature-list"] .mr-feature-title {
+    font-family: var(--mr-font-display);
+    font-size: 124px;
+    font-weight: var(--mr-weight-headline);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    opacity: 0;
+    transform: translateX(-30px);
+    will-change: transform, opacity;
+    max-width: 920px;
+  }
+  .mr-scene[data-type="feature-list"] .mr-feature-items {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    width: 100%;
+  }
+  .mr-scene[data-type="feature-list"] .mr-feature-item {
+    font-family: var(--mr-font-grotesk);
+    font-size: 64px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    opacity: 0;
+    transform: translateX(-20px);
+    will-change: transform, opacity;
+  }
+  .mr-scene[data-type="feature-list"] .mr-feature-item::before {
+    content: '';
+    flex: 0 0 auto;
+    width: 24px;
+    height: 6px;
+    background: var(--mr-green);
+    transform: translateY(-12px);
+  }
+
+  /* ── Cena END-CARD ── logo horizontal grande + sub + handle social. */
+  .mr-scene[data-type="end-card"] {
+    flex-direction: column;
+    gap: 48px;
+    justify-content: center;
+  }
+  .mr-scene[data-type="end-card"] .mr-end-logo {
+    width: 560px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.92);
+    transform-origin: center;
+    will-change: transform, opacity;
+  }
+  .mr-scene[data-type="end-card"] .mr-end-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+  .mr-scene[data-type="end-card"] .mr-end-tagline {
+    font-family: var(--mr-font-grotesk);
+    font-size: var(--mr-size-body);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    text-align: center;
+    max-width: 820px;
+    opacity: 0;
+    will-change: opacity, clip-path;
+    clip-path: inset(0 100% 0 0);
+  }
+  .mr-scene[data-type="end-card"] .mr-end-handle {
+    font-family: var(--mr-font-mono);
+    font-size: var(--mr-size-kicker);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.35em;
+    opacity: 0;
+    will-change: opacity, letter-spacing;
+  }
+  .mr-scene[data-type="end-card"] .mr-end-accent-bar {
+    width: 120px;
+    height: 4px;
+    background: var(--mr-green);
+    margin: 0 auto;
+    transform-origin: center;
+    transform: scaleX(0);
+    will-change: transform;
+  }
+
+  /* Helper genérico — span de letra/palavra para revelação cinematográfica.
+     setFrame controla opacity/translateY de cada span individualmente. */
+  .mr-char, .mr-word {
+    display: inline-block;
+    will-change: transform, opacity;
+  }
 </style>
 </head>
 <body>
@@ -7646,6 +8084,60 @@
             </div>
           </div>
           </div><!-- /pc-sig-body site -->
+        </div>
+
+        <!-- Bloco APP STORE BADGE -->
+        <div class="pc-sig-block" id="pcSigBlockAppStore">
+          <div class="pc-sig-label">
+            <span class="pc-sig-label-left">
+              <i class="ph ph-caret-down pc-sig-chevron"></i>
+              <span>App Store</span>
+            </span>
+            <button type="button" class="pc-sig-reset" data-reset="appStore" title="Volta o badge da App Store ao padrão">
+              <i class="ph ph-arrow-clockwise"></i>Resetar
+            </button>
+          </div>
+          <div class="pc-sig-body">
+          <div class="pc-sub" id="pcSubAppStoreVisibility">
+            <div class="pc-vis-row">
+              <button type="button" class="pc-vis-btn" data-vis="appStore">
+                <span>Mostrar Badge</span>
+                <span class="pc-vis-switch"></span>
+              </button>
+            </div>
+          </div>
+          <div class="pc-sub" id="pcSubAppStorePosition">
+            <div class="pc-label">Posição</div>
+            <select class="pc-select" id="pcAppStorePosSelect">
+              <option value="tl">Superior Esquerda</option>
+              <option value="tc">Superior Centro</option>
+              <option value="tr">Superior Direita</option>
+              <option value="bl">Inferior Esquerda</option>
+              <option value="bc">Inferior Centro</option>
+              <option value="br">Inferior Direita</option>
+            </select>
+          </div>
+          <div class="pc-sub pc-offset-field" id="pcSubAppStoreScale">
+            <div class="pc-label-row">
+              <span class="pc-label">Escala</span>
+              <span class="pc-value-pill" id="pcAppStoreScaleValue">100%</span>
+            </div>
+            <input type="range" class="pc-range" id="pcAppStoreScale" min="60" max="180" step="5" value="100" data-value-label="pcAppStoreScaleValue">
+          </div>
+          <div class="pc-sub pc-offset-field" id="pcSubAppStoreOffsets">
+            <div class="pc-label-row">
+              <span class="pc-label">Ajuste fino</span>
+              <span class="pc-value-pill" id="pcAppStoreNudgeValue">0 / 0</span>
+            </div>
+            <div class="pc-nudge-control" data-nudge-target="appStore" data-step="5" data-min="-60" data-max="60" data-unit="px">
+              <button type="button" class="pc-nudge-btn pc-nudge-up" data-dx="0" data-dy="-1" title="Mover para cima"><i class="ph ph-caret-up"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-left" data-dx="-1" data-dy="0" title="Mover para esquerda"><i class="ph ph-caret-left"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-reset" data-reset="true" title="Centralizar ajuste"><i class="ph ph-arrow-clockwise"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-right" data-dx="1" data-dy="0" title="Mover para direita"><i class="ph ph-caret-right"></i></button>
+              <button type="button" class="pc-nudge-btn pc-nudge-down" data-dx="0" data-dy="1" title="Mover para baixo"><i class="ph ph-caret-down"></i></button>
+            </div>
+          </div>
+          </div><!-- /pc-sig-body app-store -->
         </div>
 
         <!-- Bloco DETALHE VERDE -->
@@ -8148,10 +8640,13 @@
         </div><!-- /post-scaler -->
 
         <div class="motion-reel-scaler" id="motionReelScaler" hidden>
+          <!-- Toggle Player ↔ Grid view (R12) -->
+          <div class="mr-view-toggle" id="mrViewToggle">
+            <button type="button" class="mr-view-btn active" data-view="player" onclick="setMotionReelViewMode('player')"><i class="ph ph-play"></i>Player</button>
+            <button type="button" class="mr-view-btn" data-view="grid" onclick="setMotionReelViewMode('grid')"><i class="ph ph-squares-four"></i>Grid 6×2</button>
+          </div>
           <div class="motion-reel-stage" id="motionReelStage">
-            <!-- Cenas geradas via JS a partir de MOTION_REEL_CONFIG.
-                 Step 1 do spec: cena keyword única com "TESTE" para validar
-                 fonte (Sora), escala 1080×1920 e setFrame(t). -->
+            <!-- Conteúdo renderizado pelo Remotion Player ou Grid via mount.jsx -->
           </div>
         </div><!-- /motion-reel-scaler -->
 
@@ -8353,7 +8848,7 @@ function getDownloadButtonLabel() {
   if (isPresentationMode()) return 'Baixar Imagem';
   if (isInstagramAdsMode()) return 'Baixar Criativo';
   if (isLogoCropwareMode()) return 'Baixar Logo';
-  if (isMotionReelMode()) return 'Baixar Reel';
+  if (isMotionReelMode()) return 'Baixar MP4';
   return isCarouselMode() ? 'Baixar Carrossel' : 'Baixar Post';
 }
 function getCanvasHeaderLabel() {
@@ -9007,7 +9502,10 @@ function buildSidebar() {
   const isLinkedinCarousel = activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel';
   const isNewsCarousel = activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel';
   let dlLabel, dlAction;
-  if (isPresentation) {
+  if (isMotionReelMode()) {
+    dlLabel = 'Baixar MP4';
+    dlAction = 'downloadMotionReelMP4()';
+  } else if (isPresentation) {
     dlLabel = 'Baixar Imagem';
     dlAction = 'downloadPresentationImage()';
   } else if (isLinkedinCarousel) {
@@ -9063,12 +9561,21 @@ function buildSidebar() {
   // Restaura visibilidade do botão download (o rebuild recria com display:none)
   const dlBtn = document.getElementById('downloadBtn');
   if (dlBtn) {
-    const dlBtnText = isNewsCarousel ? 'Baixar imagens' : (isLinkedinCarousel ? 'Baixar PDF' : 'Baixar');
-    const dlBtnIcon = isNewsCarousel ? 'ph-file-zip' : (isLinkedinCarousel ? 'ph-file-pdf' : 'ph-download-simple');
+    const isMotionReel = isMotionReelMode();
+    const dlBtnText = isMotionReel ? 'Baixar MP4'
+                     : isNewsCarousel ? 'Baixar imagens'
+                     : isLinkedinCarousel ? 'Baixar PDF'
+                     : 'Baixar';
+    const dlBtnIcon = isMotionReel ? 'ph-film-strip'
+                     : isNewsCarousel ? 'ph-file-zip'
+                     : isLinkedinCarousel ? 'ph-file-pdf'
+                     : 'ph-download-simple';
     dlBtn.innerHTML = `<i class="ph ${dlBtnIcon}"></i>${dlBtnText}`;
     dlBtn.title = dlLabel;
     dlBtn.setAttribute('onclick', `closeActionsMenu(); ${dlAction}`);
-    dlBtn.style.display = items.length > 0 ? 'inline-flex' : 'none';
+    // Motion-reel sempre mostra (default storyboard já é renderizável).
+    // Outros modos só mostram se há items.
+    dlBtn.style.display = (isMotionReel || items.length > 0) ? 'inline-flex' : 'none';
   }
   // Botão PDF extra (só pro carrossel notícia)
   const dlPdfBtn = document.getElementById('downloadPdfBtn');
@@ -9174,7 +9681,9 @@ function deletePost(idx) {
   if (!post) return;
   const slideEl = document.getElementById(post.slideId);
   if (slideEl) slideEl.remove();
-  if (post.isGenerated) deletePostFromSupabase(post.id);
+  // Motion reels não vivem no Supabase — só localStorage. Skip a call remota.
+  const isMotionReelItem = isMotionReelMode();
+  if (post.isGenerated && !isMotionReelItem) deletePostFromSupabase(post.id);
   items.splice(idx, 1);
   legendsArr.splice(idx, 1);
   buildSidebar();
@@ -9185,7 +9694,8 @@ function deletePost(idx) {
   } else {
     goTo(Math.min(idx, items.length - 1));
   }
-  saveSession();
+  if (isMotionReelItem) saveMotionReelsToLocal();
+  else saveSession();
 }
 
 function deleteCarousel(idx) {
@@ -9217,6 +9727,10 @@ function deleteCarousel(idx) {
 // Mostra o post no índice idx. Lida com empty state, primeira exibição
 // (sem post anterior pra esconder) e transições normais.
 function goTo(idx) {
+  if (isMotionReelMode()) {
+    goToMotionReel(idx);
+    return;
+  }
   if (isCarouselMode()) {
     goToCarousel(idx);
     return;
@@ -10013,6 +10527,7 @@ const PER_STYLE_FIELDS = [
   'layout', 'textAlign',
   'logoEnabled', 'logoPos', 'logoScale', 'logoOffsetX', 'logoOffsetY',
   'siteEnabled', 'siteMode', 'siteText', 'sitePos', 'siteScale', 'siteOffsetX', 'siteOffsetY', 'siteColor',
+  'appStoreEnabled', 'appStorePos', 'appStoreScale', 'appStoreOffsetX', 'appStoreOffsetY',
   'brandMode',
   'accentBarEnabled', 'accentBarPos', 'accentBarColor', 'accentBarOffsetX', 'accentBarOffsetY',
   'stripEnabled', 'stripHeight', 'stripPos',
@@ -10268,6 +10783,11 @@ function renderGeneratedPost(postData, legendText) {
   if (postData.siteScale == null)   postData.siteScale   = 1;
   if (postData.siteOffsetX == null) postData.siteOffsetX = 0;
   if (postData.siteOffsetY == null) postData.siteOffsetY = 0;
+  if (!postData.appStorePos) postData.appStorePos = 'bl';
+  if (postData.appStoreEnabled == null) postData.appStoreEnabled = false;
+  if (postData.appStoreScale == null)   postData.appStoreScale   = 1;
+  if (postData.appStoreOffsetX == null) postData.appStoreOffsetX = 0;
+  if (postData.appStoreOffsetY == null) postData.appStoreOffsetY = 0;
   if (!postData.brandMode) postData.brandMode = 'light';
   if (!postData.siteMode) postData.siteMode = 'light';
   if (!postData.overlayColor)     postData.overlayColor     = '#000000';
@@ -10465,6 +10985,11 @@ function renderGeneratedCarousel(carouselData, legendText) {
     if (slideData.siteScale == null)   slideData.siteScale   = 1;
     if (slideData.siteOffsetX == null) slideData.siteOffsetX = 0;
     if (slideData.siteOffsetY == null) slideData.siteOffsetY = 0;
+    if (!slideData.appStorePos) slideData.appStorePos = 'bl';
+    if (slideData.appStoreEnabled == null) slideData.appStoreEnabled = false;
+    if (slideData.appStoreScale == null)   slideData.appStoreScale   = 1;
+    if (slideData.appStoreOffsetX == null) slideData.appStoreOffsetX = 0;
+    if (slideData.appStoreOffsetY == null) slideData.appStoreOffsetY = 0;
     if (!slideData.brandMode) slideData.brandMode = 'light';
     if (!slideData.siteMode) slideData.siteMode = 'light';
     if (!slideData.overlayColor)     slideData.overlayColor     = '#000000';
@@ -10588,6 +11113,11 @@ function renderGeneratedPresentation(presentationData, legendText) {
     if (slideData.siteScale == null)   slideData.siteScale   = 1;
     if (slideData.siteOffsetX == null) slideData.siteOffsetX = 0;
     if (slideData.siteOffsetY == null) slideData.siteOffsetY = 0;
+    if (!slideData.appStorePos) slideData.appStorePos = 'bl';
+    if (slideData.appStoreEnabled == null) slideData.appStoreEnabled = false;
+    if (slideData.appStoreScale == null)   slideData.appStoreScale   = 1;
+    if (slideData.appStoreOffsetX == null) slideData.appStoreOffsetX = 0;
+    if (slideData.appStoreOffsetY == null) slideData.appStoreOffsetY = 0;
     if (!slideData.brandMode) slideData.brandMode = 'light';
     if (!slideData.siteMode) slideData.siteMode = 'light';
     if (!slideData.overlayColor)     slideData.overlayColor     = '#000000';
@@ -10791,6 +11321,13 @@ function renderSiteText(postData) {
   return `<div class="post-site" data-pos="${pos}">${text}</div>`;
 }
 
+// Badge "Baixar na App Store" — opt-in via appStoreEnabled. Arte oficial conforme guidelines da Apple.
+function renderAppStoreBadge(postData) {
+  if (postData.appStoreEnabled !== true) return '';
+  const pos = postData.appStorePos || 'bl';
+  return `<div class="post-app-store" data-pos="${pos}"><img src="app-store-badge.svg" alt="Baixar na App Store"></div>`;
+}
+
 function renderClassicStyle(postData) {
   const layout  = postData.layout  || 'top';
   const logoPos = postData.logoPos || 'br';
@@ -10860,6 +11397,7 @@ function renderClassicStyle(postData) {
     ${contentHTML}
     ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
     ${renderSiteText(postData)}
+    ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
   `;
 }
@@ -10890,6 +11428,7 @@ function renderDashboardStyle(postData) {
     </div>
     ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
     ${renderSiteText(postData)}
+    ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
   `;
 }
@@ -11010,6 +11549,7 @@ function renderRevistaStyle(postData) {
     </div>
     ${postData.logoEnabled !== false ? '<img class="revista-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     ${renderSiteText(postData)}
+    ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
   `;
 }
@@ -11085,6 +11625,7 @@ function renderNewsEditorialStyle(postData) {
     </div>
     ${postData.logoEnabled !== false ? '<img class="news-edit-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     ${renderSiteText(postData)}
+    ${renderAppStoreBadge(postData)}
     ${role === 'closing' ? `<div class="news-edit-closing-signature">${postData.editorialFlavor === 'opinion' ? 'Cropware Análise' : 'Cropware Tendências'}</div>` : ''}
     <div class="brand-strip"></div>
   `;
@@ -11113,6 +11654,7 @@ function renderSplitStyle(postData) {
       ${postData.logoEnabled !== false ? '<img class="split-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     </div>
     ${renderSiteText(postData)}
+    ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
   `;
 }
@@ -11139,6 +11681,7 @@ function renderColunaStyle(postData) {
       <div class="coluna-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
     </div>
     ${renderSiteText(postData)}
+    ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
   `;
 }
@@ -11343,6 +11886,7 @@ function renderMolduraStyle(postData) {
     </div>
     ${postData.logoEnabled !== false ? '<img class="moldura-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
     ${renderSiteText(postData)}
+    ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
   `;
 }
@@ -11381,6 +11925,7 @@ function renderSpotlightStyle(postData) {
     </div>
     ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
     ${renderSiteText(postData)}
+    ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
   `;
 }
@@ -11436,6 +11981,7 @@ function renderSignalStyle(postData) {
     </div>
     ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
     ${renderSiteText(postData)}
+    ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
   `;
 }
@@ -11512,6 +12058,7 @@ function renderMockupStyle(postData) {
     </div>
     ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
     ${renderSiteText(postData)}
+    ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
   `;
 }
@@ -11544,6 +12091,11 @@ function applyPostVariant(postEl, postData) {
   postEl.style.setProperty('--logo-offset-y', (postData.logoOffsetY == null ? 0 : postData.logoOffsetY) + 'px');
   postEl.style.setProperty('--site-offset-x', (postData.siteOffsetX == null ? 0 : postData.siteOffsetX) + 'px');
   postEl.style.setProperty('--site-offset-y', (postData.siteOffsetY == null ? 0 : postData.siteOffsetY) + 'px');
+  // App Store badge — scale + offsets + enabled flag (dataset usado pelo CSS pra esconder)
+  postEl.style.setProperty('--app-store-scale', (postData.appStoreScale == null ? 1 : postData.appStoreScale));
+  postEl.style.setProperty('--app-store-offset-x', (postData.appStoreOffsetX == null ? 0 : postData.appStoreOffsetX) + 'px');
+  postEl.style.setProperty('--app-store-offset-y', (postData.appStoreOffsetY == null ? 0 : postData.appStoreOffsetY) + 'px');
+  postEl.dataset.appStoreEnabled = postData.appStoreEnabled === true ? 'true' : 'false';
   postEl.dataset.style   = style;
   postEl.dataset.type    = postData.type || '';
   postEl.dataset.layout  = layout;
@@ -11923,6 +12475,10 @@ function updatePostControls(idx) {
   setSubVisible('pcSubSiteScale',          siteOn);
   setSubVisible('pcSubSiteMode',           siteOn);
   setSubVisible('pcSubSiteOffsets',        siteOn);
+  const appStoreOn = post.appStoreEnabled === true;
+  setSubVisible('pcSubAppStorePosition',   appStoreOn);
+  setSubVisible('pcSubAppStoreScale',      appStoreOn);
+  setSubVisible('pcSubAppStoreOffsets',    appStoreOn);
   const bulletsStyles = currentStyle === 'classic' || currentStyle === 'moldura' || currentStyle === 'signal' || currentStyle === 'sidelight';
   setSubVisible('pcSubVisibility',         !isPresMode && !isNewsEditorial);
   setSubVisible('pcSubVisibilityDivider',  !isPresMode && !isNewsEditorial);
@@ -12044,7 +12600,7 @@ function updatePostControls(idx) {
   const stripPosS = document.getElementById('pcStripPosSelect');
   if (stripPosS) stripPosS.value = post.stripPos || 'bottom';
 
-  // Visibility toggles (hook / complement / bullets / bulletIcons / site / logo / accentBar / strip)
+  // Visibility toggles (hook / complement / bullets / bulletIcons / site / logo / accentBar / strip / appStore)
   const visState = {
     hook:        post.hookVisible        !== false,
     complement:  post.complementVisible  !== false,
@@ -12054,6 +12610,7 @@ function updatePostControls(idx) {
     logo:        post.logoEnabled        !== false,
     accentBar:   post.accentBarEnabled   !== false,
     strip:       post.stripEnabled       !== false,
+    appStore:    post.appStoreEnabled    === true,
   };
   document.querySelectorAll('.pc-vis-btn').forEach(b => {
     b.classList.toggle('active', visState[b.dataset.vis]);
@@ -12117,9 +12674,13 @@ function updatePostControls(idx) {
   if (signalCardHeightInput) syncPercentControl('pcSignalCardHeight', 'pcSignalCardHeightValue', signalCardHeight);
   syncPercentControl('pcLogoScale', 'pcLogoScaleValue', logoScale);
   syncPercentControl('pcSiteScale', 'pcSiteScaleValue', siteScale);
+  syncPercentControl('pcAppStoreScale', 'pcAppStoreScaleValue', post.appStoreScale == null ? 1 : post.appStoreScale);
 
   syncNudgeValue('pcLogoNudgeValue', logoOffsetX, logoOffsetY, 'px');
   syncNudgeValue('pcSiteNudgeValue', siteOffsetX, siteOffsetY, 'px');
+  syncNudgeValue('pcAppStoreNudgeValue', post.appStoreOffsetX == null ? 0 : post.appStoreOffsetX, post.appStoreOffsetY == null ? 0 : post.appStoreOffsetY, 'px');
+  const appStorePosSelect = document.getElementById('pcAppStorePosSelect');
+  if (appStorePosSelect) appStorePosSelect.value = post.appStorePos || 'bl';
   // Mockup — sync device select, escala, ajuste fino
   const mockupDeviceSelSync = document.getElementById('pcMockupDeviceSelect');
   if (mockupDeviceSelSync && isMockup) mockupDeviceSelSync.value = post.mockupDevice || 'phone';
@@ -13018,10 +13579,17 @@ function initPostControls() {
                   : key === 'logo' ? 'logoEnabled'
                   : key === 'accentBar' ? 'accentBarEnabled'
                   : key === 'strip' ? 'stripEnabled'
+                  : key === 'appStore' ? 'appStoreEnabled'
                   : 'bulletsVisible';
       const postEl = document.getElementById(post.id);
       syncRenderedVisualFields(postEl, post);
-      post[field] = !(post[field] !== false);
+      // appStoreEnabled é opt-in (default false), então o toggle inverte o booleano real.
+      // Demais campos seguem o legado (!== false → padrão true).
+      if (field === 'appStoreEnabled') {
+        post[field] = !(post[field] === true);
+      } else {
+        post[field] = !(post[field] !== false);
+      }
       syncCurrentStyleBucket(post);
       if (postEl) applyPostVariant(postEl, post);
       updatePostControls(current);
@@ -13354,6 +13922,7 @@ function initPostControls() {
   wireScaleField('pcLogoCropwareIconScale', '--logo-cropware-icon-scale', 'logoCropwareIconScale', 60, 140);
   wireScaleField('pcLogoScale', '--logo-scale', 'logoScale', 60, 140);
   wireScaleField('pcSiteScale', '--site-scale', 'siteScale', 60, 160);
+  wireScaleField('pcAppStoreScale', '--app-store-scale', 'appStoreScale', 60, 180);
   wireScaleField('pcMockupScale', '--mockup-scale', 'mockupScale', 30, 200);
 
   // Botão "Aplicar a todos os slides" da textura da foto
@@ -13527,6 +14096,19 @@ function initPostControls() {
       const post = getActivePost();
       if (!post || !post.isGenerated) return;
       post.sitePos = sitePosSelectEl.value;
+      const postEl = document.getElementById(post.id);
+      if (postEl) applyPostVariant(postEl, post);
+      updatePostControls(current);
+      saveSession();
+    });
+  }
+  // App Store — select de posição
+  const appStorePosSelectEl = document.getElementById('pcAppStorePosSelect');
+  if (appStorePosSelectEl) {
+    appStorePosSelectEl.addEventListener('change', () => {
+      const post = getActivePost();
+      if (!post || !post.isGenerated) return;
+      post.appStorePos = appStorePosSelectEl.value;
       const postEl = document.getElementById(post.id);
       if (postEl) applyPostVariant(postEl, post);
       updatePostControls(current);
@@ -13921,6 +14503,13 @@ function initPostControls() {
       cssY: '--site-offset-y',
       labelId: 'pcSiteNudgeValue',
     },
+    appStore: {
+      xField: 'appStoreOffsetX',
+      yField: 'appStoreOffsetY',
+      cssX: '--app-store-offset-x',
+      cssY: '--app-store-offset-y',
+      labelId: 'pcAppStoreNudgeValue',
+    },
     accentBar: {
       xField: 'accentBarOffsetX',
       yField: 'accentBarOffsetY',
@@ -14005,6 +14594,10 @@ function initPostControls() {
     site: {
       siteEnabled: true, sitePos: 'bl', siteOffsetX: 0, siteOffsetY: 0,
       siteScale: 1, siteMode: 'light', siteText: 'cropware.app',
+    },
+    appStore: {
+      appStoreEnabled: false, appStorePos: 'bl',
+      appStoreOffsetX: 0, appStoreOffsetY: 0, appStoreScale: 1,
     },
     accentBar: {
       accentBarEnabled: true, accentBarPos: 'tl',
@@ -14339,6 +14932,11 @@ function _resetPostStyleSingle(post) {
   post.siteText           = 'cropware.app';
   post.sitePos            = 'bl';
   post.siteEnabled        = true;
+  post.appStoreEnabled    = false;
+  post.appStorePos        = 'bl';
+  post.appStoreScale      = 1;
+  post.appStoreOffsetX    = 0;
+  post.appStoreOffsetY    = 0;
   post.hookVisible        = true;
   post.complementVisible  = true;
   post.bulletsVisible     = true;
@@ -15538,6 +16136,10 @@ async function bootStudio() {
     console.error('bootStudio loadSession failed:', e);
     showPersistError('Falha ao carregar posts salvos: ' + (e.message || e));
   }
+
+  // Rehidrata motion reels do localStorage (R12). Não usam Supabase porque
+  // são storyboards leves (~5KB) — localStorage é o trade-off certo.
+  loadMotionReelsFromLocal();
 
   try {
     await loadDesignConfig();  // carrega diretriz de marca/voz do Supabase
@@ -17844,7 +18446,8 @@ async function callGeminiImage(imagePrompt, extraDirection, aspectRatio) {
 }
 
 function handleGenerate() {
-  if (isWeatherMode()) generateWeatherCarousel();
+  if (isMotionReelMode()) generateMotionReel();
+  else if (isWeatherMode()) generateWeatherCarousel();
   else if (isCarouselMode() && getPlatform() === 'news') generateNewsCarousel();
   else if (isCarouselMode()) generateCarousel();
   else generatePost();
@@ -19964,6 +20567,11 @@ async function confirmInsertSlide() {
       siteOffsetX:     ref.siteOffsetX,
       siteOffsetY:     ref.siteOffsetY,
       siteColor:       ref.siteColor,
+      appStoreEnabled: ref.appStoreEnabled,
+      appStorePos:     ref.appStorePos,
+      appStoreScale:   ref.appStoreScale,
+      appStoreOffsetX: ref.appStoreOffsetX,
+      appStoreOffsetY: ref.appStoreOffsetY,
       hookScale:       ref.hookScale,
       complementScale: ref.complementScale,
       bulletsScale:    ref.bulletsScale,
@@ -20795,317 +21403,324 @@ const MOTION_REEL_CONFIG = {
   width: 1080,
   height: 1920,
   fps: 30,
-  duration: 15.0,
+  duration: 18.0,
   brand: 'Cropware',
-  logoUrl: 'icon-cropware.svg',
+  logoUrl: 'logo-cropware-pb-final.svg',
+  // Cada cena tem: id, start/end (segundos), type, e props específicas.
+  // transitionIn = { type, dur, easing, color? } controla o boundary com
+  // a cena anterior. Tipos: cut / fade / wipe-up / wipe-down / push-up /
+  // push-left / mask-circle / flash / zoom-blur. Padrão: fade 200ms.
+  // bgImage + kenBurns = foto de fundo com zoom/pan lento. bgOverlay =
+  // tint semi-transparente em cima da foto pra contraste com o texto.
+  //
+  // Storyboard padrão (18s) — texto-first cinematográfico:
+  //   0.0  intro          BRAND-INTRO   "Conheça o Cropware"
+  //   2.6  stat           STAT-CARD     "3x mais rápido"
+  //   5.4  kw-fast        KEYWORD       "Rápido"
+  //   7.7  features       FEATURE-LIST  "Tudo na palma"
+  //  10.8  quote          QUOTE         "Em 2 semanas..."
+  //  13.8  kw-direct      KEYWORD       "Direto ao ponto."
+  //  15.6  end            END-CARD      logo + handle
   scenes: [
     {
-      id: 'intro', start: 0.0, end: 2.0, type: 'brand-intro',
-      preHeadline: 'Conheça o', brandName: 'Cropware',
+      id: 'intro', start: 0.0, end: 2.6, type: 'brand-intro',
+      kicker: 'PARA O AGRO',
+      preHeadline: 'Conheça o',
+      brandName: 'Cropware',
       bg: 'var(--mr-cream)', fg: 'var(--mr-dark)',
+      transitionIn: { type: 'fade', dur: 0.3, easing: 'out-expo' },
     },
     {
-      id: 'kw-1', start: 2.0, end: 4.5, type: 'keyword',
+      id: 'stat', start: 2.6, end: 5.4, type: 'stat-card',
+      kicker: 'EM CAMPO',
+      value: 3, suffix: 'x',
+      label: 'mais rápido que sua planilha de safra',
+      bg: 'var(--mr-green)', fg: 'var(--mr-white)',
+      transitionIn: { type: 'wipe-up', dur: 0.5, easing: 'in-out-quart' },
+    },
+    {
+      id: 'kw-fast', start: 5.4, end: 7.7, type: 'keyword',
       word: 'Rápido',
-      bg: 'var(--mr-green)', fg: 'var(--mr-white)',
-    },
-    {
-      id: 'kw-2', start: 4.5, end: 7.0, type: 'keyword',
-      word: 'Inteligente',
-      bg: 'var(--mr-cream)', fg: 'var(--mr-dark)',
-    },
-    {
-      id: 'mockup', start: 7.0, end: 10.5, type: 'product-mockup',
-      caption: 'Tudo o que o agrônomo precisa',
-      mockupUrl: 'vecteezy_smartphone-mockup-isolated-on-white-background_13977941.svg',
       bg: 'var(--mr-dark)', fg: 'var(--mr-white)',
+      transitionIn: { type: 'flash', dur: 0.35, easing: 'in-out-cubic', color: '#FFFFFF' },
     },
     {
-      id: 'kw-3', start: 10.5, end: 12.5, type: 'keyword',
+      id: 'features', start: 7.7, end: 10.8, type: 'feature-list',
+      kicker: 'TUDO EM UM',
+      title: 'Tudo na palma.',
+      items: [
+        'Monitoramento por satélite',
+        'Diagnóstico direto em campo',
+        'Histórico completo de safra',
+      ],
+      bg: 'var(--mr-cream)', fg: 'var(--mr-dark)',
+      transitionIn: { type: 'push-up', dur: 0.5, easing: 'in-out-cubic' },
+    },
+    {
+      id: 'quote', start: 10.8, end: 13.8, type: 'quote',
+      text: 'Em 2 semanas, todo o time de campo migrou.',
+      author: 'Agrônomo · Cliente Cropware',
+      bg: 'var(--mr-dark)', fg: 'var(--mr-white)',
+      transitionIn: { type: 'mask-circle', dur: 0.55, easing: 'in-out-expo' },
+    },
+    {
+      id: 'kw-direct', start: 13.8, end: 15.6, type: 'keyword',
       word: 'Direto ao ponto.',
-      bg: 'var(--mr-white)', fg: 'var(--mr-dark)',
+      bg: 'var(--mr-green)', fg: 'var(--mr-white)',
+      transitionIn: { type: 'zoom-blur', dur: 0.45, easing: 'out-quart' },
     },
     {
-      id: 'cta', start: 12.5, end: 15.0, type: 'cta',
-      headline: 'Disponível agora',
-      sublabel: 'Baixe na App Store ou Google Play',
-      bg: 'var(--mr-green)', fg: 'var(--mr-white)',
-      logoUrl: 'icon-cropware.svg',
+      id: 'end', start: 15.6, end: 18.0, type: 'end-card',
+      logoUrl: 'logo-cropware-pb-final.svg',
+      tagline: 'O agro é Cropware.',
+      handle: '@cropware.app',
+      bg: 'var(--mr-dark)', fg: 'var(--mr-white)',
+      transitionIn: { type: 'fade', dur: 0.4, easing: 'in-out-cubic' },
     },
   ],
 };
 
-// Easings. setFrame interpola em JS porque precisa ser determinístico
-// (pausar Web Animations API + seekar seria mais "canônico" mas complica
-// o pipeline de render). Cada easing recebe progress 0..1 e retorna 0..1.
-function mrEaseInOutQuart(t) {
-  return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
-}
-function mrEaseOutQuint(t) {
-  return 1 - Math.pow(1 - t, 5);
-}
-function mrEaseOutQuart(t) {
-  return 1 - Math.pow(1 - t, 4);
-}
-// Clamp + normaliza um tempo `local` dentro de uma janela [delay, delay+dur]
-// para um progress 0..1. Retorna 0 antes do delay, 1 depois do fim.
-function mrWindow(local, delay, dur) {
-  if (local < delay) return 0;
-  if (local >= delay + dur) return 1;
-  return (local - delay) / dur;
-}
+// R11 cleanup: a engine antiga (setFrame puro + easings/transitions/animations
+// manuais em ~800 linhas) foi removida. Agora tudo roda via Remotion Player no
+// preview e Remotion CLI no render — ver motion-reel/MotionReel.jsx e helpers.
 
-// Cria/atualiza o DOM das cenas no palco. Chamado quando entra no modo.
-// Cada tipo de cena monta sua sub-árvore própria; setFrame depois mexe
-// só nos inline styles (opacity, transform, clip-path).
-function renderMotionReelStage() {
-  const stage = document.getElementById('motionReelStage');
-  if (!stage) return;
-  stage.innerHTML = '';
-  MOTION_REEL_CONFIG.scenes.forEach(scene => {
-    const el = document.createElement('div');
-    el.className = 'mr-scene';
-    el.dataset.type = scene.type;
-    el.dataset.sceneId = scene.id;
-    if (scene.bg) el.style.background = scene.bg;
-    if (scene.fg) el.style.color = scene.fg;
-
-    if (scene.type === 'keyword') {
-      const w = document.createElement('div');
-      w.className = 'mr-keyword';
-      w.textContent = scene.word || '';
-      el.appendChild(w);
-
-    } else if (scene.type === 'brand-intro') {
-      const pre = document.createElement('div');
-      pre.className = 'mr-pre-headline';
-      pre.textContent = scene.preHeadline || '';
-      const brand = document.createElement('div');
-      brand.className = 'mr-brand-name';
-      brand.textContent = scene.brandName || '';
-      const bar = document.createElement('div');
-      bar.className = 'mr-accent-bar';
-      el.appendChild(pre);
-      el.appendChild(brand);
-      el.appendChild(bar);
-
-    } else if (scene.type === 'product-mockup') {
-      const caption = document.createElement('div');
-      caption.className = 'mr-caption';
-      caption.textContent = scene.caption || '';
-      const mockup = document.createElement('div');
-      mockup.className = 'mr-mockup';
-      if (scene.mockupUrl) {
-        const img = document.createElement('img');
-        img.src = scene.mockupUrl;
-        img.alt = '';
-        img.loading = 'eager';
-        mockup.appendChild(img);
-      } else {
-        const ph = document.createElement('div');
-        ph.className = 'mr-mockup-placeholder';
-        ph.textContent = 'mockup';
-        mockup.appendChild(ph);
-      }
-      el.appendChild(caption);
-      el.appendChild(mockup);
-
-    } else if (scene.type === 'cta') {
-      const logo = document.createElement('div');
-      logo.className = 'mr-logo';
-      if (scene.logoUrl) {
-        const img = document.createElement('img');
-        img.src = scene.logoUrl;
-        img.alt = '';
-        img.loading = 'eager';
-        logo.appendChild(img);
-      }
-      const spacer1 = document.createElement('div');
-      spacer1.className = 'mr-cta-spacer';
-      const body = document.createElement('div');
-      body.className = 'mr-cta-body';
-      const head = document.createElement('div');
-      head.className = 'mr-cta-headline';
-      head.textContent = scene.headline || '';
-      const sub = document.createElement('div');
-      sub.className = 'mr-cta-sublabel';
-      sub.textContent = scene.sublabel || '';
-      body.appendChild(head);
-      body.appendChild(sub);
-      const spacer2 = document.createElement('div');
-      spacer2.className = 'mr-cta-spacer';
-      el.appendChild(logo);
-      el.appendChild(spacer1);
-      el.appendChild(body);
-      el.appendChild(spacer2);
-    }
-
-    stage.appendChild(el);
-  });
-}
-
-// setFrame(t): função pura — mesmo t produz o mesmo frame visual.
-// Despacha por tipo de cena. Cada bloco implementa os timings/easings
-// específicos do spec (brand-intro/keyword/product-mockup/cta).
-function motionReelSetFrame(t) {
-  const stage = document.getElementById('motionReelStage');
-  if (!stage) return;
-  const cfg = MOTION_REEL_CONFIG;
-  // Clampa t na duração total para que loops/scrubs nunca caiam fora.
-  if (t < 0) t = 0;
-  if (t > cfg.duration) t = cfg.duration;
-  const scene = cfg.scenes.find(s => t >= s.start && t < s.end)
-             || cfg.scenes[cfg.scenes.length - 1];
-  if (!scene) return;
-
-  stage.querySelectorAll('.mr-scene').forEach(el => {
-    el.classList.toggle('is-active', el.dataset.sceneId === scene.id);
-  });
-
-  const sceneEl = stage.querySelector(`[data-scene-id="${scene.id}"]`);
-  if (!sceneEl) return;
-  const local = t - scene.start;
-  const dur = scene.end - scene.start;
-  // Fade-out global da cena nos últimos 200ms (cobre todos os tipos).
-  const fadeStart = Math.max(0, dur - 0.2);
-  let sceneOpacity = 1;
-  if (local > fadeStart) {
-    sceneOpacity = 1 - Math.min(1, (local - fadeStart) / 0.2);
-  }
-  sceneEl.style.opacity = String(sceneOpacity);
-
-  if (scene.type === 'keyword') {
-    const kw = sceneEl.querySelector('.mr-keyword');
-    if (!kw) return;
-    // Mask-reveal vertical nos primeiros 500ms.
-    const p = mrEaseInOutQuart(mrWindow(local, 0, 0.5));
-    kw.style.clipPath = `inset(0 0 ${(1 - p) * 100}% 0)`;
-
-  } else if (scene.type === 'brand-intro') {
-    // Pre-headline sobe + fade em 400ms.
-    const pre = sceneEl.querySelector('.mr-pre-headline');
-    if (pre) {
-      const p = mrEaseOutQuint(mrWindow(local, 0, 0.4));
-      pre.style.opacity = String(p);
-      pre.style.transform = `translateY(${(1 - p) * 40}px)`;
-    }
-    // Brand name: scale 1.05→1 + fade em 500ms, delay 300ms.
-    const brand = sceneEl.querySelector('.mr-brand-name');
-    if (brand) {
-      const p = mrEaseOutQuint(mrWindow(local, 0.3, 0.5));
-      brand.style.opacity = String(p);
-      const scale = 1.05 - 0.05 * p;
-      brand.style.transform = `scale(${scale})`;
-    }
-    // Accent bar: scaleX 0→1 em 400ms, delay 700ms.
-    const bar = sceneEl.querySelector('.mr-accent-bar');
-    if (bar) {
-      const p = mrEaseOutQuint(mrWindow(local, 0.7, 0.4));
-      bar.style.transform = `scaleX(${p})`;
-    }
-
-  } else if (scene.type === 'product-mockup') {
-    // Caption: fade + slide de cima em 400ms, delay 200ms.
-    const caption = sceneEl.querySelector('.mr-caption');
-    if (caption) {
-      const p = mrEaseOutQuint(mrWindow(local, 0.2, 0.4));
-      caption.style.opacity = String(p);
-      caption.style.transform = `translateY(${(1 - p) * -30}px)`;
-    }
-    // Mockup: translateY 200→0 + rotação -3deg→0 em 700ms.
-    // Saída: nos últimos 400ms da cena, translateY 0 → -100 + fade.
-    const mockup = sceneEl.querySelector('.mr-mockup');
-    if (mockup) {
-      const inP = mrEaseOutQuart(mrWindow(local, 0, 0.7));
-      let ty = (1 - inP) * 200;
-      let rot = (1 - inP) * -3;
-      let op = inP;
-      // Float infinito sutil: -10px↔10px em 3s ping-pong. Aplicado
-      // depois que a entrada terminou e antes da saída começar.
-      if (local >= 0.7 && local < dur - 0.4) {
-        const floatT = (local - 0.7) / 3.0;          // 1 ciclo a cada 3s
-        const phase = Math.sin(floatT * Math.PI * 2); // -1..1
-        ty += phase * 10;
-      }
-      // Saída.
-      const exitStart = Math.max(0, dur - 0.4);
-      if (local > exitStart) {
-        const outP = mrEaseOutQuart(Math.min(1, (local - exitStart) / 0.4));
-        ty += outP * -100;
-        op = 1 - outP;
-      }
-      mockup.style.transform = `translateY(${ty}px) rotate(${rot}deg)`;
-      mockup.style.opacity = String(op);
-    }
-
-  } else if (scene.type === 'cta') {
-    // Logo no topo: scale 0.9→1 + fade em 400ms, delay 600ms.
-    const logo = sceneEl.querySelector('.mr-logo');
-    if (logo) {
-      const p = mrEaseOutQuint(mrWindow(local, 0.6, 0.4));
-      logo.style.opacity = String(p);
-      logo.style.transform = `scale(${0.9 + 0.1 * p})`;
-    }
-    // Headline: mask-reveal igual keyword, em 500ms.
-    const head = sceneEl.querySelector('.mr-cta-headline');
-    if (head) {
-      const p = mrEaseInOutQuart(mrWindow(local, 0, 0.5));
-      head.style.clipPath = `inset(0 0 ${(1 - p) * 100}% 0)`;
-    }
-    // Sublabel: fade-in em 300ms, delay 400ms.
-    const sub = sceneEl.querySelector('.mr-cta-sublabel');
-    if (sub) {
-      const p = mrEaseOutQuint(mrWindow(local, 0.4, 0.3));
-      sub.style.opacity = String(p);
-    }
-  }
-}
-
-// Calcula transform: scale para o palco caber no canvas-stage,
-// mantendo proporção 9:16. Espelha a estratégia de scalePost().
-function scaleMotionReel() {
-  const area = document.getElementById('canvasStage');
-  const scaler = document.getElementById('motionReelScaler');
-  if (!area || !scaler || scaler.hidden) return;
-  const aw = area.clientWidth - 40;
-  const ah = area.clientHeight - 40;
-  const scale = Math.min(aw / MOTION_REEL_CONFIG.width, ah / MOTION_REEL_CONFIG.height, 1);
-  scaler.style.transform = `scale(${scale})`;
-  scaler.style.width = `${MOTION_REEL_CONFIG.width}px`;
-  scaler.style.height = `${MOTION_REEL_CONFIG.height * scale}px`;
-}
-
-// Loop de preview no browser. Não é o modo de render — esse é um
-// loop "wallclock" para o usuário ver a peça rodando. Quando Puppeteer
-// for plugado, ele bypassa esse loop e chama setFrame(t) por frame.
-let _motionReelRafId = null;
-let _motionReelStartTs = 0;
-
-function startMotionReelPreview() {
-  if (_motionReelRafId !== null) return;
-  _motionReelStartTs = performance.now();
-  const tick = () => {
-    const elapsed = (performance.now() - _motionReelStartTs) / 1000;
-    const t = elapsed % MOTION_REEL_CONFIG.duration;
-    motionReelSetFrame(t);
-    _motionReelRafId = requestAnimationFrame(tick);
-  };
-  _motionReelRafId = requestAnimationFrame(tick);
-}
-
-function stopMotionReelPreview() {
-  if (_motionReelRafId !== null) {
-    cancelAnimationFrame(_motionReelRafId);
-    _motionReelRafId = null;
-  }
-}
+// No-op desde R11. O Remotion Player já cuida do scaling interno
+// preservando aspect-ratio 9:16. O CSS de `.motion-reel-stage` define
+// o container responsivo (max-width 540px) e o Player renderiza os
+// controles em tamanho nativo. Mantida só pra não quebrar chamadas
+// no resize listener e em outros pontos que ainda referenciam.
+function scaleMotionReel() { /* layout 100% via CSS agora */ }
 
 // Toggle de visibilidade do palco. Chamado no fim de switchMode().
 // Quando entra em motion-reel: esconde post-scaler/slide-nav/empty-state,
+// View state: 'player' (preview com playback) | 'grid' (4×3 thumbs editáveis).
+// Persistido só em memória; default = 'player'.
+let _motionReelView = 'player';
+
+// Troca view e atualiza UI: data-view do stage + classe active dos botões
+// + chama o módulo bundled (window.setMotionReelView).
+function setMotionReelViewMode(mode) {
+  if (mode !== 'player' && mode !== 'grid') return;
+  _motionReelView = mode;
+  const stage = document.getElementById('motionReelStage');
+  if (stage) stage.dataset.view = mode;
+  document.querySelectorAll('.mr-view-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === mode);
+  });
+  if (typeof window.setMotionReelView === 'function') {
+    window.setMotionReelView(mode);
+  }
+}
+
+// Handler global injetado no window — o módulo bundled chama isso quando
+// o usuário clica num thumb editável no grid view.
+window.onMotionReelSceneClick = function(sceneId, opts) {
+  if (opts && opts.locked) {
+    // Em cenas fixas o click do card abre o PREVIEW (não a edição).
+    openMotionReelScenePreview(sceneId);
+    return;
+  }
+  openMotionReelSceneEditor(sceneId);
+};
+
+// Preview de uma cena isolada: monta um Player com storyboard de 1 cena só.
+window.onMotionReelScenePreview = function(sceneId) {
+  openMotionReelScenePreview(sceneId);
+};
+
+// Mount React Player pra UMA cena dentro do modal. Cria storyboard
+// derivado com só essa cena (start=0, sem transitionIn) pra loop limpo.
+let _mrPreviewMounted = false;
+function openMotionReelScenePreview(sceneId) {
+  const cfg = (motionReels[currentMotionReel] && motionReels[currentMotionReel].config) || MOTION_REEL_CONFIG;
+  const scene = (cfg.scenes || []).find(s => s.id === sceneId);
+  if (!scene) return;
+  const dur = Math.max(1.0, (scene.end || 0) - (scene.start || 0));
+  const singleSceneSb = {
+    ...cfg,
+    duration: dur,
+    scenes: [{
+      ...scene,
+      start: 0,
+      end: dur,
+      // Tira transitionIn pra cena loopar limpo sem efeito de entrada.
+      transitionIn: undefined,
+    }],
+  };
+  const mountEl = document.getElementById('mrScenePreviewMount');
+  if (mountEl && typeof window.mountMotionReelPreviewPlayer === 'function') {
+    window.mountMotionReelPreviewPlayer(mountEl, singleSceneSb);
+    _mrPreviewMounted = true;
+  }
+  const labelEl = document.getElementById('mrScenePreviewLabel');
+  if (labelEl) labelEl.textContent = `${sceneId.toUpperCase()} · ${scene.type} · ${dur.toFixed(1)}s`;
+  document.getElementById('mrScenePreviewModal').classList.add('open');
+}
+function closeMotionReelScenePreview() {
+  document.getElementById('mrScenePreviewModal').classList.remove('open');
+  if (_mrPreviewMounted && typeof window.unmountMotionReelPreviewPlayer === 'function') {
+    window.unmountMotionReelPreviewPlayer();
+    _mrPreviewMounted = false;
+  }
+}
+
+// ESC fecha o preview modal (UX comum em modais).
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  const modal = document.getElementById('mrScenePreviewModal');
+  if (modal && modal.classList.contains('open')) {
+    closeMotionReelScenePreview();
+  }
+});
+
+let _mrSceneEditingId = null;
+
+// Abre o modal de edição da cena. Carrega meta info e zera o prompt.
+function openMotionReelSceneEditor(sceneId) {
+  const cfg = (motionReels[currentMotionReel] && motionReels[currentMotionReel].config) || MOTION_REEL_CONFIG;
+  const scene = (cfg.scenes || []).find(s => s.id === sceneId);
+  if (!scene) {
+    setGenStatus(`<i class="ph ph-warning"></i>Cena ${sceneId} não encontrada.`, 'error');
+    return;
+  }
+  _mrSceneEditingId = sceneId;
+  const meta = document.getElementById('mrSceneEditMeta');
+  if (meta) meta.textContent = `${sceneId} · ${scene.type} · ${(scene.end - scene.start).toFixed(1)}s`;
+  const prompt = document.getElementById('mrSceneEditPrompt');
+  if (prompt) { prompt.value = ''; prompt.focus(); }
+  const status = document.getElementById('mrSceneEditStatus');
+  if (status) status.textContent = '';
+  document.getElementById('mrSceneEditModal').classList.add('open');
+}
+
+function closeMotionReelSceneEditor() {
+  _mrSceneEditingId = null;
+  document.getElementById('mrSceneEditModal').classList.remove('open');
+}
+
+// Envia a cena atual + instrução pra Gemini, aplica resultado no storyboard.
+async function submitMotionReelSceneEdit() {
+  if (!_mrSceneEditingId) return;
+  const prompt = document.getElementById('mrSceneEditPrompt');
+  const instruction = (prompt ? prompt.value : '').trim();
+  if (!instruction) {
+    setMrEditStatus('Descreva o que você quer mudar.', 'error');
+    return;
+  }
+  const reel = motionReels[currentMotionReel];
+  const cfg = (reel && reel.config) || MOTION_REEL_CONFIG;
+  const sceneIdx = (cfg.scenes || []).findIndex(s => s.id === _mrSceneEditingId);
+  if (sceneIdx < 0) {
+    setMrEditStatus('Cena não encontrada no storyboard ativo.', 'error');
+    return;
+  }
+  const originalScene = cfg.scenes[sceneIdx];
+
+  const submitBtn = document.getElementById('mrSceneEditSubmit');
+  if (submitBtn) submitBtn.disabled = true;
+  setMrEditStatus('<i class="ph ph-hourglass"></i> Gemini editando cena...', '');
+
+  try {
+    const edited = await callGeminiMotionReelSceneEdit(originalScene, instruction);
+    // Preserva campos imutáveis (id, start, end, type, locked).
+    const merged = {
+      ...edited,
+      id: originalScene.id,
+      start: originalScene.start,
+      end: originalScene.end,
+      type: originalScene.type,
+      locked: originalScene.locked,
+    };
+    // Mantém referência ao objeto config (in-place update).
+    cfg.scenes[sceneIdx] = merged;
+    // Se for o reel da sidebar, atualiza o objeto também.
+    if (reel && reel.config) reel.config = cfg;
+    // Persistência (R12): qualquer mutação salva no localStorage.
+    saveMotionReelsToLocal();
+    // Re-monta o storyboard no Player/grid.
+    if (typeof window.updateMotionReelStoryboard === 'function') {
+      window.updateMotionReelStoryboard(cfg);
+    }
+    setMrEditStatus('<i class="ph ph-check-circle"></i> Cena atualizada.', 'success');
+    setTimeout(() => closeMotionReelSceneEditor(), 600);
+  } catch (err) {
+    console.error('[MotionReel] Falha na edição', err);
+    setMrEditStatus(`<i class="ph ph-warning"></i> ${err.message || err}`, 'error');
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
+  }
+}
+
+function setMrEditStatus(msg, tone) {
+  const el = document.getElementById('mrSceneEditStatus');
+  if (!el) return;
+  el.innerHTML = msg;
+  el.style.color = tone === 'error' ? '#D7642A' : tone === 'success' ? '#2A7B5A' : '#5C605D';
+}
+
+// Prompt sistêmico pra edição focada de UMA cena. A Gemini recebe a cena
+// inteira em JSON + instrução do usuário e retorna apenas a cena editada.
+function buildMotionReelSceneEditPrompt(scene) {
+  return `Você é o editor de cenas de um Motion Reel da Cropware (software brasileiro pro agro).
+
+Recebe UMA cena em JSON e uma INSTRUÇÃO do usuário em PT-BR.
+Retorna a MESMA cena com as alterações aplicadas, mantendo o schema.
+
+REGRAS DURAS:
+1. NUNCA altere: id, start, end, type, locked. Esses são imutáveis.
+2. Pode alterar todos os demais campos (texto, cores, background, transitionIn, overlays, voiceover, items, etc).
+3. Cores: use APENAS tokens válidos:
+   "var(--mr-greenBright)" "var(--mr-greenAccent)" "var(--mr-greenDeep)" "var(--mr-greenForest)" "var(--mr-greenAbyss)"
+   "var(--mr-slateLight)" "var(--mr-slateMid)" "var(--mr-slateDark)" "var(--mr-slateAbyss)"
+   "var(--mr-white)" "var(--mr-cream)" "var(--mr-fog)" "var(--mr-amber)" "var(--mr-azure)"
+4. Transições válidas: cut · fade · wipe-up · wipe-down · push-up · push-left · mask-circle · flash · zoom-blur · light-leak · cinematic-blur · ring-tunnel · glitch · slide-radial
+5. SFX válidos: whoosh · whip · click · ding · shutter · vine-boom · impact · riser · pop · notification · reveal · cut · page-turn · switch · xp-error · bruh
+6. Backgrounds: { type: "solid" } OU { type: "gradient", gradient: {...} } OU { type: "texture", texture: {...} }
+7. Overlays válidos: rotating-rings · pulse-circle · particle-drift · line-draw · curve-trace · light-streak · vignette-breath
+8. Ícones (feature-list items): use Iconify (twemoji:* ou noto:*) — exemplos: twemoji:satellite, twemoji:seedling, twemoji:ear-of-corn
+
+CENA ATUAL:
+${JSON.stringify(scene, null, 2)}
+
+OUTPUT: APENAS o JSON da cena editada, começando em { e terminando em }. Sem prosa, sem markdown wrap.`;
+}
+
+async function callGeminiMotionReelSceneEdit(scene, instruction) {
+  const systemPrompt = buildMotionReelSceneEditPrompt(scene);
+  const userPrompt = `Instrução do usuário: ${instruction}\n\nRetorne a cena editada (JSON apenas).`;
+  const resp = await fetchGeminiWithRetry(
+    `${SUPABASE_URL}/functions/v1/gemini`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+      },
+      body: JSON.stringify({
+        model: 'gemini-2.5-flash',
+        body: {
+          contents: [{ parts: [{ text: userPrompt }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          generationConfig: { responseMimeType: 'application/json' },
+        },
+      }),
+    },
+    'Gemini Scene Edit'
+  );
+  const data = await resp.json();
+  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const match = raw.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('Gemini não retornou JSON válido.');
+  return JSON.parse(match[0]);
+}
+
 // mostra palco, renderiza cenas, inicia preview, escala.
 // Quando sai: para preview e devolve o palco de posts.
 function updateMotionReelVisibility() {
   const scaler = document.getElementById('motionReelScaler');
+  const stage = document.getElementById('motionReelStage');
+  // Inicializa data-view do stage no modo atual (default player).
+  if (stage) stage.dataset.view = _motionReelView;
   const postScaler = document.getElementById('postScaler');
   const slideNav = document.getElementById('slideNav');
   const legendOpenRow = document.getElementById('legendOpenRow');
@@ -21116,13 +21731,31 @@ function updateMotionReelVisibility() {
     if (legendOpenRow) legendOpenRow.style.display = 'none';
     if (scaler) {
       scaler.hidden = false;
-      renderMotionReelStage();
       scaleMotionReel();
-      motionReelSetFrame(0);
-      startMotionReelPreview();
+      // Pinta o palco via Remotion Player. Se o módulo bundled pelo Vite ainda
+      // não terminou de baixar, aguarda um tick e tenta de novo.
+      const sb = (motionReels[currentMotionReel] && motionReels[currentMotionReel].config) || MOTION_REEL_CONFIG;
+      if (stage && typeof window.mountMotionReelPlayer === 'function') {
+        window.mountMotionReelPlayer(stage, sb);
+      } else if (stage) {
+        const _waitForMount = () => {
+          if (typeof window.mountMotionReelPlayer === 'function') {
+            window.mountMotionReelPlayer(stage, sb);
+          } else {
+            setTimeout(_waitForMount, 80);
+          }
+        };
+        _waitForMount();
+      }
     }
+    // Mostra o botão "Baixar MP4" sempre em motion-reel mode (o default
+    // storyboard já é válido pra renderizar mesmo sem reel customizado).
+    const dlBtn = document.getElementById('downloadBtn');
+    if (dlBtn) dlBtn.style.display = 'flex';
   } else {
-    stopMotionReelPreview();
+    if (typeof window.unmountMotionReelPlayer === 'function') {
+      window.unmountMotionReelPlayer();
+    }
     if (scaler) scaler.hidden = true;
     // Restaura postScaler só se o modo de destino tem items; caso contrário
     // updateEmptyStateVisibility() já o escondeu corretamente e não devemos
@@ -21138,10 +21771,640 @@ window.addEventListener('resize', () => {
   if (isMotionReelMode()) scaleMotionReel();
 });
 
-// Exposto globalmente para debug via console (window.setFrame(1.0))
-// e para futura integração com Puppeteer no pipeline de render.
-window.setFrame = motionReelSetFrame;
+// ═══════════════════════════════════════════════════════════════════
+// MOTION REEL — GERAÇÃO POR IA (Gemini)
+// Recebe tema + tom + duração e retorna um storyboard completo no formato
+// do MOTION_REEL_CONFIG. Reusa a mesma edge function `gemini` da Supabase
+// usada pelo resto do app (callGeminiText, etc).
+// ═══════════════════════════════════════════════════════════════════
+
+function buildMotionReelSystemPrompt(tone, theme) {
+  const toneLabel = ({
+    casual:   'casual, próximo do produtor',
+    tecnico:  'técnico, preciso, agronômico',
+    formal:   'formal, institucional',
+    inspirador: 'inspirador, motivacional',
+  })[tone] || 'casual';
+  return `Você é o diretor criativo de Reels (vídeos verticais 9:16, 1080×1920) da Cropware — software brasileiro para agronegócio. Tom: ${toneLabel}. Idioma: pt-BR.
+
+═══════════════════════════════════════════════════════════
+TEMA DESTE REEL (LEIA COM ATENÇÃO — TODO O STORYBOARD GIRA EM TORNO DELE):
+"${theme}"
+═══════════════════════════════════════════════════════════
+
+REGRA #1 (a mais importante): TODAS as cenas devem ser ESPECIFICAMENTE sobre o tema acima. Não use copy genérica de marca ("agro do futuro", "tecnologia que transforma"). Cada keyword, stat, feature ou frase precisa fazer sentido apenas para ESTE tema — se a mesma copy serviria para qualquer outro Reel da Cropware, refaça.
+
+ESQUEMA EXATO do JSON de resposta:
+{
+  "duration": <segundos totais, número>,
+  "scenes": [
+    {
+      "id": "<slug-curto>",
+      "start": <segundo de início>,
+      "end": <segundo de fim>,
+      "type": "<um dos tipos abaixo>",
+      "bg": "<cor>",
+      "fg": "<cor>",
+      "transitionIn": { "type": "<tipo>", "dur": <segundos>, "easing": "<easing>" },
+      ...props específicas do tipo
+    }
+  ]
+}
+
+TIPOS DE CENA (escolha o tipo certo pra cada momento — não repita mesmo tipo 3x seguidas):
+
+• "brand-intro" — abertura. Props: kicker (curto, MAIÚSCULA, opcional), preHeadline (ex "Conheça o"), brandName (geralmente "Cropware" mas pode ser o nome da feature/produto do tema).
+• "keyword" — 1-4 palavras de impacto, centralizadas gigantes. Use pra puxar atenção. Props: word.
+• "stat-card" — número grande + label. Use quando o tema permite um dado quantitativo concreto. Props: kicker, value (número), suffix (opcional: "x", "%", "h", "min", "ha"), label (frase curta explicando), format (opcional: "decimal" pra valor com 1 casa, "comma" pra milhares, senão inteiro).
+• "quote" — citação de alguém (cliente, fundador, agrônomo). Props: text (frase 50-90 char), author (curto, ex "Cliente Cropware · MT").
+• "feature-list" — título + 3-4 itens com ícone colorido. Use quando o tema permite enumerar partes/etapas/benefícios. Props: kicker, title (curto, máx 4 palavras), items: array de 3-4 objetos { "text": "...", "icon": "set:name" }.
+   ÍCONES via Iconify (use APENAS estes packs colorful pra hero scenes — escolha o ícone que melhor representa o item):
+     - twemoji:* (Twitter emoji colorido — muito expressivo)
+         exemplos: twemoji:satellite, twemoji:seedling, twemoji:ear-of-corn, twemoji:tractor, twemoji:globe-showing-americas, twemoji:droplet, twemoji:sun, twemoji:cloud, twemoji:bar-chart, twemoji:rocket, twemoji:gear, twemoji:check-mark-button, twemoji:speech-balloon, twemoji:handshake, twemoji:warning, twemoji:money-bag, twemoji:mobile-phone, twemoji:antenna-bars
+     - noto:* (Google Noto Emoji multi-color, alternativa)
+   Em caso de dúvida, use twemoji por default. Catálogo completo: https://icon-sets.iconify.design/twemoji/
+   Cada item é OBRIGATORIAMENTE objeto: { "text": "Monitoramento por satélite", "icon": "twemoji:satellite" }.
+• "end-card" — fechamento padrão. Props: tagline (frase curta DIRETAMENTE relacionada ao tema), handle ("@cropware.app"), logoUrl ("logo-cropware-pb-final.svg").
+• "cta" — fechamento com headline grande quando o tema é uma campanha ativa. Props: headline (curto), sublabel (descrição), handle (opcional).
+• "chapter" — pausa visual / divisor de seções no meio do reel. Numero grande "01/02/03" + título + subtitle. Use 1x quando o tema tem 2+ momentos distintos. Props: chapterNumber (1-9), chapterTitle (curto, 2-4 palavras), chapterSubtitle (opcional).
+• "lower-third" — overlay de menção rápida (faixa branca grande no rodapé, slide-in). Use 1x pra creditar pessoa, parceiro ou fonte. Props: name, subtitle, handle, cta (opcional).
+• "data-chart" — gráfico animado (bars + line). Use 1x quando o tema permite mostrar série temporal real (safra, monitoramento, ROI). Props: kicker, title, chartType ("bar" | "line" | "bar-line"), unit (opcional, ex "kg/ha"), data: { labels: ["Jan", "Fev", ...], series: [{ name, values: [N, N, ...], kind: "bar"|"line", color (hex) }] }. Use 4-6 labels e 1-2 series.
+• "app-card" — janela mockup do app Cropware ilustrando o tema. Use 1x MÁX quando o tema é sobre uma feature concreta. Props: kicker (opcional), caption (frase contexto), appType ("weather" | "satellite" | "alert" | "dashboard"), data: específico do tipo:
+   - weather: { city, temp (number), condition, forecast: [{day, temp}, ...] }
+   - satellite: { lot, ndvi (0-1) }   // NDVI map auto-gerado
+   - alert: { title, message, severity: "alta"|"media"|"baixa" }
+   - dashboard: { metrics: [{ label, value, unit?, trend?: "up"|"down" }, ...] (3 itens) }
+
+PALETA DE CORES (use APENAS estes tokens literais — paleta MR_COLORS v2 curada):
+
+VERDES (5 derivações ao redor do verde Cropware oficial):
+  - "var(--mr-greenBright)"  #82CCA5  claro vibrante (highlight)
+  - "var(--mr-greenAccent)"  #6AC58F  verde Cropware oficial — PRIMARY
+  - "var(--mr-greenDeep)"    #42AA7B  médio
+  - "var(--mr-greenForest)"  #2A7B5A  escuro
+  - "var(--mr-greenAbyss)"   #143F2C  quase preto verde
+
+SLATES (4 cinzas pretos com pegada Cropware):
+  - "var(--mr-slateLight)"   #80847F
+  - "var(--mr-slateMid)"     #5C605D
+  - "var(--mr-slateDark)"    #3D3F3D
+  - "var(--mr-slateAbyss)"   #1A1B1A  preto quase total
+
+NEUTROS: "var(--mr-white)" #FFFFFF (default pra fundo claro) · "var(--mr-fog)" #EEEFEE · "var(--mr-cream)" #F5F1EA (alternativa quente, use raramente)
+ACCENTS: "var(--mr-amber)" #F4B860 (flares quentes) · "var(--mr-azure)" #0B84F3 (data viz)
+
+Combinações sugeridas (bg → fg):
+  - greenAbyss → white  · greenForest → white  · greenAccent → white
+  - slateAbyss → white  · slateDark → white    · slateMid → fog
+  - white → slateAbyss/greenAbyss  · fog → slateDark
+NÃO repita a mesma cor de fundo em cenas adjacentes — varie o "ambiente" da cena.
+
+BACKGROUND DA CENA (substitui o antigo bgImage — opcional, default = cor sólida bg):
+  Cada cena pode declarar um objeto "background" pra dar profundidade visual:
+
+  • "background": { "type": "solid" }
+      Usa scene.bg literal sem efeito. Default; pode omitir.
+
+  • "background": { "type": "gradient", "gradient": { ... } }
+      Tipos de gradient.kind:
+        - "linear": colors[] + angle (0-360 graus, default 135)
+        - "radial": colors[] centrado
+        - "breathing-radial": colors[] + breathScale (1.04-1.10) — center deriva
+          lentamente + scale pulsa (estilo "Aurora Glassmorphism"). Recomendado
+          para intros e cenas longas (≥5s) — não em cenas curtas (≤2s).
+      Ex: { "type": "gradient", "gradient": { "kind": "breathing-radial",
+            "colors": ["var(--mr-greenForest)", "var(--mr-greenAbyss)"], "breathScale": 1.05 } }
+
+  • "background": { "type": "texture", "texture": { ... } }
+      Tipos de texture.kind:
+        - "noise" — turbulência fractal (ruído orgânico)
+        - "grain" — ruído fino estilo filme
+        - "dots"  — grid de pontos brancos
+        - "lines" — hatching diagonal
+        - "topo"  — curvas de nível concêntricas (estilo mapa topográfico)
+      Props: color (cor base), intensity (0-1, default 0.4).
+      Ex: { "type": "texture", "texture": { "kind": "topo", "color": "var(--mr-greenAbyss)", "intensity": 0.55 } }
+
+  REGRA: distribua os 3 tipos pelas cenas pra variedade. Texturas pesadas em
+  keywords/quotes funcionam bem; breathing-radial em intros e end-cards;
+  solid (omitir background) em cenas com muito texto.
+
+TRANSIÇÕES (cada cena exceto a primeira DEVE ter transitionIn):
+  Básicas: fade · wipe-up · wipe-down · push-up · push-left · mask-circle
+  Cinematográficas: flash · zoom-blur · cinematic-blur · ring-tunnel · glitch · slide-radial · light-leak
+Durações: 0.3s a 0.6s (1.0s para light-leak, 0.6-0.8s para cinematic-blur). Use cada tipo cinematográfico no máximo 1x. Varie pra dar ritmo.
+EASINGS válidos: "in-out-quart", "out-quint", "out-quart", "in-out-cubic", "out-expo", "in-out-expo".
+
+PROPS EXTRAS POR TIPO:
+  - light-leak: seed (0-9), hueShift (0=dourado, 30=âmbar, 120=verde, 240=azul)
+  - ring-tunnel: color (default verde Cropware)
+  - slide-radial: origin ("top-left"|"top-right"|"bottom-left"|"bottom-right"|"center")
+  - flash: color (default branco)
+
+SFX NAS TRANSIÇÕES (opcional):
+  Adicione "sfx" no objeto transitionIn pra disparar efeito sonoro no boundary.
+  Nomes disponíveis: "whoosh" · "whip" · "page-turn" · "switch" · "click" ·
+                     "shutter" · "shutter-old" · "ding" · "bruh" · "vine-boom" ·
+                     "xp-error" · "impact" · "riser" · "pop" · "notification"
+  Use com PARCIMÔNIA — máximo 3-4 SFX no reel todo. Pareie tipo com sentido:
+    wipe-up / push-up    → "whoosh"
+    flash / glitch       → "impact" (vine-boom)
+    light-leak / cinematic-blur → "riser"
+    ring-tunnel / mask-circle → "riser" ou "shutter"
+    ScaleBounceText momento → "pop"
+    end-card chegando    → "ding" ou "notification"
+  Ex: "transitionIn": { "type": "flash", "dur": 0.35, "sfx": "impact" }
+
+VOICEOVER POR CENA (opcional, recomendado p/ reels institucionais):
+  Cada cena pode ter "voiceover": { "text": "frase falada por uma voz IA" }.
+  O motor gera os MP3s offline via ElevenLabs ("npm run reel:voiceover") e
+  monta o áudio sincronizado na cena.
+  Diretrizes pro voiceover.text:
+    - PT-BR natural, ritmo de fala humana, 10-18 palavras por cena
+    - Não REPETE o texto visual da cena — COMPLEMENTA
+    - Pausa: termine cada frase em ponto. Use vírgula pra respirar.
+    - Total do reel: ~150-200 palavras (~60s falados)
+  Ex: { "voiceover": { "text": "Em campo, cada minuto conta. Por isso o Cropware roda em 3 segundos." } }
+
+MÚSICA DE FUNDO (top-level, opcional):
+  No NÍVEL RAIZ do storyboard (mesmo nível de "scenes"), adicione:
+    "audio": { "music": "audio/track.mp3", "volume": 0.4, "fadeIn": 1.5, "fadeOut": 2.5 }
+  Como você não tem como saber o que o usuário fez upload, OMITA esse campo
+  na geração — quem decide a música é o usuário no upload manual.
+
+OVERLAYS DECORATIVOS (scene.overlays — opcional, array, máx 2 por cena, NÃO em todas as cenas):
+  Cada cena pode declarar uma lista de efeitos visuais sutis renderizados POR CIMA do conteúdo.
+  Use pra acrescentar atmosfera técnica/orgânica sem dominar a frame.
+
+  • { "type": "rotating-rings", color, opacity (0-1, default 0.18), count (2|3), origin ("center"|"top-right"|"top-left"|"bottom-right"|"bottom-left") }
+    Anéis tracejados girando — vibe radar / satélite. Bom em cenas técnicas (app-card satellite, data-chart).
+
+  • { "type": "pulse-circle", color, opacity (default 0.22), origin ("center") }
+    Pulsos concêntricos do centro. Bom em alerts ou momentos de "expansão".
+
+  • { "type": "particle-drift", color, count (10-50, default 30), opacity (default 0.4) }
+    Partículas finas seeded drifting. Bom em cenas atmosféricas (quote, brand-intro).
+
+  • { "type": "line-draw", color, preset ("frame"|"corner-r"|"corner-l"|"underline-tr"|"underline-bl"), thickness (2-8), delay (s), dur (s), opacity }
+    Linha geométrica desenhando-se. Bom pra acentuar canto/borda.
+
+  • { "type": "curve-trace", color, preset ("sweep-right"|"sweep-left"|"wave-top"|"wave-bottom"|"arc-corner"), thickness (3-7), delay, dur, opacity }
+    Bezier curvilíneo desenhando. Acento orgânico, mais suave que line-draw.
+
+  • { "type": "light-streak", color, angle (-45 a 45 graus), opacity (default 0.18), speed (default 1) }
+    Faixa diagonal de luz atravessando 1x. Bom pra acelerar ritmo em cenas estáticas.
+
+  • { "type": "vignette-breath", color (escuro), intensity (0-1, default 0.45) }
+    Vinheta radial pulsando. Bom em cenas dark pra dar profundidade.
+
+ESTRUTURA OBRIGATÓRIA (R12 — formato 6+6, fixas + customizáveis):
+  Gere SEMPRE 12 cenas, sendo 6 FIXAS e 6 CUSTOMIZÁVEIS pelo tema.
+  Total: 60 segundos, ordem rígida.
+
+  Ordem das 12 cenas (com tempo aproximado e flag locked):
+    01  0-6s    brand-intro    LOCKED   "Conheça o Cropware"
+    02  6-10s   stat-card      custom   Dado de impacto do tema
+    03  10-14s  keyword        custom   Adjetivo de impacto
+    04  14-18s  chapter        LOCKED   Cap. 04 · "No campo"
+    05  18-24s  feature-list   custom   3 features tema-específicas
+    06  24-30s  data-chart     custom   Série de dados real (se aplicável)
+    07  30-34s  chapter        LOCKED   Cap. 07 · "Em tempo real"
+    08  34-40s  app-card       custom   Mock app ilustrando feature
+    09  40-44s  keyword        custom   Adjetivo/frase de fechamento
+    10  44-50s  quote          LOCKED   Depoimento genérico
+    11  50-55s  lower-third    LOCKED   "@cropware.app · Siga no Instagram"
+    12  55-60s  end-card       LOCKED   Logo + tagline + "Seguir"
+
+  REGRA DURA: as 6 cenas LOCKED (01, 04, 07, 10, 11, 12) são 100%
+    HARDCODED no código React (BrandIntro.jsx, Chapter.jsx, Quote.jsx,
+    LowerThird.jsx, EndCard.jsx). VOCÊ NÃO PRECISA E NÃO DEVE escrever
+    copy nem visual pra elas — só esqueleto mínimo:
+
+  [01] brand-intro LOCKED:
+       { "id": "intro", "type": "brand-intro", "locked": true,
+         "transitionIn": { "type": "fade", "dur": 0.3, "easing": "out-expo" } }
+
+  [04] chapter LOCKED:
+       { "id": "chapter-1", "type": "chapter", "locked": true,
+         "transitionIn": { "type": "light-leak", "dur": 1.0 } }
+
+  [07] chapter LOCKED:
+       { "id": "chapter-2", "type": "chapter", "locked": true,
+         "transitionIn": { "type": "cinematic-blur", "dur": 0.6 } }
+
+  [10] quote LOCKED:
+       { "id": "quote", "type": "quote", "locked": true,
+         "transitionIn": { "type": "wipe-down", "dur": 0.5 } }
+
+  [11] lower-third LOCKED:
+       { "id": "lower-third-cta", "type": "lower-third", "locked": true,
+         "transitionIn": { "type": "push-up", "dur": 0.45 } }
+
+  [12] end-card LOCKED:
+       { "id": "end", "type": "end-card", "locked": true,
+         "transitionIn": { "type": "ring-tunnel", "dur": 0.7 } }
+
+  O sistema sobrescreve essas posições com o conteúdo Cropware ao validar
+  o storyboard. Foque 100% nas 6 customizáveis.
+
+  Para as 6 CUSTOMIZÁVEIS (02, 03, 05, 06, 08, 09) você ESCREVE copy
+  tema-específica. Mantenha "locked": false (ou omita) nelas.
+  Em data-chart e app-card, se o tema NÃO permitir uso natural, você
+  ainda DEVE incluir a cena (ordem é rígida) — preencha com dados
+  fictícios sensatos relacionados ao tema (ex.: stat genérico "85%").
+
+  Outras regras:
+  - start/end encadeiam sem buracos. Total = 60s exatos.
+  - Distribua bg colors alternando área clara/escura pra ritmo.
+  - Use breathing-radial OU texture nas cenas customizáveis.
+
+EXEMPLO de cena bem ancorada ao tema "Lançamento da feature de NDVI":
+  { "id": "stat-ndvi", "start": 6.0, "end": 12.0, "type": "stat-card",
+    "bg": "var(--mr-greenAbyss)", "fg": "var(--mr-white)",
+    "background": { "type": "gradient", "gradient": { "kind": "radial",
+      "colors": ["var(--mr-greenForest)", "var(--mr-greenAbyss)"] } },
+    "transitionIn": { "type": "wipe-up", "dur": 0.55, "easing": "in-out-quart" },
+    "kicker": "NDVI EM MINUTOS", "value": 5, "suffix": "min",
+    "label": "do satélite ao mapa de saúde da lavoura" }
+
+Note que kicker, value e label só fazem sentido se for sobre NDVI. Mesma estrutura aplicada a um tema diferente teria copy diferente.
+
+═══════════════════════════════════════════════════════════
+EXEMPLO COMPLETO (storyboard minimal — pra você ver o formato esperado):
+{
+  "duration": 60,
+  "scenes": [
+    { "id": "intro", "start": 0, "end": 5, "type": "brand-intro",
+      "kicker": "PARA O AGRO", "preHeadline": "Conheça o", "brandName": "Cropware",
+      "bg": "var(--mr-white)", "fg": "var(--mr-slateAbyss)",
+      "background": { "type": "gradient", "gradient": { "kind": "breathing-radial", "colors": ["var(--mr-white)", "var(--mr-fog)"], "breathScale": 1.04 } },
+      "voiceover": { "text": "Conheça o Cropware, o software brasileiro pro agro." },
+      "transitionIn": { "type": "fade", "dur": 0.3, "easing": "out-expo" } },
+    { "id": "stat", "start": 5, "end": 11, "type": "stat-card",
+      "kicker": "EM CAMPO", "value": 3, "suffix": "x", "label": "mais rápido que sua planilha",
+      "bg": "var(--mr-greenAbyss)", "fg": "var(--mr-white)",
+      "background": { "type": "gradient", "gradient": { "kind": "radial", "colors": ["var(--mr-greenForest)", "var(--mr-greenAbyss)"] } },
+      "voiceover": { "text": "Três vezes mais rápido que a planilha de hoje." },
+      "transitionIn": { "type": "wipe-up", "dur": 0.5, "easing": "in-out-quart", "sfx": "whoosh" } },
+    { "id": "features", "start": 11, "end": 18, "type": "feature-list",
+      "kicker": "TUDO EM UM", "title": "Tudo na palma.",
+      "items": [
+        { "text": "Monitoramento por satélite",  "icon": "twemoji:satellite" },
+        { "text": "Diagnóstico direto em campo", "icon": "twemoji:seedling" },
+        { "text": "Histórico completo de safra", "icon": "twemoji:bar-chart" }
+      ],
+      "bg": "var(--mr-white)", "fg": "var(--mr-slateAbyss)",
+      "background": { "type": "gradient", "gradient": { "kind": "linear", "colors": ["var(--mr-white)", "var(--mr-fog)"], "angle": 180 } },
+      "voiceover": { "text": "Monitoramento, diagnóstico e histórico — tudo na sua mão." },
+      "overlays": [{ "type": "line-draw", "color": "var(--mr-greenAccent)", "preset": "corner-r", "thickness": 4, "delay": 0.6, "dur": 1.2 }],
+      "transitionIn": { "type": "push-up", "dur": 0.5, "easing": "in-out-cubic" } },
+    { "id": "end", "start": 18, "end": 22, "type": "end-card",
+      "logoUrl": "logo-cropware-pb-final.svg", "tagline": "O agro é Cropware.", "handle": "@cropware.app",
+      "bg": "var(--mr-slateAbyss)", "fg": "var(--mr-white)",
+      "background": { "type": "gradient", "gradient": { "kind": "breathing-radial", "colors": ["var(--mr-greenAbyss)", "var(--mr-slateAbyss)"], "breathScale": 1.08 } },
+      "voiceover": { "text": "Encontra a gente em arroba cropware ponto app." },
+      "transitionIn": { "type": "ring-tunnel", "dur": 0.7, "easing": "in-out-cubic", "sfx": "riser" } }
+  ]
+}
+
+Note: o exemplo acima tem só 4 cenas pra ficar compacto. O seu output DEVE ter 8-12 cenas distribuídas em 60s (duração alvo). Use os 11 tipos disponíveis com variedade. Cada cena com voiceover.text complementando o visual.
+═══════════════════════════════════════════════════════════
+
+OUTPUT: APENAS o JSON, sem prosa, sem \`\`\`markdown wrap. Comece em { e termine em }.`;
+}
+
+async function callGeminiMotionReelStoryboard(theme, tone, duration) {
+  // Tema vai NO system prompt pra ficar próximo das regras de aderência;
+  // user prompt repete pra reforçar e adiciona a duração alvo.
+  const systemPrompt = buildMotionReelSystemPrompt(tone, theme);
+  const userPrompt = `Crie o storyboard JSON do Reel sobre "${theme}".\nDuração total: ${duration} segundos.\nCada cena precisa ter copy específica ao tema. Lembre da REGRA #1.`;
+  const resp = await fetchGeminiWithRetry(
+    `${SUPABASE_URL}/functions/v1/gemini`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+      },
+      body: JSON.stringify({
+        model: 'gemini-2.5-flash',
+        body: {
+          contents: [{ parts: [{ text: userPrompt }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          generationConfig: { responseMimeType: 'application/json' },
+        },
+      }),
+    },
+    'Gemini Motion Reel'
+  );
+  const data = await resp.json();
+  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const match = raw.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('Motion Reel: Gemini não retornou JSON válido.');
+  return JSON.parse(match[0]);
+}
+
+// Valida e normaliza o storyboard vindo da IA. Garante consistência de
+// timing (end == próximo start) e remove campos que não conhecemos.
+function mrValidateStoryboard(parsed, targetDuration) {
+  if (!parsed || !Array.isArray(parsed.scenes) || !parsed.scenes.length) {
+    throw new Error('Storyboard sem cenas.');
+  }
+  const validTypes = new Set(['brand-intro', 'keyword', 'stat-card', 'quote', 'feature-list', 'end-card', 'cta', 'chapter', 'lower-third', 'data-chart', 'app-card']);
+  const validTransitions = new Set(['cut', 'fade', 'wipe-up', 'wipe-down', 'push-up', 'push-left', 'mask-circle', 'flash', 'zoom-blur', 'light-leak', 'cinematic-blur', 'ring-tunnel', 'glitch', 'slide-radial']);
+  const validBgTypes = new Set(['solid', 'gradient', 'texture']);
+  const validOverlayTypes = new Set(['rotating-rings', 'pulse-circle', 'particle-drift', 'line-draw', 'curve-trace', 'light-streak', 'vignette-breath']);
+  const scenes = parsed.scenes.filter(s => validTypes.has(s.type));
+  if (!scenes.length) throw new Error('Nenhuma cena com tipo válido.');
+  // Renormaliza timing: respeita as proporções da IA mas força encadeamento limpo.
+  // R7: cenas mais longas (4.5-7s) pra alvo de 60s.
+  let cursor = 0;
+  scenes.forEach((s, i) => {
+    const aiDur = Math.max(2.0, Math.min(8.0, Number(s.end) - Number(s.start) || 5.5));
+    s.start = cursor;
+    s.end = cursor + aiDur;
+    cursor = s.end;
+    if (!s.id) s.id = `${s.type}-${i}`;
+    if (s.transitionIn && !validTransitions.has(s.transitionIn.type)) {
+      s.transitionIn = { type: 'fade', dur: 0.4, easing: 'in-out-cubic' };
+    }
+    // Sanitiza background: descarta campos antigos (bgImage/kenBurns/bgOverlay)
+    // e valida o objeto novo `background` (tipo + payload).
+    delete s.bgImage; delete s.kenBurns; delete s.bgOverlay;
+    if (s.background) {
+      if (!s.background.type || !validBgTypes.has(s.background.type)) {
+        delete s.background;
+      }
+    }
+    // Sanitiza overlays: filtra só tipos conhecidos, máx 2 por cena.
+    if (Array.isArray(s.overlays)) {
+      s.overlays = s.overlays
+        .filter(o => o && validOverlayTypes.has(o.type))
+        .slice(0, 2);
+      if (!s.overlays.length) delete s.overlays;
+    } else {
+      delete s.overlays;
+    }
+    // Sanitiza voiceover — só mantém se text for string não-vazia.
+    if (s.voiceover && (typeof s.voiceover !== 'object' || !s.voiceover.text)) {
+      delete s.voiceover;
+    }
+    // Sanitiza SFX em transitionIn — só nomes string.
+    if (s.transitionIn && s.transitionIn.sfx && typeof s.transitionIn.sfx !== 'string') {
+      delete s.transitionIn.sfx;
+    }
+    // R12: normaliza `locked` pra boolean (default false).
+    s.locked = s.locked === true;
+  });
+  // R12 enforcement: as 6 posições locked (01, 04, 07, 10, 11, 12 = índices
+  // 0, 3, 6, 9, 10, 11) DEVEM ter o conteúdo da identidade Cropware. A IA
+  // costuma esquecer campos (kicker, taglineLines, etc) — aqui sobrescrevemos
+  // com o default pra garantir consistência visual. Preserva só start/end.
+  const lockedDefaults = (window.MOTION_REEL_DEFAULT_STORYBOARD && Array.isArray(window.MOTION_REEL_DEFAULT_STORYBOARD.scenes))
+    ? window.MOTION_REEL_DEFAULT_STORYBOARD.scenes.filter(s => s.locked === true)
+    : [];
+  const LOCKED_POSITIONS = [0, 3, 6, 9, 10, 11];
+  LOCKED_POSITIONS.forEach((pos, lockIdx) => {
+    if (scenes[pos] && lockedDefaults[lockIdx]) {
+      const orig = scenes[pos];
+      const def = lockedDefaults[lockIdx];
+      // Mantém start/end (cronologia da IA) e voiceover (text custom do tema)
+      scenes[pos] = {
+        ...def,
+        start: orig.start,
+        end: orig.end,
+        locked: true,
+        ...(orig.voiceover ? { voiceover: orig.voiceover } : {}),
+      };
+    }
+  });
+  // Reescala duração total pra bater com o alvo. R7: target default = 60s.
+  const totalAi = cursor;
+  const target = Number(targetDuration) || 60;
+  const scale = target / totalAi;
+  scenes.forEach(s => { s.start *= scale; s.end *= scale; });
+  return {
+    width: 1080, height: 1920, fps: 30,
+    duration: target,
+    brand: 'Cropware',
+    logoUrl: 'logo-cropware-pb-final.svg',
+    scenes,
+  };
+}
+
+// Substitui o MOTION_REEL_CONFIG global e re-monta o Player com o
+// storyboard novo. O Player (Remotion) cuida do loop e do scrubbing
+// internamente — não há mais rAF próprio do app.
+function applyMotionReelStoryboard(newCfg) {
+  Object.keys(MOTION_REEL_CONFIG).forEach(k => delete MOTION_REEL_CONFIG[k]);
+  Object.assign(MOTION_REEL_CONFIG, newCfg);
+  if (isMotionReelMode()) {
+    const stage = document.getElementById('motionReelStage');
+    if (stage && typeof window.mountMotionReelPlayer === 'function') {
+      window.mountMotionReelPlayer(stage, MOTION_REEL_CONFIG);
+    }
+  }
+}
+
+// Vira theme num título curto pra sidebar (sem cortar palavra no meio).
+function mrTitleFromTheme(theme, maxLen = 36) {
+  const t = (theme || '').trim();
+  if (t.length <= maxLen) return t || 'Reel';
+  const cut = t.slice(0, maxLen);
+  const sp = cut.lastIndexOf(' ');
+  return (sp > 18 ? cut.slice(0, sp) : cut).trim() + '…';
+}
+
+// Troca o reel ativo (em motion-reel mode). Chamado por buildSidebar→goTo
+// quando o usuário clica num item da lista.
+function goToMotionReel(idx) {
+  if (!motionReels.length) { updateEmptyStateVisibility(); return; }
+  const safeIdx = Math.max(0, Math.min(idx, motionReels.length - 1));
+  currentMotionReel = safeIdx;
+  const reel = motionReels[safeIdx];
+  if (reel && reel.config) {
+    applyMotionReelStoryboard(reel.config);
+  }
+  // Sidebar active state
+  document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
+  const thumb = document.querySelector(`.thumb-item[data-item-idx="${safeIdx}"]`);
+  if (thumb) thumb.classList.add('active');
+  // Header da peça (postTitle/postSub são reusados pelo motion-reel mode também)
+  const titleEl = document.getElementById('postTitle');
+  if (titleEl && reel) titleEl.textContent = reel.title || 'Reel';
+  const subEl = document.getElementById('postSub');
+  if (subEl && reel) subEl.textContent = reel.sub || '';
+  scaleMotionReel();
+}
+
+// ── Persistência de motion reels em localStorage (R12) ──────────────
+// Storyboards são leves (~5KB cada), localStorage suporta tranquilo.
+// Chave inclui sessionId pra não vazar entre contas.
+function _motionReelsStorageKey() {
+  return `cropware-motion-reels:${getSessionId() || 'anon'}`;
+}
+function saveMotionReelsToLocal() {
+  try {
+    const payload = motionReels.map(r => ({
+      id: r.id,
+      title: r.title,
+      sub: r.sub,
+      theme: r.theme,
+      tone: r.tone,
+      duration: r.duration,
+      createdAt: r.createdAt,
+      config: r.config,
+    }));
+    localStorage.setItem(_motionReelsStorageKey(), JSON.stringify(payload));
+  } catch (err) {
+    console.warn('[motionReels] save falhou:', err);
+  }
+}
+function loadMotionReelsFromLocal() {
+  try {
+    const raw = localStorage.getItem(_motionReelsStorageKey());
+    if (!raw) return;
+    const arr = JSON.parse(raw);
+    if (!Array.isArray(arr) || !arr.length) return;
+    motionReels.length = 0;
+    motionReelLegends.length = 0;
+    arr.forEach(r => {
+      motionReels.push({ ...r, isGenerated: true });
+      motionReelLegends.push('');
+    });
+    currentMotionReel = Math.max(0, motionReels.length - 1);
+    console.log(`[motionReels] ${motionReels.length} reel(s) restaurado(s) do localStorage`);
+  } catch (err) {
+    console.warn('[motionReels] load falhou:', err);
+  }
+}
+
+async function generateMotionReel() {
+  const themeEl = document.getElementById('genTheme');
+  const theme = themeEl ? themeEl.value.trim() : '';
+  if (!theme) {
+    setGenStatus('Descreva o tema do Reel.', 'error');
+    return;
+  }
+  const tone = (getActiveDesignConfig() || {}).tone || 'casual';
+  const duration = (motionReels[currentMotionReel]?.duration) || 60.0;
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = 'Gerando...';
+  setGenStatus('<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Gemini montando storyboard do Reel...', '');
+  try {
+    const parsed = await callGeminiMotionReelStoryboard(theme, tone, duration);
+    const cfg = mrValidateStoryboard(parsed, duration);
+    const timestamp = Date.now();
+    const reel = {
+      id: `motion-reel-${timestamp}`,
+      title: mrTitleFromTheme(theme, 36),
+      sub: `Reel · ${Math.round(cfg.duration)}s · ${cfg.scenes.length} cenas`,
+      theme,
+      tone,
+      duration: cfg.duration,
+      createdAt: timestamp,
+      isGenerated: true,
+      config: cfg,
+    };
+    motionReels.push(reel);
+    motionReelLegends.push('');
+    currentMotionReel = motionReels.length - 1;
+    saveMotionReelsToLocal();
+    applyMotionReelStoryboard(cfg);
+    // Atualiza a lista lateral e estado de empty state (modo já tem item agora).
+    buildSidebar();
+    updateEmptyStateVisibility();
+    // Sincroniza header com o reel recém-criado.
+    const titleEl = document.getElementById('postTitle');
+    if (titleEl) titleEl.textContent = reel.title;
+    const subEl = document.getElementById('postSub');
+    if (subEl) subEl.textContent = reel.sub;
+    setGenStatus(`<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>Reel gerado (${cfg.scenes.length} cenas).`, 'success');
+    closeGenerator();
+    // Limpa o tema pra próxima geração começar do zero.
+    if (themeEl) themeEl.value = '';
+  } catch (err) {
+    console.error('[MotionReel] Falha na geração', err);
+    setGenStatus(`<i class="ph ph-warning sz-18" style="margin-right:6px"></i>Falha: ${err.message || err}`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = getGenerateButtonLabel();
+  }
+}
+
+// Download "1 click" do MP4 do reel ativo. Chama o endpoint local
+// /api/render-reel (Vite middleware) que cuida da geração de voiceover
+// + render Remotion + retorna o MP4 binário pra browser baixar.
+async function downloadMotionReelMP4() {
+  closeActionsMenu();
+  const reel = motionReels[currentMotionReel];
+  const cfg = (reel && reel.config) || MOTION_REEL_CONFIG;
+  if (!cfg || !cfg.scenes || !cfg.scenes.length) {
+    setGenStatus('<i class="ph ph-warning sz-18" style="margin-right:6px"></i>Nenhum reel ativo pra baixar.', 'error');
+    return;
+  }
+  const reelIdRaw = (reel && reel.id) || `default-${Date.now()}`;
+  const reelId = String(reelIdRaw).toLowerCase().replace(/[^a-z0-9-]/g, '-').slice(0, 60);
+
+  // Checa se o reel tem voiceover.text — pra avisar o usuário do tempo extra.
+  const hasVoiceover = (cfg.scenes || []).some(s => s && s.voiceover && s.voiceover.text);
+  const dlBtn = document.getElementById('downloadBtn');
+  const originalLabel = dlBtn ? dlBtn.innerHTML : '';
+  if (dlBtn) {
+    dlBtn.disabled = true;
+    dlBtn.innerHTML = '<i class="ph ph-hourglass"></i>Renderizando...';
+  }
+  setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>${hasVoiceover ? 'Gerando voiceover (~10s) + renderizando MP4 (~60s)' : 'Renderizando MP4 (~60s)'} — pode demorar uns 1-2 minutos. Não feche a aba.`, '');
+
+  try {
+    const resp = await fetch('/api/render-reel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ storyboard: cfg, reelId }),
+    });
+    if (!resp.ok) {
+      let detail = '';
+      try { detail = (await resp.json()).error || ''; } catch { detail = await resp.text(); }
+      throw new Error(`HTTP ${resp.status}: ${detail || resp.statusText}`);
+    }
+    const blob = await resp.blob();
+    if (!blob.size) throw new Error('MP4 vazio.');
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${reelId}.mp4`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    setGenStatus(`<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>MP4 baixado: ${reelId}.mp4 (${(blob.size / 1024 / 1024).toFixed(2)} MB).`, 'success');
+  } catch (err) {
+    console.error('[MotionReel] Falha no render', err);
+    setGenStatus(`<i class="ph ph-warning sz-18" style="margin-right:6px"></i>Falha: ${err.message || err}`, 'error');
+  } finally {
+    if (dlBtn) {
+      dlBtn.disabled = false;
+      dlBtn.innerHTML = originalLabel;
+    }
+  }
+}
+
+// Reescala junto com o resize da janela (só quando o modo está ativo).
+window.addEventListener('resize', () => {
+  if (isMotionReelMode()) scaleMotionReel();
+});
+
+// Exposto globalmente pra console + handlers do app.
 window.MOTION_REEL_CONFIG = MOTION_REEL_CONFIG;
+window.generateMotionReel = generateMotionReel;
+window.downloadMotionReelMP4 = downloadMotionReelMP4;
+window.setMotionReelViewMode = setMotionReelViewMode;
+window.openMotionReelSceneEditor = openMotionReelSceneEditor;
+window.closeMotionReelSceneEditor = closeMotionReelSceneEditor;
+window.submitMotionReelSceneEdit = submitMotionReelSceneEdit;
+window.openMotionReelScenePreview = openMotionReelScenePreview;
+window.closeMotionReelScenePreview = closeMotionReelScenePreview;
 
 </script>
 
@@ -21190,6 +22453,49 @@ window.MOTION_REEL_CONFIG = MOTION_REEL_CONFIG;
 </div>
 
 <!-- GENERATOR MODAL -->
+<!-- Modal de preview de cena (R12). Layout próprio (não usa .gen-modal-box
+     pra escapar do max-height/overflow:auto padrão). Click no backdrop fecha. -->
+<div class="gen-modal mr-preview-modal" id="mrScenePreviewModal" onclick="closeMotionReelScenePreview()">
+  <div class="mr-preview-content" onclick="event.stopPropagation()">
+    <button type="button" class="mr-preview-close" onclick="closeMotionReelScenePreview()" title="Fechar (Esc)" aria-label="Fechar">
+      <i class="ph ph-x"></i>
+    </button>
+    <div id="mrScenePreviewMount" class="mr-preview-mount"></div>
+    <div id="mrScenePreviewLabel" class="mr-preview-label"></div>
+  </div>
+</div>
+
+<!-- Modal de edição de cena via prompt (R12) -->
+<div class="gen-modal" id="mrSceneEditModal">
+  <div class="gen-modal-box" style="width:560px">
+    <div class="gen-modal-header">
+      <span id="mrSceneEditTitle">Editar cena com IA</span>
+      <button class="gen-close" onclick="closeMotionReelSceneEditor()"><i class="ph ph-x"></i></button>
+    </div>
+    <div class="gen-body">
+      <div class="gen-group">
+        <label>Cena selecionada</label>
+        <div id="mrSceneEditMeta" style="font-family:'Space Mono',monospace;font-size:12px;color:#5C605D;letter-spacing:0.06em;text-transform:uppercase;padding:8px 10px;background:#F5F1EA;border-radius:6px;"></div>
+      </div>
+      <div class="gen-group">
+        <label>O que você quer mudar?</label>
+        <textarea id="mrSceneEditPrompt" rows="3" placeholder="ex: Muda o número pra 5x. Troca o fundo pra texture noise verde escuro. Adiciona um overlay rotating-rings."
+          style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:'Inter Tight',sans-serif;resize:vertical;min-height:80px;"></textarea>
+        <div style="font-size:11px;color:#80847F;margin-top:6px;line-height:1.4;">
+          A IA mantém id/start/end/type intactos. Você pode mudar texto, cor, background, transição, overlays, voiceover.text e qualquer outro campo da cena.
+        </div>
+      </div>
+      <div id="mrSceneEditStatus" style="font-size:12px;color:#5C605D;min-height:18px;"></div>
+    </div>
+    <div class="gen-actions">
+      <button class="btn btn-ghost" onclick="closeMotionReelSceneEditor()">Cancelar</button>
+      <button class="btn btn-primary" id="mrSceneEditSubmit" onclick="submitMotionReelSceneEdit()">
+        <i class="ph ph-sparkle"></i>Aplicar edição
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="gen-modal" id="genModal">
   <div class="gen-modal-box">
     <div class="gen-modal-header">
@@ -21465,6 +22771,11 @@ window.MOTION_REEL_CONFIG = MOTION_REEL_CONFIG;
     <span>Negrito</span>
   </button>
 </div>
+
+<!-- Motion Reel — bundle React + Remotion Player. Vite compila o módulo
+     e expõe window.mountMotionReelPlayer / window.unmountMotionReelPlayer
+     pro vanilla JS chamar quando o modo motion-reel é ativado. -->
+<script type="module" src="/motion-reel/mount.jsx"></script>
 
 </body>
 </html>

@@ -1,2 +1,24 @@
 node_modules/
 backups/
+dist/
+
+# Remotion render output
+out/
+
+# Voiceover gerado por IA (cache de MP3s)
+public/voiceover/
+
+# Secrets
+.env
+.env.local
+
+# Sistema / OS
+.DS_Store
+
+# Config local de ferramentas (Claude Code, agents, etc)
+.claude/
+.agents/
+skills-lock.json
+
+# Arquivos de teste/scratch
+test-reel*.json

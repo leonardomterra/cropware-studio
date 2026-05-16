@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "migrate:r2": "node scripts/migrate-posts-to-r2.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "reel:studio": "remotion studio motion-reel/index.js --gl=angle",
+    "reel:render": "remotion render motion-reel/index.js MotionReel out/reel.mp4 --gl=angle",
+    "reel:voiceover": "node scripts/generate-voiceover.mjs",
+    "reel:thumbs": "node scripts/render-locked-thumbs.mjs"
   },
   "repository": {
     "type": "git",
@@ -22,6 +26,20 @@
   },
   "homepage": "https://github.com/leonardomterra/cropware-studio#readme",
   "devDependencies": {
+    "@remotion/cli": "^4.0.462",
+    "@vitejs/plugin-react": "^6.0.2",
     "vite": "^8.0.8"
+  },
+  "dependencies": {
+    "@iconify/react": "^6.0.2",
+    "@remotion/google-fonts": "^4.0.462",
+    "@remotion/light-leaks": "4.0.462",
+    "@remotion/lottie": "^4.0.462",
+    "@remotion/player": "^4.0.462",
+    "@remotion/sfx": "^4.0.462",
+    "@remotion/transitions": "^4.0.462",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "remotion": "^4.0.462"
   }
 }
