@@ -22075,28 +22075,65 @@ NOVAS R13 (descrição):
   - drift-fade: crossfade lento com leve drift horizontal. Muito calmo. Bom entre cenas de texto.
   - light-streak: feixe diagonal de luz cruza a tela e "carrega" a nova cena. Cinematográfico, dinâmico.
 
-SFX NAS TRANSIÇÕES (opcional):
+SFX NAS TRANSIÇÕES (opcional, catálogo expandido R16):
   Adicione "sfx" no objeto transitionIn pra disparar efeito sonoro no boundary.
-  Nomes disponíveis: "whoosh" · "whip" · "page-turn" · "switch" · "click" ·
-                     "shutter" · "shutter-old" · "ding" · "bruh" · "vine-boom" ·
-                     "xp-error" · "impact" · "riser" · "pop" · "notification"
-  Use com PARCIMÔNIA — máximo 3-4 SFX no reel todo. Pareie tipo com sentido:
-    wipe-up / push-up    → "whoosh"
-    light-leak / cinematic-blur → "riser"
-    ring-tunnel / mask-circle → "riser" ou "shutter"
-    ScaleBounceText momento → "pop"
-    end-card chegando    → "ding" ou "notification"
-  Ex: "transitionIn": { "type": "cinematic-blur", "dur": 0.5, "sfx": "impact" }
+  Use com PARCIMÔNIA — máximo 3-4 SFX no reel todo (excesso vira ruído).
+
+  CATÁLOGO POR CATEGORIA (escolha pelo SENTIDO, não pelo nome):
+
+  WHOOSH (transições rápidas, slide, push):
+    - "whoosh-soft"           : wipe-up/push-up calmo, transições leves
+    - "whoosh-fast-cinematic" : cuts rápidos, light-streak, ritmo acelerado
+    - "whoosh-deep"           : transição pesada, cinematic-blur, drift-fade
+
+  IMPACT (cortes secos com peso, momentos de "chegada"):
+    - "impact-deep-cinematic" : ring-tunnel, zoom-blur, mask-circle (peso grande)
+    - "impact-snap-dry"       : keyword reveal, click no chapter (seco)
+    - "impact-thud"           : end-card chegando, momento final pesado
+
+  AMBIENT (sons longos, atmosféricos — USE sfxOffset NEGATIVO):
+    - "ambient-wind-soft"     : vento sutil em scenario/keyword orgânica
+    - "ambient-field-nature"  : som de campo (longo, 4MB) — só em chapters
+
+  ORGANIC (texturas naturais, agro-friendly):
+    - "leaf-rustle"           : folhagem, scenario/keyword sobre natureza
+    - "paper-turn"            : virar página, chapter/headline editorial
+    - "wood-crack-soft"       : estalo discreto, transição rústica
+
+  TECH/UI (minimalistas, pra app-card/whatsapp/data):
+    - "ui-tap-soft"           : tap sutil em app-card
+    - "ui-confirm-modern"     : confirmação clean em whatsapp-chat
+    - "digital-beep-clean"    : beep curto, notification moderna
+
+  LEGACY (mantidos pra compat, evite em reels novos):
+    "whoosh" · "whip" · "page-turn" · "switch" · "click" · "shutter" ·
+    "ding" · "impact" · "riser" · "pop" · "notification"
+    (e os memes "bruh"/"vine-boom"/"xp-error" — só pra estética cômica)
+
+  PAREAMENTOS RECOMENDADOS (R16):
+    brand-intro    → SEM SFX (já tem ritmo próprio)
+    headline       → "paper-turn" ou "whoosh-soft"
+    keyword        → "impact-snap-dry" (reveal seco)
+    chapter        → "impact-snap-dry" ou "paper-turn"
+    feature-list   → "whoosh-soft" + (cards aparecem no stagger interno, sem SFX)
+    scenario       → "ambient-wind-soft" com sfxOffset -0.3 (atmosfera)
+    app-card       → "ui-tap-soft"
+    whatsapp-chat  → "ui-confirm-modern" ou "ui-tap-soft"
+    quote          → "leaf-rustle" (orgânico) ou SEM SFX
+    lower-third    → "ui-confirm-modern"
+    end-card       → "impact-thud" (peso final) ou "digital-beep-clean"
+
+  Ex: "transitionIn": { "type": "cinematic-blur", "dur": 0.5, "sfx": "impact-deep-cinematic" }
 
   SFX OFFSET (sfxOffset — opcional, segundos):
   Por DEFAULT, o SFX dispara NO MEIO da transição (sincronizado com o pico
   visual de cinematic-blur, ring-tunnel, light-streak). Override só quando
   o som precisa de timing específico:
     - sfxOffset NEGATIVO (-0.2 a -0.4): antecipa o SFX pra construir tensão
-      antes do pico visual. Bom pra ambient/riser longos.
+      antes do pico visual. OBRIGATÓRIO pra ambient-* (sons longos).
     - sfxOffset POSITIVO (+0.1 a +0.3): atrasa o SFX pra bater no ataque
       visual final. Bom pra impacts/snaps secos.
-  Ex: "transitionIn": { "type": "drift-fade", "dur": 0.6, "sfx": "riser", "sfxOffset": -0.3 }
+  Ex: "transitionIn": { "type": "drift-fade", "dur": 0.6, "sfx": "ambient-wind-soft", "sfxOffset": -0.3 }
 
 VOICEOVER POR CENA (importante — leia tudo antes de gerar texto):
   Cada cena pode ter "voiceover": { "text": "frase falada por voz IA PT-BR" }.

@@ -11,6 +11,9 @@ public/voiceover/
 # Música de fundo — arquivos locais ficam aqui em dev; produção vai pra R2 (R15)
 public/audio/
 
+# SFX — arquivos locais (Pixabay), produção vai pra R2 (R16)
+public/sfx-pixabay/
+
 # Secrets
 .env
 .env.local
