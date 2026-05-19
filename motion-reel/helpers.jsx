@@ -38,30 +38,52 @@ export function resolveEasingName(name) {
 }
 
 // CharReveal: quebra `text` em spans e revela cada char com stagger.
-// Equivalente direto do mrAnimateChars/mrCharSpans do motor antigo.
+// IMPORTANTE: agrupa chars por palavra dentro de wrappers `white-space: nowrap`
+// pra evitar que o browser quebre linha NO MEIO de palavras (cada char é
+// inline-block, e browsers permitem break entre inline-blocks por padrão).
+// Espaços ficam como texto normal entre palavras — esses sim podem quebrar.
 export const CharReveal = ({ text, delay = 0, dur = 0.35, stagger = 0.035, ty = 24, charStyle }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const chars = [...(text || '')];
   const delayF = delay * fps;
   const durF = dur * fps;
   const staggerF = stagger * fps;
+  const text2 = text || '';
+  // Splits mantendo espaços como segmentos próprios.
+  const segments = text2.split(/(\s+)/);
+  let cursor = 0;
   return (
     <Fragment>
-      {chars.map((ch, i) => {
-        const start = delayF + i * staggerF;
-        const p = interpolate(frame, [start, start + durF], [0, 1], {
-          extrapolateLeft: 'clamp',
-          extrapolateRight: 'clamp',
-          easing: EASE.outQuart,
-        });
+      {segments.map((seg, si) => {
+        if (seg === '') return null;
+        // Whitespace puro — render como texto plain, browser permite quebra aqui
+        if (/^\s+$/.test(seg)) {
+          cursor += seg.length;
+          return <Fragment key={si}>{seg}</Fragment>;
+        }
+        // Palavra — agrupa chars em wrapper nowrap pra não quebrar internamente
+        const startIdx = cursor;
+        cursor += seg.length;
         return (
-          <span key={i} style={{
-            display: 'inline-block',
-            opacity: p,
-            transform: `translateY(${(1 - p) * ty}px)`,
-            ...(charStyle || {}),
-          }}>{ch === ' ' ? ' ' : ch}</span>
+          <span key={si} style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+            {[...seg].map((ch, ci) => {
+              const myIdx = startIdx + ci;
+              const start = delayF + myIdx * staggerF;
+              const p = interpolate(frame, [start, start + durF], [0, 1], {
+                extrapolateLeft: 'clamp',
+                extrapolateRight: 'clamp',
+                easing: EASE.outQuart,
+              });
+              return (
+                <span key={ci} style={{
+                  display: 'inline-block',
+                  opacity: p,
+                  transform: `translateY(${(1 - p) * ty}px)`,
+                  ...(charStyle || {}),
+                }}>{ch}</span>
+              );
+            })}
+          </span>
         );
       })}
     </Fragment>
@@ -173,28 +195,45 @@ export function numberFormatter(name) {
 // ── Char effects extras (R9) ───────────────────────────────────────
 // ScaleBounceText: chars entram com spring físico, scale 0 → 1.15 → 1.
 // Mais dramático que CharReveal (que só faz translateY + opacity).
+// Agrupa por palavra com nowrap pra evitar quebra no meio de palavras.
 export const ScaleBounceText = ({ text, delay = 0, stagger = 0.04, charStyle }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const chars = [...(text || '')];
   const delayF = delay * fps;
   const staggerF = stagger * fps;
+  const text2 = text || '';
+  const segments = text2.split(/(\s+)/);
+  let cursor = 0;
   return (
     <Fragment>
-      {chars.map((ch, i) => {
-        const s = spring({
-          frame: frame - delayF - i * staggerF,
-          fps,
-          config: { damping: 9, stiffness: 130, mass: 0.6 },
-        });
+      {segments.map((seg, si) => {
+        if (seg === '') return null;
+        if (/^\s+$/.test(seg)) {
+          cursor += seg.length;
+          return <Fragment key={si}>{seg}</Fragment>;
+        }
+        const startIdx = cursor;
+        cursor += seg.length;
         return (
-          <span key={i} style={{
-            display: 'inline-block',
-            opacity: Math.min(1, s * 1.5),
-            transform: `scale(${s})`,
-            transformOrigin: 'center bottom',
-            ...(charStyle || {}),
-          }}>{ch === ' ' ? ' ' : ch}</span>
+          <span key={si} style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+            {[...seg].map((ch, ci) => {
+              const myIdx = startIdx + ci;
+              const s = spring({
+                frame: frame - delayF - myIdx * staggerF,
+                fps,
+                config: { damping: 9, stiffness: 130, mass: 0.6 },
+              });
+              return (
+                <span key={ci} style={{
+                  display: 'inline-block',
+                  opacity: Math.min(1, s * 1.5),
+                  transform: `scale(${s})`,
+                  transformOrigin: 'center bottom',
+                  ...(charStyle || {}),
+                }}>{ch}</span>
+              );
+            })}
+          </span>
         );
       })}
     </Fragment>
@@ -203,32 +242,59 @@ export const ScaleBounceText = ({ text, delay = 0, stagger = 0.04, charStyle }) 
 
 // TypewriterText: char-by-char tipo máquina de escrever, com cursor piscando.
 // Cursor é um pipe `|` que segue o último char visível.
+// IMPORTANTE: agrupa chars por palavra com white-space: nowrap pra evitar
+// que o browser quebre linha no meio de palavras durante o reveal.
 export const TypewriterText = ({ text, delay = 0, charDur = 0.05, showCursor = true, cursorColor = '#FFFFFF', charStyle }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const chars = [...(text || '')];
+  const text2 = text || '';
+  const totalChars = [...text2].length;
   const delayF = delay * fps;
   const charF = charDur * fps;
-  // Quantos chars visíveis até o frame atual
-  const visible = Math.max(0, Math.min(chars.length, Math.floor((frame - delayF) / charF)));
+  const visible = Math.max(0, Math.min(totalChars, Math.floor((frame - delayF) / charF)));
   // Cursor pisca 2x por segundo (período 0.5s)
   const cursorOn = showCursor && (frame - delayF) >= 0
     ? Math.floor((frame / fps) * 2) % 2 === 0
     : false;
   // Cursor desaparece assim que termina de digitar (sem espaço fantasma).
   // Pequeno fade-out de 0.3s depois do último char pra suavizar.
-  const doneFrame = delayF + chars.length * charF;
+  const doneFrame = delayF + totalChars * charF;
   const cursorFadeOutP = interpolate(frame, [doneFrame, doneFrame + 0.3 * fps], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
+
+  // Segments por palavra (chars de uma palavra ficam juntos via nowrap).
+  const segments = text2.split(/(\s+)/);
+  let cursorIdx = 0;
   return (
     <Fragment>
-      {chars.slice(0, visible).map((ch, i) => (
-        <span key={i} style={{ display: 'inline-block', ...(charStyle || {}) }}>
-          {ch === ' ' ? ' ' : ch}
-        </span>
-      ))}
+      {segments.map((seg, si) => {
+        if (seg === '') return null;
+        if (/^\s+$/.test(seg)) {
+          const before = cursorIdx;
+          cursorIdx += seg.length;
+          // Só mostra o whitespace depois que o "typing" passou por ele
+          if (visible > before) {
+            return <Fragment key={si}>{seg.slice(0, Math.min(seg.length, visible - before))}</Fragment>;
+          }
+          return null;
+        }
+        const wordChars = [...seg];
+        const startIdx = cursorIdx;
+        cursorIdx += wordChars.length;
+        return (
+          <span key={si} style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+            {wordChars.map((ch, ci) => {
+              const absIdx = startIdx + ci;
+              if (absIdx >= visible) return null;
+              return (
+                <span key={ci} style={{ display: 'inline-block', ...(charStyle || {}) }}>{ch}</span>
+              );
+            })}
+          </span>
+        );
+      })}
       {showCursor && cursorFadeOutP > 0.01 ? (
         <span style={{
           display: 'inline-block',

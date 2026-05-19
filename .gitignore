@@ -8,6 +8,9 @@ out/
 # Voiceover gerado por IA (cache de MP3s)
 public/voiceover/
 
+# Música de fundo — arquivos locais ficam aqui em dev; produção vai pra R2 (R15)
+public/audio/
+
 # Secrets
 .env
 .env.local

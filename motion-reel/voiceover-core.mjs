@@ -1,8 +1,35 @@
 // Núcleo reusável da geração de voiceover via ElevenLabs.
 // Usado tanto pelo CLI (scripts/generate-voiceover.mjs) quanto pelo Vite
 // middleware (/api/render-reel) — ambos chamam generateVoiceoverForStoryboard.
+//
+// Requer plano Starter ou superior pra usar library voices via API
+// (Free tier só libera premade voices, que não soam pt-BR nativo).
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import crypto from 'node:crypto';
+
+// Estimativa rápida de duração da fala a partir do texto.
+// PT-BR a ritmo natural ≈ 15 chars/s (~180 wpm × ~5 chars/palavra).
+// Aproximação suficiente pra avisar overflow em janela de cena —
+// independe de bitrate/encoding do provider.
+export function estimateTtsDurationSec(text, speakingRate = 1.0) {
+  if (!text) return 0;
+  const rate = Math.max(0.25, Math.min(4.0, Number(speakingRate) || 1.0));
+  return (text.length / 15) / rate;
+}
+
+// Quanto silêncio queremos no fim da cena antes de cortar pra próxima —
+// evita TTS vazar na transição.
+const VO_TAIL_SAFETY_SEC = 0.4;
+
+// Hash do conteúdo que determina unicidade de um MP3 gerado. Se mudar
+// voice_settings no callElevenLabsTts (hoje hardcoded), incluir aqui também
+// ou flushar o cache manualmente em public/voiceover/_cache/.
+function ttsCacheKey({ text, voiceId, modelId }) {
+  const h = crypto.createHash('sha256');
+  h.update([voiceId, modelId, text].join('\n'));
+  return h.digest('hex').slice(0, 24);
+}
 
 // Chama a API da ElevenLabs e retorna o MP3 como Buffer.
 export async function callElevenLabsTts({ text, voiceId, modelId, apiKey, voiceSettings }) {
@@ -45,10 +72,12 @@ export async function generateVoiceoverForStoryboard(storyboard, opts) {
   const modelId = env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2';
 
   const outDir = path.join(projectRoot, 'public', 'voiceover', reelId);
+  const cacheDir = path.join(projectRoot, 'public', 'voiceover', '_cache');
   await fs.mkdir(outDir, { recursive: true });
+  await fs.mkdir(cacheDir, { recursive: true });
 
-  // Clona pra não mutar o input.
   const scenes = (storyboard.scenes || []).map(s => ({ ...s }));
+  const overflows = [];
 
   for (let i = 0; i < scenes.length; i++) {
     const scene = scenes[i];
@@ -58,28 +87,57 @@ export async function generateVoiceoverForStoryboard(storyboard, opts) {
       continue;
     }
     const voiceId = scene.voiceover.voiceId || defaultVoiceId;
+    const speakingRate = scene.voiceover.speakingRate || 1.0;
     const filename = `${sceneId}.mp3`;
     const outPath = path.join(outDir, filename);
+    const cachePath = path.join(cacheDir, `${ttsCacheKey({ text: scene.voiceover.text, voiceId, modelId })}.mp3`);
     onProgress && onProgress({ index: i, total: scenes.length, sceneId, status: 'generating', text: scene.voiceover.text });
     try {
-      const mp3 = await callElevenLabsTts({
-        text: scene.voiceover.text,
-        voiceId, modelId, apiKey,
-      });
+      let mp3, fromCache = false;
+      try {
+        mp3 = await fs.readFile(cachePath);
+        fromCache = true;
+      } catch {
+        mp3 = await callElevenLabsTts({
+          text: scene.voiceover.text,
+          voiceId, modelId, apiKey,
+        });
+        await fs.writeFile(cachePath, mp3);
+      }
       await fs.writeFile(outPath, mp3);
       const staticPath = `voiceover/${reelId}/${filename}`;
-      scene.voiceover = { ...scene.voiceover, url: staticPath };
-      onProgress && onProgress({ index: i, total: scenes.length, sceneId, status: 'done', bytes: mp3.length });
+      const durationSec = estimateTtsDurationSec(scene.voiceover.text, speakingRate);
+      const sceneDur = Math.max(0, Number(scene.end || 0) - Number(scene.start || 0));
+      const safeMaxDur = Math.max(0, sceneDur - VO_TAIL_SAFETY_SEC);
+      const overlapSec = Math.max(0, durationSec - safeMaxDur);
+      const overflow = overlapSec > 0;
+      scene.voiceover = {
+        ...scene.voiceover,
+        url: staticPath,
+        durationSec: Number(durationSec.toFixed(2)),
+        ...(overflow ? { overflow: true, overlapSec: Number(overlapSec.toFixed(2)) } : {}),
+      };
+      if (overflow) overflows.push({ sceneId, sceneDur, durationSec, overlapSec });
+      onProgress && onProgress({
+        index: i, total: scenes.length, sceneId, status: 'done',
+        bytes: mp3.length, fromCache,
+        durationSec, sceneDur, overflow, overlapSec,
+      });
     } catch (err) {
       onProgress && onProgress({ index: i, total: scenes.length, sceneId, status: 'failed', error: err.message });
       // Continua nas demais cenas pra não derrubar o reel todo.
     }
   }
 
+  if (overflows.length && onProgress) {
+    onProgress({ status: 'summary', overflows });
+  }
+
   return { ...storyboard, scenes };
 }
 
 // Helper: carrega .env manualmente (sem dep extra).
+// Prioridade: process.env > .env.
 export async function loadDotEnv(projectRoot) {
   const env = {};
   try {
@@ -91,7 +149,7 @@ export async function loadDotEnv(projectRoot) {
       env[k] = v.trim().replace(/^"(.*)"$/, '$1');
     }
   } catch { /* sem .env */ }
-  // process.env tem prioridade sobre .env
+  // process.env tem prioridade
   for (const k of Object.keys(env)) {
     if (process.env[k]) env[k] = process.env[k];
   }

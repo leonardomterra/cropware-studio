@@ -1,15 +1,15 @@
-# Motion Reel — Estado Final (R11)
+# Motion Reel — Estado Final (R13)
 
 Gerador de Reels 9:16 (1080×1920) integrado ao Cropware Studio. **Stack:**
 Remotion 4 + React 19 (cenas + animações) · Gemini (IA gera storyboard) ·
-ElevenLabs (voiceover TTS) · `@remotion/sfx` (SFX hospedados) · `@iconify/react`
-(ícones coloridos) · Vite middleware (endpoint local pra render MP4).
+ElevenLabs (voiceover TTS pt-BR, plano Starter+) · `@remotion/sfx` (SFX hospedados) ·
+`@iconify/react` (ícones coloridos) · Vite middleware (endpoint local pra render MP4).
 
 ## Como usar (fluxo final)
 
 ```bash
 # Único setup (uma vez):
-cp .env.example .env             # preencha ELEVENLABS_API_KEY
+cp .env.example .env             # preencha ELEVENLABS_API_KEY (plano Starter+)
 npm install                       # já feito
 
 # Dev:
@@ -21,7 +21,7 @@ npm run dev                       # Vite + endpoint /api/render-reel
 # com voiceover.text por cena automaticamente.
 
 # Baixar MP4 (1 clique):
-# Ações → "Baixar MP4" → endpoint chama ElevenLabs (gera MP3s)
+# Ações → "Baixar MP4" → endpoint chama ElevenLabs (gera MP3s pt-BR)
 # + Remotion render → MP4 baixa direto pelo browser (~70s).
 
 # Render CLI manual:
@@ -38,7 +38,7 @@ cropware-studio/
 ├── vite.config.mjs               Vite + React + endpoint /api/render-reel
 ├── remotion.config.mjs           CLI config (codec, publicDir)
 ├── package.json                  Deps + scripts reel:*
-├── .env / .env.example           ELEVENLABS_API_KEY
+├── .env / .env.example           ELEVENLABS_API_KEY + voice ID + model
 ├── public/
 │   ├── logo-cropware-pb-final.svg   staticFile() dos componentes
 │   ├── icon-cropware.svg
@@ -51,54 +51,89 @@ cropware-studio/
 │   ├── theme.js                  14 cores MR_COLORS (verdes/slates/neutros/accents)
 │   ├── fonts.js                  Inter Tight + Familjen Grotesk + Space Mono
 │   ├── transitions.js            Mapping nome → presentation
-│   ├── custom-transitions.jsx    Flash · ZoomBlur · MaskCircle · CinematicBlur · RingTunnel · Glitch · SlideRadial
+│   ├── custom-transitions.jsx    Flash · ZoomBlur · MaskCircle · CinematicBlur · RingTunnel ·
+│   │                             Glitch · SlideRadial · GlassFrost · IrisSquare · DriftFade · LightStreak
 │   ├── overlays.jsx              7 overlays decorativos
 │   ├── helpers.jsx               CharReveal / KickerReveal / FadeSlide /
 │   │                             AccentBar / NumberTicker / ScaleBounceText /
 │   │                             TypewriterText / GlitchText / SceneBackdrop /
-│   │                             IconifyIcon
+│   │                             IconifyIcon · LottieAsset
 │   ├── sfx.js                    Mapping de nomes → URLs remotion.media/*.wav
 │   ├── voiceover-core.mjs        TTS ElevenLabs reusável (CLI + middleware)
-│   ├── default-storyboard.js     Storyboard demo 60s (11 cenas)
-│   └── scenes/                   11 tipos:
-│       ├── BrandIntro.jsx
-│       ├── Keyword.jsx
-│       ├── StatCard.jsx
-│       ├── Quote.jsx
-│       ├── FeatureList.jsx       items: { text, icon } com Iconify
-│       ├── EndCard.jsx
-│       ├── Cta.jsx
-│       ├── Chapter.jsx           Marker numerado + título
-│       ├── LowerThird.jsx        Overlay-style faixa rodapé
-│       ├── DataChart.jsx         SVG bar+line com spring/stroke-dashoffset
-│       └── AppCard.jsx           Janela mockup (weather/satellite/dashboard/alert)
-└── scripts/
-    └── generate-voiceover.mjs    CLI wrapper de voiceover-core.mjs
+│   ├── default-storyboard.js     Storyboard demo 60s (12 cenas)
+│   ├── mount.jsx                 Player + Grid view (12 thumbs 4×3) + Preview modal
+│   └── scenes/                   12 tipos:
+│       ├── BrandIntro.jsx        FIXA — cap01 "Conheça"
+│       ├── Headline.jsx          custom — cap02 kicker + headline editorial
+│       ├── Keyword.jsx           custom — texture verde + ícone + word
+│       ├── Quote.jsx             FIXA — cap10 depoimento genérico
+│       ├── FeatureList.jsx       custom — light theme, items com Iconify
+│       ├── Scenario.jsx          custom — cap06 paragrafo narrativo
+│       ├── WhatsAppChat.jsx      custom — cap09 iPhone mockup conversa
+│       ├── EndCard.jsx           FIXA — cap12 logo + tagline + handle
+│       ├── Cta.jsx               legado (não usado no default 60s)
+│       ├── Chapter.jsx           FIXA — cap04, cap07 marker "Capítulo NN"
+│       ├── LowerThird.jsx        FIXA — cap11 WhatsApp CTA "Fala com a gente"
+│       └── AppCard.jsx           custom — cap08 mockup weather/satellite/etc
+├── scripts/
+│   ├── generate-voiceover.mjs    CLI wrapper de voiceover-core.mjs
+│   └── render-locked-thumbs.mjs  R12 — gera PNGs das 6 cenas locked em public/thumbs/
+└── public/
+    └── thumbs/                   PNGs pré-renderizadas das locked scenes
+                                  (01-intro, 04-chapter-1, 07-chapter-2, 10-quote,
+                                  11-lower-third, 12-end-card)
 ```
 
 ## Capacidades por cena
 
+### Storyboard default 60s — 12 cenas em grade 4×3 (R12)
+
+6 cenas **FIXAS** (locked: true — identidade Cropware, hardcoded nos componentes) +
+6 cenas **CUSTOMIZÁVEIS** (locked: false — IA preenche conteúdo por tema).
+
+| #  | Tempo       | Tipo            | Lock     | Função |
+|----|-------------|-----------------|----------|--------|
+| 01 | 00.0→6.0    | brand-intro     | **FIXA** | "Conheça o Cropware" |
+| 02 | 5.0→10.0    | headline        | custom   | Kicker + headline editorial (R12, substituiu stat-card) |
+| 03 | 10.0→14.0   | keyword         | custom   | Palavra-chave + ícone Iconify (R12 polish) |
+| 04 | 14.0→18.0   | chapter         | **FIXA** | "Capítulo 02 · No campo" |
+| 05 | 18.0→24.0   | feature-list    | custom   | 3 features tema-específicas (R12 light theme) |
+| 06 | 24.0→30.0   | scenario        | custom   | Mini-cenário narrativo (R12, substituiu data-chart) |
+| 07 | 30.0→34.0   | chapter         | **FIXA** | "Capítulo 03 · Resultados" |
+| 08 | 34.0→40.0   | app-card        | custom   | Mockup app (weather/satellite/etc) |
+| 09 | 40.0→44.0   | whatsapp-chat   | custom   | iPhone mockup com conversa user↔AI (R12, substituiu kw-direct) |
+| 10 | 44.0→50.0   | quote           | **FIXA** | "A fazenda inteira, num só lugar." |
+| 11 | 50.0→55.0   | lower-third     | **FIXA** | WhatsApp Lottie + "Fala com a gente" |
+| 12 | 55.0→60.0   | end-card        | **FIXA** | Logo + tagline + handle |
+
+### Catálogo completo de tipos
+
 | Tipo | Visual | Quando usar |
 |---|---|---|
-| brand-intro | Kicker + pre-headline + brand name (char-reveal) + accent bar | Abertura |
-| keyword | 1-4 palavras gigantes letter-by-letter + underline | Puxar atenção |
-| stat-card | Kicker mono + número grande (NumberTicker) + suffix + label | Mostrar dado quantitativo |
-| quote | Aspas verdes + frase (clip-path horizontal) + autor mono | Depoimentos |
-| feature-list | Kicker + título + 3-4 items com **ícones Iconify coloridos** | Enumerar features |
+| brand-intro | Hero `conheca-hero-bg.webp` + Ken Burns + overlay verde + CONHEÇA typewriter + logo + tagline | Abertura |
+| headline | Imagem `conheca-solucao-bg.webp` + Ken Burns + glass slate + kicker + headline + accent bar | Headline editorial |
+| keyword | Textura verde tintada (multiply) + 1 ícone Iconify animado + word Space Mono + underline | Puxar atenção |
+| quote | Imagem `og-bg.webp` (folha+orvalho) + Ken Burns + glass slate + frase + atribuição "· Cropware" | Depoimentos |
+| feature-list | Light theme (fundo branco/fog) + kicker + título + 3-4 cards com ícones Iconify verdes | Enumerar features |
+| scenario | Imagem `conheca-campo-bg.webp` + Ken Burns + glass slate + kicker + paragrafo narrativo `\n`-separado | Cenário/storytelling |
+| whatsapp-chat | iPhone mockup com iOS status bar + WhatsApp header (#075E54) + bolhas + input bar | Conversa user↔AI |
 | end-card | Logo horizontal + accent bar + tagline + handle | Fechamento padrão |
-| cta | Logo + headline + sublabel + handle | Fechamento com call-to-action grande |
-| chapter | "CAPÍTULO 02" mono + título grande + subtitle | Pausa visual / divisor |
-| lower-third | Faixa branca rodapé com nome + handle + CTA | Menção de cliente/parceiro |
-| data-chart | Bars (spring stagger) + line (stroke-dashoffset glow) + dot pulsante | Série temporal real |
-| app-card | Janela mockup macOS (weather/satellite/dashboard/alert) | Ilustrar feature |
+| cta | Logo + headline + sublabel + handle | Fechamento com CTA grande (legado) |
+| chapter | Imagem `conheca-produto-bg.webp` + glass slate + "Capítulo NN" mono + título | Pausa visual / divisor |
+| lower-third | Imagem `sobre-equipe.webp` + glass verde claro + WhatsApp Lottie + card branco com título+subtítulo | CTA WhatsApp |
+| app-card | Janela mockup com chrome "CROPWARE - TEMPO/NDVI/ALERTAS" (weather/satellite/dashboard/alert) | Ilustrar feature |
 
-## Transições (13)
+## Transições (18)
 
 **Built-in (`@remotion/transitions`)**: cut · fade · wipe-up · wipe-down · push-up · push-left · mask-circle
 
-**Custom (`custom-transitions.jsx`)**: flash · zoom-blur · cinematic-blur · ring-tunnel · glitch · slide-radial
+**Custom cinematográficas (`custom-transitions.jsx`)**: flash · zoom-blur · cinematic-blur · ring-tunnel · glitch · slide-radial
 
-**Overlay (`@remotion/light-leaks` via TransitionSeries.Overlay)**: light-leak
+**Custom R13 (calmas/elegantes)**: glass-frost · iris-square · drift-fade · light-streak
+
+**Overlay (`@remotion/light-leaks` via TransitionSeries.Overlay)**: light-leak (usar `hueShift >= 100` pra tom verde, default laranja contrasta com paleta)
+
+**Notas IA**: evitar `flash` (jarring) — preferir `cinematic-blur` ou `fade` em substituição.
 
 ## Overlays decorativos (7)
 
@@ -107,8 +142,8 @@ rotating-rings · pulse-circle · particle-drift · line-draw · curve-trace · 
 ## Áudio
 
 - **SFX** via `transitionIn.sfx`: whoosh · click · ding · vine-boom · impact · riser · pop · notification · whip · page-turn · switch · shutter · etc. (11 nativos do @remotion/sfx + aliases semânticos)
-- **Música** via `audio.music` global: upload manual em `public/audio/X.mp3`, com fade in/out
-- **Voiceover** via `scene.voiceover.text`: IA gera o texto → ElevenLabs gera MP3 → mixado no render. Vozes PT-BR documentadas em `.env.example`.
+- **Música** via `audio.music` global: arquivo em `public/audio/X.mp3`, com fade in/out + ducking automático sob voz (configurável via `audio.duck` e `audio.duckRamp`). Default carrega trilha do `default-storyboard.js` em todo reel novo.
+- **Voiceover** via `scene.voiceover.text`: IA gera o texto → ElevenLabs (`eleven_multilingual_v2`) gera MP3 pt-BR → mixado no render. Voz padrão `RVmX026jCrF5VqUvpCk0` (library voice — requer plano Starter+). Outras documentadas em `.env.example`. Por cena: `voiceover.voiceId` e `voiceover.speakingRate`.
 
 ## Sistema de background (substitui bgImage)
 
@@ -136,7 +171,7 @@ rotating-rings · pulse-circle · particle-drift · line-draw · curve-trace · 
    │  { storyboard, reelId,             │
    │    skipVoiceover? }                │
    ├───────────────────────────────────▶│
-   │                                    │  1. ElevenLabs TTS por cena (~10s)
+   │                                    │  1. ElevenLabs TTS por cena (~5-10s)
    │                                    │  2. Escreve out/.tmp/X.props.json
    │                                    │  3. spawn `remotion render --props=... --gl=angle`
    │                                    │  4. Lê out/{id}.mp4
@@ -147,7 +182,7 @@ rotating-rings · pulse-circle · particle-drift · line-draw · curve-trace · 
 
 Tempo típico de render no Mac M-series: **~70-90s** pra reel de 60s (1623 frames @ 30fps) com `--gl=angle` (hardware GPU). Com `--gl=swangle` (SwiftShader software WebGL) leva ~9 min.
 
-## Histórico (R1 → R11)
+## Histórico (R1 → R13)
 
 | Round | Data | Mudança |
 |---|---|---|
@@ -161,11 +196,26 @@ Tempo típico de render no Mac M-series: **~70-90s** pra reel de 60s (1623 frame
 | R9 | 2026-05-15 | 4 transições novas + 7 overlays decorativos + char effects |
 | R10 | 2026-05-15 | **Áudio**: SFX + música + voiceover ElevenLabs + CLI script |
 | R11 | 2026-05-15 | Iconify + license ack + IA prompt com exemplo + cleanup 800 linhas dead code + endpoint `/api/render-reel` + botão "Baixar MP4" no app |
+| R12 | 2026-05-16 | **Grid view 4×3** (12 thumbs com click → edit IA) + LockedThumbs PNG (resolve "bolinha fantasma" do Thumbnail) + identidade locked/custom (6+6) + LowerThird v3 (imagem+glass+Lottie) + Quote+Chapter+BrandIntro com imagens reais + light-leak overlay no chapter |
+| R13 | 2026-05-18 | **Slides custom padronizados** (visual fixo + IA só preenche texto): Headline (cap02 substituiu stat-card) · Keyword polish (textura verde+ícone Iconify por tema) · FeatureList light theme · Scenario (cap06 substituiu data-chart) · WhatsAppChat (cap09 substituiu kw-direct) · 4 transições novas (glass-frost, iris-square, drift-fade, light-streak) · word-grouping em CharReveal/TypewriterText/ScaleBounceText (sem mid-word breaks) · cap04 light-leak hueShift 30→110 (verde) · cap03 flash→cinematic-blur · AppCard chrome titles UPPERCASE com hífen |
+| R14 | 2026-05-19 | **Áudio completo — narração + música**. _Voz_: `RVmX026jCrF5VqUvpCk0` (library voice ElevenLabs, calma/editorial, requer Starter+ — Free tier bloqueia library voices via API) · prompt do Gemini reescrito com **diretrizes por tipo de cena** (orçamento de palavras: 4s→8 / 5s→10 / 6s→13) · 5 cenas SILENCIOSAS por design (keyword, ambos chapters, whatsapp-chat, quote) · `voiceover-core.mjs` estima duração por chars (~15 chars/s pt-BR, provider-agnóstico) e flagga overflow com `overlapSec` quando estoura janela − 0.4s · logs `Xs/Ys` por cena no CLI e Vite middleware. _Música de fundo_: campo `audio.music` no storyboard (path relativo a `public/`), com fade in/out + loop · default ativo em `default-storyboard.js` puxa de `public/audio/` (4 tracks country-western Pixabay disponíveis) · validator herda `audio` do default ao processar reel da IA · guardrail em `downloadMotionReelMP4` injeta `audio` se faltar (reels antigos em memória). _Ducking_: música cai automaticamente para `baseVol × duckLevel` (default 0.35) durante voz, com ramp de 150ms — configurável via `audio.duck` e `audio.duckRamp`. _Provider TTS validado_: testamos Google Cloud TTS (Neural2-C, free tier) como alternativa mas soou robótica demais — voltamos pra ElevenLabs por qualidade. |
 
-## Pendências (não escopadas no R7-R11)
+## Pendências (não escopadas, próximos passos)
 
+### Visual / UX
 - Polimentos visuais finais (alinhamentos, escolha de cores em casos específicos)
+- Re-render das locked thumbs após cap04 mudar pra light-leak hueShift 110 (`npm run reel:thumbs`)
+
+### Funcional
 - UI in-app pra upload de música de fundo (hoje só via edição manual de JSON)
 - UI in-app pra editar storyboard JSON visualmente (hoje só via IA + console)
 - Render Lambda em vez de local (pra escala)
 - Mais skins de paleta (light mode, monocromático, etc.)
+
+### IA / Prompts
+- Validar manualmente se o prompt da IA está respeitando as novas regras (preferir cinematic-blur, hueShift ≥100 pra light-leak). R14 já implementou: guardrails no validator migram stat-card→headline e data-chart→scenario silenciosamente, e normalizam flash→cinematic-blur automaticamente.
+
+### Áudio / Narração — verificação pós-R14
+- **Assinar ElevenLabs Starter ($5/mo)** pra destravar a library voice `RVmX026jCrF5VqUvpCk0` via API. Depois disso, rodar `npm run dev` → "Gerar Reel" → "Baixar MP4" e confirmar qualidade da voz.
+- **Validar timing** clicando "Baixar MP4" no app: o log deve mostrar `Xs/Ys` por cena e zero overflow. Se a IA estourar alguma janela, considerar truncamento automático em `voiceover-core.mjs` (cortar texto na última pontuação que cabe) OU passar `speakingRate: 1.05` por cena que estourar.
+- **Validar discurso por tipo de cena** — abrir 2-3 reels gerados pelo Gemini e checar se: (a) keyword/chapter/whatsapp-chat/quote estão SEM voiceover; (b) headline parafraseia em vez de ecoar literal; (c) scenario tem ritmo contemplativo; (d) end-card diz "arroba cropware ponto app" por extenso. Se a IA escapar das regras, reforçar com exemplos negativos no prompt.

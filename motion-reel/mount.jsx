@@ -68,6 +68,7 @@ function ReelPlayerView({ storyboard }) {
       doubleClickToFullscreen
       spaceKeyToPlayOrPause
       acknowledgeRemotionLicense
+      numberOfSharedAudioTags={12}
       style={{ width: '100%', height: '100%' }}
     />
   );
@@ -374,6 +375,7 @@ function mountPreviewPlayer(targetEl, storyboard) {
       clickToPlay
       spaceKeyToPlayOrPause
       acknowledgeRemotionLicense
+      numberOfSharedAudioTags={12}
       style={{ width: '100%', height: '100%' }}
     />
   );

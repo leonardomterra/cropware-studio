@@ -77,18 +77,18 @@ export const AppCard = ({
 };
 
 function defaultTitle(t) {
-  if (t === 'weather')   return 'Cropware · Tempo';
-  if (t === 'satellite') return 'Cropware · NDVI';
-  if (t === 'alert')     return 'Cropware · Alertas';
-  return 'Cropware';
+  if (t === 'weather')   return 'CROPWARE - TEMPO';
+  if (t === 'satellite') return 'CROPWARE - NDVI';
+  if (t === 'alert')     return 'CROPWARE - ALERTAS';
+  return 'CROPWARE';
 }
 
 // Chrome de janela: 3 dots à esquerda + título centralizado.
+// Sem borderBottom — a separação chrome/body fica só pela troca de cor de fundo.
 const AppChrome = ({ title }) => (
   <div style={{
     height: 56,
     background: MR_COLORS.fog,
-    borderBottom: `1px solid ${MR_COLORS.slateLight}33`,
     display: 'flex',
     alignItems: 'center',
     padding: '0 20px',
@@ -101,8 +101,9 @@ const AppChrome = ({ title }) => (
     </div>
     <div style={{
       position: 'absolute', left: 0, right: 0, textAlign: 'center',
-      fontFamily: MR_FONTS.mono, fontSize: 22, fontWeight: 400,
-      color: MR_COLORS.slateDark, letterSpacing: '0.05em',
+      fontFamily: MR_FONTS.mono, fontSize: 22, fontWeight: 500,
+      color: MR_COLORS.slateDark, letterSpacing: '0.08em',
+      textTransform: 'uppercase',
     }}>{title}</div>
   </div>
 );

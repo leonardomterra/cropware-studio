@@ -10,7 +10,7 @@ import { none } from '@remotion/transitions/none';
 import { linearTiming } from '@remotion/transitions';
 import { Easing } from 'remotion';
 
-import { flash, zoomBlur, maskCircle, cinematicBlur, ringTunnel, glitch, slideRadial } from './custom-transitions.jsx';
+import { flash, zoomBlur, maskCircle, cinematicBlur, ringTunnel, glitch, slideRadial, glassFrost, irisSquare, driftFade, lightStreak } from './custom-transitions.jsx';
 
 export function resolvePresentation(type, sceneTransitionConfig) {
   switch (type) {
@@ -28,6 +28,11 @@ export function resolvePresentation(type, sceneTransitionConfig) {
     case 'ring-tunnel':    return ringTunnel({ color: (sceneTransitionConfig && sceneTransitionConfig.color) || '#6AC58F' });
     case 'glitch':         return glitch();
     case 'slide-radial':   return slideRadial({ origin: (sceneTransitionConfig && sceneTransitionConfig.origin) || 'bottom-left' });
+    // Novas transições R13 (2026-05)
+    case 'glass-frost':    return glassFrost();
+    case 'iris-square':    return irisSquare();
+    case 'drift-fade':     return driftFade();
+    case 'light-streak':   return lightStreak();
     default:               return fade();
   }
 }

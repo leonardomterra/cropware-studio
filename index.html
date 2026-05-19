@@ -7027,15 +7027,19 @@
     --mr-accent-bar-height: 3px;
 
     /* R12: layout em coluna — toggle Player/Grid no topo, stage abaixo.
-       Default = centralizar tudo. Override por data-view onde precisa. */
-    width: 100%;
-    height: 100%;
+       Default = centralizar tudo. Override por data-view onde precisa.
+       FIX 2026-05: position absolute + inset 0 pra ignorar qualquer sibling
+       (post-scaler) do canvas-stage que ainda estivesse afetando layout flex,
+       garantindo que ocupe o canvas inteiro sempre que ativo. */
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     gap: 12px;
-    padding-top: 8px;
+    padding: 8px 16px 0;
+    box-sizing: border-box;
   }
   .motion-reel-scaler[hidden] { display: none !important; }
 
@@ -21814,10 +21818,10 @@ ESQUEMA EXATO do JSON de resposta:
 TIPOS DE CENA (escolha o tipo certo pra cada momento — não repita mesmo tipo 3x seguidas):
 
 • "brand-intro" — abertura. Props: kicker (curto, MAIÚSCULA, opcional), preHeadline (ex "Conheça o"), brandName (geralmente "Cropware" mas pode ser o nome da feature/produto do tema).
-• "keyword" — 1-4 palavras de impacto, centralizadas gigantes. Use pra puxar atenção. Props: word.
-• "stat-card" — número grande + label. Use quando o tema permite um dado quantitativo concreto. Props: kicker, value (número), suffix (opcional: "x", "%", "h", "min", "ha"), label (frase curta explicando), format (opcional: "decimal" pra valor com 1 casa, "comma" pra milhares, senão inteiro).
+• "keyword" — 1-4 palavras de impacto. Visual hardcoded: textura verde + 1 ícone Iconify animado no topo + palavra em Space Mono uppercase + underline. Props: word (string), icon (opcional, ícone line-md adequado ao tema — default "line-md:speed-loop" pra "Rápido."). Exemplos de icon por adjetivo: "Rápido."→"line-md:speed-loop", "Confiável."→"line-md:confirm", "Preciso."→"line-md:check-all", "Direto."→"line-md:arrow-up-circle", "Inteligente."→"line-md:lightbulb", "Em campo."→"line-md:map-marker-loop".
+• "headline" — frase-hook editorial grande (estilo poster de filme). Usada no slot 02 logo após o intro pra preparar o tema. Visual já é hardcoded (imagem + Ken Burns + glass slate); IA preenche apenas o copy. Props: kicker (curto, MAIÚSCULA, 1-2 palavras tipo "VISÃO COMPLETA"), headline (1-2 frases curtas, MÁX 50-70 caracteres totais, tipo "Veja sua lavoura como nunca antes." pra NDVI ou "Antecipe o que vem do céu." pra clima). NÃO inventar números ou estatísticas — é uma frase de POSICIONAMENTO, não um dado.
 • "quote" — citação de alguém (cliente, fundador, agrônomo). Props: text (frase 50-90 char), author (curto, ex "Cliente Cropware · MT").
-• "feature-list" — título + 3-4 itens com ícone colorido. Use quando o tema permite enumerar partes/etapas/benefícios. Props: kicker, title (curto, máx 4 palavras), items: array de 3-4 objetos { "text": "...", "icon": "set:name" }.
+• "feature-list" — título + 3-4 itens com ícone colorido. Use quando o tema permite enumerar partes/etapas/benefícios. Visual hardcoded (light theme — fundo branco/fog + cards brancos com ícone + texto). Props: kicker, title (curto, máx 4 palavras), items: array de 3-4 objetos { "text": "...", "icon": "set:name" }.
    ÍCONES via Iconify (use APENAS estes packs colorful pra hero scenes — escolha o ícone que melhor representa o item):
      - twemoji:* (Twitter emoji colorido — muito expressivo)
          exemplos: twemoji:satellite, twemoji:seedling, twemoji:ear-of-corn, twemoji:tractor, twemoji:globe-showing-americas, twemoji:droplet, twemoji:sun, twemoji:cloud, twemoji:bar-chart, twemoji:rocket, twemoji:gear, twemoji:check-mark-button, twemoji:speech-balloon, twemoji:handshake, twemoji:warning, twemoji:money-bag, twemoji:mobile-phone, twemoji:antenna-bars
@@ -21828,12 +21832,13 @@ TIPOS DE CENA (escolha o tipo certo pra cada momento — não repita mesmo tipo 
 • "cta" — fechamento com headline grande quando o tema é uma campanha ativa. Props: headline (curto), sublabel (descrição), handle (opcional).
 • "chapter" — pausa visual / divisor de seções no meio do reel. Numero grande "01/02/03" + título + subtitle. Use 1x quando o tema tem 2+ momentos distintos. Props: chapterNumber (1-9), chapterTitle (curto, 2-4 palavras), chapterSubtitle (opcional).
 • "lower-third" — overlay de menção rápida (faixa branca grande no rodapé, slide-in). Use 1x pra creditar pessoa, parceiro ou fonte. Props: name, subtitle, handle, cta (opcional).
-• "data-chart" — gráfico animado (bars + line). Use 1x quando o tema permite mostrar série temporal real (safra, monitoramento, ROI). Props: kicker, title, chartType ("bar" | "line" | "bar-line"), unit (opcional, ex "kg/ha"), data: { labels: ["Jan", "Fev", ...], series: [{ name, values: [N, N, ...], kind: "bar"|"line", color (hex) }] }. Use 4-6 labels e 1-2 series.
+• "scenario" — mini-cenário narrativo (situação real do produtor, ex: "É manhã. Você abre o Cropware. Em segundos sabe o que precisa fazer hoje."). Usada no slot 06 como ponte antes do "Em tempo real" do cap07. Visual hardcoded (imagem + glass slate); IA preenche kicker + scenario por tema. Props: kicker (curto, MAIÚSCULA, 2-3 palavras tipo "UMA MANHÃ QUALQUER"), scenario (2-3 frases curtas separadas por \n, MÁX 100-130 caracteres totais, descrevendo um momento concreto do produtor). NÃO inventar números — é uma descrição de cenário, não dado.
 • "app-card" — janela mockup do app Cropware ilustrando o tema. Use 1x MÁX quando o tema é sobre uma feature concreta. Props: kicker (opcional), caption (frase contexto), appType ("weather" | "satellite" | "alert" | "dashboard"), data: específico do tipo:
    - weather: { city, temp (number), condition, forecast: [{day, temp}, ...] }
    - satellite: { lot, ndvi (0-1) }   // NDVI map auto-gerado
    - alert: { title, message, severity: "alta"|"media"|"baixa" }
    - dashboard: { metrics: [{ label, value, unit?, trend?: "up"|"down" }, ...] (3 itens) }
+• "whatsapp-chat" — mockup de conversa WhatsApp entre produtor e Cropware AI ilustrando o tema. Usada no slot 09. Visual hardcoded (phone mockup + UI WhatsApp); IA preenche "messages" com 3-4 mensagens alternando from="user" e from="ai". Cada mensagem deve ser CURTA (50-100 caracteres), conversacional, TEMA-ESPECÍFICA. Ex (NDVI): [{from:"user",text:"Como está minha lavoura?"},{from:"ai",text:"Talhão 12 NDVI 0.78 — saudável. Talhão 7 caiu pra 0.42, sugiro inspeção."},{from:"user",text:"O que pode ser?"},{from:"ai",text:"Padrão sugere falta de nitrogênio. Abrir plano de adubação?"}]. Props: messages (array de {from, text}).
 
 PALETA DE CORES (use APENAS estes tokens literais — paleta MR_COLORS v2 curada):
 
@@ -21892,14 +21897,21 @@ BACKGROUND DA CENA (substitui o antigo bgImage — opcional, default = cor sóli
 TRANSIÇÕES (cada cena exceto a primeira DEVE ter transitionIn):
   Básicas: fade · wipe-up · wipe-down · push-up · push-left · mask-circle
   Cinematográficas: flash · zoom-blur · cinematic-blur · ring-tunnel · glitch · slide-radial · light-leak
-Durações: 0.3s a 0.6s (1.0s para light-leak, 0.6-0.8s para cinematic-blur). Use cada tipo cinematográfico no máximo 1x. Varie pra dar ritmo.
+  R13 (calmas/elegantes): glass-frost · iris-square · drift-fade · light-streak
+Durações: 0.3s a 0.6s (1.0s para light-leak, 0.6-0.8s para cinematic-blur, 0.55s para glass-frost/iris-square). Use cada tipo cinematográfico no máximo 1x. Varie pra dar ritmo.
 EASINGS válidos: "in-out-quart", "out-quint", "out-quart", "in-out-cubic", "out-expo", "in-out-expo".
 
 PROPS EXTRAS POR TIPO:
-  - light-leak: seed (0-9), hueShift (0=dourado, 30=âmbar, 120=verde, 240=azul)
+  - light-leak: seed (0-9), hueShift (0=dourado, 110-120=verde Cropware, 240=azul) — SEMPRE use hueShift >= 100 pra ficar verde, evite tons laranja
   - ring-tunnel: color (default verde Cropware)
   - slide-radial: origin ("top-left"|"top-right"|"bottom-left"|"bottom-right"|"center")
-  - flash: color (default branco)
+  - flash: color (default branco) — EVITE flash, prefere cinematic-blur ou fade que são mais calmos
+
+NOVAS R13 (descrição):
+  - glass-frost: cena vira vidro fosco/blur, clarea → revela. Combina com glass dos slides fixos. Boa em cenas de texto.
+  - iris-square: abertura/fechamento quadrado (vibe câmera antiga). Bom em chapters e cards.
+  - drift-fade: crossfade lento com leve drift horizontal. Muito calmo. Bom entre cenas de texto.
+  - light-streak: feixe diagonal de luz cruza a tela e "carrega" a nova cena. Cinematográfico, dinâmico.
 
 SFX NAS TRANSIÇÕES (opcional):
   Adicione "sfx" no objeto transitionIn pra disparar efeito sonoro no boundary.
@@ -21915,16 +21927,72 @@ SFX NAS TRANSIÇÕES (opcional):
     end-card chegando    → "ding" ou "notification"
   Ex: "transitionIn": { "type": "flash", "dur": 0.35, "sfx": "impact" }
 
-VOICEOVER POR CENA (opcional, recomendado p/ reels institucionais):
-  Cada cena pode ter "voiceover": { "text": "frase falada por uma voz IA" }.
-  O motor gera os MP3s offline via ElevenLabs ("npm run reel:voiceover") e
-  monta o áudio sincronizado na cena.
-  Diretrizes pro voiceover.text:
-    - PT-BR natural, ritmo de fala humana, 10-18 palavras por cena
-    - Não REPETE o texto visual da cena — COMPLEMENTA
-    - Pausa: termine cada frase em ponto. Use vírgula pra respirar.
-    - Total do reel: ~150-200 palavras (~60s falados)
-  Ex: { "voiceover": { "text": "Em campo, cada minuto conta. Por isso o Cropware roda em 3 segundos." } }
+VOICEOVER POR CENA (importante — leia tudo antes de gerar texto):
+  Cada cena pode ter "voiceover": { "text": "frase falada por voz IA PT-BR" }.
+  O motor gera os MP3s via ElevenLabs (voz pt-BR de qualidade) e mixa por cena.
+
+  REGRA DE OURO — orçamento de palavras por janela de cena:
+    A voz PT-BR fala ~2.5 palavras/segundo. Sobra 0.4s no fim da cena pra
+    respirar antes do corte. Então o LIMITE DURO de palavras por cena é:
+      • cena de 4s  →  máx  8 palavras
+      • cena de 5s  →  máx 10 palavras
+      • cena de 6s  →  máx 13 palavras
+    NUNCA estoure. Se a frase não cabe, encurte ou OMITA voiceover (silêncio
+    é resposta válida — não força fala em toda cena).
+
+  CENAS QUE DEVEM FICAR SILENCIOSAS (NÃO inclua "voiceover" nelas):
+    [03] keyword       — a palavra na tela fala por si, narrar é redundante
+    [04] chapter cap.2 — marker visual, deixa a transição respirar
+    [07] chapter cap.3 — idem
+    [09] whatsapp-chat — o mockup da conversa é o conteúdo; voz atrapalha
+    [10] quote         — a citação na tela é a fala; voz é eco redundante
+
+  CENAS COM VOICEOVER (7 das 12) — diretrizes ESPECÍFICAS por tipo:
+
+  [01] brand-intro (6s, locked) — abertura institucional, tom acolhedor.
+       FORMATO: "Conheça o Cropware. [breve qualificador, 4-6 palavras]."
+       Ex: "Conheça o Cropware. O agro brasileiro em um só lugar."
+       Limite: 10 palavras. Não cite o tema aqui — é a marca, não a feature.
+
+  [02] headline (5s, custom) — ECO da headline visual em uma frase impactante.
+       NÃO repita literal — parafraseia ou estende. Tom: editorial, afirmativo.
+       Limite: 10 palavras. Uma frase só, ponto final.
+       Ex (visual="Veja sua lavoura como nunca antes"):
+           "Veja cada talhão como nunca antes viu."
+
+  [05] feature-list (6s, custom) — enuncia as 3 features em UMA frase corrida,
+       SEM listar com "primeiro, segundo, terceiro". Use conjunções naturais.
+       Limite: 13 palavras. Tom: confiante, prático.
+       Ex: "Monitora, diagnostica e guarda a história da sua safra inteira."
+
+  [06] scenario (6s, custom) — CONTEMPLATIVO, ritmo lento. Pinta a cena que
+       o slide narra. Pode ser 1 frase longa ou 2 curtas. Use pausa de vírgula.
+       Limite: 13 palavras. Tom: cinematográfico, pausado.
+       Ex: "É manhã. Você abre o app, e o campo todo cabe na palma."
+
+  [08] app-card (6s, custom) — descreve o BENEFÍCIO do que está sendo mostrado
+       no mockup. Evite jargão técnico. Foca no que muda pro produtor.
+       Limite: 13 palavras. Tom: direto.
+       Ex: "Previsão precisa pro talhão certo, na hora que você precisa decidir."
+
+  [11] lower-third (5s, locked) — CTA WhatsApp curta e convidativa.
+       FORMATO sugerido: "Fala com a gente. [convite, 4-5 palavras]."
+       Limite: 10 palavras.
+       Ex: "Fala com a gente. Tira suas dúvidas no WhatsApp agora."
+
+  [12] end-card (5s, locked) — assinatura. Encerra com a marca + handle falado.
+       "Arroba cropware ponto app" (escreva por extenso, não use "@").
+       Limite: 10 palavras.
+       Ex: "O agro é Cropware. Em arroba cropware ponto app."
+
+  REGRAS GERAIS DO TEXTO:
+    - PT-BR natural, sem inglês ou jargão técnico desnecessário
+    - Termine cada frase em ponto final (controla pausa do TTS)
+    - Use vírgula pra micro-respiro dentro da frase
+    - NÃO repita literalmente o texto visual — complementa OU parafraseia
+    - NÃO use números compostos longos ("trezentos e quarenta e dois") — soa robótico
+    - Total falado do reel: ~70 palavras distribuídas em 7 cenas (~28s narrado,
+      32s de respiro/silêncio) — SE estourar, é porque você escreveu demais
 
 MÚSICA DE FUNDO (top-level, opcional):
   No NÍVEL RAIZ do storyboard (mesmo nível de "scenes"), adicione:
@@ -21937,7 +22005,7 @@ OVERLAYS DECORATIVOS (scene.overlays — opcional, array, máx 2 por cena, NÃO 
   Use pra acrescentar atmosfera técnica/orgânica sem dominar a frame.
 
   • { "type": "rotating-rings", color, opacity (0-1, default 0.18), count (2|3), origin ("center"|"top-right"|"top-left"|"bottom-right"|"bottom-left") }
-    Anéis tracejados girando — vibe radar / satélite. Bom em cenas técnicas (app-card satellite, data-chart).
+    Anéis tracejados girando — vibe radar / satélite. Bom em cenas técnicas (app-card satellite).
 
   • { "type": "pulse-circle", color, opacity (default 0.22), origin ("center") }
     Pulsos concêntricos do centro. Bom em alerts ou momentos de "expansão".
@@ -21963,14 +22031,14 @@ ESTRUTURA OBRIGATÓRIA (R12 — formato 6+6, fixas + customizáveis):
 
   Ordem das 12 cenas (com tempo aproximado e flag locked):
     01  0-6s    brand-intro    LOCKED   "Conheça o Cropware"
-    02  6-10s   stat-card      custom   Dado de impacto do tema
+    02  6-10s   headline       custom   Headline editorial — frase-hook do tema
     03  10-14s  keyword        custom   Adjetivo de impacto
     04  14-18s  chapter        LOCKED   Cap. 04 · "No campo"
     05  18-24s  feature-list   custom   3 features tema-específicas
-    06  24-30s  data-chart     custom   Série de dados real (se aplicável)
+    06  24-30s  scenario       custom   Mini-cenário narrativo (situação real do produtor)
     07  30-34s  chapter        LOCKED   Cap. 07 · "Em tempo real"
     08  34-40s  app-card       custom   Mock app ilustrando feature
-    09  40-44s  keyword        custom   Adjetivo/frase de fechamento
+    09  40-44s  whatsapp-chat  custom   Mockup conversa WhatsApp user × Cropware AI
     10  44-50s  quote          LOCKED   Depoimento genérico
     11  50-55s  lower-third    LOCKED   "@cropware.app · Siga no Instagram"
     12  55-60s  end-card       LOCKED   Logo + tagline + "Seguir"
@@ -22009,25 +22077,24 @@ ESTRUTURA OBRIGATÓRIA (R12 — formato 6+6, fixas + customizáveis):
 
   Para as 6 CUSTOMIZÁVEIS (02, 03, 05, 06, 08, 09) você ESCREVE copy
   tema-específica. Mantenha "locked": false (ou omita) nelas.
-  Em data-chart e app-card, se o tema NÃO permitir uso natural, você
+  Em app-card, se o tema NÃO permitir uso natural, você
   ainda DEVE incluir a cena (ordem é rígida) — preencha com dados
-  fictícios sensatos relacionados ao tema (ex.: stat genérico "85%").
+  genéricos relacionados ao tema (ex.: alerta climático genérico, talhão fictício).
 
   Outras regras:
   - start/end encadeiam sem buracos. Total = 60s exatos.
   - Distribua bg colors alternando área clara/escura pra ritmo.
   - Use breathing-radial OU texture nas cenas customizáveis.
 
-EXEMPLO de cena bem ancorada ao tema "Lançamento da feature de NDVI":
-  { "id": "stat-ndvi", "start": 6.0, "end": 12.0, "type": "stat-card",
-    "bg": "var(--mr-greenAbyss)", "fg": "var(--mr-white)",
-    "background": { "type": "gradient", "gradient": { "kind": "radial",
-      "colors": ["var(--mr-greenForest)", "var(--mr-greenAbyss)"] } },
-    "transitionIn": { "type": "wipe-up", "dur": 0.55, "easing": "in-out-quart" },
-    "kicker": "NDVI EM MINUTOS", "value": 5, "suffix": "min",
-    "label": "do satélite ao mapa de saúde da lavoura" }
+EXEMPLO de cena 02 (headline) bem ancorada ao tema "Lançamento da feature de NDVI":
+  { "id": "headline-1", "start": 6.0, "end": 10.0, "type": "headline",
+    "kicker": "VISÃO COMPLETA",
+    "headline": "Veja sua lavoura como nunca antes.",
+    "transitionIn": { "type": "wipe-up", "dur": 0.55, "easing": "in-out-quart" } }
 
-Note que kicker, value e label só fazem sentido se for sobre NDVI. Mesma estrutura aplicada a um tema diferente teria copy diferente.
+Note que kicker e headline só fazem sentido se for sobre NDVI/satélite. Pra clima seria
+"Antecipe o que vem do céu.", pra geração de demanda "Onde toda safra começa.", e assim
+por diante. Visual é hardcoded — você só escreve copy.
 
 ═══════════════════════════════════════════════════════════
 EXEMPLO COMPLETO (storyboard minimal — pra você ver o formato esperado):
@@ -22040,11 +22107,10 @@ EXEMPLO COMPLETO (storyboard minimal — pra você ver o formato esperado):
       "background": { "type": "gradient", "gradient": { "kind": "breathing-radial", "colors": ["var(--mr-white)", "var(--mr-fog)"], "breathScale": 1.04 } },
       "voiceover": { "text": "Conheça o Cropware, o software brasileiro pro agro." },
       "transitionIn": { "type": "fade", "dur": 0.3, "easing": "out-expo" } },
-    { "id": "stat", "start": 5, "end": 11, "type": "stat-card",
-      "kicker": "EM CAMPO", "value": 3, "suffix": "x", "label": "mais rápido que sua planilha",
-      "bg": "var(--mr-greenAbyss)", "fg": "var(--mr-white)",
-      "background": { "type": "gradient", "gradient": { "kind": "radial", "colors": ["var(--mr-greenForest)", "var(--mr-greenAbyss)"] } },
-      "voiceover": { "text": "Três vezes mais rápido que a planilha de hoje." },
+    { "id": "headline-1", "start": 5, "end": 10, "type": "headline",
+      "kicker": "VISÃO COMPLETA",
+      "headline": "Veja sua lavoura como nunca antes.",
+      "voiceover": { "text": "Veja cada talhão como nunca antes viu." },
       "transitionIn": { "type": "wipe-up", "dur": 0.5, "easing": "in-out-quart", "sfx": "whoosh" } },
     { "id": "features", "start": 11, "end": 18, "type": "feature-list",
       "kicker": "TUDO EM UM", "title": "Tudo na palma.",
@@ -22067,7 +22133,10 @@ EXEMPLO COMPLETO (storyboard minimal — pra você ver o formato esperado):
   ]
 }
 
-Note: o exemplo acima tem só 4 cenas pra ficar compacto. O seu output DEVE ter 8-12 cenas distribuídas em 60s (duração alvo). Use os 11 tipos disponíveis com variedade. Cada cena com voiceover.text complementando o visual.
+Note: o exemplo acima tem só 4 cenas pra ficar compacto. O seu output DEVE ter
+EXATAMENTE 12 cenas (formato 6+6 R12) em 60s. Voiceover apenas nas 7 cenas
+indicadas na seção VOICEOVER POR CENA — as outras 5 (keyword, ambos chapters,
+whatsapp-chat, quote) ficam SEM "voiceover" e o silêncio é intencional.
 ═══════════════════════════════════════════════════════════
 
 OUTPUT: APENAS o JSON, sem prosa, sem \`\`\`markdown wrap. Comece em { e termine em }.`;
@@ -22110,8 +22179,18 @@ function mrValidateStoryboard(parsed, targetDuration) {
   if (!parsed || !Array.isArray(parsed.scenes) || !parsed.scenes.length) {
     throw new Error('Storyboard sem cenas.');
   }
-  const validTypes = new Set(['brand-intro', 'keyword', 'stat-card', 'quote', 'feature-list', 'end-card', 'cta', 'chapter', 'lower-third', 'data-chart', 'app-card']);
-  const validTransitions = new Set(['cut', 'fade', 'wipe-up', 'wipe-down', 'push-up', 'push-left', 'mask-circle', 'flash', 'zoom-blur', 'light-leak', 'cinematic-blur', 'ring-tunnel', 'glitch', 'slide-radial']);
+  // R14 guardrail — migra tipos descontinuados pelo R12/R13. IA antiga ou
+  // prompt esquecido pode devolver stat-card/data-chart; mantemos posição
+  // mas trocamos pelo substituto correto.
+  const TYPE_MIGRATIONS = {
+    'stat-card': 'headline',   // posição 02 — headline editorial substituiu
+    'data-chart': 'scenario',  // posição 06 — mini-cenário substituiu
+  };
+  parsed.scenes.forEach(s => {
+    if (s && TYPE_MIGRATIONS[s.type]) s.type = TYPE_MIGRATIONS[s.type];
+  });
+  const validTypes = new Set(['brand-intro', 'keyword', 'headline', 'quote', 'feature-list', 'end-card', 'cta', 'chapter', 'lower-third', 'scenario', 'app-card', 'whatsapp-chat']);
+  const validTransitions = new Set(['cut', 'fade', 'wipe-up', 'wipe-down', 'push-up', 'push-left', 'mask-circle', 'flash', 'zoom-blur', 'light-leak', 'cinematic-blur', 'ring-tunnel', 'glitch', 'slide-radial', 'glass-frost', 'iris-square', 'drift-fade', 'light-streak']);
   const validBgTypes = new Set(['solid', 'gradient', 'texture']);
   const validOverlayTypes = new Set(['rotating-rings', 'pulse-circle', 'particle-drift', 'line-draw', 'curve-trace', 'light-streak', 'vignette-breath']);
   const scenes = parsed.scenes.filter(s => validTypes.has(s.type));
@@ -22125,8 +22204,17 @@ function mrValidateStoryboard(parsed, targetDuration) {
     s.end = cursor + aiDur;
     cursor = s.end;
     if (!s.id) s.id = `${s.type}-${i}`;
-    if (s.transitionIn && !validTransitions.has(s.transitionIn.type)) {
-      s.transitionIn = { type: 'fade', dur: 0.4, easing: 'in-out-cubic' };
+    if (s.transitionIn) {
+      // R14 guardrail — flash é jarring pra estética calma/editorial; troca
+      // por cinematic-blur preservando dur/easing se vieram da IA.
+      if (s.transitionIn.type === 'flash') {
+        s.transitionIn.type = 'cinematic-blur';
+        if (!s.transitionIn.dur) s.transitionIn.dur = 0.55;
+        if (!s.transitionIn.easing) s.transitionIn.easing = 'in-out-cubic';
+      }
+      if (!validTransitions.has(s.transitionIn.type)) {
+        s.transitionIn = { type: 'fade', dur: 0.4, easing: 'in-out-cubic' };
+      }
     }
     // Sanitiza background: descarta campos antigos (bgImage/kenBurns/bgOverlay)
     // e valida o objeto novo `background` (tipo + payload).
@@ -22183,12 +22271,16 @@ function mrValidateStoryboard(parsed, targetDuration) {
   const target = Number(targetDuration) || 60;
   const scale = target / totalAi;
   scenes.forEach(s => { s.start *= scale; s.end *= scale; });
+  // Música de fundo: IA não decide trilha (prompt manda omitir). Sempre
+  // herda do default storyboard, que carrega o track ativo em public/audio/.
+  const defaultAudio = (window.MOTION_REEL_DEFAULT_STORYBOARD && window.MOTION_REEL_DEFAULT_STORYBOARD.audio) || null;
   return {
     width: 1080, height: 1920, fps: 30,
     duration: target,
     brand: 'Cropware',
     logoUrl: 'logo-cropware-pb-final.svg',
     scenes,
+    ...(defaultAudio ? { audio: defaultAudio } : {}),
   };
 }
 
@@ -22357,11 +22449,16 @@ async function downloadMotionReelMP4() {
   }
   setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>${hasVoiceover ? 'Gerando voiceover (~10s) + renderizando MP4 (~60s)' : 'Renderizando MP4 (~60s)'} — pode demorar uns 1-2 minutos. Não feche a aba.`, '');
 
+  // Garantia: se o reel em memória foi gerado antes do suporte a música ou
+  // perdeu o campo audio por qualquer motivo, herda do default storyboard.
+  // Aplica só na cópia enviada ao backend (não muta o MOTION_REEL_CONFIG ativo).
+  const defaultAudio = (window.MOTION_REEL_DEFAULT_STORYBOARD && window.MOTION_REEL_DEFAULT_STORYBOARD.audio) || null;
+  const cfgForRender = (!cfg.audio && defaultAudio) ? { ...cfg, audio: defaultAudio } : cfg;
   try {
     const resp = await fetch('/api/render-reel', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ storyboard: cfg, reelId }),
+      body: JSON.stringify({ storyboard: cfgForRender, reelId }),
     });
     if (!resp.ok) {
       let detail = '';

@@ -10,28 +10,29 @@ import { resolveSfxUrl } from './sfx.js';
 import { Overlay } from './overlays.jsx';
 import { BrandIntro } from './scenes/BrandIntro.jsx';
 import { Keyword } from './scenes/Keyword.jsx';
-import { StatCard } from './scenes/StatCard.jsx';
+import { Headline } from './scenes/Headline.jsx';
+import { Scenario } from './scenes/Scenario.jsx';
+import { WhatsAppChat } from './scenes/WhatsAppChat.jsx';
 import { Quote } from './scenes/Quote.jsx';
 import { FeatureList } from './scenes/FeatureList.jsx';
 import { EndCard } from './scenes/EndCard.jsx';
 import { Cta } from './scenes/Cta.jsx';
 import { Chapter } from './scenes/Chapter.jsx';
 import { LowerThird } from './scenes/LowerThird.jsx';
-import { DataChart } from './scenes/DataChart.jsx';
 import { AppCard } from './scenes/AppCard.jsx';
 
 const SCENE_COMPONENTS = {
   'brand-intro':  BrandIntro,
   'keyword':      Keyword,
-  'stat-card':    StatCard,
+  'headline':     Headline,
+  'scenario':     Scenario,
+  'whatsapp-chat':WhatsAppChat,
   'quote':        Quote,
   'feature-list': FeatureList,
   'end-card':     EndCard,
   'cta':          Cta,
-  // R8 — novos tipos
   'chapter':      Chapter,
   'lower-third':  LowerThird,
-  'data-chart':   DataChart,
   'app-card':     AppCard,
 };
 
@@ -55,6 +56,8 @@ export const MotionReel = ({ storyboard }) => {
   // Tracker de frame absoluto na timeline final (considerando overlap das transições).
   let cursorFrame = 0;
   let totalFrames = 0;
+  // Ranges [startFrame, endFrame] em que voz toca — usado pra ducking da música.
+  const voiceoverRanges = [];
 
   storyboard.scenes.forEach((scene, i) => {
     const Comp = SCENE_COMPONENTS[scene.type];
@@ -111,6 +114,11 @@ export const MotionReel = ({ storyboard }) => {
             <Audio src={voUrl} volume={scene.voiceover.volume == null ? 1.0 : scene.voiceover.volume} />
           </Sequence>
         );
+        // Registra o range pra ducking. durationSec vem do voiceover-core
+        // depois da geração; se ausente (preview pré-geração), usa scene dur.
+        const voDurSec = scene.voiceover.durationSec || durSec;
+        const voEndFrame = sceneStartFrame + Math.round(voDurSec * fps);
+        voiceoverRanges.push([sceneStartFrame, voEndFrame]);
       }
     }
 
@@ -133,12 +141,16 @@ export const MotionReel = ({ storyboard }) => {
     totalFrames = cursorFrame;
   });
 
-  // Música de fundo: global, com fade in/out controlado por volume callback.
+  // Música de fundo: global, com fade in/out + ducking sob voz.
   const music = storyboard.audio && (storyboard.audio.music || storyboard.audio.src);
   const musicCfg = (storyboard.audio || {});
   const fadeInF  = Math.max(0, (musicCfg.fadeIn  == null ? 1.0 : musicCfg.fadeIn)  * fps);
   const fadeOutF = Math.max(0, (musicCfg.fadeOut == null ? 2.0 : musicCfg.fadeOut) * fps);
   const baseVol  = musicCfg.volume == null ? 0.4 : musicCfg.volume;
+  // Ducking: durante voz, multiplica baseVol por este fator (0-1). 0.35 = -65%.
+  const duckLevel = musicCfg.duck == null ? 0.35 : musicCfg.duck;
+  // Ramp suave entre full e duck (anti-pop). Default 150ms.
+  const duckRampF = Math.max(1, Math.round(((musicCfg.duckRamp == null ? 0.15 : musicCfg.duckRamp)) * fps));
   const musicUrl = music ? resolveMediaUrl(music) : null;
 
   return (
@@ -157,7 +169,23 @@ export const MotionReel = ({ storyboard }) => {
             const fadeOut = fadeOutF > 0
               ? interpolate(f, [totalFrames - fadeOutF, totalFrames], [baseVol, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
               : baseVol;
-            return Math.min(fadeIn, fadeOut);
+            // Ducking: pra cada range de voz, ramp 1 → duckLevel → 1 em torno do range.
+            // Pega o menor (mais "duckado") entre todos os ranges sobrepostos.
+            let duck = 1;
+            for (let r = 0; r < voiceoverRanges.length; r++) {
+              const vs = voiceoverRanges[r][0];
+              const ve = voiceoverRanges[r][1];
+              if (ve <= vs) continue;
+              if (f < vs - duckRampF || f > ve + duckRampF) continue;
+              const local = interpolate(
+                f,
+                [vs - duckRampF, vs, ve, ve + duckRampF],
+                [1, duckLevel, duckLevel, 1],
+                { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+              );
+              if (local < duck) duck = local;
+            }
+            return Math.min(fadeIn, fadeOut) * duck;
           }}
           loop={musicCfg.loop !== false}
         />

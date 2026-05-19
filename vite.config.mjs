@@ -57,8 +57,19 @@ const motionReelApi = {
             finalStoryboard = await generateVoiceoverForStoryboard(storyboard, {
               reelId, projectRoot: PROJECT_ROOT, env,
               onProgress: (p) => {
+                if (p.status === 'summary') {
+                  console.warn(`[render-reel] ⚠️  ${p.overflows.length} cena(s) com voiceover estourando:`);
+                  p.overflows.forEach(o => {
+                    console.warn(`  • ${o.sceneId}: ${o.durationSec.toFixed(2)}s > ${o.sceneDur.toFixed(2)}s (+${o.overlapSec.toFixed(2)}s)`);
+                  });
+                  return;
+                }
                 const tag = `  [vo ${p.index + 1}/${p.total}] ${p.sceneId}`;
-                if (p.status === 'done') console.log(`${tag}: ✓ ${(p.bytes / 1024).toFixed(0)} KB`);
+                if (p.status === 'done') {
+                  const flag = p.overflow ? ` ⚠️ +${p.overlapSec.toFixed(2)}s` : '';
+                  const cache = p.fromCache ? ' (cache)' : '';
+                  console.log(`${tag}: ✓ ${(p.bytes / 1024).toFixed(0)} KB · ${p.durationSec.toFixed(2)}s/${p.sceneDur.toFixed(1)}s${flag}${cache}`);
+                }
                 if (p.status === 'failed') console.log(`${tag}: ✗ ${p.error}`);
               },
             });

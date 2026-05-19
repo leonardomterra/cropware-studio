@@ -250,3 +250,110 @@ const SlideRadialPresentation = ({ children, presentationProgress, presentationD
   );
 };
 export const slideRadial = (props = {}) => ({ component: SlideRadialPresentation, props });
+
+// ─── GLASS-FROST ─────────────────────────────────────────────────────
+// A tela vira um vidro fosco/blur por um instante, depois clarea revelando
+// a nova cena. Combina com a estética glass dos slides fixos.
+const GlassFrostPresentation = ({ children, presentationProgress, presentationDirection }) => {
+  if (presentationDirection === 'entering') {
+    // Cena entra desfocada → foca + opacity 0 → 1 + scale 1.04 → 1
+    const blur = (1 - presentationProgress) * 40;
+    const scale = 1.04 - 0.04 * presentationProgress;
+    const opacity = Math.min(1, presentationProgress * 1.4);
+    return (
+      <AbsoluteFill style={{
+        filter: `blur(${blur.toFixed(2)}px)`,
+        transform: `scale(${scale.toFixed(4)})`,
+        opacity,
+      }}>{children}</AbsoluteFill>
+    );
+  }
+  // Saída: desfoca + scale up + fade out
+  const blur = presentationProgress * 40;
+  const scale = 1 + presentationProgress * 0.04;
+  const opacity = Math.max(0, 1 - presentationProgress * 1.4);
+  return (
+    <AbsoluteFill style={{
+      filter: `blur(${blur.toFixed(2)}px)`,
+      transform: `scale(${scale.toFixed(4)})`,
+      opacity,
+    }}>{children}</AbsoluteFill>
+  );
+};
+export const glassFrost = () => ({ component: GlassFrostPresentation, props: {} });
+
+// ─── IRIS-SQUARE ─────────────────────────────────────────────────────
+// Abertura/fechamento de "câmera antiga" em forma de quadrado arredondado.
+// Variante do mask-circle com forma diferente (vibe Wes Anderson).
+const IrisSquarePresentation = ({ children, presentationProgress, presentationDirection }) => {
+  // Entrando: inset 50→0 (do centro pra fora)
+  // Saindo: inset 0→50 (do todo pra um quadrado central)
+  const inset = presentationDirection === 'entering'
+    ? (1 - presentationProgress) * 50
+    : presentationProgress * 50;
+  return (
+    <AbsoluteFill style={{
+      clipPath: `inset(${inset.toFixed(2)}% ${inset.toFixed(2)}% ${inset.toFixed(2)}% ${inset.toFixed(2)}% round 4%)`,
+    }}>
+      {children}
+    </AbsoluteFill>
+  );
+};
+export const irisSquare = () => ({ component: IrisSquarePresentation, props: {} });
+
+// ─── DRIFT-FADE ──────────────────────────────────────────────────────
+// Crossfade lento com leve drift horizontal. Sutil, contemplativo,
+// bom entre cenas de texto.
+const DriftFadePresentation = ({ children, presentationProgress, presentationDirection }) => {
+  if (presentationDirection === 'entering') {
+    const opacity = presentationProgress;
+    const tx = (1 - presentationProgress) * -20; // entra deslocada -20px e converge
+    return (
+      <AbsoluteFill style={{
+        opacity,
+        transform: `translateX(${tx.toFixed(2)}px)`,
+      }}>{children}</AbsoluteFill>
+    );
+  }
+  const opacity = 1 - presentationProgress;
+  const tx = presentationProgress * 20;
+  return (
+    <AbsoluteFill style={{
+      opacity,
+      transform: `translateX(${tx.toFixed(2)}px)`,
+    }}>{children}</AbsoluteFill>
+  );
+};
+export const driftFade = () => ({ component: DriftFadePresentation, props: {} });
+
+// ─── LIGHT-STREAK ────────────────────────────────────────────────────
+// Feixe diagonal de luz cruza a tela e "carrega" a nova cena. Renderiza
+// o streak sobre a cena que sai pra não duplicar.
+const LightStreakPresentation = ({ children, presentationProgress, presentationDirection }) => {
+  if (presentationDirection === 'entering') {
+    // Entrada: simples fade-in atrás do streak (que vem da cena exiting)
+    const opacity = Math.max(0, presentationProgress * 1.4 - 0.4);
+    return <AbsoluteFill style={{ opacity }}>{children}</AbsoluteFill>;
+  }
+  // Saída: scene fade-out + streak diagonal cruzando da esquerda pra direita
+  const opacity = Math.max(0, 1 - presentationProgress * 1.3);
+  const streakX = presentationProgress * 100; // 0% → 100% da largura
+  return (
+    <AbsoluteFill>
+      <AbsoluteFill style={{ opacity }}>{children}</AbsoluteFill>
+      {/* Streak: faixa diagonal brilhante posicionada ao longo da progressão */}
+      <div style={{
+        position: 'absolute',
+        top: '-20%',
+        bottom: '-20%',
+        left: `${streakX - 35}%`,
+        width: '70%',
+        background: 'linear-gradient(110deg, transparent 38%, rgba(255,255,255,0.55) 49%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,0.55) 51%, transparent 62%)',
+        filter: 'blur(3px)',
+        mixBlendMode: 'screen',
+        pointerEvents: 'none',
+      }} />
+    </AbsoluteFill>
+  );
+};
+export const lightStreak = () => ({ component: LightStreakPresentation, props: {} });

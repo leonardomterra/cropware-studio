@@ -43,10 +43,24 @@ async function main() {
     projectRoot: PROJECT_ROOT,
     env,
     onProgress: (p) => {
+      if (p.status === 'summary') {
+        console.log(`\n⚠️  ${p.overflows.length} cena(s) com voiceover ESTOURANDO a janela (text mais longo que dur):`);
+        p.overflows.forEach(o => {
+          console.log(`     • ${o.sceneId}: ${o.durationSec.toFixed(2)}s falados > ${o.sceneDur.toFixed(2)}s de cena (+${o.overlapSec.toFixed(2)}s vazando)`);
+        });
+        console.log(`     → encurte o voiceover.text dessas cenas no JSON (ou alongue a cena)\n`);
+        return;
+      }
       const tag = `[${p.index + 1}/${p.total}] ${p.sceneId}`;
       if (p.status === 'skipped')    console.log(`  ${tag}: sem voiceover.text — pulando`);
       if (p.status === 'generating') process.stdout.write(`  ${tag}: gerando "${p.text.slice(0, 50)}${p.text.length > 50 ? '...' : ''}" ... `);
-      if (p.status === 'done')       console.log(`✓ ${(p.bytes / 1024).toFixed(0)} KB`);
+      if (p.status === 'done') {
+        const sizeKb = (p.bytes / 1024).toFixed(0);
+        const dur = `${p.durationSec.toFixed(2)}s/${p.sceneDur.toFixed(1)}s`;
+        const flag = p.overflow ? ` ⚠️  +${p.overlapSec.toFixed(2)}s estourando` : '';
+        const cache = p.fromCache ? ' (cache)' : '';
+        console.log(`✓ ${sizeKb} KB · ${dur}${flag}${cache}`);
+      }
       if (p.status === 'failed')     console.log(`✗ FALHOU: ${p.error}`);
     },
   });

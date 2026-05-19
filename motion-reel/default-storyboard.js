@@ -6,17 +6,17 @@
 // - locked: false  → tema-específicas (IA gera, usuário edita por prompt).
 //
 //   #   Time         Tipo            Lock     Função
-//   01  00.0  →  5.0  brand-intro    FIXA   Conheça o Cropware
-//   02  05.0  → 10.0  stat-card      custom 1º dado de impacto
-//   03  10.0  → 14.0  keyword        custom 1º keyword
+//   01  00.0  →  6.0  brand-intro    FIXA   Conheça o Cropware
+//   02  05.0  → 10.0  headline       custom Headline editorial (R12 substituiu stat-card)
+//   03  10.0  → 14.0  keyword        custom Palavra-chave + ícone Iconify
 //   04  14.0  → 18.0  chapter        FIXA   Cap. 02 · No campo
 //   05  18.0  → 24.0  feature-list   custom 3 features tema-específicas
-//   06  24.0  → 30.0  data-chart     custom Série de dados real
+//   06  24.0  → 30.0  scenario       custom Mini-cenário narrativo (R13 substituiu data-chart)
 //   07  30.0  → 34.0  chapter        FIXA   Cap. 03 · Resultados
 //   08  34.0  → 40.0  app-card       custom Mock app ilustrando feature
-//   09  40.0  → 44.0  keyword        custom 2º keyword (fechamento)
+//   09  40.0  → 44.0  whatsapp-chat  custom Conversa user × Cropware AI (R13 substituiu kw-direct)
 //   10  44.0  → 50.0  quote          FIXA   Depoimento genérico de cliente
-//   11  50.0  → 55.0  lower-third    FIXA   @cropware.app card CTA
+//   11  50.0  → 55.0  lower-third    FIXA   WhatsApp Lottie + "Fala com a gente"
 //   12  55.0  → 60.0  end-card       FIXA   Logo + tagline + "Seguir"
 export const MOTION_REEL_DEFAULT = {
   width: 1080,
@@ -25,6 +25,16 @@ export const MOTION_REEL_DEFAULT = {
   duration: 60.0,
   brand: 'Cropware',
   logoUrl: 'logo-cropware-pb-final.svg',
+  // Música de fundo global — fade in/out controlados pelo Player. Engine em
+  // MotionReel.jsx faz mix com voiceover (sem ducking automático; volume
+  // baixo serve como compromisso). Trocar trilha = trocar `music` path
+  // (relativo ao public/) ou colocar outro arquivo em public/audio/.
+  audio: {
+    music: 'audio/viacheslavstarostin-country-western-texas-background-music-361672.mp3',
+    volume: 0.18,
+    fadeIn: 1.5,
+    fadeOut: 2.5,
+  },
   scenes: [
     // ─────────────── 01 INTRO (FIXA — identidade Cropware) ───────────────
     // Cena hardcoded em BrandIntro.jsx: bg `conheca-hero-bg.webp` (homem no
@@ -37,29 +47,25 @@ export const MOTION_REEL_DEFAULT = {
       locked: true,
       transitionIn: { type: 'fade', dur: 0.3, easing: 'out-expo' },
     },
-    // ─────────────── 02 STAT-1 (custom) ───────────────
+    // ─────────────── 02 HEADLINE (custom) ───────────────
+    // Headline editorial pós-intro. Visual fixo em Headline.jsx (imagem
+    // `conheca-solucao-bg.webp` + Ken Burns + glass slate). IA preenche
+    // kicker + headline por tema.
     {
-      id: 'stat-1', start: 5.0, end: 10.0, type: 'stat-card',
-      kicker: 'EM CAMPO',
-      value: 3, suffix: 'x',
-      label: 'mais rápido que sua planilha de safra',
-      bg: 'var(--mr-greenAbyss)', fg: 'var(--mr-white)',
-      background: {
-        type: 'gradient',
-        gradient: { kind: 'radial', colors: ['var(--mr-greenForest)', 'var(--mr-greenAbyss)'] },
-      },
+      id: 'headline-1', start: 5.0, end: 10.0, type: 'headline',
+      kicker: 'VISÃO COMPLETA',
+      headline: 'Veja sua lavoura como nunca antes.',
       transitionIn: { type: 'wipe-up', dur: 0.55, easing: 'in-out-quart', sfx: 'whoosh' },
     },
     // ─────────────── 03 KW-1 (custom) ───────────────
+    // Visual fixo em Keyword.jsx (color block verde sólido + breathing radial).
+    // IA preenche só `word`.
     {
       id: 'kw-fast', start: 10.0, end: 14.0, type: 'keyword',
       word: 'Rápido.',
-      bg: 'var(--mr-slateAbyss)', fg: 'var(--mr-white)',
-      background: {
-        type: 'texture',
-        texture: { kind: 'noise', color: 'var(--mr-slateAbyss)', intensity: 0.35 },
-      },
-      transitionIn: { type: 'flash', dur: 0.35, easing: 'in-out-cubic', color: '#FFFFFF', sfx: 'impact' },
+      // Era flash branco rápido — quebrava a estética calma. Cinematic-blur
+      // é uma transição suave de blur/zoom, fica em harmonia com o resto.
+      transitionIn: { type: 'cinematic-blur', dur: 0.55, easing: 'in-out-cubic', sfx: 'impact' },
     },
     // ─────────────── 04 CHAPTER-1 (FIXA) ───────────────
     // Cena hardcoded em Chapter.jsx: imagem `conheca-produto-bg.webp`
@@ -69,9 +75,13 @@ export const MOTION_REEL_DEFAULT = {
       id: 'chapter-1', start: 14.0, end: 18.0, type: 'chapter',
       locked: true,
       chapterNumber: 2,
-      transitionIn: { type: 'light-leak', dur: 1.0, seed: 3, hueShift: 30, sfx: 'page-turn' },
+      // hueShift 110 desloca o laranja natural do light-leak pra um verde
+      // que casa com a paleta Cropware. seed: 3 mantém a forma determinística.
+      transitionIn: { type: 'light-leak', dur: 1.0, seed: 3, hueShift: 110, sfx: 'page-turn' },
     },
     // ─────────────── 05 FEATURE-LIST (custom) ───────────────
+    // Visual fixo em FeatureList.jsx (light theme, fundo branco/fog + cards
+    // brancos com ícone + texto). IA preenche kicker, title, items.
     {
       id: 'features-1', start: 18.0, end: 24.0, type: 'feature-list',
       kicker: 'TUDO EM UM',
@@ -81,35 +91,16 @@ export const MOTION_REEL_DEFAULT = {
         { text: 'Diagnóstico direto em campo', icon: 'twemoji:seedling' },
         { text: 'Histórico completo de safra', icon: 'twemoji:bar-chart' },
       ],
-      bg: 'var(--mr-white)', fg: 'var(--mr-slateAbyss)',
-      background: {
-        type: 'gradient',
-        gradient: { kind: 'linear', colors: ['var(--mr-white)', 'var(--mr-fog)'], angle: 0 },
-      },
       transitionIn: { type: 'push-up', dur: 0.5, easing: 'in-out-cubic', sfx: 'whoosh' },
     },
-    // ─────────────── 06 DATA-CHART (custom) ───────────────
+    // ─────────────── 06 SCENARIO (custom) ───────────────
+    // Mini-cenário narrativo (ex: "É manhã. Você abre o Cropware..."). Visual
+    // fixo em Scenario.jsx (imagem `conheca-campo-bg.webp` + glass slate).
+    // IA preenche kicker + scenario por tema.
     {
-      id: 'data-1', start: 24.0, end: 30.0, type: 'data-chart',
-      kicker: 'SAFRA 24/25 vs 23/24',
-      title: 'Produtividade no talhão.',
-      chartType: 'bar-line',
-      unit: 'sc/ha',
-      data: {
-        labels: ['DEZ', 'JAN', 'FEV', 'MAR', 'ABR', 'MAI'],
-        series: [
-          { name: 'Safra 24/25', kind: 'bar', values: [42, 51, 58, 64, 71, 76], color: '#6AC58F' },
-          { name: 'Produtividade', kind: 'line', values: [38, 44, 49, 55, 62, 69], color: '#0B84F3' },
-        ],
-      },
-      bg: 'var(--mr-slateAbyss)', fg: 'var(--mr-white)',
-      background: {
-        type: 'gradient',
-        gradient: { kind: 'breathing-radial', colors: ['var(--mr-slateDark)', 'var(--mr-slateAbyss)'], breathScale: 1.03 },
-      },
-      overlays: [
-        { type: 'line-draw', color: 'var(--mr-greenAccent)', preset: 'corner-r', thickness: 4, delay: 0.6, dur: 1.5, opacity: 0.7 },
-      ],
+      id: 'scenario-1', start: 24.0, end: 30.0, type: 'scenario',
+      kicker: 'UMA MANHÃ QUALQUER',
+      scenario: 'É manhã. Você abre o Cropware.\nEm segundos sabe o que precisa fazer hoje.',
       transitionIn: { type: 'mask-circle', dur: 0.6, easing: 'in-out-expo', sfx: 'reveal' },
     },
     // ─────────────── 07 CHAPTER-2 (FIXA) ───────────────
@@ -149,13 +140,15 @@ export const MOTION_REEL_DEFAULT = {
     },
     // ─────────────── 09 KW-DIRECT (custom) ───────────────
     {
-      id: 'kw-direct', start: 40.0, end: 44.0, type: 'keyword',
-      word: 'Direto ao ponto.',
-      bg: 'var(--mr-greenAccent)', fg: 'var(--mr-white)',
-      background: {
-        type: 'gradient',
-        gradient: { kind: 'breathing-radial', colors: ['var(--mr-greenBright)', 'var(--mr-greenDeep)'], breathScale: 1.06 },
-      },
+      // Cena 09 — WhatsApp chat mockup. Visual fixo em WhatsAppChat.jsx.
+      // IA preenche `messages` com troca de 3-4 msgs entre user e Cropware AI.
+      id: 'whatsapp-chat-1', start: 40.0, end: 44.0, type: 'whatsapp-chat',
+      messages: [
+        { from: 'user', text: 'Como está minha lavoura hoje?' },
+        { from: 'ai',   text: 'Talhão 12 com NDVI 0.78 — saudável. Talhão 7 caiu pra 0.42, sugiro inspeção.' },
+        { from: 'user', text: 'O que pode estar acontecendo?' },
+        { from: 'ai',   text: 'Padrão sugere falta de nitrogênio. Quer abrir um plano de adubação?' },
+      ],
       transitionIn: { type: 'zoom-blur', dur: 0.45, easing: 'out-quart', sfx: 'whip' },
     },
     // ─────────────── 10 QUOTE (FIXA) ───────────────
