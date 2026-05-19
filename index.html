@@ -21976,7 +21976,11 @@ ESQUEMA EXATO do JSON de resposta:
 TIPOS DE CENA (escolha o tipo certo pra cada momento — não repita mesmo tipo 3x seguidas):
 
 • "brand-intro" — abertura. Props: kicker (curto, MAIÚSCULA, opcional), preHeadline (ex "Conheça o"), brandName (geralmente "Cropware" mas pode ser o nome da feature/produto do tema).
-• "keyword" — 1-4 palavras de impacto. Visual hardcoded: textura verde + 1 ícone Iconify animado no topo + palavra em Space Mono uppercase + underline. Props: word (string), icon (opcional, ícone line-md adequado ao tema — default "line-md:speed-loop" pra "Rápido."). Exemplos de icon por adjetivo: "Rápido."→"line-md:speed-loop", "Confiável."→"line-md:confirm", "Preciso."→"line-md:check-all", "Direto."→"line-md:arrow-up-circle", "Inteligente."→"line-md:lightbulb", "Em campo."→"line-md:map-marker-loop".
+• "keyword" — UMA palavra de impacto (R16). Visual hardcoded: textura tintada conforme tema + 1 ícone Iconify animado no topo + palavra em Space Mono uppercase + underline. Props: word (string), icon (opcional, default "line-md:speed-loop").
+   REGRA DURA do word: APENAS UMA palavra (sem espaços), máx 12 chars, SEM PONTUAÇÃO no final (nem ponto, nem !, nem ?). Deve ser um adjetivo ou substantivo de impacto.
+   Ex válidos: "Rápido", "Preciso", "Conectado", "Decisão", "Inteligente"
+   Ex INVÁLIDOS: "Rápido.", "Mais rápido" (2 palavras), "Rápido!", "Cropware é rápido" (frase)
+   Exemplos de icon por palavra: "Rápido"→"line-md:speed-loop", "Confiável"→"line-md:confirm", "Preciso"→"line-md:check-all", "Direto"→"line-md:arrow-up-circle", "Inteligente"→"line-md:lightbulb", "Conectado"→"line-md:map-marker-loop".
 • "headline" — frase-hook editorial grande (estilo poster de filme). Usada no slot 02 logo após o intro pra preparar o tema. Visual já é hardcoded (imagem + Ken Burns + glass slate); IA preenche apenas o copy. Props: kicker (curto, MAIÚSCULA, 1-2 palavras tipo "VISÃO COMPLETA"), headline (1-2 frases curtas, MÁX 50-70 caracteres totais, tipo "Veja sua lavoura como nunca antes." pra NDVI ou "Antecipe o que vem do céu." pra clima). NÃO inventar números ou estatísticas — é uma frase de POSICIONAMENTO, não um dado.
 • "quote" — citação de alguém (cliente, fundador, agrônomo). Props: text (frase 50-90 char), author (curto, ex "Cliente Cropware · MT").
 • "feature-list" — título + 3-4 itens com ícone colorido. Use quando o tema permite enumerar partes/etapas/benefícios. Visual hardcoded (light theme — fundo branco/fog + cards brancos com ícone + texto). Props: kicker, title (curto, máx 4 palavras), items: array de 3-4 objetos { "text": "...", "icon": "set:name" }.
@@ -22078,12 +22082,21 @@ SFX NAS TRANSIÇÕES (opcional):
                      "xp-error" · "impact" · "riser" · "pop" · "notification"
   Use com PARCIMÔNIA — máximo 3-4 SFX no reel todo. Pareie tipo com sentido:
     wipe-up / push-up    → "whoosh"
-    flash / glitch       → "impact" (vine-boom)
     light-leak / cinematic-blur → "riser"
     ring-tunnel / mask-circle → "riser" ou "shutter"
     ScaleBounceText momento → "pop"
     end-card chegando    → "ding" ou "notification"
-  Ex: "transitionIn": { "type": "flash", "dur": 0.35, "sfx": "impact" }
+  Ex: "transitionIn": { "type": "cinematic-blur", "dur": 0.5, "sfx": "impact" }
+
+  SFX OFFSET (sfxOffset — opcional, segundos):
+  Por DEFAULT, o SFX dispara NO MEIO da transição (sincronizado com o pico
+  visual de cinematic-blur, ring-tunnel, light-streak). Override só quando
+  o som precisa de timing específico:
+    - sfxOffset NEGATIVO (-0.2 a -0.4): antecipa o SFX pra construir tensão
+      antes do pico visual. Bom pra ambient/riser longos.
+    - sfxOffset POSITIVO (+0.1 a +0.3): atrasa o SFX pra bater no ataque
+      visual final. Bom pra impacts/snaps secos.
+  Ex: "transitionIn": { "type": "drift-fade", "dur": 0.6, "sfx": "riser", "sfxOffset": -0.3 }
 
 VOICEOVER POR CENA (importante — leia tudo antes de gerar texto):
   Cada cena pode ter "voiceover": { "text": "frase falada por voz IA PT-BR" }.
@@ -22183,6 +22196,27 @@ OVERLAYS DECORATIVOS (scene.overlays — opcional, array, máx 2 por cena, NÃO 
   • { "type": "vignette-breath", color (escuro), intensity (0-1, default 0.45) }
     Vinheta radial pulsando. Bom em cenas dark pra dar profundidade.
 
+TEMA VISUAL (R16, top-level + override por cena, opcional):
+  Adicione "theme" no NÍVEL RAIZ do storyboard pra definir a paleta visual
+  de todas as 6 cenas customizáveis. Locked scenes não são afetadas (são
+  hardcoded com identidade Cropware).
+
+  3 temas disponíveis (escolha 1 baseado no MOOD pretendido):
+    • "editorial" (default): slate escuro + verde profundo. Mood premium,
+      calmo, cinematográfico. Bom pra: reels institucionais sérios,
+      lançamentos de tecnologia, comunicação B2B.
+    • "vibrante":  verde brilhante dominante + slate médio. Mood energético,
+      expansivo, juvenil. Bom pra: campanhas virais, "uau" momentos,
+      anúncios de promoção/safra.
+    • "claro":     cream/white + verde accent. Mood limpo, otimista,
+      onboarding. Bom pra: comunicação leve, tutoriais, novos clientes.
+
+  Cada cena pode opcionalmente OVERRIDE com seu próprio "theme" (mesma lista).
+  Use só pra contraste pontual — manter coerência visual no reel todo é melhor.
+
+  Ex: { "duration": 60, "theme": "vibrante", "scenes": [ ... ] }
+  Ex (override): { ..., "scenes": [{ ..., "theme": "claro" }, ...] }
+
 ESTRUTURA OBRIGATÓRIA (R12 — formato 6+6, fixas + customizáveis):
   Gere SEMPRE 12 cenas, sendo 6 FIXAS e 6 CUSTOMIZÁVEIS pelo tema.
   Total: 60 segundos, ordem rígida.
@@ -22258,6 +22292,7 @@ por diante. Visual é hardcoded — você só escreve copy.
 EXEMPLO COMPLETO (storyboard minimal — pra você ver o formato esperado):
 {
   "duration": 60,
+  "theme": "editorial",
   "scenes": [
     { "id": "intro", "start": 0, "end": 5, "type": "brand-intro",
       "kicker": "PARA O AGRO", "preHeadline": "Conheça o", "brandName": "Cropware",
