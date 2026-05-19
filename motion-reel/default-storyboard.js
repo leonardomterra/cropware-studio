@@ -25,12 +25,12 @@ export const MOTION_REEL_DEFAULT = {
   duration: 60.0,
   brand: 'Cropware',
   logoUrl: 'logo-cropware-pb-final.svg',
-  // Música de fundo global — fade in/out controlados pelo Player. Engine em
-  // MotionReel.jsx faz mix com voiceover (sem ducking automático; volume
-  // baixo serve como compromisso). Trocar trilha = trocar `music` path
-  // (relativo ao public/) ou colocar outro arquivo em public/audio/.
+  // Música de fundo global — fade in/out + ducking automático sob voz
+  // (configurável via duck/duckRamp). Engine em MotionReel.jsx faz o mix.
+  // R15: trilha hospedada em R2 via Cloudflare Worker do studio. Trocar =
+  // subir nova MP3 com `npm run reel:upload-music <file>` e usar a URL retornada.
   audio: {
-    music: 'audio/viacheslavstarostin-country-western-texas-background-music-361672.mp3',
+    music: 'https://cropware-r2-worker.leonardoterra-comercial.workers.dev/images/studio/_motion-reel/audio/viacheslavstarostin-country-western-texas-background-music-361672.mp3',
     volume: 0.18,
     fadeIn: 1.5,
     fadeOut: 2.5,

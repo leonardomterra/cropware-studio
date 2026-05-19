@@ -25,8 +25,9 @@ async function main() {
 
   const inputPath = process.argv[2];
   const reelId = process.argv[3] || 'default';
+  const userId = process.argv[4] || 'cli';
   if (!inputPath) {
-    console.error('Uso: node scripts/generate-voiceover.mjs <storyboard.json> [reelId]');
+    console.error('Uso: node scripts/generate-voiceover.mjs <storyboard.json> [reelId] [userId]');
     process.exit(1);
   }
   const raw = JSON.parse(await fs.readFile(inputPath, 'utf-8'));
@@ -40,6 +41,7 @@ async function main() {
 
   const updated = await generateVoiceoverForStoryboard(storyboard, {
     reelId,
+    userId,
     projectRoot: PROJECT_ROOT,
     env,
     onProgress: (p) => {
@@ -59,7 +61,8 @@ async function main() {
         const dur = `${p.durationSec.toFixed(2)}s/${p.sceneDur.toFixed(1)}s`;
         const flag = p.overflow ? ` ⚠️  +${p.overlapSec.toFixed(2)}s estourando` : '';
         const cache = p.fromCache ? ' (cache)' : '';
-        console.log(`✓ ${sizeKb} KB · ${dur}${flag}${cache}`);
+        const r2 = p.r2Url ? ' (R2)' : (p.r2Error ? ` ⚠️  R2:${p.r2Error.slice(0, 40)}` : '');
+        console.log(`✓ ${sizeKb} KB · ${dur}${flag}${cache}${r2}`);
       }
       if (p.status === 'failed')     console.log(`✗ FALHOU: ${p.error}`);
     },

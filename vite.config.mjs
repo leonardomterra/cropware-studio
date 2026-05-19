@@ -33,7 +33,7 @@ const motionReelApi = {
       }
       try {
         const rawBody = await readBody(req);
-        const { storyboard, reelId: rawReelId, skipVoiceover } = JSON.parse(rawBody || '{}');
+        const { storyboard, reelId: rawReelId, userId: rawUserId, skipVoiceover } = JSON.parse(rawBody || '{}');
         if (!storyboard || !Array.isArray(storyboard.scenes)) {
           res.statusCode = 400;
           res.setHeader('Content-Type', 'application/json');
@@ -42,8 +42,9 @@ const motionReelApi = {
         }
         const reelId = (rawReelId || `reel-${Date.now()}`)
           .toString().toLowerCase().replace(/[^a-z0-9-]/g, '-').slice(0, 64);
+        const userId = (rawUserId || 'anon').toString().toLowerCase().replace(/[^a-z0-9-]/g, '-').slice(0, 80) || 'anon';
 
-        console.log(`[render-reel] start id=${reelId} scenes=${storyboard.scenes.length}`);
+        console.log(`[render-reel] start id=${reelId} user=${userId} scenes=${storyboard.scenes.length}`);
 
         // 1. Voiceover — só se houver scene.voiceover.text e não estiver skipped.
         const env = await loadDotEnv(PROJECT_ROOT);
@@ -55,7 +56,7 @@ const motionReelApi = {
           } else {
             console.log(`[render-reel] gerando voiceover (ElevenLabs)...`);
             finalStoryboard = await generateVoiceoverForStoryboard(storyboard, {
-              reelId, projectRoot: PROJECT_ROOT, env,
+              reelId, userId, projectRoot: PROJECT_ROOT, env,
               onProgress: (p) => {
                 if (p.status === 'summary') {
                   console.warn(`[render-reel] ⚠️  ${p.overflows.length} cena(s) com voiceover estourando:`);
@@ -68,7 +69,8 @@ const motionReelApi = {
                 if (p.status === 'done') {
                   const flag = p.overflow ? ` ⚠️ +${p.overlapSec.toFixed(2)}s` : '';
                   const cache = p.fromCache ? ' (cache)' : '';
-                  console.log(`${tag}: ✓ ${(p.bytes / 1024).toFixed(0)} KB · ${p.durationSec.toFixed(2)}s/${p.sceneDur.toFixed(1)}s${flag}${cache}`);
+                  const r2 = p.r2Url ? ' (R2)' : (p.r2Error ? ` ⚠️ R2:${p.r2Error.slice(0, 40)}` : '');
+                  console.log(`${tag}: ✓ ${(p.bytes / 1024).toFixed(0)} KB · ${p.durationSec.toFixed(2)}s/${p.sceneDur.toFixed(1)}s${flag}${cache}${r2}`);
                 }
                 if (p.status === 'failed') console.log(`${tag}: ✗ ${p.error}`);
               },
@@ -110,16 +112,45 @@ const motionReelApi = {
           return;
         }
 
-        // 4. Streama o MP4 de volta como download.
+        // 4. Upload do MP4 pro R2 via Worker, devolve URL pro client baixar.
+        // Se R2 indisponível ou upload falhar, faz fallback pro streaming
+        // do binário (backward compat com browser antigo / sem net).
         const stat = await fs.stat(outPath);
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'video/mp4');
-        res.setHeader('Content-Disposition', `attachment; filename="${reelId}.mp4"`);
-        res.setHeader('Content-Length', stat.size);
-        const buf = await fs.readFile(outPath);
-        res.end(buf);
+        const sizeMb = stat.size / 1024 / 1024;
+        let r2Url = null, r2Error = null;
+        if (env.R2_WORKER_URL) {
+          try {
+            const key = `images/studio/_motion-reel/reels/${userId}/${reelId}.mp4`;
+            const url = `${env.R2_WORKER_URL.replace(/\/$/, '')}/${key}`;
+            const buf = await fs.readFile(outPath);
+            const resp = await fetch(url, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'video/mp4' },
+              body: buf,
+            });
+            if (!resp.ok) throw new Error(`R2 PUT ${resp.status}: ${(await resp.text().catch(() => '')).slice(0, 200)}`);
+            r2Url = url;
+            console.log(`[render-reel] MP4 R2: ${url}`);
+          } catch (err) {
+            r2Error = err.message;
+            console.warn(`[render-reel] R2 upload falhou: ${err.message} — fallback pra streaming binário.`);
+          }
+        }
+        if (r2Url) {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ url: r2Url, sizeMb: Number(sizeMb.toFixed(2)), reelId }));
+        } else {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'video/mp4');
+          res.setHeader('Content-Disposition', `attachment; filename="${reelId}.mp4"`);
+          res.setHeader('Content-Length', stat.size);
+          if (r2Error) res.setHeader('X-R2-Error', r2Error.slice(0, 200));
+          const buf = await fs.readFile(outPath);
+          res.end(buf);
+        }
 
-        console.log(`[render-reel] done id=${reelId} size=${(stat.size / 1024 / 1024).toFixed(2)} MB`);
+        console.log(`[render-reel] done id=${reelId} size=${sizeMb.toFixed(2)} MB ${r2Url ? '(R2)' : '(stream)'}`);
       } catch (err) {
         console.error('[render-reel] erro:', err);
         res.statusCode = 500;

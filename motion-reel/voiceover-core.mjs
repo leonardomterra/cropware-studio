@@ -31,6 +31,35 @@ function ttsCacheKey({ text, voiceId, modelId }) {
   return h.digest('hex').slice(0, 24);
 }
 
+// Slug seguro pra usar em path R2 (mesma regra do uploadImageToR2 no index.html).
+function safePathPart(value, fallback = 'item') {
+  const cleaned = String(value || fallback)
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+  return cleaned || fallback;
+}
+
+// Upload do MP3 pro R2 via Cloudflare Worker do studio.
+// Path convention: images/studio/_motion-reel/voiceover/{userId}/{hash}.mp3
+// Idempotente — PUT sobrescreve com mesmo conteúdo se cache key bate.
+async function uploadVoiceoverToR2({ workerUrl, userId, hash, buffer }) {
+  const user = safePathPart(userId, 'cli');
+  const key = `images/studio/_motion-reel/voiceover/${user}/${hash}.mp3`;
+  const url = `${workerUrl.replace(/\/$/, '')}/${key}`;
+  const resp = await fetch(url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'audio/mpeg' },
+    body: buffer,
+  });
+  if (!resp.ok) {
+    const txt = await resp.text().catch(() => '');
+    throw new Error(`R2 PUT ${resp.status}: ${txt.slice(0, 200)}`);
+  }
+  return url;
+}
+
 // Chama a API da ElevenLabs e retorna o MP3 como Buffer.
 export async function callElevenLabsTts({ text, voiceId, modelId, apiKey, voiceSettings }) {
   const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`;
@@ -59,11 +88,12 @@ export async function callElevenLabsTts({ text, voiceId, modelId, apiKey, voiceS
 //
 // opts:
 //   reelId       — slug pra subpasta (ex 'demo' ou 'meu-reel-ndvi')
+//   userId       — id do usuário Supabase (pra isolar no R2). 'cli' se vier do CLI.
 //   projectRoot  — caminho absoluto da raiz do projeto Cropware
-//   env          — { ELEVENLABS_API_KEY, ELEVENLABS_DEFAULT_VOICE_ID, ELEVENLABS_MODEL_ID }
+//   env          — { ELEVENLABS_API_KEY, ELEVENLABS_DEFAULT_VOICE_ID, ELEVENLABS_MODEL_ID, R2_WORKER_URL }
 //   onProgress?  — fn(progress) chamado a cada cena (pra logs/SSE futuro)
 export async function generateVoiceoverForStoryboard(storyboard, opts) {
-  const { reelId, projectRoot, env, onProgress } = opts;
+  const { reelId, userId, projectRoot, env, onProgress } = opts;
   if (!env || !env.ELEVENLABS_API_KEY) {
     throw new Error('ELEVENLABS_API_KEY ausente — não dá pra gerar voiceover.');
   }
@@ -105,7 +135,20 @@ export async function generateVoiceoverForStoryboard(storyboard, opts) {
         await fs.writeFile(cachePath, mp3);
       }
       await fs.writeFile(outPath, mp3);
-      const staticPath = `voiceover/${reelId}/${filename}`;
+      const localPath = `voiceover/${reelId}/${filename}`;
+      // Upload pro R2 (idempotente). Se falhar, mantém URL local — render
+      // ainda funciona em dev, só não fica disponível pra outros ambientes.
+      let finalUrl = localPath;
+      let r2Error = null;
+      if (env.R2_WORKER_URL) {
+        try {
+          finalUrl = await uploadVoiceoverToR2({
+            workerUrl: env.R2_WORKER_URL,
+            userId, hash: ttsCacheKey({ text: scene.voiceover.text, voiceId, modelId }),
+            buffer: mp3,
+          });
+        } catch (err) { r2Error = err.message; }
+      }
       const durationSec = estimateTtsDurationSec(scene.voiceover.text, speakingRate);
       const sceneDur = Math.max(0, Number(scene.end || 0) - Number(scene.start || 0));
       const safeMaxDur = Math.max(0, sceneDur - VO_TAIL_SAFETY_SEC);
@@ -113,7 +156,7 @@ export async function generateVoiceoverForStoryboard(storyboard, opts) {
       const overflow = overlapSec > 0;
       scene.voiceover = {
         ...scene.voiceover,
-        url: staticPath,
+        url: finalUrl,
         durationSec: Number(durationSec.toFixed(2)),
         ...(overflow ? { overflow: true, overlapSec: Number(overlapSec.toFixed(2)) } : {}),
       };
@@ -122,6 +165,8 @@ export async function generateVoiceoverForStoryboard(storyboard, opts) {
         index: i, total: scenes.length, sceneId, status: 'done',
         bytes: mp3.length, fromCache,
         durationSec, sceneDur, overflow, overlapSec,
+        r2Url: finalUrl !== localPath ? finalUrl : null,
+        r2Error,
       });
     } catch (err) {
       onProgress && onProgress({ index: i, total: scenes.length, sceneId, status: 'failed', error: err.message });

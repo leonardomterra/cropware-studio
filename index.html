@@ -22455,27 +22455,41 @@ async function downloadMotionReelMP4() {
   const defaultAudio = (window.MOTION_REEL_DEFAULT_STORYBOARD && window.MOTION_REEL_DEFAULT_STORYBOARD.audio) || null;
   const cfgForRender = (!cfg.audio && defaultAudio) ? { ...cfg, audio: defaultAudio } : cfg;
   try {
+    const userId = (currentUser && currentUser.id) || 'anon';
     const resp = await fetch('/api/render-reel', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ storyboard: cfgForRender, reelId }),
+      body: JSON.stringify({ storyboard: cfgForRender, reelId, userId }),
     });
     if (!resp.ok) {
       let detail = '';
       try { detail = (await resp.json()).error || ''; } catch { detail = await resp.text(); }
       throw new Error(`HTTP ${resp.status}: ${detail || resp.statusText}`);
     }
-    const blob = await resp.blob();
-    if (!blob.size) throw new Error('MP4 vazio.');
-    const url = URL.createObjectURL(blob);
+    // R15: middleware retorna JSON { url, sizeMb } se MP4 subiu pro R2.
+    // Fallback: streaming binário (video/mp4) — backward compat.
+    const ct = resp.headers.get('Content-Type') || '';
+    let downloadUrl, sizeMb, isObjectUrl = false;
+    if (ct.includes('application/json')) {
+      const { url, sizeMb: sz } = await resp.json();
+      if (!url) throw new Error('Resposta sem URL.');
+      downloadUrl = url;
+      sizeMb = sz;
+    } else {
+      const blob = await resp.blob();
+      if (!blob.size) throw new Error('MP4 vazio.');
+      downloadUrl = URL.createObjectURL(blob);
+      isObjectUrl = true;
+      sizeMb = blob.size / 1024 / 1024;
+    }
     const a = document.createElement('a');
-    a.href = url;
+    a.href = downloadUrl;
     a.download = `${reelId}.mp4`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 60_000);
-    setGenStatus(`<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>MP4 baixado: ${reelId}.mp4 (${(blob.size / 1024 / 1024).toFixed(2)} MB).`, 'success');
+    if (isObjectUrl) setTimeout(() => URL.revokeObjectURL(downloadUrl), 60_000);
+    setGenStatus(`<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>MP4 baixado: ${reelId}.mp4 (${sizeMb.toFixed(2)} MB).`, 'success');
   } catch (err) {
     console.error('[MotionReel] Falha no render', err);
     setGenStatus(`<i class="ph ph-warning sz-18" style="margin-right:6px"></i>Falha: ${err.message || err}`, 'error');
