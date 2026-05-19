@@ -5045,6 +5045,81 @@
   .pc-regen-undo .ph { font-size: 16px; }
   .pc-regen-undo:hover { background: #fcd34d; }
   .pc-regen-row.has-undo .pc-regen-undo { display: inline-flex; }
+
+  /* R16 — variante standalone do botão Desfazer (fora de .pc-regen-row).
+     Usada no dialog de edição de cena do motion-reel. */
+  #mrSceneEditUndo {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    width: auto;
+    border-radius: 8px;
+    background: #fde68a;
+    color: #92400e;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background-color 140ms;
+    margin-right: auto;
+  }
+  #mrSceneEditUndo[style*="inline-flex"] { display: inline-flex !important; }
+  #mrSceneEditUndo:hover { background: #fcd34d; }
+  #mrSceneEditUndo .ph { font-size: 14px; }
+
+  /* R16 — cards de seleção de tema visual do motion-reel */
+  .mr-theme-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .mr-theme-card {
+    padding: 10px 10px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 9px;
+    background: #f8fafc;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    transition: border-color 140ms, background-color 140ms, box-shadow 140ms;
+    font-family: 'Inter Tight', sans-serif;
+    text-align: left;
+  }
+  .mr-theme-card:hover { border-color: #94a3b8; background: #fff; }
+  .mr-theme-card.active {
+    border-color: #42AA7B;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(66,170,123,0.18);
+  }
+  .mr-theme-preview {
+    width: 100%;
+    height: 60px;
+    border-radius: 6px;
+    margin-bottom: 2px;
+  }
+  .mr-theme-preview--editorial {
+    background: linear-gradient(135deg, #1A1B1A 0%, #1A1B1A 60%, #82CCA5 60%, #82CCA5 100%);
+  }
+  .mr-theme-preview--vibrante {
+    background: linear-gradient(135deg, #82CCA5 0%, #82CCA5 60%, #2A7B5A 60%, #2A7B5A 100%);
+  }
+  .mr-theme-preview--claro {
+    background: linear-gradient(135deg, #F5F1EA 0%, #F5F1EA 60%, #42AA7B 60%, #42AA7B 100%);
+  }
+  .mr-theme-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+  .mr-theme-desc {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.3;
+  }
   .pc-regen-badge {
     margin-left: auto;
     padding: 2px 8px;
@@ -21591,9 +21666,13 @@ function openMotionReelSceneEditor(sceneId) {
   const meta = document.getElementById('mrSceneEditMeta');
   if (meta) meta.textContent = `${sceneId} · ${scene.type} · ${(scene.end - scene.start).toFixed(1)}s`;
   const prompt = document.getElementById('mrSceneEditPrompt');
-  if (prompt) { prompt.value = ''; prompt.focus(); }
+  if (prompt) { prompt.value = ''; }
   const status = document.getElementById('mrSceneEditStatus');
   if (status) status.textContent = '';
+  // R16 — sync visual do seletor de tema e do botão Desfazer.
+  const activeTheme = scene.theme || cfg.theme || 'editorial';
+  _syncMrThemeCardSelection(activeTheme);
+  _syncMrUndoButton();
   document.getElementById('mrSceneEditModal').classList.add('open');
 }
 
@@ -21624,6 +21703,9 @@ async function submitMotionReelSceneEdit() {
   if (submitBtn) submitBtn.disabled = true;
   setMrEditStatus('<i class="ph ph-hourglass"></i> Gemini editando cena...', '');
 
+  // R16 — empilha snapshot ANTES da edição IA pra permitir desfazer.
+  _pushMrSceneSnapshot(_mrSceneEditingId, JSON.parse(JSON.stringify(originalScene)));
+
   try {
     const edited = await callGeminiMotionReelSceneEdit(originalScene, instruction);
     // Preserva campos imutáveis (id, start, end, type, locked).
@@ -21645,8 +21727,11 @@ async function submitMotionReelSceneEdit() {
     if (typeof window.updateMotionReelStoryboard === 'function') {
       window.updateMotionReelStoryboard(cfg);
     }
-    setMrEditStatus('<i class="ph ph-check-circle"></i> Cena atualizada.', 'success');
-    setTimeout(() => closeMotionReelSceneEditor(), 600);
+    setMrEditStatus('<i class="ph ph-check-circle"></i> Cena atualizada — modal fica aberto pra mais ajustes ou desfazer.', 'success');
+    // R16: clear prompt input pra próxima edição; modal fica aberto.
+    const promptEl = document.getElementById('mrSceneEditPrompt');
+    if (promptEl) promptEl.value = '';
+    _syncMrUndoButton();
   } catch (err) {
     console.error('[MotionReel] Falha na edição', err);
     setMrEditStatus(`<i class="ph ph-warning"></i> ${err.message || err}`, 'error');
@@ -21660,6 +21745,79 @@ function setMrEditStatus(msg, tone) {
   if (!el) return;
   el.innerHTML = msg;
   el.style.color = tone === 'error' ? '#D7642A' : tone === 'success' ? '#2A7B5A' : '#5C605D';
+}
+
+// R16 — Undo stack por cena, cap 5 snapshots, FIFO (mesmo padrão dos posts
+// em pushUndoSnapshot/undoLastRegen). Snapshots são da cena INTEIRA (não só
+// do campo editado) — simplifica restauração de mudanças de tema + IA juntas.
+function _pushMrSceneSnapshot(sceneId, sceneCopy) {
+  const reel = motionReels[currentMotionReel];
+  if (!reel) return;
+  if (!reel._undoStack) reel._undoStack = {};
+  if (!reel._undoStack[sceneId]) reel._undoStack[sceneId] = [];
+  reel._undoStack[sceneId].push(sceneCopy);
+  if (reel._undoStack[sceneId].length > 5) reel._undoStack[sceneId].shift();
+}
+
+function _syncMrUndoButton() {
+  const btn = document.getElementById('mrSceneEditUndo');
+  if (!btn) return;
+  if (!_mrSceneEditingId) { btn.style.display = 'none'; return; }
+  const reel = motionReels[currentMotionReel];
+  const stack = (reel && reel._undoStack && reel._undoStack[_mrSceneEditingId]) || [];
+  btn.style.display = stack.length ? 'inline-flex' : 'none';
+}
+
+function _syncMrThemeCardSelection(themeName) {
+  const cards = document.querySelectorAll('#mrThemeCards .mr-theme-card');
+  cards.forEach(c => c.classList.toggle('active', c.dataset.theme === themeName));
+}
+
+// Aplica tema na cena selecionada (override scene.theme). Push snapshot
+// antes pra permitir desfazer. Atualiza grid via updateMotionReelStoryboard.
+function applyMrSceneTheme(themeName) {
+  if (!_mrSceneEditingId) return;
+  const validThemes = new Set(['editorial', 'vibrante', 'claro']);
+  if (!validThemes.has(themeName)) return;
+  const reel = motionReels[currentMotionReel];
+  const cfg = (reel && reel.config) || MOTION_REEL_CONFIG;
+  const idx = (cfg.scenes || []).findIndex(s => s.id === _mrSceneEditingId);
+  if (idx < 0) return;
+  const before = JSON.parse(JSON.stringify(cfg.scenes[idx]));
+  // Só empilha snapshot se o tema realmente mudou — evita undo "vazio".
+  const currentTheme = before.theme || cfg.theme || 'editorial';
+  if (currentTheme === themeName) return;
+  _pushMrSceneSnapshot(_mrSceneEditingId, before);
+  cfg.scenes[idx] = { ...cfg.scenes[idx], theme: themeName };
+  if (reel && reel.config) reel.config = cfg;
+  saveMotionReelsToLocal();
+  if (typeof window.updateMotionReelStoryboard === 'function') {
+    window.updateMotionReelStoryboard(cfg);
+  }
+  _syncMrThemeCardSelection(themeName);
+  _syncMrUndoButton();
+  setMrEditStatus(`<i class="ph ph-paint-bucket"></i> Tema "${themeName}" aplicado nesta cena.`, 'success');
+}
+
+function undoLastMrSceneEdit() {
+  if (!_mrSceneEditingId) return;
+  const reel = motionReels[currentMotionReel];
+  if (!reel || !reel._undoStack || !reel._undoStack[_mrSceneEditingId]) return;
+  const stack = reel._undoStack[_mrSceneEditingId];
+  if (!stack.length) return;
+  const snap = stack.pop();
+  const cfg = (reel && reel.config) || MOTION_REEL_CONFIG;
+  const idx = (cfg.scenes || []).findIndex(s => s.id === _mrSceneEditingId);
+  if (idx < 0 || !snap) return;
+  cfg.scenes[idx] = snap;
+  saveMotionReelsToLocal();
+  if (typeof window.updateMotionReelStoryboard === 'function') {
+    window.updateMotionReelStoryboard(cfg);
+  }
+  const restoredTheme = snap.theme || cfg.theme || 'editorial';
+  _syncMrThemeCardSelection(restoredTheme);
+  _syncMrUndoButton();
+  setMrEditStatus('<i class="ph ph-arrow-counter-clockwise"></i> Última alteração desfeita.', 'success');
 }
 
 // Prompt sistêmico pra edição focada de UMA cena. A Gemini recebe a cena
@@ -22583,33 +22741,58 @@ window.closeMotionReelScenePreview = closeMotionReelScenePreview;
   </div>
 </div>
 
-<!-- Modal de edição de cena via prompt (R12) -->
+<!-- Modal de edição de cena: tema visual + edição IA + undo (R16) -->
 <div class="gen-modal" id="mrSceneEditModal">
-  <div class="gen-modal-box" style="width:560px">
+  <div class="gen-modal-box" style="width:580px">
     <div class="gen-modal-header">
-      <span id="mrSceneEditTitle">Editar cena com IA</span>
+      <span id="mrSceneEditTitle"><i class="ph ph-pencil-simple sz-16" style="margin-right:8px"></i>Editar cena</span>
       <button class="gen-close" onclick="closeMotionReelSceneEditor()"><i class="ph ph-x"></i></button>
     </div>
     <div class="gen-body">
       <div class="gen-group">
         <label>Cena selecionada</label>
-        <div id="mrSceneEditMeta" style="font-family:'Space Mono',monospace;font-size:12px;color:#5C605D;letter-spacing:0.06em;text-transform:uppercase;padding:8px 10px;background:#F5F1EA;border-radius:6px;"></div>
+        <div id="mrSceneEditMeta" style="font-family:'Space Mono',monospace;font-size:12px;color:#5C605D;letter-spacing:0.06em;text-transform:uppercase;padding:10px 12px;background:#F5F1EA;border-radius:8px;"></div>
       </div>
       <div class="gen-group">
-        <label>O que você quer mudar?</label>
-        <textarea id="mrSceneEditPrompt" rows="3" placeholder="ex: Muda o número pra 5x. Troca o fundo pra texture noise verde escuro. Adiciona um overlay rotating-rings."
-          style="width:100%;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:'Inter Tight',sans-serif;resize:vertical;min-height:80px;"></textarea>
+        <label>Tema visual <span style="font-weight:400;color:#80847F;font-size:12px;margin-left:6px">(aplica imediato)</span></label>
+        <div class="mr-theme-cards" id="mrThemeCards">
+          <button class="mr-theme-card" data-theme="editorial" onclick="applyMrSceneTheme('editorial')" type="button">
+            <div class="mr-theme-preview mr-theme-preview--editorial"></div>
+            <span class="mr-theme-name">Editorial</span>
+            <span class="mr-theme-desc">Slate escuro · verde profundo</span>
+          </button>
+          <button class="mr-theme-card" data-theme="vibrante" onclick="applyMrSceneTheme('vibrante')" type="button">
+            <div class="mr-theme-preview mr-theme-preview--vibrante"></div>
+            <span class="mr-theme-name">Vibrante</span>
+            <span class="mr-theme-desc">Verde brilhante · energético</span>
+          </button>
+          <button class="mr-theme-card" data-theme="claro" onclick="applyMrSceneTheme('claro')" type="button">
+            <div class="mr-theme-preview mr-theme-preview--claro"></div>
+            <span class="mr-theme-name">Claro</span>
+            <span class="mr-theme-desc">Cream · verde accent</span>
+          </button>
+        </div>
+      </div>
+      <div class="gen-group">
+        <label>Editar conteúdo com IA</label>
+        <textarea id="mrSceneEditPrompt" rows="3" placeholder="ex: Muda o headline pra falar de NDVI. Troca o ícone pra map-marker. Adiciona um overlay rotating-rings."
+          style="width:100%;padding:11px 14px;border:1px solid #e2e8f0;border-radius:9px;font-size:14px;font-family:'Inter Tight',sans-serif;resize:vertical;min-height:80px;background:#f8fafc;color:#0f172a;"></textarea>
         <div style="font-size:11px;color:#80847F;margin-top:6px;line-height:1.4;">
           A IA mantém id/start/end/type intactos. Você pode mudar texto, cor, background, transição, overlays, voiceover.text e qualquer outro campo da cena.
         </div>
       </div>
-      <div id="mrSceneEditStatus" style="font-size:12px;color:#5C605D;min-height:18px;"></div>
+      <div id="mrSceneEditStatus" style="font-size:13px;color:#64748b;min-height:18px;"></div>
     </div>
     <div class="gen-actions">
-      <button class="btn btn-ghost" onclick="closeMotionReelSceneEditor()">Cancelar</button>
-      <button class="btn btn-primary" id="mrSceneEditSubmit" onclick="submitMotionReelSceneEdit()">
-        <i class="ph ph-sparkle"></i>Aplicar edição
+      <button class="pc-regen-undo" id="mrSceneEditUndo" type="button" style="display:none" onclick="undoLastMrSceneEdit()" title="Desfazer última alteração">
+        <i class="ph ph-arrow-counter-clockwise"></i>Desfazer
       </button>
+      <div style="display:flex;gap:10px;margin-left:auto">
+        <button class="btn btn-ghost" type="button" onclick="closeMotionReelSceneEditor()">Fechar</button>
+        <button class="btn btn-primary" id="mrSceneEditSubmit" type="button" onclick="submitMotionReelSceneEdit()">
+          <i class="ph ph-sparkle"></i>Aplicar edição
+        </button>
+      </div>
     </div>
   </div>
 </div>
