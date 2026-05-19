@@ -7,6 +7,7 @@ import { LightLeak } from '@remotion/light-leaks';
 
 import { resolvePresentation, resolveTiming } from './transitions.js';
 import { resolveSfxUrl } from './sfx.js';
+import { resolveTheme } from './themes.js';
 import { Overlay } from './overlays.jsx';
 import { BrandIntro } from './scenes/BrandIntro.jsx';
 import { Keyword } from './scenes/Keyword.jsx';
@@ -136,10 +137,13 @@ export const MotionReel = ({ storyboard }) => {
     // storyboard (mesmo que reels antigos em cache tenham herdado overlays
     // antes do refactor). Customização visual só nas custom scenes.
     const sceneOverlays = scene.locked === true ? null : scene.overlays;
+    // Tema resolvido por cena (theme.js per-slide-type). Locked scenes não
+    // consomem (são hardcoded) mas passar não atrapalha.
+    const sceneTheme = resolveTheme(storyboard, scene);
     children.push(
       <TransitionSeries.Sequence key={scene.id || `scene-${i}`} durationInFrames={sceneDurFrames}>
         <AbsoluteFill>
-          <Comp {...scene} />
+          <Comp {...scene} theme={sceneTheme} />
           {Array.isArray(sceneOverlays) && sceneOverlays.map((ov, oIdx) => (
             <Overlay key={`ov-${oIdx}`} overlay={ov} durSec={durSec} />
           ))}
