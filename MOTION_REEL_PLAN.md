@@ -58,7 +58,8 @@ cropware-studio/
 │   │                             AccentBar / NumberTicker / ScaleBounceText /
 │   │                             TypewriterText / GlitchText / SceneBackdrop /
 │   │                             IconifyIcon · LottieAsset
-│   ├── sfx.js                    Mapping de nomes → URLs remotion.media/*.wav
+│   ├── sfx.js                    Mapping de nomes → URLs (R16: 14 SFX R2 + 11 legacy)
+│   ├── themes.js                 R16 — catálogo de temas per-slide-type (editorial/vibrante/claro)
 │   ├── voiceover-core.mjs        TTS ElevenLabs reusável (CLI + middleware)
 │   ├── default-storyboard.js     Storyboard demo 60s (12 cenas)
 │   ├── mount.jsx                 Player + Grid view (12 thumbs 4×3) + Preview modal
@@ -78,7 +79,8 @@ cropware-studio/
 ├── scripts/
 │   ├── generate-voiceover.mjs        CLI wrapper de voiceover-core.mjs
 │   ├── render-locked-thumbs.mjs      R12 — gera PNGs das 6 cenas locked em public/thumbs/
-│   └── upload-motion-reel-music.mjs  R15 — sobe MP3s de public/audio/ pro R2 via Worker
+│   ├── upload-motion-reel-music.mjs  R15 — sobe MP3s de public/audio/ pro R2 via Worker
+│   └── upload-motion-reel-sfx.mjs    R16 — sobe SFX pro R2 (batch dir ou arquivo)
 └── public/
     └── thumbs/                   PNGs pré-renderizadas das locked scenes
                                   (01-intro, 04-chapter-1, 07-chapter-2, 10-quote,
@@ -201,23 +203,21 @@ Tempo típico de render no Mac M-series: **~70-90s** pra reel de 60s (1623 frame
 | R13 | 2026-05-18 | **Slides custom padronizados** (visual fixo + IA só preenche texto): Headline (cap02 substituiu stat-card) · Keyword polish (textura verde+ícone Iconify por tema) · FeatureList light theme · Scenario (cap06 substituiu data-chart) · WhatsAppChat (cap09 substituiu kw-direct) · 4 transições novas (glass-frost, iris-square, drift-fade, light-streak) · word-grouping em CharReveal/TypewriterText/ScaleBounceText (sem mid-word breaks) · cap04 light-leak hueShift 30→110 (verde) · cap03 flash→cinematic-blur · AppCard chrome titles UPPERCASE com hífen |
 | R14 | 2026-05-19 | **Áudio completo — narração + música**. _Voz_: `RVmX026jCrF5VqUvpCk0` (library voice ElevenLabs, calma/editorial, requer Starter+ — Free tier bloqueia library voices via API) · prompt do Gemini reescrito com **diretrizes por tipo de cena** (orçamento de palavras: 4s→8 / 5s→10 / 6s→13) · 5 cenas SILENCIOSAS por design (keyword, ambos chapters, whatsapp-chat, quote) · `voiceover-core.mjs` estima duração por chars (~15 chars/s pt-BR, provider-agnóstico) e flagga overflow com `overlapSec` quando estoura janela − 0.4s · logs `Xs/Ys` por cena no CLI e Vite middleware. _Música de fundo_: campo `audio.music` no storyboard (path relativo a `public/`), com fade in/out + loop · default ativo em `default-storyboard.js` puxa de `public/audio/` (4 tracks country-western Pixabay disponíveis) · validator herda `audio` do default ao processar reel da IA · guardrail em `downloadMotionReelMP4` injeta `audio` se faltar (reels antigos em memória). _Ducking_: música cai automaticamente para `baseVol × duckLevel` (default 0.35) durante voz, com ramp de 150ms — configurável via `audio.duck` e `audio.duckRamp`. _Provider TTS validado_: testamos Google Cloud TTS (Neural2-C, free tier) como alternativa mas soou robótica demais — voltamos pra ElevenLabs por qualidade. |
 | R15 | 2026-05-19 | **Storage R2 — música, voiceover e MP4s vão pra Cloudflare via Worker compartilhado do studio**. Descoberto que o studio já tinha infra completa: auth Supabase (email/senha) + R2 via Worker (`cropware-r2-worker.leonardoterra-comercial.workers.dev`) usado pelo upload de imagens dos posts. Aproveitamos esse Worker existente sem criar Edge Function nova. _Paths R2_: `images/studio/_motion-reel/audio/{filename}.mp3` (compartilhado), `.../voiceover/{userId}/{hash}.mp3` (per-user, cache reusável entre reels), `.../reels/{userId}/{reelId}.mp4` (per-user). _Voiceover_: `voiceover-core.mjs` faz PUT no Worker após cada geração/cache-hit, `scene.voiceover.url` recebe URL R2 absoluta (em vez de path local); fallback gracioso pro path local se R2 falhar. _MP4 outputs_: Vite middleware faz upload pós-render e devolve JSON `{ url, sizeMb }`; client baixa direto da CDN Cloudflare (em vez de stream binário pelo Vite); fallback pra streaming se R2 falhar. _Música default_: subida via `npm run reel:upload-music`, URL R2 absoluta no `default-storyboard.js`; `public/audio/` agora gitignored. _Cliente_ passa `userId` (`currentUser.id` do Supabase Auth) pro `/api/render-reel`. |
+| R16 | 2026-05-19 | **Variantes estéticas + dialog redesign + SFX expandido + sincronia visual** (6 fases / 6 commits). _Fase 1_: slide 03 keyword sem ponto no default e regra dura no prompt Gemini (UMA palavra, sem pontuação) · SFX agora dispara no MEIO da transição por default (alinha com pico visual de cinematic-blur, ring-tunnel, light-streak em `progress=0.5`); override via `tIn.sfxOffset` (segundos, negativo antecipa, positivo atrasa) · `console.warn` quando `resolveSfxUrl` retorna null. _Fase 2_: novo `motion-reel/themes.js` com 3 temas (`editorial` baseline, `vibrante` greenBright dominante, `claro` cream/white) e estrutura **per-slide-type** pra evitar conflitos visuais (ex: tema vibrante em Keyword usa greenForest em vez de greenBright); `resolveTheme(storyboard, scene)` faz cascata scene.theme → storyboard.theme → 'editorial'; wiring em MotionReel.jsx propaga prop `theme` no `<Comp {...scene} theme={...} />`. _Fase 3_: 6 slides custom (Headline, Keyword, FeatureList, Scenario, AppCard, WhatsAppChat) refatorados pra consumir prop `theme` com fallback defensivo `T = theme \|\| FALLBACK`; validator aceita `parsed.theme` + `scene.theme` com sanitização; default-storyboard ganha `theme: 'editorial'` explícito; WhatsApp mockup interno fica canônico (verde #25D366), só varia bg externo + tint. _Fase 4_: redesign do `#mrSceneEditModal` seguindo padrão `.gen-modal` canônico — adiciona seção "Tema visual" com 3 cards clicáveis (preview gradient + nome + descrição, card ativo com border verde + box-shadow); botão "Desfazer" (`#mrSceneEditUndo`) replicando pattern `_undoStack` dos posts (stack por cena, cap 5, FIFO); modal não fecha mais automaticamente após Aplicar (fica aberto pra empilhar mais ajustes); 5 funções novas: `_pushMrSceneSnapshot`, `_syncMrUndoButton`, `_syncMrThemeCardSelection`, `applyMrSceneTheme`, `undoLastMrSceneEdit`. _Fase 5_: novo script `scripts/upload-motion-reel-sfx.mjs` (batch dir ou arquivo, output imprime entries prontas pra SFX_MAP); npm script `reel:upload-sfx`; 14 SFX curados no Pixabay subidos pro R2 em 5 categorias semânticas — WHOOSH (3: soft/fast-cinematic/deep), IMPACT (3: deep-cinematic/snap-dry/thud), AMBIENT (2: wind-soft/field-nature), ORGANIC (3: leaf-rustle/paper-turn/wood-crack-soft), TECH/UI (3: tap-soft/confirm-modern/digital-beep-clean); SFX_MAP atualizado em `motion-reel/sfx.js` mantendo legacy `@remotion/sfx` pra compat. _Fase 6_: prompt Gemini reescrito com catálogo SFX por categoria + pareamentos por tipo de cena (brand-intro=sem SFX, keyword=impact-snap-dry, scenario=ambient-wind-soft com sfxOffset -0.3, end-card=impact-thud) + bloco TEMA VISUAL (escolha global + override por cena, guidelines por mood) + regra dura keyword (UMA palavra, máx 12 chars, sem pontuação). |
 
 ## Pendências (não escopadas, próximos passos)
 
-### Visual / UX
-- Polimentos visuais finais (alinhamentos, escolha de cores em casos específicos)
-- Re-render das locked thumbs após cap04 mudar pra light-leak hueShift 110 (`npm run reel:thumbs`)
-
 ### Funcional
-- UI in-app pra upload de música de fundo (hoje só via edição manual de JSON)
-- UI in-app pra editar storyboard JSON visualmente (hoje só via IA + console)
-- Render Lambda em vez de local (pra escala)
-- Mais skins de paleta (light mode, monocromático, etc.)
+- **UI in-app pra upload de música de fundo** — hoje só via `npm run reel:upload-music`. Botão "Upload música" no menu Ações com file picker + endpoint Vite + atualiza `audio.music` automaticamente.
+- **UI in-app pra editar storyboard JSON visualmente** — hoje só via IA (dialog) + console pra ajustes finos. Vale um editor de schema básico (campos por tipo, color pickers).
+- **Render Lambda em vez de local** — quando escalar pra multi-user. Lambda exige R2 (já temos), só falta o trigger.
+- **Mais skins de paleta** — explorar tema `mono` (preto+branco puros) ou `agro-warm` (terra/amber dominante) além dos 3 atuais (editorial/vibrante/claro).
 
 ### IA / Prompts
-- Validar manualmente se o prompt da IA está respeitando as novas regras (preferir cinematic-blur, hueShift ≥100 pra light-leak). R14 já implementou: guardrails no validator migram stat-card→headline e data-chart→scenario silenciosamente, e normalizam flash→cinematic-blur automaticamente.
+- **Validar manualmente o prompt** — gerar 2-3 reels com temas distintos (NDVI, clima, geração demanda) e auditar: (a) keyword sem ponto; (b) cenas silenciosas respeitadas; (c) theme aplicado coerentemente; (d) SFX do catálogo novo escolhidos por categoria semântica; (e) sfxOffset usado em ambient-*.
+- **Considerar guardrails extras** se a IA continuar escapando das regras (truncar word automaticamente se vier com pontuação? rejeitar SFX fora do catálogo?).
 
-### Áudio / Narração — verificação pós-R14
-- **Assinar ElevenLabs Starter ($5/mo)** pra destravar a library voice `RVmX026jCrF5VqUvpCk0` via API. Depois disso, rodar `npm run dev` → "Gerar Reel" → "Baixar MP4" e confirmar qualidade da voz.
-- **Validar timing** clicando "Baixar MP4" no app: o log deve mostrar `Xs/Ys` por cena e zero overflow. Se a IA estourar alguma janela, considerar truncamento automático em `voiceover-core.mjs` (cortar texto na última pontuação que cabe) OU passar `speakingRate: 1.05` por cena que estourar.
-- **Validar discurso por tipo de cena** — abrir 2-3 reels gerados pelo Gemini e checar se: (a) keyword/chapter/whatsapp-chat/quote estão SEM voiceover; (b) headline parafraseia em vez de ecoar literal; (c) scenario tem ritmo contemplativo; (d) end-card diz "arroba cropware ponto app" por extenso. Se a IA escapar das regras, reforçar com exemplos negativos no prompt.
+### Visual / UX
+- Polimentos visuais finais (alinhamentos, cores em casos específicos por tema).
+- Eventualmente gerar **novas imagens de fundo** se os 3 temas mostrarem que alguma cena ficou visualmente fraca em alguma combinação (ex: `claro` precisar de bg mais limpo no Scenario).
+- Re-render das locked thumbs se a paleta dos temas afetar visualmente (hoje não afetam — locked = editorial hardcoded).
