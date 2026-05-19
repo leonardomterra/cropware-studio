@@ -62,7 +62,7 @@ export const MOTION_REEL_DEFAULT = {
     // IA preenche só `word`.
     {
       id: 'kw-fast', start: 10.0, end: 14.0, type: 'keyword',
-      word: 'Rápido.',
+      word: 'Rápido',
       // Era flash branco rápido — quebrava a estética calma. Cinematic-blur
       // é uma transição suave de blur/zoom, fica em harmonia com o resto.
       transitionIn: { type: 'cinematic-blur', dur: 0.55, easing: 'in-out-cubic', sfx: 'impact' },

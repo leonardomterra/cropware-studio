@@ -72,15 +72,25 @@ export const MotionReel = ({ storyboard }) => {
       const tDurFrames = Math.max(2, Math.round((tIn.dur || 0.3) * fps));
       cursorFrame -= tDurFrames; // overlap
 
-      // SFX disparado no início da transição (= cursorFrame agora).
+      // SFX disparado no meio da transição por default (alinha com pico
+      // visual de cinematic-blur, ring-tunnel, light-streak — todos em
+      // progress=0.5). Override por SFX via tIn.sfxOffset em segundos:
+      // negativo antecipa (bom pra ambient longos), positivo atrasa.
       if (tIn.sfx) {
         const sfxUrl = resolveSfxUrl(tIn.sfx);
         if (sfxUrl) {
+          const defaultOffsetFrames = Math.round(tDurFrames * 0.5);
+          const customOffsetFrames = tIn.sfxOffset != null
+            ? Math.round(tIn.sfxOffset * fps)
+            : defaultOffsetFrames;
+          const sfxStartFrame = Math.max(0, cursorFrame + customOffsetFrames);
           audioLayers.push(
-            <Sequence key={`sfx-${i}`} from={Math.max(0, cursorFrame)} layout="none">
+            <Sequence key={`sfx-${i}`} from={sfxStartFrame} layout="none">
               <Audio src={sfxUrl} volume={tIn.sfxVolume == null ? 0.7 : tIn.sfxVolume} />
             </Sequence>
           );
+        } else {
+          console.warn(`[motion-reel] SFX desconhecido: "${tIn.sfx}" — verifique sfx.js`);
         }
       }
 
