@@ -1,11 +1,16 @@
 // Cena 05 — FEATURE LIST (custom).
-// Visual fixo: light theme (fundo branco/fog suave) + título preto + 3-4 itens
-// em cards brancos com ícone + texto. IA preenche kicker, title, items.
+// Visual: bg + título + 3-4 itens em cards com ícone + texto. IA preenche
+// kicker, title, items. R16: bg/fg/accent/cardBg vêm do theme prop
+// (catálogo em themes.js per-slide-type).
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate } from 'remotion';
 import { MR_COLORS, MR_FONTS } from '../theme.js';
+import { MR_THEMES } from '../themes.js';
 import { CharReveal, KickerReveal, EASE, IconifyIcon } from '../helpers.jsx';
 
-export const FeatureList = ({ kicker, title, items = [], start, end }) => {
+const FALLBACK = MR_THEMES.editorial.perSlide['feature-list'];
+
+export const FeatureList = ({ kicker, title, items = [], theme, start, end }) => {
+  const T = theme || FALLBACK;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -16,8 +21,8 @@ export const FeatureList = ({ kicker, title, items = [], start, end }) => {
 
   return (
     <AbsoluteFill style={{
-      background: MR_COLORS.fog,
-      color: MR_COLORS.slateAbyss,
+      background: T.bg,
+      color: T.fg,
       flexDirection: 'column',
       alignItems: 'flex-start',
       justifyContent: 'center',
@@ -26,9 +31,10 @@ export const FeatureList = ({ kicker, title, items = [], start, end }) => {
       fontFamily: MR_FONTS.display,
       opacity: bgIn,
     }}>
-      {/* Camada 1: gradient sutil pra dar leve textura ao fundo branco */}
+      {/* Camada 1: gradient sutil pra dar dimensão ao bg
+          (claro: white→fog→cream; vibrante: bg → bg leve mais escuro) */}
       <AbsoluteFill style={{
-        background: `linear-gradient(180deg, ${MR_COLORS.white} 0%, ${MR_COLORS.fog} 60%, ${MR_COLORS.cream}88 100%)`,
+        background: `linear-gradient(180deg, ${T.bg} 0%, ${T.bg} 60%, ${T.bg}cc 100%)`,
         opacity: bgIn,
       }} />
 
@@ -64,7 +70,7 @@ export const FeatureList = ({ kicker, title, items = [], start, end }) => {
               fontFamily: MR_FONTS.mono,
               fontSize: 30,
               fontWeight: 400,
-              color: MR_COLORS.greenForest,
+              color: T.accentDeep || T.accent,
               textTransform: 'uppercase',
             }}
           />
@@ -78,7 +84,7 @@ export const FeatureList = ({ kicker, title, items = [], start, end }) => {
             lineHeight: 0.95,
             letterSpacing: '-0.04em',
             maxWidth: 880,
-            color: MR_COLORS.slateAbyss,
+            color: T.fg,
             transform: 'translateZ(0)',
           }}>
             <CharReveal text={title} delay={0.25} dur={0.45} stagger={0.03} ty={24} />
@@ -112,19 +118,20 @@ export const FeatureList = ({ kicker, title, items = [], start, end }) => {
                 alignItems: 'center',
                 gap: 28,
                 padding: '20px 28px',
-                background: MR_COLORS.white,
+                background: T.cardBg || MR_COLORS.white,
                 borderRadius: 18,
+                border: T.cardBorder ? `1px solid ${T.cardBorder}` : 'none',
                 boxShadow: '0 8px 24px rgba(20,63,44,0.08), 0 1px 2px rgba(20,63,44,0.06)',
                 opacity: p,
                 transform: `translateX(${((1 - p) * -28).toFixed(2)}px)`,
               }}>
-                {/* Container do ícone — círculo verde claro suave */}
+                {/* Container do ícone — bloco com tint do accent */}
                 <span style={{
                   flex: '0 0 auto',
                   width: 72,
                   height: 72,
                   borderRadius: 18,
-                  background: `${MR_COLORS.greenBright}26`,
+                  background: `${T.accent}26`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -136,7 +143,7 @@ export const FeatureList = ({ kicker, title, items = [], start, end }) => {
                       width: 12,
                       height: 12,
                       borderRadius: '50%',
-                      background: MR_COLORS.greenAccent,
+                      background: T.accent,
                     }} />
                   )}
                 </span>
@@ -146,7 +153,7 @@ export const FeatureList = ({ kicker, title, items = [], start, end }) => {
                   fontWeight: 500,
                   lineHeight: 1.15,
                   letterSpacing: '-0.015em',
-                  color: MR_COLORS.slateAbyss,
+                  color: T.fg,
                 }}>{text}</span>
               </div>
             );

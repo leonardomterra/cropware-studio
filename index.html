@@ -22189,6 +22189,10 @@ function mrValidateStoryboard(parsed, targetDuration) {
   parsed.scenes.forEach(s => {
     if (s && TYPE_MIGRATIONS[s.type]) s.type = TYPE_MIGRATIONS[s.type];
   });
+  // R16: aceita storyboard.theme + scene.theme override. Reels antigos sem
+  // theme → 'editorial' (mesmo visual de antes).
+  const validThemes = new Set(['editorial', 'vibrante', 'claro']);
+  if (parsed.theme && !validThemes.has(parsed.theme)) delete parsed.theme;
   const validTypes = new Set(['brand-intro', 'keyword', 'headline', 'quote', 'feature-list', 'end-card', 'cta', 'chapter', 'lower-third', 'scenario', 'app-card', 'whatsapp-chat']);
   const validTransitions = new Set(['cut', 'fade', 'wipe-up', 'wipe-down', 'push-up', 'push-left', 'mask-circle', 'flash', 'zoom-blur', 'light-leak', 'cinematic-blur', 'ring-tunnel', 'glitch', 'slide-radial', 'glass-frost', 'iris-square', 'drift-fade', 'light-streak']);
   const validBgTypes = new Set(['solid', 'gradient', 'texture']);
@@ -22237,6 +22241,8 @@ function mrValidateStoryboard(parsed, targetDuration) {
     if (s.voiceover && (typeof s.voiceover !== 'object' || !s.voiceover.text)) {
       delete s.voiceover;
     }
+    // R16: scene.theme só persiste se for um dos 3 válidos.
+    if (s.theme && !validThemes.has(s.theme)) delete s.theme;
     // Sanitiza SFX em transitionIn — só nomes string.
     if (s.transitionIn && s.transitionIn.sfx && typeof s.transitionIn.sfx !== 'string') {
       delete s.transitionIn.sfx;
@@ -22279,6 +22285,7 @@ function mrValidateStoryboard(parsed, targetDuration) {
     duration: target,
     brand: 'Cropware',
     logoUrl: 'logo-cropware-pb-final.svg',
+    theme: parsed.theme || 'editorial',
     scenes,
     ...(defaultAudio ? { audio: defaultAudio } : {}),
   };

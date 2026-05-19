@@ -6,7 +6,10 @@
 // faz stagger fade-in. No final, leve float ±6px pra dar vida.
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from 'remotion';
 import { MR_COLORS, MR_FONTS, resolveColor } from '../theme.js';
+import { MR_THEMES } from '../themes.js';
 import { EASE, SceneBackdrop, KickerReveal, FadeSlide } from '../helpers.jsx';
+
+const FALLBACK = MR_THEMES.editorial.perSlide['app-card'];
 
 export const AppCard = ({
   bg, fg,
@@ -15,10 +18,14 @@ export const AppCard = ({
   appType = 'dashboard',
   data = {},
   background,
+  theme,
   start, end,
 }) => {
-  const bgColor = resolveColor(bg);
-  const fgColor = resolveColor(fg);
+  // bg/fg do storyboard têm prioridade (compat com reels antigos); senão cai
+  // pro theme atual (per-slide-type).
+  const T = theme || FALLBACK;
+  const bgColor = bg ? resolveColor(bg) : T.bg;
+  const fgColor = fg ? resolveColor(fg) : T.fg;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const durSec = (end || 0) - (start || 0);
@@ -47,7 +54,7 @@ export const AppCard = ({
           dur={0.5}
           fromEm={0.18}
           toEm={0.4}
-          style={{ fontFamily: MR_FONTS.mono, fontSize: 32, fontWeight: 400, color: MR_COLORS.greenAccent, textTransform: 'uppercase' }}
+          style={{ fontFamily: MR_FONTS.mono, fontSize: 32, fontWeight: 400, color: T.accent, textTransform: 'uppercase' }}
         />
       ) : null}
       {caption ? (

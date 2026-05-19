@@ -1,17 +1,23 @@
 // Cena 03 — KEYWORD (custom, tema-driven).
-// Visual fixo: textura `keyword-texture.webp` tintada em verde (mix-blend-mode
-// multiply sobre greenAccent) + 1 ícone Iconify animado no topo + palavra em
-// Space Mono uppercase + underline. IA preenche word + (opcional) icon.
+// Visual: textura `keyword-texture.webp` tintada conforme tema (mix-blend
+// multiply ou screen) + 1 ícone Iconify animado no topo + palavra em Space
+// Mono uppercase + underline. IA preenche word + (opcional) icon.
+// R16: bg/fg/accent vêm do theme prop (catálogo em themes.js per-slide-type).
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, staticFile } from 'remotion';
-import { MR_COLORS, MR_FONTS } from '../theme.js';
+import { MR_FONTS } from '../theme.js';
+import { MR_THEMES } from '../themes.js';
 import { CharReveal, IconifyIcon, EASE } from '../helpers.jsx';
+
+const FALLBACK = MR_THEMES.editorial.perSlide.keyword;
 
 export const Keyword = ({
   word,
-  icon = 'line-md:speed-loop', // default fits "Rápido." — IA pode trocar por tema
+  icon = 'line-md:speed-loop',
   underline = true,
+  theme,
   start, end,
 }) => {
+  const T = theme || FALLBACK;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -43,8 +49,8 @@ export const Keyword = ({
 
   return (
     <AbsoluteFill style={{
-      background: MR_COLORS.greenAccent,
-      color: MR_COLORS.white,
+      background: T.bg,
+      color: T.fg,
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
@@ -53,13 +59,13 @@ export const Keyword = ({
       fontFamily: MR_FONTS.mono,
       overflow: 'hidden',
     }}>
-      {/* Camada 1: textura sobre greenAccent (multiply tinta tudo de verde
-          preservando o detalhe do padrão) */}
+      {/* Camada 1: textura sobre o bg (blend-mode definido pelo tema:
+          multiply tinta de verde escuro; screen ilumina) */}
       <AbsoluteFill style={{
         backgroundImage: `url('${staticFile('keyword-texture.webp')}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        mixBlendMode: 'multiply',
+        mixBlendMode: T.textureMode || 'multiply',
         opacity: bgIn * 0.7,
       }} />
 
@@ -90,9 +96,9 @@ export const Keyword = ({
         transform: `scale(${iconScale.toFixed(4)})`,
         transformOrigin: 'center',
         filter: 'drop-shadow(0 10px 28px rgba(0,0,0,0.45))',
-        color: MR_COLORS.white,
+        color: T.fg,
       }}>
-        <IconifyIcon icon={icon} size={180} color={MR_COLORS.white} />
+        <IconifyIcon icon={icon} size={180} color={T.fg} />
       </div>
 
       {/* Camada 5: palavra Space Mono uppercase + underline (gap maior pra respiro) */}
@@ -113,7 +119,7 @@ export const Keyword = ({
           textTransform: 'uppercase',
           textAlign: 'center',
           maxWidth: 920,
-          color: MR_COLORS.white,
+          color: T.fg,
           textShadow: '0 6px 32px rgba(0,0,0,0.45)',
         }}>
           <CharReveal text={word || ''} delay={0.55} dur={0.4} stagger={0.032} ty={28} />
@@ -123,12 +129,12 @@ export const Keyword = ({
           <div style={{
             width: 180,
             height: 7,
-            background: MR_COLORS.greenBright,
+            background: T.accent,
             opacity: 1,
             borderRadius: 3,
             transformOrigin: 'left center',
             transform: `scaleX(${underlineP.toFixed(3)})`,
-            boxShadow: `0 0 28px ${MR_COLORS.greenBright}aa`,
+            boxShadow: `0 0 28px ${T.accent}aa`,
           }} />
         ) : null}
       </div>

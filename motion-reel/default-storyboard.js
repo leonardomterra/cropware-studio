@@ -25,6 +25,10 @@ export const MOTION_REEL_DEFAULT = {
   duration: 60.0,
   brand: 'Cropware',
   logoUrl: 'logo-cropware-pb-final.svg',
+  // R16: tema visual default. 'editorial' = baseline atual (slate escuro +
+  // verde profundo). Override por reel via storyboard.theme ou por cena via
+  // scene.theme. Catálogo completo em motion-reel/themes.js.
+  theme: 'editorial',
   // Música de fundo global — fade in/out + ducking automático sob voz
   // (configurável via duck/duckRamp). Engine em MotionReel.jsx faz o mix.
   // R15: trilha hospedada em R2 via Cloudflare Worker do studio. Trocar =

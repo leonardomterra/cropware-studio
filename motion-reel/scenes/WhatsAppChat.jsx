@@ -9,9 +9,10 @@
 // Props: messages — array de { from: 'user' | 'ai', text }. Máx 5 mensagens.
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, staticFile } from 'remotion';
 import { MR_COLORS, MR_FONTS } from '../theme.js';
+import { MR_THEMES } from '../themes.js';
 import { EASE } from '../helpers.jsx';
 
-const BG_IMAGE = 'wpp-bg-pattern.png';
+const FALLBACK = MR_THEMES.editorial.perSlide['whatsapp-chat'];
 
 const WHATSAPP_GREEN = '#25D366';
 const WALLPAPER_BG = '#E5DDD3';
@@ -27,7 +28,8 @@ const DEFAULT_MESSAGES = [
   { from: 'ai',   text: 'Padrão sugere falta de nitrogênio. Quer abrir um plano de adubação?' },
 ];
 
-export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, start, end }) => {
+export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, start, end }) => {
+  const T = theme || FALLBACK;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const durSec = Math.max(1, (end || 0) - (start || 0));
@@ -64,14 +66,22 @@ export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, start, end }) => {
 
   return (
     <AbsoluteFill style={{ background: MR_COLORS.slateAbyss, overflow: 'hidden', fontFamily: MR_FONTS.display }}>
-      {/* Camada 1: imagem de fundo (textura dark de ícones) com Ken Burns lento */}
+      {/* Camada 1: imagem de fundo com Ken Burns lento (varia por tema) */}
       <AbsoluteFill style={{
-        backgroundImage: `url('${staticFile(BG_IMAGE)}')`,
+        backgroundImage: `url('${staticFile(T.bgImage || 'wpp-bg-pattern.png')}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         transform: `scale(${imgScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
         transformOrigin: 'center',
         opacity: imgOpacity,
+      }} />
+
+      {/* Camada 1.5: tint sólido por cima da imagem (tema-driven — escuro no
+          editorial/vibrante; quase ausente no claro pra deixar a foto leve) */}
+      <AbsoluteFill style={{
+        background: T.bgTint || 'rgba(26,27,26,0.78)',
+        opacity: overlayP,
+        pointerEvents: 'none',
       }} />
 
       {/* Camada 2: vinheta sutil pra concentrar atenção no mockup central */}

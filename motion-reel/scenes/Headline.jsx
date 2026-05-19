@@ -1,22 +1,22 @@
 // Cena 02 — HEADLINE (custom, tema-driven).
 // Substitui o antigo stat-card (que dependia de números fictícios).
-// Visual hardcoded: imagem `conheca-solucao-bg.webp` (homem com tablet em milho)
-// + Ken Burns + glass slate + kicker mono + frase editorial grande + accent bar.
-// Conteúdo (kicker, headline) vem do storyboard — IA preenche por tema.
+// Visual: imagem + Ken Burns + glass tint + kicker mono + frase editorial
+// + accent bar. R16: bg/fg/accent/bgImage/glassTint vêm do theme prop
+// (catálogo em themes.js per-slide-type).
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, staticFile } from 'remotion';
-import { MR_COLORS, MR_FONTS } from '../theme.js';
+import { MR_FONTS } from '../theme.js';
+import { MR_THEMES } from '../themes.js';
 import { CharReveal, AccentBar, KickerReveal, EASE } from '../helpers.jsx';
 
-const BG_IMAGE = 'conheca-solucao-bg.webp';
-
-// Glass slate (mesma receita dos fixos cap04/07).
-const SLATE_TINT = 'linear-gradient(180deg, rgba(26,27,26,0.42) 0%, rgba(26,27,26,0.60) 55%, rgba(10,10,10,0.78) 100%)';
+const FALLBACK = MR_THEMES.editorial.perSlide.headline;
 
 export const Headline = ({
   kicker,
   headline,
+  theme,
   start, end,
 }) => {
+  const T = theme || FALLBACK;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const durSec = Math.max(1, (end || 0) - (start || 0));
@@ -43,10 +43,10 @@ export const Headline = ({
   });
 
   return (
-    <AbsoluteFill style={{ background: MR_COLORS.slateAbyss, overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: T.bg, overflow: 'hidden' }}>
       {/* Camada 1: imagem com Ken Burns */}
       <AbsoluteFill style={{
-        backgroundImage: `url('${staticFile(BG_IMAGE)}')`,
+        backgroundImage: `url('${staticFile(T.bgImage || 'conheca-solucao-bg.webp')}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         transform: `scale(${imgScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
@@ -55,11 +55,11 @@ export const Headline = ({
         opacity: imgOpacity,
       }} />
 
-      {/* Camada 2: glass slate */}
+      {/* Camada 2: glass tint (slate/forest/cream conforme tema) */}
       <AbsoluteFill style={{
         backdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(140%)`,
         WebkitBackdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(140%)`,
-        background: SLATE_TINT,
+        background: T.glassTint || FALLBACK.glassTint,
         opacity: overlayP,
       }} />
 
@@ -96,7 +96,7 @@ export const Headline = ({
         justifyContent: 'center',
         padding: '0 80px',
         gap: 36,
-        color: MR_COLORS.white,
+        color: T.fg,
         fontFamily: MR_FONTS.display,
         textAlign: 'center',
       }}>
@@ -111,7 +111,7 @@ export const Headline = ({
               fontFamily: MR_FONTS.mono,
               fontSize: 32,
               fontWeight: 400,
-              color: MR_COLORS.greenBright,
+              color: T.accent,
               textTransform: 'uppercase',
               textShadow: '0 2px 14px rgba(0,0,0,0.45)',
               transform: 'translateZ(0)',
@@ -126,7 +126,7 @@ export const Headline = ({
           lineHeight: 0.96,
           letterSpacing: '-0.04em',
           maxWidth: 920,
-          color: MR_COLORS.white,
+          color: T.fg,
           textShadow: '0 4px 28px rgba(0,0,0,0.55)',
           transform: 'translateZ(0)',
         }}>
@@ -143,11 +143,11 @@ export const Headline = ({
           delay={1.25}
           dur={0.5}
           origin="center"
-          color={MR_COLORS.greenBright}
+          color={T.accent}
           width={160}
           height={4}
           style={{
-            boxShadow: `0 0 24px ${MR_COLORS.greenBright}99`,
+            boxShadow: `0 0 24px ${T.accent}99`,
             borderRadius: 2,
             marginTop: 4,
           }}

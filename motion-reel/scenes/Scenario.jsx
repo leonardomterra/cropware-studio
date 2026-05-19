@@ -1,18 +1,17 @@
 // Cena 06 — SCENARIO (custom, tema-driven).
 // Substitui o antigo data-chart (que dependia de números fictícios).
-// Visual fixo: imagem `conheca-campo-bg.webp` (homem agachado checando celular)
-// + Ken Burns + glass slate + parágrafo narrativo descrevendo um momento.
-// IA preenche kicker + scenario (3-4 linhas curtas, contextualizando um momento).
+// Visual: imagem + Ken Burns + glass tint + parágrafo narrativo.
+// IA preenche kicker + scenario (3-4 linhas curtas).
+// R16: bg/fg/accent/bgImage/glassTint vêm do theme prop.
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, staticFile } from 'remotion';
-import { MR_COLORS, MR_FONTS } from '../theme.js';
+import { MR_FONTS } from '../theme.js';
+import { MR_THEMES } from '../themes.js';
 import { FadeSlide, KickerReveal, EASE } from '../helpers.jsx';
 
-const BG_IMAGE = 'conheca-campo-bg.webp';
+const FALLBACK = MR_THEMES.editorial.perSlide.scenario;
 
-// Glass slate (mesma receita dos fixos cap04/07/10).
-const SLATE_TINT = 'linear-gradient(180deg, rgba(26,27,26,0.45) 0%, rgba(26,27,26,0.62) 55%, rgba(10,10,10,0.80) 100%)';
-
-export const Scenario = ({ kicker, scenario, start, end }) => {
+export const Scenario = ({ kicker, scenario, theme, start, end }) => {
+  const T = theme || FALLBACK;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const durSec = Math.max(1, (end || 0) - (start || 0));
@@ -39,10 +38,10 @@ export const Scenario = ({ kicker, scenario, start, end }) => {
   });
 
   return (
-    <AbsoluteFill style={{ background: MR_COLORS.slateAbyss, overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: T.bg, overflow: 'hidden' }}>
       {/* Camada 1: imagem com Ken Burns */}
       <AbsoluteFill style={{
-        backgroundImage: `url('${staticFile(BG_IMAGE)}')`,
+        backgroundImage: `url('${staticFile(T.bgImage || 'conheca-campo-bg.webp')}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         transform: `scale(${imgScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
@@ -51,11 +50,11 @@ export const Scenario = ({ kicker, scenario, start, end }) => {
         opacity: imgOpacity,
       }} />
 
-      {/* Camada 2: glass slate */}
+      {/* Camada 2: glass tint (slate/forest/cream conforme tema) */}
       <AbsoluteFill style={{
         backdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(140%)`,
         WebkitBackdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(140%)`,
-        background: SLATE_TINT,
+        background: T.glassTint || FALLBACK.glassTint,
         opacity: overlayP,
       }} />
 
@@ -92,7 +91,7 @@ export const Scenario = ({ kicker, scenario, start, end }) => {
         justifyContent: 'center',
         padding: '0 96px',
         gap: 32,
-        color: MR_COLORS.white,
+        color: T.fg,
         fontFamily: MR_FONTS.display,
       }}>
         {kicker ? (
@@ -106,7 +105,7 @@ export const Scenario = ({ kicker, scenario, start, end }) => {
               fontFamily: MR_FONTS.mono,
               fontSize: 30,
               fontWeight: 400,
-              color: MR_COLORS.greenBright,
+              color: T.accent,
               textTransform: 'uppercase',
               textShadow: '0 2px 14px rgba(0,0,0,0.45)',
               transform: 'translateZ(0)',
@@ -122,7 +121,7 @@ export const Scenario = ({ kicker, scenario, start, end }) => {
             lineHeight: 1.18,
             letterSpacing: '-0.025em',
             maxWidth: 920,
-            color: MR_COLORS.white,
+            color: T.fg,
             textShadow: '0 4px 24px rgba(0,0,0,0.55)',
             whiteSpace: 'pre-line', // permite \n no scenario
             transform: 'translateZ(0)',
