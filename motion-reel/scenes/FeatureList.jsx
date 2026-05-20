@@ -2,7 +2,7 @@
 // Visual: bg + título + 3-4 itens em cards com ícone + texto. IA preenche
 // kicker, title, items. R16: bg/fg/accent/cardBg vêm do theme prop
 // (catálogo em themes.js per-slide-type).
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate } from 'remotion';
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, staticFile } from 'remotion';
 import { MR_COLORS, MR_FONTS } from '../theme.js';
 import { MR_THEMES } from '../themes.js';
 import { CharReveal, KickerReveal, EASE, IconifyIcon } from '../helpers.jsx';
@@ -31,21 +31,20 @@ export const FeatureList = ({ kicker, title, items = [], theme, start, end }) =>
       fontFamily: MR_FONTS.display,
       opacity: bgIn,
     }}>
-      {/* Camada 1: gradient sutil pra dar dimensão ao bg
-          (claro: white→fog→cream; vibrante: bg → bg leve mais escuro) */}
-      <AbsoluteFill style={{
-        background: `linear-gradient(180deg, ${T.bg} 0%, ${T.bg} 60%, ${T.bg}cc 100%)`,
-        opacity: bgIn,
-      }} />
+      {/* Camada 1: textura real de papel, visível também em thumbs do Studio. */}
+      {T.paperTexture ? (
+        <AbsoluteFill style={{
+          backgroundImage: `url('${staticFile(T.paperTexture)}')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: bgIn * (T.paperTextureOpacity ?? 0.42),
+          mixBlendMode: T.paperTextureBlend || 'multiply',
+          filter: T.paperTextureFilter || 'saturate(0.6) contrast(1.04)',
+          pointerEvents: 'none',
+        }} />
+      ) : null}
 
-      {/* Camada 2: vinheta MUITO sutil pra dar dimensão */}
-      <AbsoluteFill style={{
-        background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.06) 100%)',
-        opacity: bgIn,
-        pointerEvents: 'none',
-      }} />
-
-      {/* Camada 3: conteúdo — kicker + título + cards */}
+      {/* Camada 2: conteúdo — kicker + título + cards */}
       <div style={{
         position: 'relative',
         zIndex: 2,
@@ -121,7 +120,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, start, end }) =>
                 background: T.cardBg || MR_COLORS.white,
                 borderRadius: 18,
                 border: T.cardBorder ? `1px solid ${T.cardBorder}` : 'none',
-                boxShadow: '0 8px 24px rgba(20,63,44,0.08), 0 1px 2px rgba(20,63,44,0.06)',
+                boxShadow: T.cardShadow || '0 8px 24px rgba(20,63,44,0.08), 0 1px 2px rgba(20,63,44,0.06)',
                 opacity: p,
                 transform: `translateX(${((1 - p) * -28).toFixed(2)}px)`,
               }}>
@@ -131,19 +130,20 @@ export const FeatureList = ({ kicker, title, items = [], theme, start, end }) =>
                   width: 72,
                   height: 72,
                   borderRadius: 18,
-                  background: `${T.accent}26`,
+                  background: T.cardIconBg || `${T.accent}26`,
+                  color: T.cardIconColor || T.accent,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
                   {icon ? (
-                    <IconifyIcon icon={icon} size={48} />
+                    <IconifyIcon icon={icon} size={48} color={T.cardIconColor || T.accent} />
                   ) : (
                     <div style={{
                       width: 12,
                       height: 12,
                       borderRadius: '50%',
-                      background: T.accent,
+                      background: T.cardIconColor || T.accent,
                     }} />
                   )}
                 </span>
@@ -153,7 +153,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, start, end }) =>
                   fontWeight: 500,
                   lineHeight: 1.15,
                   letterSpacing: '-0.015em',
-                  color: T.fg,
+                  color: T.cardFg || T.fg,
                 }}>{text}</span>
               </div>
             );

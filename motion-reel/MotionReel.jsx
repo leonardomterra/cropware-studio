@@ -3,10 +3,9 @@
 // pelo <Player> (preview no browser) quanto pelo CLI render (npx remotion).
 import { AbsoluteFill, Audio, Sequence, staticFile, interpolate } from 'remotion';
 import { TransitionSeries } from '@remotion/transitions';
-import { LightLeak } from '@remotion/light-leaks';
 
 import { resolvePresentation, resolveTiming } from './transitions.js';
-import { resolveSfxUrl } from './sfx.js';
+import { resolveSfxDefaultVolume, resolveSfxUrl } from './sfx.js';
 import { resolveTheme } from './themes.js';
 import { Overlay } from './overlays.jsx';
 import { BrandIntro } from './scenes/BrandIntro.jsx';
@@ -46,6 +45,12 @@ function resolveMediaUrl(src) {
   return staticFile(v);
 }
 
+function clampNumber(value, min, max, fallback) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(min, Math.min(max, n));
+}
+
 export const MotionReel = ({ storyboard }) => {
   if (!storyboard || !Array.isArray(storyboard.scenes) || !storyboard.scenes.length) {
     return <AbsoluteFill style={{ background: '#F5F1EA' }} />;
@@ -73,21 +78,25 @@ export const MotionReel = ({ storyboard }) => {
       const tDurFrames = Math.max(2, Math.round((tIn.dur || 0.3) * fps));
       cursorFrame -= tDurFrames; // overlap
 
-      // SFX disparado no meio da transição por default (alinha com pico
-      // visual de cinematic-blur, ring-tunnel, light-streak — todos em
-      // progress=0.5). Override por SFX via tIn.sfxOffset em segundos:
-      // negativo antecipa (bom pra ambient longos), positivo atrasa.
-      if (tIn.sfx) {
+      // SFX dispara no meio da transição por default (pico visual em
+      // progress=0.5). tIn.sfxOffset é um ajuste relativo a esse meio:
+      // negativo antecipa, positivo atrasa.
+      const shouldPlaySfx = scene.locked !== true || scene.id === 'end';
+      if (tIn.sfx && shouldPlaySfx) {
         const sfxUrl = resolveSfxUrl(tIn.sfx);
         if (sfxUrl) {
           const defaultOffsetFrames = Math.round(tDurFrames * 0.5);
-          const customOffsetFrames = tIn.sfxOffset != null
-            ? Math.round(tIn.sfxOffset * fps)
-            : defaultOffsetFrames;
-          const sfxStartFrame = Math.max(0, cursorFrame + customOffsetFrames);
+          const relativeOffsetFrames = tIn.sfxOffset != null
+            ? Math.round(clampNumber(tIn.sfxOffset, -0.45, 0.45, 0) * fps)
+            : 0;
+          const sfxStartFrame = Math.max(0, cursorFrame + defaultOffsetFrames + relativeOffsetFrames);
+          const baseSfxVolume = tIn.sfxVolume == null
+            ? resolveSfxDefaultVolume(tIn.sfx)
+            : tIn.sfxVolume;
+          const sfxVolume = clampNumber(baseSfxVolume, 0, 0.16, resolveSfxDefaultVolume(tIn.sfx));
           audioLayers.push(
             <Sequence key={`sfx-${i}`} from={sfxStartFrame} layout="none">
-              <Audio src={sfxUrl} volume={tIn.sfxVolume == null ? 0.7 : tIn.sfxVolume} />
+              <Audio src={sfxUrl} volume={() => sfxVolume} />
             </Sequence>
           );
         } else {
@@ -95,21 +104,13 @@ export const MotionReel = ({ storyboard }) => {
         }
       }
 
-      if (tIn.type === 'light-leak') {
-        children.push(
-          <TransitionSeries.Overlay key={`overlay-${i}`} durationInFrames={tDurFrames}>
-            <LightLeak seed={tIn.seed == null ? i : tIn.seed} hueShift={tIn.hueShift == null ? 0 : tIn.hueShift} />
-          </TransitionSeries.Overlay>
-        );
-      } else {
-        children.push(
-          <TransitionSeries.Transition
-            key={`trans-${i}`}
-            presentation={resolvePresentation(tIn.type, tIn)}
-            timing={resolveTiming(scene, fps)}
-          />
-        );
-      }
+      children.push(
+        <TransitionSeries.Transition
+          key={`trans-${i}`}
+          presentation={resolvePresentation(tIn.type, tIn)}
+          timing={resolveTiming(scene, fps)}
+        />
+      );
     }
 
     const sceneStartFrame = cursorFrame;
@@ -136,7 +137,9 @@ export const MotionReel = ({ storyboard }) => {
     // Locked scenes são 100% hardcoded nos componentes — ignoram overlays do
     // storyboard (mesmo que reels antigos em cache tenham herdado overlays
     // antes do refactor). Customização visual só nas custom scenes.
-    const sceneOverlays = scene.locked === true ? null : scene.overlays;
+    const sceneOverlays = scene.locked === true || scene.type === 'feature-list'
+      ? null
+      : scene.overlays;
     // Tema resolvido por cena (theme.js per-slide-type). Locked scenes não
     // consomem (são hardcoded) mas passar não atrapalha.
     const sceneTheme = resolveTheme(storyboard, scene);

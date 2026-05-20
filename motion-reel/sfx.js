@@ -83,5 +83,21 @@ export function resolveSfxUrl(nameOrUrl) {
   return SFX_MAP[v] || null;
 }
 
+// Volume default por família. Mantém SFX como textura discreta sob música e
+// narração; scene.transitionIn.sfxVolume ainda pode sobrescrever pontualmente.
+export function resolveSfxDefaultVolume(nameOrUrl) {
+  if (!nameOrUrl) return 0.09;
+  const v = String(nameOrUrl).trim();
+  if (/ambient-/.test(v)) return 0.045;
+  if (/^(leaf-rustle|paper-turn|wood-crack-soft)$/.test(v)) return 0.065;
+  if (/^(ui-|digital-)/.test(v)) return 0.075;
+  if (/^whoosh-/.test(v)) return 0.085;
+  if (/^impact-/.test(v)) return 0.095;
+  if (/^(ding|notification|pop|switch|click|cut)$/.test(v)) return 0.075;
+  if (/^(impact|riser|whip|shutter|reveal|page-turn)$/.test(v)) return 0.09;
+  if (/^(bruh|vine-boom|xp-error)$/.test(v)) return 0.065;
+  return 0.09;
+}
+
 // Lista pública pra IA conhecer o vocabulário.
 export const SFX_NAMES = Object.keys(SFX_MAP);

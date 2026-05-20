@@ -1,9 +1,10 @@
-# Motion Reel — Estado Final (R13)
+# Motion Reel — Estado Atual (R17)
 
 Gerador de Reels 9:16 (1080×1920) integrado ao Cropware Studio. **Stack:**
 Remotion 4 + React 19 (cenas + animações) · Gemini (IA gera storyboard) ·
-ElevenLabs (voiceover TTS pt-BR, plano Starter+) · `@remotion/sfx` (SFX hospedados) ·
-`@iconify/react` (ícones coloridos) · Vite middleware (endpoint local pra render MP4).
+ElevenLabs (voiceover TTS pt-BR, plano Starter+) · `@remotion/sfx` + SFX R2 ·
+`@iconify/react` + Lottie/AnimatedIcons · Vite middleware com progresso NDJSON
+para render MP4.
 
 ## Como usar (fluxo final)
 
@@ -21,8 +22,8 @@ npm run dev                       # Vite + endpoint /api/render-reel
 # com voiceover.text por cena automaticamente.
 
 # Baixar MP4 (1 clique):
-# Ações → "Baixar MP4" → endpoint chama ElevenLabs (gera MP3s pt-BR)
-# + Remotion render → MP4 baixa direto pelo browser (~70s).
+# Ações → "Baixar MP4" → dialog mostra andamento (voiceover/cache,
+# render frames, upload/baixar) → MP4 baixa direto pelo browser.
 
 # Render CLI manual:
 npm run reel:render               # default storyboard → out/reel.mp4
@@ -58,8 +59,9 @@ cropware-studio/
 │   │                             AccentBar / NumberTicker / ScaleBounceText /
 │   │                             TypewriterText / GlitchText / SceneBackdrop /
 │   │                             IconifyIcon · LottieAsset
-│   ├── sfx.js                    Mapping de nomes → URLs (R16: 14 SFX R2 + 11 legacy)
+│   ├── sfx.js                    Mapping de nomes → URLs + volumes default por SFX
 │   ├── themes.js                 R16 — catálogo de temas per-slide-type (editorial/vibrante/claro)
+│   ├── keyword-icons.js          Curadoria de ícones animados keyword + Lottie local
 │   ├── voiceover-core.mjs        TTS ElevenLabs reusável (CLI + middleware)
 │   ├── default-storyboard.js     Storyboard demo 60s (12 cenas)
 │   ├── mount.jsx                 Player + Grid view (12 thumbs 4×3) + Preview modal
@@ -68,7 +70,7 @@ cropware-studio/
 │       ├── Headline.jsx          custom — cap02 kicker + headline editorial
 │       ├── Keyword.jsx           custom — texture verde + ícone + word
 │       ├── Quote.jsx             FIXA — cap10 depoimento genérico
-│       ├── FeatureList.jsx       custom — light theme, items com Iconify
+│       ├── FeatureList.jsx       custom — cards + textura real de papel
 │       ├── Scenario.jsx          custom — cap06 paragrafo narrativo
 │       ├── WhatsAppChat.jsx      custom — cap09 iPhone mockup conversa
 │       ├── EndCard.jsx           FIXA — cap12 logo + tagline + handle
@@ -134,7 +136,7 @@ cropware-studio/
 
 **Custom R13 (calmas/elegantes)**: glass-frost · iris-square · drift-fade · light-streak
 
-**Overlay (`@remotion/light-leaks` via TransitionSeries.Overlay)**: light-leak (usar `hueShift >= 100` pra tom verde, default laranja contrasta com paleta)
+**Compatibilidade**: `light-leak` legado agora cai em `drift-fade` para evitar o vazamento roxo/laranja fora da identidade Cropware.
 
 **Notas IA**: evitar `flash` (jarring) — preferir `cinematic-blur` ou `fade` em substituição.
 
@@ -142,11 +144,21 @@ cropware-studio/
 
 rotating-rings · pulse-circle · particle-drift · line-draw · curve-trace · light-streak · vignette-breath
 
+Nota: `feature-list` ignora overlays no renderer para evitar cantos/linhas herdados de storyboards antigos.
+
 ## Áudio
 
-- **SFX** via `transitionIn.sfx`: whoosh · click · ding · vine-boom · impact · riser · pop · notification · whip · page-turn · switch · shutter · etc. (11 nativos do @remotion/sfx + aliases semânticos)
+- **SFX** via `transitionIn.sfx`: whoosh · click · ding · vine-boom · impact · riser · pop · notification · whip · page-turn · switch · shutter · etc. Volumes default ficam em `sfx.js` e são clampados no renderer para não atropelar música/voz.
 - **Música** via `audio.music` global: arquivo em `public/audio/X.mp3`, com fade in/out + ducking automático sob voz (configurável via `audio.duck` e `audio.duckRamp`). Default carrega trilha do `default-storyboard.js` em todo reel novo.
-- **Voiceover** via `scene.voiceover.text`: IA gera o texto → ElevenLabs (`eleven_multilingual_v2`) gera MP3 pt-BR → mixado no render. Voz padrão `RVmX026jCrF5VqUvpCk0` (library voice — requer plano Starter+). Outras documentadas em `.env.example`. Por cena: `voiceover.voiceId` e `voiceover.speakingRate`.
+- **Voiceover** via `scene.voiceover.text`: IA gera o texto → ElevenLabs (`eleven_multilingual_v2`) gera MP3 pt-BR → mixado no render. O cache por texto/voz/modelo evita gastar créditos de novo ao baixar MP4 sem mudar a narração. Voz padrão `RVmX026jCrF5VqUvpCk0` (library voice — requer plano Starter+). Outras documentadas em `.env.example`. Por cena: `voiceover.voiceId` e `voiceover.speakingRate`.
+
+## Visual R17
+
+- **Reels salvos apenas**: modo Motion não mostra mais storyboard legado quando a lista de reels está vazia.
+- **Gerador de Reel**: modal esconde chips de personagens/cenas e upload de imagem, porque o Motion Reel usa banco de imagens/assets e não geração de imagem por cena.
+- **Keyword**: ícones estáticos de agro (`twemoji:noto:seedling/ear-of-corn`) são normalizados para Lottie `animatedicons:sustainability`, renderizado outline-only (`fillOpacity=0`) e tintado por tema.
+- **FeatureList**: usa textura real `public/motion-reel/textures/crumpled-paper.jpg` nos três temas; tema vibrante usa fundo claro + cards verdes; `cardFg`, `cardIconBg`, `cardIconColor` e `cardShadow` são tokens por tema.
+- **Tema claro**: headline/keyword ajustados para contraste melhor, menos sombra e acentos alinhados à identidade.
 
 ## Sistema de background (substitui bgImage)
 
@@ -204,6 +216,7 @@ Tempo típico de render no Mac M-series: **~70-90s** pra reel de 60s (1623 frame
 | R14 | 2026-05-19 | **Áudio completo — narração + música**. _Voz_: `RVmX026jCrF5VqUvpCk0` (library voice ElevenLabs, calma/editorial, requer Starter+ — Free tier bloqueia library voices via API) · prompt do Gemini reescrito com **diretrizes por tipo de cena** (orçamento de palavras: 4s→8 / 5s→10 / 6s→13) · 5 cenas SILENCIOSAS por design (keyword, ambos chapters, whatsapp-chat, quote) · `voiceover-core.mjs` estima duração por chars (~15 chars/s pt-BR, provider-agnóstico) e flagga overflow com `overlapSec` quando estoura janela − 0.4s · logs `Xs/Ys` por cena no CLI e Vite middleware. _Música de fundo_: campo `audio.music` no storyboard (path relativo a `public/`), com fade in/out + loop · default ativo em `default-storyboard.js` puxa de `public/audio/` (4 tracks country-western Pixabay disponíveis) · validator herda `audio` do default ao processar reel da IA · guardrail em `downloadMotionReelMP4` injeta `audio` se faltar (reels antigos em memória). _Ducking_: música cai automaticamente para `baseVol × duckLevel` (default 0.35) durante voz, com ramp de 150ms — configurável via `audio.duck` e `audio.duckRamp`. _Provider TTS validado_: testamos Google Cloud TTS (Neural2-C, free tier) como alternativa mas soou robótica demais — voltamos pra ElevenLabs por qualidade. |
 | R15 | 2026-05-19 | **Storage R2 — música, voiceover e MP4s vão pra Cloudflare via Worker compartilhado do studio**. Descoberto que o studio já tinha infra completa: auth Supabase (email/senha) + R2 via Worker (`cropware-r2-worker.leonardoterra-comercial.workers.dev`) usado pelo upload de imagens dos posts. Aproveitamos esse Worker existente sem criar Edge Function nova. _Paths R2_: `images/studio/_motion-reel/audio/{filename}.mp3` (compartilhado), `.../voiceover/{userId}/{hash}.mp3` (per-user, cache reusável entre reels), `.../reels/{userId}/{reelId}.mp4` (per-user). _Voiceover_: `voiceover-core.mjs` faz PUT no Worker após cada geração/cache-hit, `scene.voiceover.url` recebe URL R2 absoluta (em vez de path local); fallback gracioso pro path local se R2 falhar. _MP4 outputs_: Vite middleware faz upload pós-render e devolve JSON `{ url, sizeMb }`; client baixa direto da CDN Cloudflare (em vez de stream binário pelo Vite); fallback pra streaming se R2 falhar. _Música default_: subida via `npm run reel:upload-music`, URL R2 absoluta no `default-storyboard.js`; `public/audio/` agora gitignored. _Cliente_ passa `userId` (`currentUser.id` do Supabase Auth) pro `/api/render-reel`. |
 | R16 | 2026-05-19 | **Variantes estéticas + dialog redesign + SFX expandido + sincronia visual** (6 fases / 6 commits). _Fase 1_: slide 03 keyword sem ponto no default e regra dura no prompt Gemini (UMA palavra, sem pontuação) · SFX agora dispara no MEIO da transição por default (alinha com pico visual de cinematic-blur, ring-tunnel, light-streak em `progress=0.5`); override via `tIn.sfxOffset` (segundos, negativo antecipa, positivo atrasa) · `console.warn` quando `resolveSfxUrl` retorna null. _Fase 2_: novo `motion-reel/themes.js` com 3 temas (`editorial` baseline, `vibrante` greenBright dominante, `claro` cream/white) e estrutura **per-slide-type** pra evitar conflitos visuais (ex: tema vibrante em Keyword usa greenForest em vez de greenBright); `resolveTheme(storyboard, scene)` faz cascata scene.theme → storyboard.theme → 'editorial'; wiring em MotionReel.jsx propaga prop `theme` no `<Comp {...scene} theme={...} />`. _Fase 3_: 6 slides custom (Headline, Keyword, FeatureList, Scenario, AppCard, WhatsAppChat) refatorados pra consumir prop `theme` com fallback defensivo `T = theme \|\| FALLBACK`; validator aceita `parsed.theme` + `scene.theme` com sanitização; default-storyboard ganha `theme: 'editorial'` explícito; WhatsApp mockup interno fica canônico (verde #25D366), só varia bg externo + tint. _Fase 4_: redesign do `#mrSceneEditModal` seguindo padrão `.gen-modal` canônico — adiciona seção "Tema visual" com 3 cards clicáveis (preview gradient + nome + descrição, card ativo com border verde + box-shadow); botão "Desfazer" (`#mrSceneEditUndo`) replicando pattern `_undoStack` dos posts (stack por cena, cap 5, FIFO); modal não fecha mais automaticamente após Aplicar (fica aberto pra empilhar mais ajustes); 5 funções novas: `_pushMrSceneSnapshot`, `_syncMrUndoButton`, `_syncMrThemeCardSelection`, `applyMrSceneTheme`, `undoLastMrSceneEdit`. _Fase 5_: novo script `scripts/upload-motion-reel-sfx.mjs` (batch dir ou arquivo, output imprime entries prontas pra SFX_MAP); npm script `reel:upload-sfx`; 14 SFX curados no Pixabay subidos pro R2 em 5 categorias semânticas — WHOOSH (3: soft/fast-cinematic/deep), IMPACT (3: deep-cinematic/snap-dry/thud), AMBIENT (2: wind-soft/field-nature), ORGANIC (3: leaf-rustle/paper-turn/wood-crack-soft), TECH/UI (3: tap-soft/confirm-modern/digital-beep-clean); SFX_MAP atualizado em `motion-reel/sfx.js` mantendo legacy `@remotion/sfx` pra compat. _Fase 6_: prompt Gemini reescrito com catálogo SFX por categoria + pareamentos por tipo de cena (brand-intro=sem SFX, keyword=impact-snap-dry, scenario=ambient-wind-soft com sfxOffset -0.3, end-card=impact-thud) + bloco TEMA VISUAL (escolha global + override por cena, guidelines por mood) + regra dura keyword (UMA palavra, máx 12 chars, sem pontuação). |
+| R17 | 2026-05-20 | **Polimento operacional + Motion Reel visual atual**. Remove fallback de reel legado quando não há reels salvos; gerador de Reel fica específico para Motion (sem chips de personagem/cena nem upload de imagem); endpoint `/api/render-reel` passa a emitir progresso NDJSON e o app mostra dialog com etapa, percentual e tempo decorrido. `voiceover-core.mjs` adiciona cache por texto/voz/modelo para evitar gastar ElevenLabs ao baixar novamente sem mudar narração. SFX recebe volumes default e clamp no renderer para ficar discreto frente a música/voz. `light-leak` legado passa a usar `drift-fade`, removendo transição roxa fora da marca. Slide 03 `keyword` ganha Lottie local do AnimatedIcons (`animatedicons:sustainability`) com outline-only e tint por tema; ícones estáticos agro são normalizados para esse asset. Temas claro/editorial/vibrante foram calibrados em `headline`, `keyword` e `feature-list`; o slide 05 ignora overlays para eliminar cantos/linhas herdados e usa textura real de papel amassado em `public/motion-reel/textures/crumpled-paper.jpg`. |
 
 ## Pendências (não escopadas, próximos passos)
 

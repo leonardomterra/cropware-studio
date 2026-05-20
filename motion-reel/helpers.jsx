@@ -353,9 +353,9 @@ export const IconifyIcon = ({ icon, size = 64, color, style }) => {
 // com entrada (spring scale + fade) e loop contínuo. A animação interna do
 // Lottie roda no playbackRate dado.
 // Props: src ('lottie/plant.json'), size (220), delay (0), playbackRate (1),
-//   tint (cor — se setado, recolore a animação via mix-blend-mode: color,
-//   preservando a luminância original).
-export const LottieAsset = ({ src, size = 220, delay = 0, playbackRate = 1, loop = true, tint, style }) => {
+//   tint (cor — se setado, recolore a animação via SVG filter),
+//   fillOpacity (0-1 — opcional, útil pra transformar Lotties em outline).
+export const LottieAsset = ({ src, size = 220, delay = 0, playbackRate = 1, loop = true, tint, fillOpacity = null, style }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const [data, setData] = useState(null);
@@ -366,7 +366,8 @@ export const LottieAsset = ({ src, size = 220, delay = 0, playbackRate = 1, loop
     fetch(staticFile(src))
       .then(r => r.json())
       .then(d => {
-        if (!cancelled) setData(d);
+        const nextData = fillOpacity == null ? d : withLottieFillOpacity(d, fillOpacity);
+        if (!cancelled) setData(nextData);
         continueRender(handle);
       })
       .catch(err => {
@@ -374,7 +375,7 @@ export const LottieAsset = ({ src, size = 220, delay = 0, playbackRate = 1, loop
         continueRender(handle);
       });
     return () => { cancelled = true; };
-  }, [src, handle]);
+  }, [src, fillOpacity, handle]);
 
   // ──── Entrada "sprout" ────
   // Spring com leve overshoot pro pop + rise from below + blur out + fade in.
@@ -447,6 +448,24 @@ export const LottieAsset = ({ src, size = 220, delay = 0, playbackRate = 1, loop
     </div>
   );
 };
+
+function withLottieFillOpacity(data, fillOpacity) {
+  const opacity = Math.max(0, Math.min(1, Number(fillOpacity)));
+  const clone = JSON.parse(JSON.stringify(data));
+  const apply = value => {
+    if (Array.isArray(value)) {
+      value.forEach(apply);
+      return;
+    }
+    if (!value || typeof value !== 'object') return;
+    if (value.ty === 'fl') {
+      value.o = { ...(value.o || {}), a: 0, k: opacity * 100 };
+    }
+    Object.values(value).forEach(apply);
+  };
+  apply(clone);
+  return clone;
+}
 
 // Converte string hex (#RRGGBB) para [r, g, b] em 0-1 pra feColorMatrix.
 function hexToRgb01(hex) {

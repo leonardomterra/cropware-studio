@@ -28,6 +28,7 @@ export function resolvePresentation(type, sceneTransitionConfig) {
     case 'ring-tunnel':    return ringTunnel({ color: (sceneTransitionConfig && sceneTransitionConfig.color) || '#6AC58F' });
     case 'glitch':         return glitch();
     case 'slide-radial':   return slideRadial({ origin: (sceneTransitionConfig && sceneTransitionConfig.origin) || 'bottom-left' });
+    case 'light-leak':     return driftFade();
     // Novas transições R13 (2026-05)
     case 'glass-frost':    return glassFrost();
     case 'iris-square':    return irisSquare();

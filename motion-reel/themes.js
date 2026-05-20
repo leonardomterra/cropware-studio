@@ -14,6 +14,7 @@ const GLASS = {
   slate:  'linear-gradient(180deg, rgba(26,27,26,0.45) 0%, rgba(26,27,26,0.62) 55%, rgba(10,10,10,0.80) 100%)',
   forest: 'linear-gradient(180deg, rgba(20,63,44,0.48) 0%, rgba(20,63,44,0.66) 55%, rgba(10,30,20,0.82) 100%)',
   cream:  'linear-gradient(180deg, rgba(245,241,234,0.55) 0%, rgba(245,241,234,0.72) 55%, rgba(230,222,205,0.88) 100%)',
+  white:  'linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.84) 55%, rgba(238,239,238,0.92) 100%)',
 };
 
 export const MR_THEMES = {
@@ -30,12 +31,18 @@ export const MR_THEMES = {
       },
       keyword: {
         bg: MR_COLORS.greenAccent, fg: MR_COLORS.white,
-        accent: MR_COLORS.greenForest, textureMode: 'multiply',
+        iconColor: MR_COLORS.greenBright,
+        iconFilter: `drop-shadow(0 0 28px ${MR_COLORS.greenBright}99)`,
+        accent: MR_COLORS.greenBright, textureMode: 'multiply',
       },
       'feature-list': {
         bg: MR_COLORS.fog, fg: MR_COLORS.slateAbyss,
         accent: MR_COLORS.greenBright, accentDeep: MR_COLORS.greenForest,
-        cardBg: MR_COLORS.white, cardBorder: 'rgba(0,0,0,0.06)',
+        paperTexture: 'motion-reel/textures/crumpled-paper.jpg',
+        paperTextureOpacity: 0.5,
+        paperTextureBlend: 'multiply',
+        paperTextureFilter: 'saturate(0.58) contrast(1.04)',
+        cardBg: MR_COLORS.white,
       },
       scenario: {
         bg: MR_COLORS.slateAbyss, fg: MR_COLORS.white,
@@ -67,12 +74,22 @@ export const MR_THEMES = {
       keyword: {
         // Inverte hierarquia: bg escuro, fg verde claro (em vez de bg verde + fg branco).
         bg: MR_COLORS.greenForest, fg: MR_COLORS.greenBright,
+        wordColor: MR_COLORS.white,
+        iconColor: MR_COLORS.white,
+        iconFilter: 'drop-shadow(0 0 28px rgba(255,255,255,0.55))',
         accent: MR_COLORS.white, textureMode: 'screen',
       },
       'feature-list': {
-        bg: MR_COLORS.greenBright, fg: MR_COLORS.greenAbyss,
-        accent: MR_COLORS.greenAbyss, accentDeep: MR_COLORS.slateAbyss,
-        cardBg: MR_COLORS.white, cardBorder: 'rgba(20,63,44,0.10)',
+        bg: MR_COLORS.fog, fg: MR_COLORS.slateAbyss,
+        accent: MR_COLORS.greenDeep, accentDeep: MR_COLORS.greenForest,
+        paperTexture: 'motion-reel/textures/crumpled-paper.jpg',
+        paperTextureOpacity: 0.46,
+        paperTextureBlend: 'multiply',
+        paperTextureFilter: 'saturate(0.58) contrast(1.04)',
+        cardBg: MR_COLORS.greenForest, cardFg: MR_COLORS.white,
+        cardIconBg: 'rgba(255,255,255,0.18)',
+        cardIconColor: MR_COLORS.white,
+        cardShadow: '0 12px 34px rgba(20,63,44,0.18), 0 2px 4px rgba(20,63,44,0.10)',
       },
       scenario: {
         bg: MR_COLORS.greenAbyss, fg: MR_COLORS.white,
@@ -97,18 +114,27 @@ export const MR_THEMES = {
     description: 'Cream / branco · verde accent · mood limpo',
     perSlide: {
       headline: {
-        bg: MR_COLORS.cream, fg: MR_COLORS.slateAbyss,
-        accent: MR_COLORS.greenDeep, accentDeep: MR_COLORS.greenForest,
-        bgImage: 'conheca-solucao-bg.webp', glassTint: GLASS.cream,
+        bg: MR_COLORS.white, fg: MR_COLORS.greenDeep,
+        kickerColor: MR_COLORS.slateAbyss,
+        textShadow: '0 3px 14px rgba(20,63,44,0.24)',
+        accent: MR_COLORS.slateAbyss, accentDeep: MR_COLORS.greenForest,
+        bgImage: 'conheca-solucao-bg.webp', glassTint: GLASS.white,
       },
       keyword: {
         bg: MR_COLORS.fog, fg: MR_COLORS.greenForest,
+        wordColor: MR_COLORS.white,
+        iconColor: MR_COLORS.greenDeep,
+        iconFilter: `drop-shadow(0 0 28px ${MR_COLORS.greenDeep}aa)`,
         accent: MR_COLORS.greenDeep, textureMode: 'multiply',
       },
       'feature-list': {
         bg: MR_COLORS.white, fg: MR_COLORS.slateAbyss,
         accent: MR_COLORS.greenDeep, accentDeep: MR_COLORS.greenForest,
-        cardBg: MR_COLORS.fog, cardBorder: 'rgba(0,0,0,0.05)',
+        paperTexture: 'motion-reel/textures/crumpled-paper.jpg',
+        paperTextureOpacity: 0.38,
+        paperTextureBlend: 'multiply',
+        paperTextureFilter: 'saturate(0.52) contrast(1.02)',
+        cardBg: MR_COLORS.fog,
       },
       scenario: {
         bg: MR_COLORS.cream, fg: MR_COLORS.slateAbyss,

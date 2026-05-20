@@ -111,7 +111,7 @@ export const Headline = ({
               fontFamily: MR_FONTS.mono,
               fontSize: 32,
               fontWeight: 400,
-              color: T.accent,
+              color: T.kickerColor || T.accent,
               textTransform: 'uppercase',
               textShadow: '0 2px 14px rgba(0,0,0,0.45)',
               transform: 'translateZ(0)',
@@ -127,7 +127,7 @@ export const Headline = ({
           letterSpacing: '-0.04em',
           maxWidth: 920,
           color: T.fg,
-          textShadow: '0 4px 28px rgba(0,0,0,0.55)',
+          textShadow: T.textShadow || '0 4px 28px rgba(0,0,0,0.55)',
           transform: 'translateZ(0)',
         }}>
           <CharReveal

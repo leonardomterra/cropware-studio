@@ -505,7 +505,7 @@
     background: #fff;
     border-radius: 12px;
     padding: 28px 32px;
-    min-width: 320px;
+    min-width: 360px;
     max-width: 420px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.25);
     display: flex;
@@ -529,6 +529,39 @@
     color: var(--text, #0f172a);
     text-align: center;
     line-height: 1.4;
+  }
+  .download-loading-progress {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    overflow: hidden;
+  }
+  .download-loading-progress[hidden] { display: none; }
+  .download-loading-progress-bar {
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #42AA7B, #82CCA5);
+    transition: width 220ms ease;
+  }
+  .download-loading-meta {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-family: 'Space Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: #64748b;
+  }
+  .download-loading-detail {
+    width: 100%;
+    min-height: 16px;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 12px;
+    color: #64748b;
+    text-align: center;
+    line-height: 1.35;
   }
 
   /* ── CANVAS AREA (header + stage + slide-nav bar) ── */
@@ -9723,7 +9756,15 @@ function updateEmptyStateVisibility() {
   const emptyEl = document.getElementById('emptyState');
   const scaler  = document.getElementById('postScaler');
   if (emptyEl) {
-    emptyEl.classList.remove('visible');
+    emptyEl.classList.toggle('visible', empty);
+    emptyEl.setAttribute('aria-hidden', empty ? 'false' : 'true');
+    if (empty) {
+      const isReel = isMotionReelMode();
+      emptyEl.innerHTML = `
+        <div class="empty-state-title">${isReel ? 'Nenhum reel gerado ainda' : 'Nenhum conteúdo gerado ainda'}</div>
+        <div class="empty-state-sub">${isReel ? 'Use Ações e Gerar Reel para criar o primeiro Motion Reel. A grade aparece só para reels salvos.' : 'Use Ações para criar o primeiro conteúdo deste formato.'}</div>
+      `;
+    }
   }
   if (scaler)  scaler.style.display = empty ? 'none' : '';
   if (!empty) return;
@@ -17095,6 +17136,7 @@ function openGenerator() {
   const isLogoCropware = isLogoCropwareMode();
   const isWeather = isWeatherMode();
   const isOpinion = isOpinionCarouselMode();
+  const isMotionReel = isMotionReelMode();
   document.getElementById('genModal').classList.add('open');
   wireGenChipsOnce();
   resetGenChips();
@@ -17107,7 +17149,8 @@ function openGenerator() {
     const prefix = platform === 'linkedin-pessoal' ? 'LinkedIn Pessoal — ' : platform === 'linkedin' ? 'LinkedIn — ' : '';
     headerSpan.textContent = isCarousel ? `${prefix}Gerar Carrossel com IA` : `${prefix}Gerar Post com IA`;
   }
-  if (isAds && isCarousel) headerSpan.textContent = 'Instagram Ads — Gerar Carrossel com IA';
+  if (isMotionReel && headerSpan) headerSpan.textContent = 'Gerar Reel com IA';
+  else if (isAds && isCarousel) headerSpan.textContent = 'Instagram Ads — Gerar Carrossel com IA';
   else if (isAds) headerSpan.textContent = 'Instagram Ads — Gerar Anuncio com IA';
   else if (isLogoCropware && headerSpan) headerSpan.textContent = 'Logo Cropware — Gerar Capa';
   else if (isFeature && isCarousel && headerSpan) headerSpan.textContent = 'Funcionalidades — Gerar Carrossel';
@@ -17118,6 +17161,7 @@ function openGenerator() {
   else if (isNews && headerSpan) headerSpan.textContent = 'Post Notícia';
   const genBtn = document.getElementById('genBtn');
   if (genBtn) genBtn.textContent = isCarousel ? 'Gerar Carrossel' : 'Gerar Post';
+  if (genBtn && isMotionReel) genBtn.textContent = 'Gerar Reel';
   if (genBtn && isAds && !isCarousel) genBtn.textContent = 'Gerar Anuncio';
   if (genBtn && isAds && isCarousel) genBtn.textContent = 'Gerar Carrossel de Anuncios';
   if (genBtn && isLogoCropware) genBtn.textContent = 'Gerar Logo';
@@ -17131,6 +17175,7 @@ function openGenerator() {
   const themeInput = document.getElementById('genTheme');
   if (themeLabel) {
     if (isWeather) themeLabel.textContent = 'Local da previsão';
+    else if (isMotionReel) themeLabel.textContent = 'Tema / Contexto do Reel';
     else if (isLogoCropware) themeLabel.textContent = 'Destaque / Uso do Logo';
     else if (isFeature) themeLabel.textContent = 'Tema / Cultura / Contexto (opcional)';
     else if (isOpinion) themeLabel.textContent = 'Tema da análise';
@@ -17140,6 +17185,8 @@ function openGenerator() {
   }
   if (themeInput) themeInput.placeholder = isWeather
     ? 'Ex: Rio Verde, GO; Triângulo Mineiro; Sudoeste Goiano; Goiás; MT; MS...'
+    : isMotionReel
+    ? 'Ex: milho safrinha, NDVI em soja, previsão climática para tomada de decisão...'
     : isLogoCropware
     ? 'Ex: funcionalidades, previsão do tempo, NDVI, análises, agenda, relatórios...'
     : isFeature
@@ -17152,8 +17199,21 @@ function openGenerator() {
   const featureGroup = document.getElementById('genFeatureGroup');
   if (featureGroup) featureGroup.style.display = isFeature ? '' : 'none';
   if (isFeature) populateFeatureSelect();
+  const chipsGroup = document.getElementById('genChips');
+  if (chipsGroup) chipsGroup.style.display = isMotionReel ? 'none' : '';
   const imageGroup = document.getElementById('genImageGroup');
-  if (imageGroup) imageGroup.style.display = isLogoCropware ? 'none' : '';
+  if (imageGroup) imageGroup.style.display = (isLogoCropware || isMotionReel) ? 'none' : '';
+  if (isMotionReel) {
+    genImageBase64 = null;
+    genImageMime = 'image/jpeg';
+    const fileInput = document.getElementById('genImageInput');
+    if (fileInput) fileInput.value = '';
+    const preview = document.getElementById('genPreview');
+    if (preview) {
+      preview.src = '';
+      preview.style.display = 'none';
+    }
+  }
   const weatherContextGroup = document.getElementById('genWeatherContextGroup');
   if (weatherContextGroup) weatherContextGroup.style.display = isWeather ? '' : 'none';
   const slideCountGroup = document.getElementById('genSlideCountGroup');
@@ -21447,19 +21507,60 @@ function setGenStatus(msg, type) {
   el.className = 'gen-status' + (type ? ' ' + type : '');
 }
 
+let _downloadLoadingStartedAt = 0;
+let _downloadLoadingTimer = null;
+
+function _formatElapsed(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const min = Math.floor(total / 60);
+  const sec = total % 60;
+  return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+}
+
 // Modal de loading para downloads pesados (ZIP, PDF). Mostra spinner + mensagem.
-function showDownloadLoading(msg) {
+function showDownloadLoading(msg, opts = {}) {
   const modal = document.getElementById('downloadLoading');
   const msgEl = document.getElementById('downloadLoadingMsg');
+  const progressWrap = document.getElementById('downloadLoadingProgress');
+  const progressBar = document.getElementById('downloadLoadingProgressBar');
+  const pctEl = document.getElementById('downloadLoadingPct');
+  const elapsedEl = document.getElementById('downloadLoadingElapsed');
+  const detailEl = document.getElementById('downloadLoadingDetail');
   if (msgEl) msgEl.textContent = msg || 'Preparando download...';
+  if (progressWrap) progressWrap.hidden = opts.progress == null;
+  if (progressBar) progressBar.style.width = `${Math.max(0, Math.min(100, opts.progress || 0))}%`;
+  if (pctEl) pctEl.textContent = opts.progress == null ? '' : `${Math.round(opts.progress)}%`;
+  if (detailEl) detailEl.textContent = opts.detail || '';
+  _downloadLoadingStartedAt = Date.now();
+  if (_downloadLoadingTimer) clearInterval(_downloadLoadingTimer);
+  if (elapsedEl) elapsedEl.textContent = '00:00';
+  _downloadLoadingTimer = setInterval(() => {
+    const el = document.getElementById('downloadLoadingElapsed');
+    if (el) el.textContent = _formatElapsed(Date.now() - _downloadLoadingStartedAt);
+  }, 1000);
   if (modal) modal.hidden = false;
 }
-function setDownloadProgress(msg) {
+function setDownloadProgress(msg, opts = {}) {
   const msgEl = document.getElementById('downloadLoadingMsg');
+  const progressWrap = document.getElementById('downloadLoadingProgress');
+  const progressBar = document.getElementById('downloadLoadingProgressBar');
+  const pctEl = document.getElementById('downloadLoadingPct');
+  const detailEl = document.getElementById('downloadLoadingDetail');
   if (msgEl) msgEl.textContent = msg;
+  if (opts.progress != null) {
+    const pct = Math.max(0, Math.min(100, Number(opts.progress) || 0));
+    if (progressWrap) progressWrap.hidden = false;
+    if (progressBar) progressBar.style.width = `${pct}%`;
+    if (pctEl) pctEl.textContent = `${Math.round(pct)}%`;
+  }
+  if (detailEl && opts.detail != null) detailEl.textContent = opts.detail || '';
 }
 function hideDownloadLoading() {
   const modal = document.getElementById('downloadLoading');
+  if (_downloadLoadingTimer) {
+    clearInterval(_downloadLoadingTimer);
+    _downloadLoadingTimer = null;
+  }
   if (modal) modal.hidden = true;
 }
 
@@ -21576,6 +21677,11 @@ function scaleMotionReel() { /* layout 100% via CSS agora */ }
 // Persistido só em memória; default = 'player'.
 let _motionReelView = 'player';
 
+function getActiveMotionReelConfig() {
+  const reel = motionReels[currentMotionReel];
+  return (reel && reel.config) || null;
+}
+
 // Troca view e atualiza UI: data-view do stage + classe active dos botões
 // + chama o módulo bundled (window.setMotionReelView).
 function setMotionReelViewMode(mode) {
@@ -21611,7 +21717,8 @@ window.onMotionReelScenePreview = function(sceneId) {
 // derivado com só essa cena (start=0, sem transitionIn) pra loop limpo.
 let _mrPreviewMounted = false;
 function openMotionReelScenePreview(sceneId) {
-  const cfg = (motionReels[currentMotionReel] && motionReels[currentMotionReel].config) || MOTION_REEL_CONFIG;
+  const cfg = getActiveMotionReelConfig();
+  if (!cfg) return;
   const scene = (cfg.scenes || []).find(s => s.id === sceneId);
   if (!scene) return;
   const dur = Math.max(1.0, (scene.end || 0) - (scene.start || 0));
@@ -21656,7 +21763,11 @@ let _mrSceneEditingId = null;
 
 // Abre o modal de edição da cena. Carrega meta info e zera o prompt.
 function openMotionReelSceneEditor(sceneId) {
-  const cfg = (motionReels[currentMotionReel] && motionReels[currentMotionReel].config) || MOTION_REEL_CONFIG;
+  const cfg = getActiveMotionReelConfig();
+  if (!cfg) {
+    setGenStatus('<i class="ph ph-warning"></i>Nenhum reel ativo para editar.', 'error');
+    return;
+  }
   const scene = (cfg.scenes || []).find(s => s.id === sceneId);
   if (!scene) {
     setGenStatus(`<i class="ph ph-warning"></i>Cena ${sceneId} não encontrada.`, 'error');
@@ -21691,7 +21802,11 @@ async function submitMotionReelSceneEdit() {
     return;
   }
   const reel = motionReels[currentMotionReel];
-  const cfg = (reel && reel.config) || MOTION_REEL_CONFIG;
+  const cfg = getActiveMotionReelConfig();
+  if (!cfg) {
+    setMrEditStatus('Nenhum reel ativo para editar.', 'error');
+    return;
+  }
   const sceneIdx = (cfg.scenes || []).findIndex(s => s.id === _mrSceneEditingId);
   if (sceneIdx < 0) {
     setMrEditStatus('Cena não encontrada no storyboard ativo.', 'error');
@@ -21717,6 +21832,10 @@ async function submitMotionReelSceneEdit() {
       type: originalScene.type,
       locked: originalScene.locked,
     };
+    if (merged.type === 'keyword') {
+      merged.icon = mrResolveKeywordAnimatedIcon(merged.icon, merged.word, merged.theme || cfg.theme);
+    }
+    mrSanitizeTransitionAudio(merged);
     // Mantém referência ao objeto config (in-place update).
     cfg.scenes[sceneIdx] = merged;
     // Se for o reel da sidebar, atualiza o objeto também.
@@ -21780,7 +21899,8 @@ function applyMrSceneTheme(themeName) {
   const validThemes = new Set(['editorial', 'vibrante', 'claro']);
   if (!validThemes.has(themeName)) return;
   const reel = motionReels[currentMotionReel];
-  const cfg = (reel && reel.config) || MOTION_REEL_CONFIG;
+  const cfg = getActiveMotionReelConfig();
+  if (!cfg) return;
   const idx = (cfg.scenes || []).findIndex(s => s.id === _mrSceneEditingId);
   if (idx < 0) return;
   const before = JSON.parse(JSON.stringify(cfg.scenes[idx]));
@@ -21806,7 +21926,8 @@ function undoLastMrSceneEdit() {
   const stack = reel._undoStack[_mrSceneEditingId];
   if (!stack.length) return;
   const snap = stack.pop();
-  const cfg = (reel && reel.config) || MOTION_REEL_CONFIG;
+  const cfg = getActiveMotionReelConfig();
+  if (!cfg) return;
   const idx = (cfg.scenes || []).findIndex(s => s.id === _mrSceneEditingId);
   if (idx < 0 || !snap) return;
   cfg.scenes[idx] = snap;
@@ -21835,11 +21956,13 @@ REGRAS DURAS:
    "var(--mr-greenBright)" "var(--mr-greenAccent)" "var(--mr-greenDeep)" "var(--mr-greenForest)" "var(--mr-greenAbyss)"
    "var(--mr-slateLight)" "var(--mr-slateMid)" "var(--mr-slateDark)" "var(--mr-slateAbyss)"
    "var(--mr-white)" "var(--mr-cream)" "var(--mr-fog)" "var(--mr-amber)" "var(--mr-azure)"
-4. Transições válidas: cut · fade · wipe-up · wipe-down · push-up · push-left · mask-circle · flash · zoom-blur · light-leak · cinematic-blur · ring-tunnel · glitch · slide-radial
-5. SFX válidos: whoosh · whip · click · ding · shutter · vine-boom · impact · riser · pop · notification · reveal · cut · page-turn · switch · xp-error · bruh
+4. Transições válidas: cut · fade · wipe-up · wipe-down · push-up · push-left · mask-circle · flash · zoom-blur · light-leak · cinematic-blur · ring-tunnel · glitch · slide-radial · glass-frost · iris-square · drift-fade · light-streak
+5. SFX válidos: whoosh-soft · whoosh-fast-cinematic · whoosh-deep · impact-deep-cinematic · impact-snap-dry · impact-thud · ambient-wind-soft · ambient-field-nature · leaf-rustle · paper-turn · wood-crack-soft · ui-tap-soft · ui-confirm-modern · digital-beep-clean · whoosh · whip · click · ding · shutter · impact · riser · pop · notification · reveal · cut · page-turn · switch
+   Use poucos SFX e sempre discretos. sfxOffset é relativo ao MEIO da transição: -0.2 antecipa, +0.1 atrasa. Se usar sfxVolume, mantenha entre 0.05 e 0.16.
 6. Backgrounds: { type: "solid" } OU { type: "gradient", gradient: {...} } OU { type: "texture", texture: {...} }
 7. Overlays válidos: rotating-rings · pulse-circle · particle-drift · line-draw · curve-trace · light-streak · vignette-breath
 8. Ícones (feature-list items): use Iconify (twemoji:* ou noto:*) — exemplos: twemoji:satellite, twemoji:seedling, twemoji:ear-of-corn
+9. Se a cena for "keyword", o campo icon deve ser animado. Use APENAS: animatedicons:sustainability, line-md:speed-loop, line-md:speedometer-loop, line-md:confirm, line-md:check-all, line-md:arrow-up-circle, line-md:lightbulb, line-md:map-marker-loop, line-md:my-location-loop, line-md:bell-alert-loop, line-md:document-report, line-md:phone-call-loop, line-md:cog-loop, line-md:star-pulsating-loop, meteocons:pollen-grass-fill, meteocons:pollen-tree-fill, meteocons:clear-day-fill, meteocons:partly-cloudy-day-fill, meteocons:raindrops-fill, meteocons:thermometer-sun-fill, meteocons:wind-fill. NUNCA use twemoji:* ou noto:* em keyword.
 
 CENA ATUAL:
 ${JSON.stringify(scene, null, 2)}
@@ -21891,18 +22014,41 @@ function updateMotionReelVisibility() {
     if (postScaler) postScaler.style.display = 'none';
     if (slideNav) slideNav.style.display = 'none';
     if (legendOpenRow) legendOpenRow.style.display = 'none';
+    const hasActiveReel = !!getActiveMotionReelConfig();
+    const emptyEl = document.getElementById('emptyState');
+    if (!hasActiveReel) {
+      if (typeof window.unmountMotionReelPlayer === 'function') {
+        window.unmountMotionReelPlayer();
+      }
+      if (scaler) scaler.hidden = true;
+      if (emptyEl) {
+        emptyEl.innerHTML = `
+          <div class="empty-state-title">Nenhum reel gerado ainda</div>
+          <div class="empty-state-sub">Use Ações → Gerar Reel para criar o primeiro Motion Reel. A grade aparece só para reels salvos.</div>
+        `;
+        emptyEl.classList.add('visible');
+        emptyEl.setAttribute('aria-hidden', 'false');
+      }
+      const dlBtn = document.getElementById('downloadBtn');
+      if (dlBtn) dlBtn.style.display = 'none';
+      return;
+    }
+    if (emptyEl) {
+      emptyEl.classList.remove('visible');
+      emptyEl.setAttribute('aria-hidden', 'true');
+    }
     if (scaler) {
       scaler.hidden = false;
       scaleMotionReel();
       // Pinta o palco via Remotion Player. Se o módulo bundled pelo Vite ainda
       // não terminou de baixar, aguarda um tick e tenta de novo.
-      const sb = (motionReels[currentMotionReel] && motionReels[currentMotionReel].config) || MOTION_REEL_CONFIG;
+      const sb = getActiveMotionReelConfig();
       if (stage && typeof window.mountMotionReelPlayer === 'function') {
         window.mountMotionReelPlayer(stage, sb);
       } else if (stage) {
         const _waitForMount = () => {
           if (typeof window.mountMotionReelPlayer === 'function') {
-            window.mountMotionReelPlayer(stage, sb);
+            window.mountMotionReelPlayer(stage, getActiveMotionReelConfig());
           } else {
             setTimeout(_waitForMount, 80);
           }
@@ -21910,8 +22056,7 @@ function updateMotionReelVisibility() {
         _waitForMount();
       }
     }
-    // Mostra o botão "Baixar MP4" sempre em motion-reel mode (o default
-    // storyboard já é válido pra renderizar mesmo sem reel customizado).
+    // Mostra o botão "Baixar MP4" só quando existe reel gerado ativo.
     const dlBtn = document.getElementById('downloadBtn');
     if (dlBtn) dlBtn.style.display = 'flex';
   } else {
@@ -21980,7 +22125,9 @@ TIPOS DE CENA (escolha o tipo certo pra cada momento — não repita mesmo tipo 
    REGRA DURA do word: APENAS UMA palavra (sem espaços), máx 12 chars, SEM PONTUAÇÃO no final (nem ponto, nem !, nem ?). Deve ser um adjetivo ou substantivo de impacto.
    Ex válidos: "Rápido", "Preciso", "Conectado", "Decisão", "Inteligente"
    Ex INVÁLIDOS: "Rápido.", "Mais rápido" (2 palavras), "Rápido!", "Cropware é rápido" (frase)
-   Exemplos de icon por palavra: "Rápido"→"line-md:speed-loop", "Confiável"→"line-md:confirm", "Preciso"→"line-md:check-all", "Direto"→"line-md:arrow-up-circle", "Inteligente"→"line-md:lightbulb", "Conectado"→"line-md:map-marker-loop".
+   REGRA DURA do icon: use APENAS ícones animados da lista abaixo. Nunca use twemoji:* ou noto:* em keyword; esses são estáticos e ficam reservados ao feature-list.
+   Lista segura: "animatedicons:sustainability", "line-md:speed-loop", "line-md:speedometer-loop", "line-md:confirm", "line-md:check-all", "line-md:arrow-up-circle", "line-md:lightbulb", "line-md:map-marker-loop", "line-md:my-location-loop", "line-md:bell-alert-loop", "line-md:document-report", "line-md:phone-call-loop", "line-md:cog-loop", "line-md:star-pulsating-loop", "meteocons:pollen-grass-fill", "meteocons:pollen-tree-fill", "meteocons:clear-day-fill", "meteocons:partly-cloudy-day-fill", "meteocons:raindrops-fill", "meteocons:thermometer-sun-fill", "meteocons:wind-fill".
+   Exemplos de icon por palavra: "Rápido"→"line-md:speed-loop", "Confiável"→"line-md:confirm", "Preciso"→"line-md:check-all", "Direto"→"line-md:arrow-up-circle", "Inteligente"→"line-md:lightbulb", "Conectado"→"line-md:map-marker-loop", "Safra"→"animatedicons:sustainability", "Clima"→"meteocons:partly-cloudy-day-fill".
 • "headline" — frase-hook editorial grande (estilo poster de filme). Usada no slot 02 logo após o intro pra preparar o tema. Visual já é hardcoded (imagem + Ken Burns + glass slate); IA preenche apenas o copy. Props: kicker (curto, MAIÚSCULA, 1-2 palavras tipo "VISÃO COMPLETA"), headline (1-2 frases curtas, MÁX 50-70 caracteres totais, tipo "Veja sua lavoura como nunca antes." pra NDVI ou "Antecipe o que vem do céu." pra clima). NÃO inventar números ou estatísticas — é uma frase de POSICIONAMENTO, não um dado.
 • "quote" — citação de alguém (cliente, fundador, agrônomo). Props: text (frase 50-90 char), author (curto, ex "Cliente Cropware · MT").
 • "feature-list" — título + 3-4 itens com ícone colorido. Use quando o tema permite enumerar partes/etapas/benefícios. Visual hardcoded (light theme — fundo branco/fog + cards brancos com ícone + texto). Props: kicker, title (curto, máx 4 palavras), items: array de 3-4 objetos { "text": "...", "icon": "set:name" }.
@@ -22064,7 +22211,7 @@ Durações: 0.3s a 0.6s (1.0s para light-leak, 0.6-0.8s para cinematic-blur, 0.5
 EASINGS válidos: "in-out-quart", "out-quint", "out-quart", "in-out-cubic", "out-expo", "in-out-expo".
 
 PROPS EXTRAS POR TIPO:
-  - light-leak: seed (0-9), hueShift (0=dourado, 110-120=verde Cropware, 240=azul) — SEMPRE use hueShift >= 100 pra ficar verde, evite tons laranja
+  - light-leak: legacy-safe; a engine renderiza como drift-fade discreto. NUNCA use roxo/magenta/violeta.
   - ring-tunnel: color (default verde Cropware)
   - slide-radial: origin ("top-left"|"top-right"|"bottom-left"|"bottom-right"|"center")
   - flash: color (default branco) — EVITE flash, prefere cinematic-blur ou fade que são mais calmos
@@ -22077,7 +22224,10 @@ NOVAS R13 (descrição):
 
 SFX NAS TRANSIÇÕES (opcional, catálogo expandido R16):
   Adicione "sfx" no objeto transitionIn pra disparar efeito sonoro no boundary.
-  Use com PARCIMÔNIA — máximo 3-4 SFX no reel todo (excesso vira ruído).
+  Use com PARCIMÔNIA — máximo 3 SFX no reel todo (excesso vira ruído).
+  Eles devem ficar como textura, abaixo da música e da narração. O motor já
+  aplica volume baixo por default; só use "sfxVolume" em casos especiais,
+  entre 0.05 e 0.16. Nunca use volume acima de 0.16.
 
   CATÁLOGO POR CATEGORIA (escolha pelo SENTIDO, não pelo nome):
 
@@ -22112,28 +22262,28 @@ SFX NAS TRANSIÇÕES (opcional, catálogo expandido R16):
 
   PAREAMENTOS RECOMENDADOS (R16):
     brand-intro    → SEM SFX (já tem ritmo próprio)
-    headline       → "paper-turn" ou "whoosh-soft"
+    headline       → "paper-turn" ou "whoosh-soft" se precisar de entrada discreta
     keyword        → "impact-snap-dry" (reveal seco)
-    chapter        → "impact-snap-dry" ou "paper-turn"
-    feature-list   → "whoosh-soft" + (cards aparecem no stagger interno, sem SFX)
+    chapter        → SEM SFX na maioria dos casos
+    feature-list   → normalmente SEM SFX (cards aparecem no stagger interno)
     scenario       → "ambient-wind-soft" com sfxOffset -0.3 (atmosfera)
-    app-card       → "ui-tap-soft"
+    app-card       → "ui-tap-soft" somente se o mockup for o foco
     whatsapp-chat  → "ui-confirm-modern" ou "ui-tap-soft"
-    quote          → "leaf-rustle" (orgânico) ou SEM SFX
-    lower-third    → "ui-confirm-modern"
-    end-card       → "impact-thud" (peso final) ou "digital-beep-clean"
+    quote          → SEM SFX
+    lower-third    → SEM SFX
+    end-card       → "impact-thud" com sfxVolume 0.09 ou "digital-beep-clean"
 
-  Ex: "transitionIn": { "type": "cinematic-blur", "dur": 0.5, "sfx": "impact-deep-cinematic" }
+  Ex: "transitionIn": { "type": "cinematic-blur", "dur": 0.5, "sfx": "impact-deep-cinematic", "sfxVolume": 0.1 }
 
   SFX OFFSET (sfxOffset — opcional, segundos):
   Por DEFAULT, o SFX dispara NO MEIO da transição (sincronizado com o pico
-  visual de cinematic-blur, ring-tunnel, light-streak). Override só quando
-  o som precisa de timing específico:
+  visual de cinematic-blur, ring-tunnel, light-streak). O sfxOffset é RELATIVO
+  a esse meio, não absoluto desde o início. Use só quando o som precisa de timing específico:
     - sfxOffset NEGATIVO (-0.2 a -0.4): antecipa o SFX pra construir tensão
       antes do pico visual. OBRIGATÓRIO pra ambient-* (sons longos).
     - sfxOffset POSITIVO (+0.1 a +0.3): atrasa o SFX pra bater no ataque
       visual final. Bom pra impacts/snaps secos.
-  Ex: "transitionIn": { "type": "drift-fade", "dur": 0.6, "sfx": "ambient-wind-soft", "sfxOffset": -0.3 }
+  Ex: "transitionIn": { "type": "drift-fade", "dur": 0.6, "sfx": "ambient-wind-soft", "sfxOffset": -0.3, "sfxVolume": 0.05 }
 
 VOICEOVER POR CENA (importante — leia tudo antes de gerar texto):
   Cada cena pode ter "voiceover": { "text": "frase falada por voz IA PT-BR" }.
@@ -22341,7 +22491,7 @@ EXEMPLO COMPLETO (storyboard minimal — pra você ver o formato esperado):
       "kicker": "VISÃO COMPLETA",
       "headline": "Veja sua lavoura como nunca antes.",
       "voiceover": { "text": "Veja cada talhão como nunca antes viu." },
-      "transitionIn": { "type": "wipe-up", "dur": 0.5, "easing": "in-out-quart", "sfx": "whoosh" } },
+      "transitionIn": { "type": "wipe-up", "dur": 0.5, "easing": "in-out-quart", "sfx": "whoosh-soft", "sfxVolume": 0.08 } },
     { "id": "features", "start": 11, "end": 18, "type": "feature-list",
       "kicker": "TUDO EM UM", "title": "Tudo na palma.",
       "items": [
@@ -22350,16 +22500,15 @@ EXEMPLO COMPLETO (storyboard minimal — pra você ver o formato esperado):
         { "text": "Histórico completo de safra", "icon": "twemoji:bar-chart" }
       ],
       "bg": "var(--mr-white)", "fg": "var(--mr-slateAbyss)",
-      "background": { "type": "gradient", "gradient": { "kind": "linear", "colors": ["var(--mr-white)", "var(--mr-fog)"], "angle": 180 } },
+      "background": { "type": "solid" },
       "voiceover": { "text": "Monitoramento, diagnóstico e histórico — tudo na sua mão." },
-      "overlays": [{ "type": "line-draw", "color": "var(--mr-greenAccent)", "preset": "corner-r", "thickness": 4, "delay": 0.6, "dur": 1.2 }],
       "transitionIn": { "type": "push-up", "dur": 0.5, "easing": "in-out-cubic" } },
     { "id": "end", "start": 18, "end": 22, "type": "end-card",
       "logoUrl": "logo-cropware-pb-final.svg", "tagline": "O agro é Cropware.", "handle": "@cropware.app",
       "bg": "var(--mr-slateAbyss)", "fg": "var(--mr-white)",
       "background": { "type": "gradient", "gradient": { "kind": "breathing-radial", "colors": ["var(--mr-greenAbyss)", "var(--mr-slateAbyss)"], "breathScale": 1.08 } },
       "voiceover": { "text": "Encontra a gente em arroba cropware ponto app." },
-      "transitionIn": { "type": "ring-tunnel", "dur": 0.7, "easing": "in-out-cubic", "sfx": "riser" } }
+      "transitionIn": { "type": "ring-tunnel", "dur": 0.7, "easing": "in-out-cubic", "sfx": "impact-thud", "sfxVolume": 0.09 } }
   ]
 }
 
@@ -22401,6 +22550,152 @@ async function callGeminiMotionReelStoryboard(theme, tone, duration) {
   const match = raw.match(/\{[\s\S]*\}/);
   if (!match) throw new Error('Motion Reel: Gemini não retornou JSON válido.');
   return JSON.parse(match[0]);
+}
+
+const MR_VALID_SFX_NAMES = new Set([
+  'whoosh-soft', 'whoosh-fast-cinematic', 'whoosh-deep',
+  'impact-deep-cinematic', 'impact-snap-dry', 'impact-thud',
+  'ambient-wind-soft', 'ambient-field-nature',
+  'leaf-rustle', 'paper-turn', 'wood-crack-soft',
+  'ui-tap-soft', 'ui-confirm-modern', 'digital-beep-clean',
+  'whoosh', 'whip', 'click', 'ding', 'shutter', 'shutter-old',
+  'impact', 'riser', 'pop', 'notification', 'reveal', 'cut',
+  'page-turn', 'switch', 'xp-error', 'bruh', 'vine-boom'
+]);
+
+function mrClampNumber(value, min, max, fallback = undefined) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.max(min, Math.min(max, n));
+}
+
+function mrSanitizeTransitionAudio(scene) {
+  const t = scene && scene.transitionIn;
+  if (!t || typeof t !== 'object') return;
+
+  if (t.sfx != null) {
+    if (typeof t.sfx !== 'string') {
+      delete t.sfx;
+    } else {
+      const clean = t.sfx.trim();
+      if (MR_VALID_SFX_NAMES.has(clean)) t.sfx = clean;
+      else delete t.sfx;
+    }
+  }
+
+  if (!t.sfx) {
+    delete t.sfxVolume;
+    delete t.sfxOffset;
+    return;
+  }
+
+  if (t.sfxVolume != null) {
+    const volume = mrClampNumber(t.sfxVolume, 0, 0.16);
+    if (volume == null) delete t.sfxVolume;
+    else t.sfxVolume = volume;
+  }
+
+  if (t.sfxOffset != null) {
+    const offset = mrClampNumber(t.sfxOffset, -0.45, 0.45);
+    if (offset == null) delete t.sfxOffset;
+    else t.sfxOffset = offset;
+  }
+}
+
+const MR_KEYWORD_ANIMATED_ICON_FALLBACK = 'line-md:speed-loop';
+const MR_KEYWORD_ANIMATED_ICONS = new Set([
+  'animatedicons:sustainability',
+  'line-md:speed-loop',
+  'line-md:speedometer-loop',
+  'line-md:confirm',
+  'line-md:confirm-circle',
+  'line-md:check-all',
+  'line-md:arrow-up-circle',
+  'line-md:lightbulb',
+  'line-md:map-marker-loop',
+  'line-md:map-marker-multiple-loop',
+  'line-md:my-location-loop',
+  'line-md:compass-loop',
+  'line-md:cloud-alt-loop',
+  'line-md:bell-loop',
+  'line-md:bell-alert-loop',
+  'line-md:alert-loop',
+  'line-md:document-report',
+  'line-md:phone-call-loop',
+  'line-md:cog-loop',
+  'line-md:loading-twotone-loop',
+  'line-md:sunny-filled-loop',
+  'line-md:sun-rising-filled-loop',
+  'line-md:weather-cloudy-loop',
+  'line-md:watch-loop',
+  'line-md:download-loop',
+  'line-md:upload-loop',
+  'line-md:star-pulsating-loop',
+  'meteocons:pollen-grass-fill',
+  'meteocons:pollen-tree-fill',
+  'meteocons:clear-day-fill',
+  'meteocons:partly-cloudy-day-fill',
+  'meteocons:raindrops-fill',
+  'meteocons:thermometer-sun-fill',
+  'meteocons:wind-fill',
+  'meteocons:barometer-fill',
+  'meteocons:humidity-fill',
+]);
+const MR_KEYWORD_STATIC_ICON_MAP = {
+  'twemoji:ear-of-corn': 'animatedicons:sustainability',
+  'twemoji:seedling': 'animatedicons:sustainability',
+  'twemoji:sheaf-of-rice': 'animatedicons:sustainability',
+  'twemoji:deciduous-tree': 'meteocons:pollen-tree-fill',
+  'twemoji:sun': 'meteocons:clear-day-fill',
+  'twemoji:sun-behind-cloud': 'meteocons:partly-cloudy-day-fill',
+  'twemoji:cloud': 'line-md:weather-cloudy-loop',
+  'twemoji:droplet': 'meteocons:raindrops-fill',
+  'twemoji:satellite': 'line-md:my-location-loop',
+  'twemoji:tractor': 'line-md:speedometer-loop',
+  'twemoji:bar-chart': 'line-md:document-report',
+  'twemoji:gear': 'line-md:cog-loop',
+  'twemoji:mobile-phone': 'line-md:phone-call-loop',
+  'twemoji:rocket': 'line-md:arrow-up-circle',
+  'twemoji:warning': 'line-md:alert-loop',
+  'twemoji:check-mark-button': 'line-md:confirm',
+  'noto:ear-of-corn': 'animatedicons:sustainability',
+  'noto:seedling': 'animatedicons:sustainability',
+  'noto:sun': 'meteocons:clear-day-fill',
+  'noto:droplet': 'meteocons:raindrops-fill',
+  'noto:satellite': 'line-md:my-location-loop',
+  'noto:bar-chart': 'line-md:document-report',
+};
+const MR_KEYWORD_ICON_RULES = [
+  [['milho', 'safrinha', 'safra', 'colheita', 'plantio', 'semente', 'semeadura', 'soja', 'lavoura', 'campo', 'talhao', 'grao', 'produtiv', 'fertil', 'solo'], 'animatedicons:sustainability'],
+  [['chuva', 'agua', 'irrig', 'umidade', 'hidric'], 'meteocons:raindrops-fill'],
+  [['clima', 'previsao', 'nuvem'], 'meteocons:partly-cloudy-day-fill'],
+  [['sol', 'calor', 'temperatura', 'verao'], 'meteocons:thermometer-sun-fill'],
+  [['vento', 'pulveriz', 'deriva'], 'meteocons:wind-fill'],
+  [['mapa', 'gps', 'local', 'satellite', 'satelite', 'ndvi', 'monitor', 'talhoes'], 'line-md:my-location-loop'],
+  [['alerta', 'risco', 'praga', 'doenca', 'atencao'], 'line-md:bell-alert-loop'],
+  [['rapido', 'veloz', 'agil', 'tempo', 'instant'], 'line-md:speed-loop'],
+  [['preciso', 'precisao', 'exato', 'confiavel', 'seguro'], 'line-md:confirm'],
+  [['inteligente', 'inteligencia', 'artificial', 'ai', 'analise', 'diagnost'], 'line-md:lightbulb'],
+  [['historico', 'relatorio', 'dados', 'registro'], 'line-md:document-report'],
+  [['app', 'celular', 'mobile', 'whatsapp'], 'line-md:phone-call-loop'],
+  [['prosperar', 'resultado', 'ganho', 'lucro', 'evoluir'], 'line-md:star-pulsating-loop'],
+];
+function mrNormalizeKeywordIconText(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
+function mrResolveKeywordAnimatedIcon(icon, word, theme) {
+  const rawIcon = typeof icon === 'string' ? icon.trim().toLowerCase() : '';
+  if (MR_KEYWORD_ANIMATED_ICONS.has(rawIcon)) return rawIcon;
+  if (MR_KEYWORD_STATIC_ICON_MAP[rawIcon]) return MR_KEYWORD_STATIC_ICON_MAP[rawIcon];
+
+  const haystack = mrNormalizeKeywordIconText([word, icon, theme].filter(Boolean).join(' '));
+  for (const [needles, resolvedIcon] of MR_KEYWORD_ICON_RULES) {
+    if (needles.some(needle => haystack.includes(needle))) return resolvedIcon;
+  }
+  return MR_KEYWORD_ANIMATED_ICON_FALLBACK;
 }
 
 // Valida e normaliza o storyboard vindo da IA. Garante consistência de
@@ -22473,10 +22768,14 @@ function mrValidateStoryboard(parsed, targetDuration) {
     }
     // R16: scene.theme só persiste se for um dos 3 válidos.
     if (s.theme && !validThemes.has(s.theme)) delete s.theme;
-    // Sanitiza SFX em transitionIn — só nomes string.
-    if (s.transitionIn && s.transitionIn.sfx && typeof s.transitionIn.sfx !== 'string') {
-      delete s.transitionIn.sfx;
+    // Keyword aceita apenas ícones animados. Isso também migra storyboards
+    // antigos em que a IA salvou twemoji/noto estático (ex: milho).
+    if (s.type === 'keyword') {
+      s.icon = mrResolveKeywordAnimatedIcon(s.icon, s.word, s.theme || parsed.theme);
     }
+    // Sanitiza SFX em transitionIn — nomes conhecidos, volume discreto e
+    // offset curto relativo ao meio da transição.
+    mrSanitizeTransitionAudio(s);
     // R12: normaliza `locked` pra boolean (default false).
     s.locked = s.locked === true;
   });
@@ -22668,7 +22967,7 @@ async function generateMotionReel() {
 async function downloadMotionReelMP4() {
   closeActionsMenu();
   const reel = motionReels[currentMotionReel];
-  const cfg = (reel && reel.config) || MOTION_REEL_CONFIG;
+  const cfg = getActiveMotionReelConfig();
   if (!cfg || !cfg.scenes || !cfg.scenes.length) {
     setGenStatus('<i class="ph ph-warning sz-18" style="margin-right:6px"></i>Nenhum reel ativo pra baixar.', 'error');
     return;
@@ -22693,44 +22992,68 @@ async function downloadMotionReelMP4() {
   const cfgForRender = (!cfg.audio && defaultAudio) ? { ...cfg, audio: defaultAudio } : cfg;
   try {
     const userId = (currentUser && currentUser.id) || 'anon';
+    showDownloadLoading(
+      hasVoiceover ? 'Gerando narração e preparando render...' : 'Preparando render do MP4...',
+      { progress: 2, detail: 'Não feche esta aba.' }
+    );
     const resp = await fetch('/api/render-reel', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ storyboard: cfgForRender, reelId, userId }),
+      body: JSON.stringify({ storyboard: cfgForRender, reelId, userId, progress: true }),
     });
     if (!resp.ok) {
       let detail = '';
       try { detail = (await resp.json()).error || ''; } catch { detail = await resp.text(); }
       throw new Error(`HTTP ${resp.status}: ${detail || resp.statusText}`);
     }
-    // R15: middleware retorna JSON { url, sizeMb } se MP4 subiu pro R2.
-    // Fallback: streaming binário (video/mp4) — backward compat.
+
     const ct = resp.headers.get('Content-Type') || '';
-    let downloadUrl, sizeMb, isObjectUrl = false;
-    if (ct.includes('application/json')) {
-      const { url, sizeMb: sz } = await resp.json();
-      if (!url) throw new Error('Resposta sem URL.');
-      downloadUrl = url;
-      sizeMb = sz;
-    } else {
-      const blob = await resp.blob();
-      if (!blob.size) throw new Error('MP4 vazio.');
-      downloadUrl = URL.createObjectURL(blob);
-      isObjectUrl = true;
-      sizeMb = blob.size / 1024 / 1024;
+    if (!ct.includes('application/x-ndjson')) {
+      throw new Error(`Resposta inesperada do render: ${ct || 'sem content-type'}`);
     }
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let donePayload = null;
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        const event = JSON.parse(line);
+        if (event.type === 'error') {
+          throw new Error(event.detail || event.message || 'Render falhou.');
+        }
+        if (event.type === 'done') {
+          donePayload = event;
+          setDownloadProgress(event.message || 'MP4 pronto.', { progress: 100, detail: `${event.sizeMb?.toFixed ? event.sizeMb.toFixed(2) : event.sizeMb} MB` });
+          continue;
+        }
+        setDownloadProgress(event.message || 'Processando...', {
+          progress: event.progress,
+          detail: event.detail || (event.framesTotal ? `${event.framesDone}/${event.framesTotal} frames` : ''),
+        });
+      }
+    }
+    if (!donePayload || !donePayload.url) throw new Error('Render terminou sem URL de download.');
+
+    const downloadUrl = donePayload.url;
+    const sizeMb = Number(donePayload.sizeMb || 0);
     const a = document.createElement('a');
     a.href = downloadUrl;
     a.download = `${reelId}.mp4`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    if (isObjectUrl) setTimeout(() => URL.revokeObjectURL(downloadUrl), 60_000);
-    setGenStatus(`<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>MP4 baixado: ${reelId}.mp4 (${sizeMb.toFixed(2)} MB).`, 'success');
+    setGenStatus(`<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>MP4 pronto: ${reelId}.mp4 (${sizeMb.toFixed(2)} MB).`, 'success');
   } catch (err) {
     console.error('[MotionReel] Falha no render', err);
     setGenStatus(`<i class="ph ph-warning sz-18" style="margin-right:6px"></i>Falha: ${err.message || err}`, 'error');
   } finally {
+    hideDownloadLoading();
     if (dlBtn) {
       dlBtn.disabled = false;
       dlBtn.innerHTML = originalLabel;
@@ -22761,6 +23084,14 @@ window.closeMotionReelScenePreview = closeMotionReelScenePreview;
   <div class="download-loading-box">
     <div class="download-loading-spinner"></div>
     <div class="download-loading-msg" id="downloadLoadingMsg">Preparando download...</div>
+    <div class="download-loading-progress" id="downloadLoadingProgress" hidden>
+      <div class="download-loading-progress-bar" id="downloadLoadingProgressBar"></div>
+    </div>
+    <div class="download-loading-meta">
+      <span id="downloadLoadingPct"></span>
+      <span id="downloadLoadingElapsed">00:00</span>
+    </div>
+    <div class="download-loading-detail" id="downloadLoadingDetail"></div>
   </div>
 </div>
 
@@ -22847,7 +23178,7 @@ window.closeMotionReelScenePreview = closeMotionReelScenePreview;
       </div>
       <div class="gen-group">
         <label>Editar conteúdo com IA</label>
-        <textarea id="mrSceneEditPrompt" rows="3" placeholder="ex: Muda o headline pra falar de NDVI. Troca o ícone pra map-marker. Adiciona um overlay rotating-rings."
+        <textarea id="mrSceneEditPrompt" rows="3" placeholder="ex: Muda o headline pra falar de NDVI. Troca o ícone do keyword para um animado de mapa. Adiciona um overlay rotating-rings."
           style="width:100%;padding:11px 14px;border:1px solid #e2e8f0;border-radius:9px;font-size:14px;font-family:'Inter Tight',sans-serif;resize:vertical;min-height:80px;background:#f8fafc;color:#0f172a;"></textarea>
         <div style="font-size:11px;color:#80847F;margin-top:6px;line-height:1.4;">
           A IA mantém id/start/end/type intactos. Você pode mudar texto, cor, background, transição, overlays, voiceover.text e qualquer outro campo da cena.

@@ -6,7 +6,8 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, staticFile } from 'remotion';
 import { MR_FONTS } from '../theme.js';
 import { MR_THEMES } from '../themes.js';
-import { CharReveal, IconifyIcon, EASE } from '../helpers.jsx';
+import { CharReveal, IconifyIcon, LottieAsset, EASE } from '../helpers.jsx';
+import { resolveKeywordAnimatedIcon, resolveKeywordLottieSrc } from '../keyword-icons.js';
 
 const FALLBACK = MR_THEMES.editorial.perSlide.keyword;
 
@@ -18,6 +19,9 @@ export const Keyword = ({
   start, end,
 }) => {
   const T = theme || FALLBACK;
+  const resolvedIcon = resolveKeywordAnimatedIcon({ icon, word });
+  const lottieSrc = resolveKeywordLottieSrc(resolvedIcon);
+  const iconColor = T.iconColor || T.fg;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -83,7 +87,7 @@ export const Keyword = ({
         pointerEvents: 'none',
       }} />
 
-      {/* Camada 4: ícone Iconify single, animado */}
+      {/* Camada 4: ícone animado — Lottie curado ou Iconify animado */}
       <div style={{
         position: 'relative',
         zIndex: 2,
@@ -95,10 +99,14 @@ export const Keyword = ({
         opacity: iconOpacity,
         transform: `scale(${iconScale.toFixed(4)})`,
         transformOrigin: 'center',
-        filter: 'drop-shadow(0 10px 28px rgba(0,0,0,0.45))',
-        color: T.fg,
+        filter: T.iconFilter || 'drop-shadow(0 10px 28px rgba(0,0,0,0.45))',
+        color: iconColor,
       }}>
-        <IconifyIcon icon={icon} size={180} color={T.fg} />
+        {lottieSrc ? (
+          <LottieAsset src={lottieSrc} size={190} playbackRate={0.9} tint={iconColor} fillOpacity={0} />
+        ) : (
+          <IconifyIcon icon={resolvedIcon} size={180} color={iconColor} />
+        )}
       </div>
 
       {/* Camada 5: palavra Space Mono uppercase + underline (gap maior pra respiro) */}
@@ -119,8 +127,8 @@ export const Keyword = ({
           textTransform: 'uppercase',
           textAlign: 'center',
           maxWidth: 920,
-          color: T.fg,
-          textShadow: '0 6px 32px rgba(0,0,0,0.45)',
+          color: T.wordColor || T.fg,
+          textShadow: T.wordTextShadow || '0 6px 32px rgba(0,0,0,0.45)',
         }}>
           <CharReveal text={word || ''} delay={0.55} dur={0.4} stagger={0.032} ty={28} />
         </div>

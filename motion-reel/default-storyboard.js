@@ -59,17 +59,18 @@ export const MOTION_REEL_DEFAULT = {
       id: 'headline-1', start: 5.0, end: 10.0, type: 'headline',
       kicker: 'VISÃO COMPLETA',
       headline: 'Veja sua lavoura como nunca antes.',
-      transitionIn: { type: 'wipe-up', dur: 0.55, easing: 'in-out-quart', sfx: 'whoosh' },
+      transitionIn: { type: 'wipe-up', dur: 0.55, easing: 'in-out-quart' },
     },
     // ─────────────── 03 KW-1 (custom) ───────────────
-    // Visual fixo em Keyword.jsx (color block verde sólido + breathing radial).
-    // IA preenche só `word`.
+    // Visual fixo em Keyword.jsx (textura + Iconify animado + keyword).
+    // IA preenche `word` e opcionalmente `icon` dentro da lista animada.
     {
       id: 'kw-fast', start: 10.0, end: 14.0, type: 'keyword',
       word: 'Rápido',
+      icon: 'line-md:speed-loop',
       // Era flash branco rápido — quebrava a estética calma. Cinematic-blur
       // é uma transição suave de blur/zoom, fica em harmonia com o resto.
-      transitionIn: { type: 'cinematic-blur', dur: 0.55, easing: 'in-out-cubic', sfx: 'impact' },
+      transitionIn: { type: 'cinematic-blur', dur: 0.55, easing: 'in-out-cubic', sfx: 'impact-snap-dry', sfxOffset: 0.08, sfxVolume: 0.08 },
     },
     // ─────────────── 04 CHAPTER-1 (FIXA) ───────────────
     // Cena hardcoded em Chapter.jsx: imagem `conheca-produto-bg.webp`
@@ -79,9 +80,9 @@ export const MOTION_REEL_DEFAULT = {
       id: 'chapter-1', start: 14.0, end: 18.0, type: 'chapter',
       locked: true,
       chapterNumber: 2,
-      // hueShift 110 desloca o laranja natural do light-leak pra um verde
-      // que casa com a paleta Cropware. seed: 3 mantém a forma determinística.
-      transitionIn: { type: 'light-leak', dur: 1.0, seed: 3, hueShift: 110, sfx: 'page-turn' },
+      // light-leak é mantido como alias legado, mas renderiza como
+      // drift-fade discreto na engine pra nunca cair em magenta.
+      transitionIn: { type: 'light-leak', dur: 1.0 },
     },
     // ─────────────── 05 FEATURE-LIST (custom) ───────────────
     // Visual fixo em FeatureList.jsx (light theme, fundo branco/fog + cards
@@ -95,7 +96,7 @@ export const MOTION_REEL_DEFAULT = {
         { text: 'Diagnóstico direto em campo', icon: 'twemoji:seedling' },
         { text: 'Histórico completo de safra', icon: 'twemoji:bar-chart' },
       ],
-      transitionIn: { type: 'push-up', dur: 0.5, easing: 'in-out-cubic', sfx: 'whoosh' },
+      transitionIn: { type: 'push-up', dur: 0.5, easing: 'in-out-cubic' },
     },
     // ─────────────── 06 SCENARIO (custom) ───────────────
     // Mini-cenário narrativo (ex: "É manhã. Você abre o Cropware..."). Visual
@@ -105,7 +106,7 @@ export const MOTION_REEL_DEFAULT = {
       id: 'scenario-1', start: 24.0, end: 30.0, type: 'scenario',
       kicker: 'UMA MANHÃ QUALQUER',
       scenario: 'É manhã. Você abre o Cropware.\nEm segundos sabe o que precisa fazer hoje.',
-      transitionIn: { type: 'mask-circle', dur: 0.6, easing: 'in-out-expo', sfx: 'reveal' },
+      transitionIn: { type: 'mask-circle', dur: 0.6, easing: 'in-out-expo' },
     },
     // ─────────────── 07 CHAPTER-2 (FIXA) ───────────────
     // Cena hardcoded em Chapter.jsx via CHAPTER_CONFIGS[3].
@@ -113,7 +114,7 @@ export const MOTION_REEL_DEFAULT = {
       id: 'chapter-2', start: 30.0, end: 34.0, type: 'chapter',
       locked: true,
       chapterNumber: 3,
-      transitionIn: { type: 'cinematic-blur', dur: 0.6, easing: 'in-out-cubic', sfx: 'riser' },
+      transitionIn: { type: 'cinematic-blur', dur: 0.6, easing: 'in-out-cubic' },
     },
     // ─────────────── 08 APP-CARD (custom) ───────────────
     {
@@ -140,7 +141,7 @@ export const MOTION_REEL_DEFAULT = {
       overlays: [
         { type: 'rotating-rings', color: 'var(--mr-greenBright)', opacity: 0.15, count: 3, origin: 'top-right' },
       ],
-      transitionIn: { type: 'push-up', dur: 0.5, easing: 'in-out-cubic', sfx: 'whoosh' },
+      transitionIn: { type: 'push-up', dur: 0.5, easing: 'in-out-cubic' },
     },
     // ─────────────── 09 KW-DIRECT (custom) ───────────────
     {
@@ -153,7 +154,7 @@ export const MOTION_REEL_DEFAULT = {
         { from: 'user', text: 'O que pode estar acontecendo?' },
         { from: 'ai',   text: 'Padrão sugere falta de nitrogênio. Quer abrir um plano de adubação?' },
       ],
-      transitionIn: { type: 'zoom-blur', dur: 0.45, easing: 'out-quart', sfx: 'whip' },
+      transitionIn: { type: 'zoom-blur', dur: 0.45, easing: 'out-quart', sfx: 'ui-confirm-modern', sfxOffset: 0.06, sfxVolume: 0.07 },
     },
     // ─────────────── 10 QUOTE (FIXA) ───────────────
     // Cena hardcoded em Quote.jsx: imagem `og-bg.webp` (close folha com orvalho)
@@ -161,7 +162,7 @@ export const MOTION_REEL_DEFAULT = {
     {
       id: 'quote', start: 44.0, end: 50.0, type: 'quote',
       locked: true,
-      transitionIn: { type: 'wipe-down', dur: 0.5, easing: 'in-out-quart', sfx: 'switch' },
+      transitionIn: { type: 'wipe-down', dur: 0.5, easing: 'in-out-quart' },
     },
     // ─────────────── 11 LOWER-THIRD CTA (FIXA) ───────────────
     // Cena hardcoded em LowerThird.jsx: WhatsApp Lottie + "Fala com a gente" +
@@ -169,7 +170,7 @@ export const MOTION_REEL_DEFAULT = {
     {
       id: 'lower-third-cta', start: 50.0, end: 55.0, type: 'lower-third',
       locked: true,
-      transitionIn: { type: 'push-up', dur: 0.45, easing: 'in-out-cubic', sfx: 'pop' },
+      transitionIn: { type: 'push-up', dur: 0.45, easing: 'in-out-cubic' },
     },
     // ─────────────── 12 END-CARD (FIXA) ───────────────
     {
@@ -186,7 +187,7 @@ export const MOTION_REEL_DEFAULT = {
       overlays: [
         { type: 'pulse-circle', color: 'var(--mr-greenAccent)', opacity: 0.18 },
       ],
-      transitionIn: { type: 'fade', dur: 0.6, easing: 'in-out-cubic', sfx: 'notification' },
+      transitionIn: { type: 'fade', dur: 0.6, easing: 'in-out-cubic', sfx: 'impact-thud', sfxVolume: 0.09 },
     },
   ],
 };
