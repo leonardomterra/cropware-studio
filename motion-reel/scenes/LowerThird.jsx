@@ -4,7 +4,7 @@
 // Storyboard NÃO controla nada — tudo hardcoded.
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, staticFile } from 'remotion';
 import { MR_COLORS, MR_FONTS } from '../theme.js';
-import { EASE, LottieAsset } from '../helpers.jsx';
+import { EASE, LottieAsset, SceneTextureBackdrop } from '../helpers.jsx';
 
 const BG_IMAGE = 'sobre-equipe.webp';
 const TITLE = 'Fala com a gente.';
@@ -13,7 +13,7 @@ const SUBTITLE = 'Tire suas dúvidas no WhatsApp.';
 // Glass verde mais claro (greenAccent → greenForest → greenAbyss).
 const GREEN_TINT_LIGHT = 'linear-gradient(180deg, rgba(106,197,143,0.55) 0%, rgba(42,123,90,0.75) 55%, rgba(20,63,44,0.90) 100%)';
 
-export const LowerThird = ({ start, end, theme = {} }) => {
+export const LowerThird = ({ start, end, theme = {}, bgImage, bgImageBlur, bgOverlayOpacity, bgTexture, bgTextureOpacity, bgTextureInvert }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const durSec = Math.max(1, (end || 0) - (start || 0));
@@ -33,7 +33,7 @@ export const LowerThird = ({ start, end, theme = {} }) => {
   });
   // Blur permanente 8px + 14px adicionais na entrada — não depende de
   // backdrop-filter da glass layer (defensivo pra Thumbnail).
-  const imgBlur = 8 + (1 - enterP) * 14;
+  const imgBlur = (bgImageBlur != null ? bgImageBlur : 8) + (1 - enterP) * 14;
   const imgOpacity = enterP;
   const overlayP = interpolate(frame, [0, 0.5 * fps], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart,
@@ -60,9 +60,10 @@ export const LowerThird = ({ start, end, theme = {} }) => {
 
   return (
     <AbsoluteFill style={{ background: T.bg || MR_COLORS.greenAbyss, overflow: 'hidden' }}>
+      {!T.flat ? <>
       {/* Camada 1: imagem (equipe no campo) com Ken Burns + blur defensivo */}
       <AbsoluteFill style={{
-        backgroundImage: `url('${staticFile(T.bgImage || BG_IMAGE)}')`,
+        backgroundImage: `url('${staticFile(bgImage || T.bgImage || BG_IMAGE)}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         transform: `scale(${imgScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
@@ -76,8 +77,18 @@ export const LowerThird = ({ start, end, theme = {} }) => {
         backdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(150%)`,
         WebkitBackdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(150%)`,
         background: T.glassTint || GREEN_TINT_LIGHT,
-        opacity: overlayP,
+        opacity: overlayP * (bgOverlayOpacity != null ? bgOverlayOpacity : 1),
       }} />
+
+      {/* Camada 2.5: textura overlay do pool (opcional). zoom mais dramático
+          aqui pra dar movimento perceptível no slide CTA. */}
+      <SceneTextureBackdrop
+        src={bgTexture || T.bgTexture}
+        durSec={durSec}
+        opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.22}
+        invert={bgTextureInvert !== false}
+        zoomRange={[1.05, 1.45]}
+      />
 
       {/* Camada 3: top sheen */}
       <AbsoluteFill style={{
@@ -99,6 +110,7 @@ export const LowerThird = ({ start, end, theme = {} }) => {
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
+      </> : null}
 
       {/* Camada 6: conteúdo centralizado — Lottie ACIMA do card, ambos no centro */}
       <div style={{
@@ -123,7 +135,7 @@ export const LowerThird = ({ start, end, theme = {} }) => {
           opacity: lottieIn,
           transform: `scale(${lottieScale.toFixed(4)})`,
           transformOrigin: 'center',
-          filter: 'drop-shadow(0 20px 48px rgba(0,0,0,0.6))',
+          filter: T.flat ? 'none' : 'drop-shadow(0 20px 48px rgba(0,0,0,0.6))',
         }}>
           <LottieAsset
             src="lottie/whatsapp-v2.json"
@@ -135,11 +147,11 @@ export const LowerThird = ({ start, end, theme = {} }) => {
           />
         </div>
 
-        {/* Card branco — só título + subtítulo (sem botão) */}
+        {/* Card branco — independe de tema (sempre branco com texto dark) */}
         <div style={{
           width: 820,
-          background: T.cardBg || MR_COLORS.white,
-          color: T.cardFg || MR_COLORS.slateAbyss,
+          background: MR_COLORS.white,
+          color: MR_COLORS.slateAbyss,
           borderRadius: 36,
           padding: '52px 64px',
           display: 'flex',
@@ -148,7 +160,8 @@ export const LowerThird = ({ start, end, theme = {} }) => {
           justifyContent: 'center',
           gap: 18,
           textAlign: 'center',
-          boxShadow: T.cardShadow || '0 32px 64px rgba(0,0,0,0.40)',
+          boxShadow: T.flat ? 'none' : '0 32px 64px rgba(0,0,0,0.40)',
+          border: T.flat ? '1px solid rgba(15,23,42,0.10)' : 'none',
           opacity: cardIn,
           transform: `translateY(${cardOffset.toFixed(2)}px)`,
           willChange: 'transform',
@@ -159,7 +172,7 @@ export const LowerThird = ({ start, end, theme = {} }) => {
             fontWeight: 700,
             lineHeight: 0.95,
             letterSpacing: '-0.035em',
-            color: T.titleColor || MR_COLORS.slateAbyss,
+            color: MR_COLORS.slateAbyss,
             opacity: interpolate(frame, [0.65 * fps, 1.05 * fps], [0, 1], {
               extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuint,
             }),
@@ -170,7 +183,7 @@ export const LowerThird = ({ start, end, theme = {} }) => {
             fontWeight: 500,
             lineHeight: 1.2,
             letterSpacing: '-0.015em',
-            color: T.subtitleColor || MR_COLORS.slateMid,
+            color: MR_COLORS.slateMid,
             opacity: interpolate(frame, [0.85 * fps, 1.25 * fps], [0, 1], {
               extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuint,
             }),

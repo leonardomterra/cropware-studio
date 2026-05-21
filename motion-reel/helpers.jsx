@@ -171,6 +171,80 @@ export const AccentBar = ({ delay = 0, dur = 0.45, origin = 'left center', color
   );
 };
 
+// GlassCard: wrapper com efeito vidro (backdrop-blur + tint translúcido +
+// borda fina + shadow composto). Entra com fade + scale 0.94 → 1 a partir
+// de `delay`. Padding/borderRadius/tint customizáveis.
+export const GlassCard = ({
+  delay = 0,
+  dur = 0.55,
+  children,
+  padding = '36px 60px',
+  borderRadius = 28,
+  tint,
+  style,
+}) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const p = interpolate(frame, [delay * fps, (delay + dur) * fps], [0, 1], {
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart,
+  });
+  const scale = 0.94 + 0.06 * p;
+  return (
+    <div style={{
+      transform: `translateZ(0) scale(${scale.toFixed(4)})`,
+      opacity: p,
+      backdropFilter: 'blur(20px) saturate(160%)',
+      WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+      background: tint || 'linear-gradient(160deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.06) 50%, rgba(20,63,44,0.18) 100%)',
+      border: '1px solid rgba(255,255,255,0.22)',
+      borderRadius,
+      padding,
+      boxShadow: '0 18px 48px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.18)',
+      ...style,
+    }}>
+      {children}
+    </div>
+  );
+};
+
+// SceneTextureBackdrop — overlay genérico de textura B&W com drift lento.
+// Recebe `src` (path da textura, geralmente do pool aleatório) e anima com
+// pan diagonal + respiração de escala. Discreto por default (opacity 0.18).
+// Reutilizado por várias cenas pra dar atmosfera sem competir com o conteúdo.
+export const SceneTextureBackdrop = ({ src, durSec, blend = 'screen', opacity = 0.22, invert = true, zIndex, zoomRange, driftRange }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (!src) return null;
+  const durFrames = Math.max(1, (durSec || 6) * fps);
+  const t = interpolate(frame, [0, durFrames], [0, 1], {
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.inOutCubic,
+  });
+  const dxR = driftRange || [-20, 28];
+  const dyR = driftRange ? [-driftRange[1] * 0.6, driftRange[1] * 0.6] : [16, -18];
+  const zR = zoomRange || [1.18, 1.28];
+  const driftX = interpolate(t, [0, 1], dxR);
+  const driftY = interpolate(t, [0, 1], dyR);
+  const scale = interpolate(t, [0, 1], zR);
+  // Sem zIndex default — fica no fluxo natural do DOM (atrás do conteúdo que
+  // venha depois na hierarquia). Passar zIndex explícito só se precisar override.
+  const style = { pointerEvents: 'none', overflow: 'hidden' };
+  if (zIndex != null) style.zIndex = zIndex;
+  return (
+    <AbsoluteFill style={style}>
+      <AbsoluteFill style={{
+        backgroundImage: `url('${staticFile(src)}')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        transform: `translate(${driftX.toFixed(2)}px, ${driftY.toFixed(2)}px) scale(${scale.toFixed(4)})`,
+        transformOrigin: 'center',
+        mixBlendMode: blend,
+        opacity,
+        filter: invert ? 'invert(1) contrast(1.1)' : 'contrast(1.1)',
+      }} />
+    </AbsoluteFill>
+  );
+};
+
 // NumberTicker: interpola from→to e formata via fn.
 export const NumberTicker = ({ from = 0, to = 100, delay = 0.3, dur = 0.9, format, style }) => {
   const frame = useCurrentFrame();
@@ -345,6 +419,102 @@ export const IconifyIcon = ({ icon, size = 64, color, style }) => {
       color={color}
       style={{ display: 'block', ...(style || {}) }}
     />
+  );
+};
+
+const safeIconKind = (icon = '') => {
+  const name = String(icon).toLowerCase();
+  if (/cloud|weather/.test(name)) return 'cloud';
+  if (/plant|seed|sustain|crop|leaf|corn|soja|lavoura|campo|safra|colheita/.test(name)) return 'leaf';
+  if (/speed|watch|tempo/.test(name)) return 'speed';
+  if (/bell|alert|warning/.test(name)) return 'bell';
+  if (/document|report|bar-chart|dados|histor/.test(name)) return 'document';
+  if (/phone|mobile|whatsapp/.test(name)) return 'phone';
+  if (/map|location|gps|pin|satellite/.test(name)) return 'target';
+  if (/lightbulb|intelig/.test(name)) return 'bulb';
+  if (/arrow-up|upload|rocket|prosper/.test(name)) return 'arrow';
+  if (/cog|gear/.test(name)) return 'cog';
+  if (/star/.test(name)) return 'star';
+  if (/sun|thermometer|clear-day/.test(name)) return 'sun';
+  if (/rain|drop|humidity|water/.test(name)) return 'drop';
+  if (/wind/.test(name)) return 'wind';
+  return 'check';
+};
+
+const SAFE_ICON_PATHS = {
+  check: ['M20 50 L42 72 L82 30'],
+  leaf: ['M28 84 C38 40 78 24 104 24 C104 70 78 100 42 100', 'M42 100 C52 76 70 56 94 36'],
+  cloud: ['M28 66 H76 C86 66 94 58 94 48 C94 38 86 30 76 30 C70 18 56 12 43 18 C32 22 25 32 25 44 C15 46 8 54 8 64 C8 76 18 84 32 84 H78'],
+  speed: ['M20 72 C20 45 42 24 64 24 C86 24 108 45 108 72', 'M64 72 L86 48', 'M32 72 H96'],
+  bell: ['M36 78 H92', 'M44 78 V50 C44 38 52 28 64 28 C76 28 84 38 84 50 V78', 'M56 86 C58 92 70 92 72 86'],
+  document: ['M36 18 H72 L92 38 V110 H36 Z', 'M72 18 V38 H92', 'M48 58 H80', 'M48 74 H80', 'M48 90 H70'],
+  phone: ['M48 16 H80 C86 16 90 20 90 26 V102 C90 108 86 112 80 112 H48 C42 112 38 108 38 102 V26 C38 20 42 16 48 16 Z', 'M56 96 H72'],
+  target: ['M64 22 V38', 'M64 90 V106', 'M22 64 H38', 'M90 64 H106', 'M64 38 C78 38 90 50 90 64 C90 78 78 90 64 90 C50 90 38 78 38 64 C38 50 50 38 64 38 Z', 'M64 54 C70 54 74 58 74 64 C74 70 70 74 64 74 C58 74 54 70 54 64 C54 58 58 54 64 54 Z'],
+  bulb: ['M48 92 H80', 'M52 106 H76', 'M64 18 C48 18 36 30 36 46 C36 58 43 66 50 74 C54 78 54 84 54 88 H74 C74 84 74 78 78 74 C85 66 92 58 92 46 C92 30 80 18 64 18 Z'],
+  arrow: ['M64 100 V28', 'M36 56 L64 28 L92 56'],
+  cog: ['M64 44 C75 44 84 53 84 64 C84 75 75 84 64 84 C53 84 44 75 44 64 C44 53 53 44 64 44 Z', 'M64 20 V34', 'M64 94 V108', 'M20 64 H34', 'M94 64 H108', 'M33 33 L43 43', 'M85 85 L95 95', 'M95 33 L85 43', 'M43 85 L33 95'],
+  star: ['M64 20 L76 50 L108 52 L83 72 L91 104 L64 86 L37 104 L45 72 L20 52 L52 50 Z'],
+  sun: ['M64 40 C77 40 88 51 88 64 C88 77 77 88 64 88 C51 88 40 77 40 64 C40 51 51 40 64 40 Z', 'M64 16 V28', 'M64 100 V112', 'M16 64 H28', 'M100 64 H112', 'M30 30 L39 39', 'M89 89 L98 98', 'M98 30 L89 39', 'M39 89 L30 98'],
+  drop: ['M64 18 C64 18 88 50 88 72 C88 88 78 102 64 102 C50 102 40 88 40 72 C40 50 64 18 64 18 Z'],
+  wind: ['M24 48 H78 C88 48 88 34 78 34 C73 34 70 37 68 40', 'M20 66 H92 C104 66 104 50 92 50', 'M28 84 H72 C82 84 82 98 72 98 C67 98 64 95 62 92'],
+};
+
+const STATIC_MOTION_ICON_BY_KIND = {
+  check: 'ph:check-circle',
+  leaf: 'ph:plant',
+  cloud: 'ph:cloud-sun',
+  speed: 'ph:gauge',
+  bell: 'ph:bell-ringing',
+  document: 'ph:chart-bar',
+  phone: 'ph:device-mobile-camera',
+  target: 'ph:crosshair',
+  bulb: 'ph:lightbulb-filament',
+  arrow: 'ph:arrow-circle-up-right',
+  cog: 'ph:gear-six',
+  star: 'ph:star-four',
+  sun: 'ph:sun-horizon',
+  drop: 'ph:drop',
+  wind: 'ph:wind',
+};
+
+export const resolveStaticMotionIcon = (icon = '') => {
+  const name = String(icon || '').trim().toLowerCase();
+  if (name.startsWith('ph:')) return name;
+  if (name.startsWith('lucide:')) return name;
+  if (name.startsWith('material-symbols:')) return name;
+  return STATIC_MOTION_ICON_BY_KIND[safeIconKind(name)] || STATIC_MOTION_ICON_BY_KIND.check;
+};
+
+export const StaticMotionIcon = ({ icon, size = 64, color = 'currentColor', style }) => (
+  <IconifyIcon
+    icon={resolveStaticMotionIcon(icon)}
+    size={size}
+    color={color}
+    style={{
+      display: 'block',
+      overflow: 'visible',
+      ...(style || {}),
+    }}
+  />
+);
+
+export const RemotionLineIcon = ({ icon, size = 64, color = 'currentColor', style, delay = 0, drawDur = 0.85 }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const progress = interpolate(frame, [delay * fps, (delay + drawDur) * fps], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+    easing: EASE.outQuart,
+  });
+  const paths = SAFE_ICON_PATHS[safeIconKind(icon)] || SAFE_ICON_PATHS.check;
+  const dash = 180;
+  return (
+    <svg viewBox="0 0 128 128" width={size} height={size} fill="none" stroke={color} strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block', overflow: 'visible', ...(style || {}) }}>
+      {paths.map((d, i) => {
+        const local = Math.max(0, Math.min(1, progress * 1.18 - i * 0.08));
+        return <path key={i} d={d} pathLength={dash} strokeDasharray={dash} strokeDashoffset={(dash * (1 - local)).toFixed(2)} opacity={0.45 + local * 0.55} />;
+      })}
+    </svg>
   );
 };
 

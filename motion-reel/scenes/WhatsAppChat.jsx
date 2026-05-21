@@ -10,7 +10,7 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, staticFile } from 'remotion';
 import { MR_COLORS, MR_FONTS } from '../theme.js';
 import { MR_THEMES } from '../themes.js';
-import { EASE } from '../helpers.jsx';
+import { EASE, SceneTextureBackdrop } from '../helpers.jsx';
 
 const FALLBACK = MR_THEMES.editorial.perSlide['whatsapp-chat'];
 
@@ -28,7 +28,7 @@ const DEFAULT_MESSAGES = [
   { from: 'ai',   text: 'Padrão sugere falta de nitrogênio. Quer abrir um plano de adubação?' },
 ];
 
-export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, start, end }) => {
+export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, bgImage, bgImageBlur, bgOverlayOpacity, bgTexture, bgTextureOpacity, bgTextureInvert, start, end }) => {
   const T = theme || FALLBACK;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -48,7 +48,7 @@ export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, start, end })
   const kbTy = interpolate(frame, [0, durFrames], [0, -32], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  const imgBlur = 8 + (1 - enterP) * 14;
+  const imgBlur = (bgImageBlur != null ? bgImageBlur : 8) + (1 - enterP) * 14;
   const imgOpacity = enterP;
   const overlayP = interpolate(frame, [0, 0.5 * fps], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart,
@@ -65,10 +65,11 @@ export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, start, end })
   const phoneOffsetY = (1 - phoneIn) * 80;
 
   return (
-    <AbsoluteFill style={{ background: MR_COLORS.slateAbyss, overflow: 'hidden', fontFamily: MR_FONTS.display }}>
+    <AbsoluteFill style={{ background: T.bg || MR_COLORS.slateAbyss, overflow: 'hidden', fontFamily: MR_FONTS.display }}>
+      {!T.flat ? <>
       {/* Camada 1: imagem de fundo com Ken Burns lento (varia por tema) */}
       <AbsoluteFill style={{
-        backgroundImage: `url('${staticFile(T.bgImage || 'wpp-bg-pattern.png')}')`,
+        backgroundImage: `url('${staticFile(bgImage || T.bgImage || 'wpp-bg-pattern.png')}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         transform: `scale(${imgScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
@@ -77,12 +78,20 @@ export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, start, end })
       }} />
 
       {/* Camada 1.5: tint sólido por cima da imagem (tema-driven — escuro no
-          editorial/vibrante; quase ausente no claro pra deixar a foto leve) */}
+          editorial/vibrante; tom azul-petróleo quente no crepúsculo) */}
       <AbsoluteFill style={{
         background: T.bgTint || 'rgba(26,27,26,0.78)',
-        opacity: overlayP,
+        opacity: overlayP * (bgOverlayOpacity != null ? (bgOverlayOpacity / 0.62) : 1),
         pointerEvents: 'none',
       }} />
+
+      {/* Camada 1.7: textura overlay do pool (opcional) */}
+      <SceneTextureBackdrop
+        src={bgTexture || T.bgTexture}
+        durSec={durSec}
+        opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.22}
+        invert={bgTextureInvert !== false}
+      />
 
       {/* Camada 2: vinheta sutil pra concentrar atenção no mockup central */}
       <AbsoluteFill style={{
@@ -90,6 +99,7 @@ export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, start, end })
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
+      </> : null}
 
       {/* Camada 4: iPhone mockup centralizado */}
       <div style={{
@@ -106,7 +116,7 @@ export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, start, end })
           background: '#0B141A',
           borderRadius: 64,
           padding: 14,
-          boxShadow: '0 50px 96px rgba(0,0,0,0.65), 0 0 0 2px rgba(255,255,255,0.04)',
+          boxShadow: T.flat ? '0 0 0 1px rgba(15,23,42,0.10)' : '0 50px 96px rgba(0,0,0,0.65), 0 0 0 2px rgba(255,255,255,0.04)',
           opacity: phoneIn,
           transform: `scale(${phoneScale.toFixed(4)}) translateY(${phoneOffsetY.toFixed(2)}px)`,
           display: 'flex',

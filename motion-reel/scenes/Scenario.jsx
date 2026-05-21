@@ -6,11 +6,11 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, staticFile } from 'remotion';
 import { MR_FONTS } from '../theme.js';
 import { MR_THEMES } from '../themes.js';
-import { FadeSlide, KickerReveal, EASE } from '../helpers.jsx';
+import { FadeSlide, KickerReveal, SceneTextureBackdrop, EASE } from '../helpers.jsx';
 
 const FALLBACK = MR_THEMES.editorial.perSlide.scenario;
 
-export const Scenario = ({ kicker, scenario, theme, start, end }) => {
+export const Scenario = ({ kicker, scenario, theme, bgImage, bgImageBlur, bgOverlayOpacity, bgTexture, bgTextureOpacity, bgTextureInvert, start, end }) => {
   const T = theme || FALLBACK;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -28,7 +28,7 @@ export const Scenario = ({ kicker, scenario, theme, start, end }) => {
   const kbTy = interpolate(frame, [0, durFrames], [0, -32], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  const imgBlur = 8 + (1 - enterP) * 14;
+  const imgBlur = (bgImageBlur != null ? bgImageBlur : 8) + (1 - enterP) * 14;
   const imgOpacity = enterP;
   const overlayP = interpolate(frame, [0, 0.5 * fps], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart,
@@ -39,9 +39,10 @@ export const Scenario = ({ kicker, scenario, theme, start, end }) => {
 
   return (
     <AbsoluteFill style={{ background: T.bg, overflow: 'hidden' }}>
+      {!T.flat ? <>
       {/* Camada 1: imagem com Ken Burns */}
       <AbsoluteFill style={{
-        backgroundImage: `url('${staticFile(T.bgImage || 'conheca-campo-bg.webp')}')`,
+        backgroundImage: `url('${staticFile(bgImage || T.bgImage || 'conheca-campo-bg.webp')}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         transform: `scale(${imgScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
@@ -55,29 +56,38 @@ export const Scenario = ({ kicker, scenario, theme, start, end }) => {
         backdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(140%)`,
         WebkitBackdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(140%)`,
         background: T.glassTint || FALLBACK.glassTint,
-        opacity: overlayP,
+        opacity: overlayP * (bgOverlayOpacity != null ? bgOverlayOpacity : 1),
       }} />
 
       {/* Camada 3: top sheen */}
       <AbsoluteFill style={{
-        background: 'linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 14%, rgba(255,255,255,0) 30%)',
+        background: T.topSheen || 'linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 14%, rgba(255,255,255,0) 30%)',
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
 
       {/* Camada 4: bottom depth */}
       <AbsoluteFill style={{
-        background: 'linear-gradient(0deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.18) 22%, rgba(0,0,0,0) 42%)',
+        background: T.bottomDepth || 'linear-gradient(0deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.18) 22%, rgba(0,0,0,0) 42%)',
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
 
       {/* Camada 5: vinheta */}
       <AbsoluteFill style={{
-        background: 'radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.42) 100%)',
+        background: T.vignette || 'radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.42) 100%)',
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
+
+      {/* Camada 5.5: textura overlay do pool (opcional, scene.bgTexture) */}
+      <SceneTextureBackdrop
+        src={bgTexture || T.bgTexture}
+        durSec={durSec}
+        opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.22}
+        invert={bgTextureInvert !== false}
+      />
+      </> : null}
 
       {/* Camada 6: conteúdo — kicker mono + parágrafo narrativo */}
       <div style={{
@@ -99,15 +109,19 @@ export const Scenario = ({ kicker, scenario, theme, start, end }) => {
             text={String(kicker).toUpperCase()}
             delay={0.3}
             dur={0.5}
-            fromEm={0.18}
-            toEm={0.32}
+            fromEm={T.kickerLetterSpacingFrom ?? 0.18}
+            toEm={T.kickerLetterSpacingTo ?? 0.32}
             style={{
               fontFamily: MR_FONTS.mono,
-              fontSize: 30,
+              fontSize: T.kickerFontSize || 30,
               fontWeight: 400,
-              color: T.accent,
+              lineHeight: 1.18,
+              maxWidth: T.kickerMaxWidth || 920,
+              color: T.kickerColor || T.accent,
               textTransform: 'uppercase',
-              textShadow: '0 2px 14px rgba(0,0,0,0.45)',
+              textShadow: T.flat ? 'none' : (T.kickerTextShadow || '0 2px 14px rgba(0,0,0,0.45)'),
+              whiteSpace: 'normal',
+              overflowWrap: 'break-word',
               transform: 'translateZ(0)',
             }}
           />
@@ -122,7 +136,7 @@ export const Scenario = ({ kicker, scenario, theme, start, end }) => {
             letterSpacing: '-0.025em',
             maxWidth: 920,
             color: T.fg,
-            textShadow: '0 4px 24px rgba(0,0,0,0.55)',
+            textShadow: T.flat ? 'none' : (T.textShadow || '0 4px 24px rgba(0,0,0,0.55)'),
             whiteSpace: 'pre-line', // permite \n no scenario
             transform: 'translateZ(0)',
           }}>{scenario || ''}</div>

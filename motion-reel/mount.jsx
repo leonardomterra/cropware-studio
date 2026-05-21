@@ -8,6 +8,7 @@
 //
 // O vanilla JS controla o modo via window.setMotionReelView(mode).
 import { createRoot } from 'react-dom/client';
+import { useRef, useState, useLayoutEffect } from 'react';
 import { Player } from '@remotion/player';
 
 import { MotionReel } from './MotionReel.jsx';
@@ -67,19 +68,19 @@ function ReelGridView({ storyboard }) {
   const fps = storyboard.fps || 30;
   const durationInFrames = computeReelDurationInFrames(storyboard);
   const scenes = storyboard.scenes || [];
-  // Layout: flex wrap com largura calculada — 4 colunas, gap 12px.
-  // (Grid CSS estava sobrepondo as rows porque o aspect-ratio não criava
-  // altura intrínseca pra row.)
+  // Layout: CSS grid 6×2 — cards ocupam a altura disponível do container,
+  // ficam menores em telas mais curtas (zoom out automático).
   return (
     <div style={{
       width: '100%', height: '100%',
-      overflow: 'auto',
-      padding: 16,
+      overflow: 'hidden',
+      padding: 12,
       boxSizing: 'border-box',
-      display: 'flex',
-      flexWrap: 'wrap',
-      alignContent: 'flex-start',
-      gap: 12,
+      display: 'grid',
+      gridTemplateColumns: 'repeat(6, 1fr)',
+      gridTemplateRows: 'repeat(2, 1fr)',
+      gap: 8,
+      placeItems: 'center',
     }}>
       {scenes.map((scene, i) => {
         // Calcula frame absoluto do meio dessa cena na timeline final.
@@ -137,6 +138,21 @@ function ReelThumbCard({ scene, sceneNumber, isLocked, storyboard, durationInFra
   const fps = storyboard.fps || 30;
   const sceneDurSec = Math.max(1, (scene.end || 0) - (scene.start || 0));
   const thumbDurationInFrames = Math.max(1, Math.round(sceneDurSec * fps));
+
+  // O thumb tem aspect-ratio fixo 9:16 e encolhe pra caber na célula. A card-bar
+  // embaixo precisa acompanhar a MESMA LARGURA do thumb (não da célula inteira).
+  // Mede a largura renderizada via ResizeObserver e aplica na bar.
+  const thumbRef = useRef(null);
+  const [thumbWidth, setThumbWidth] = useState(null);
+  useLayoutEffect(() => {
+    const el = thumbRef.current;
+    if (!el) return;
+    const update = () => setThumbWidth(el.offsetWidth);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   const thumbStoryboard = {
     ...storyboard,
     duration: sceneDurSec,
@@ -171,36 +187,46 @@ function ReelThumbCard({ scene, sceneNumber, isLocked, storyboard, durationInFra
   return (
     <div
       style={{
-        // 6 cols × 2 rows. Gap 12px × 5 = 60px.
-        flex: '0 0 calc((100% - 60px) / 6)',
-        maxWidth: 'calc((100% - 60px) / 6)',
+        // Card ocupa altura total da célula do grid 6×2 e centraliza o thumb.
+        // O thumb mantém aspect-ratio 9:16 e encolhe pra caber tanto na largura
+        // quanto na altura — auto zoom-out quando a janela é menor.
+        width: '100%',
+        height: '100%',
+        maxHeight: '100%',
         position: 'relative',
         cursor: 'default',
         display: 'flex',
         flexDirection: 'column',
-        gap: 6,
+        alignItems: 'center',
+        gap: 4,
+        minWidth: 0,
+        minHeight: 0,
       }}
     >
-      {/* Ratio-box 9:16 com Thumbnail dentro (sem overlays — label fica abaixo) */}
-      <div style={{ width: '100%', paddingBottom: '177.78%', position: 'relative' }}>
+      {/* Wrapper de espaço (flex:1 toma toda altura sobrando) — centraliza o thumb */}
+      <div style={{
+        flex: 1,
+        width: '100%',
+        minHeight: 0,
+        minWidth: 0,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+        {/* Thumb 9:16 EXATO — sem border CSS (que somaria 4px ao border-box
+            e distorceria a proporção). Border vira overlay absolute. */}
         <div
+          ref={thumbRef}
           style={{
-            position: 'absolute',
-            inset: 0,
+            height: '100%',
+            maxHeight: '100%',
+            maxWidth: '100%',
+            aspectRatio: '9 / 16',
             background: '#1A1B1A',
             borderRadius: 12,
             overflow: 'hidden',
-            border: isLocked ? '2px solid rgba(0,0,0,0.06)' : '2px solid rgba(106,197,143,0.55)',
             boxShadow: '0 8px 24px rgba(0,0,0,0.20)',
-            transition: 'transform 120ms ease, box-shadow 120ms ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.28)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = '';
-            e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.20)';
+            position: 'relative',
           }}
         >
           {false ? (
@@ -240,138 +266,110 @@ function ReelThumbCard({ scene, sceneNumber, isLocked, storyboard, durationInFra
               style={{ width: '100%', height: '100%' }}
             />
           )}
+          {/* Border decorativa em overlay — não afeta sizing/proporção */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: 12,
+            border: '2px solid rgba(15,23,42,0.10)',
+            pointerEvents: 'none',
+          }} />
         </div>
       </div>
 
-      {/* Label abaixo do thumb: número + type + ícone lock/edit. Inter Tight,
-          ícones via Phosphor (CSS já carregado globalmente no index.html). */}
+      {/* Card unificado abaixo do thumb: número + lock-status + ações.
+          Largura = mesma do thumb (medida via ResizeObserver) pra acompanhar
+          quando o thumb encolhe por restrição de altura da célula. */}
       <div style={{
+        width: thumbWidth != null ? `${thumbWidth}px` : '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: 6,
-        padding: '0 2px',
+        gap: 4,
+        padding: '6px 8px',
+        borderRadius: 8,
+        background: '#ffffff',
+        border: '1px solid rgba(15,23,42,0.08)',
+        boxShadow: '0 2px 6px rgba(15,23,42,0.04)',
         fontFamily: '"Inter Tight", system-ui, sans-serif',
-        fontSize: 12,
-        fontWeight: 500,
-        color: isLocked ? '#5C605D' : '#1A1B1A',
-        letterSpacing: '-0.01em',
+        boxSizing: 'border-box',
       }}>
+        {/* Número da cena */}
         <span style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-          whiteSpace: 'nowrap',
-        }}>
-          <span style={{
-            minWidth: 30,
-            height: 25,
-            padding: '0 8px',
-            borderRadius: 6,
-            background: '#e5e7eb',
+          flex: '0 0 auto',
+          minWidth: 22,
+          fontSize: 11,
+          fontWeight: 600,
+          color: '#475569',
+          letterSpacing: '0.04em',
+          textAlign: 'center',
+        }}>{sceneNumber}</span>
+
+        {/* Lock status (não-clicável, só indica) */}
+        <span
+          title={isLocked ? 'Cena fixa' : 'Cena livre'}
+          style={{
+            flex: '0 0 auto',
+            width: 24, height: 24,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 14,
             color: '#475569',
-            fontFamily: '"Inter Tight", system-ui, sans-serif',
-            fontSize: 13,
-            fontWeight: 600,
-            lineHeight: '25px',
-            textAlign: 'center',
-          }}>{sceneNumber}</span>
-          <span
-            title={isLocked ? 'Cena fixa' : 'Cena livre'}
-            style={{
-              minWidth: 47,
-              height: 25,
-              padding: '0 9px',
-              borderRadius: 6,
-              background: isLocked ? '#e5e7eb' : '#d1fae5',
-              color: isLocked ? '#475569' : '#166534',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontFamily: '"Inter Tight", system-ui, sans-serif',
-              fontSize: 13,
-              fontWeight: 600,
-              lineHeight: 1,
-              letterSpacing: 0,
-              flex: '0 0 auto',
-            }}
-          >
-            {isLocked ? 'Fixo' : 'Livre'}
-          </span>
+          }}
+        >
+          <i className={isLocked ? 'ph ph-lock-simple' : 'ph ph-lock-simple-open'} />
         </span>
-        {/* Ações: preview (sempre) + edit (só editáveis) ou lock (só fixas) */}
-        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <button
-            type="button"
-            onClick={handleEditClick}
-            title={isLocked ? 'Editar tema visual' : 'Editar cena'}
-            style={{
-              background: '#111827',
-              border: '1px solid #111827',
-              minHeight: 25,
-              padding: '0 9px',
-              borderRadius: 6,
-              cursor: 'pointer',
-              color: '#fff',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: '"Inter Tight", system-ui, sans-serif',
-              fontSize: 13,
-              fontWeight: 600,
-              lineHeight: 1,
-              letterSpacing: 0,
-              transition: 'background 120ms ease, border-color 120ms ease, transform 120ms ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#334155';
-              e.currentTarget.style.borderColor = '#334155';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#111827';
-              e.currentTarget.style.borderColor = '#111827';
-              e.currentTarget.style.transform = '';
-            }}
-          >
-            Editar
-          </button>
-          <button
-            type="button"
-            onClick={handlePreviewClick}
-            title="Preview desta cena"
-            style={{
-              width: 25,
-              height: 25,
-              background: '#111827',
-              border: '1px solid #111827',
-              padding: 0,
-              borderRadius: 6,
-              cursor: 'pointer',
-              color: '#fff',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'background 120ms ease, border-color 120ms ease, transform 120ms ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#334155';
-              e.currentTarget.style.borderColor = '#334155';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#111827';
-              e.currentTarget.style.borderColor = '#111827';
-              e.currentTarget.style.transform = '';
-            }}
-          >
-            <span style={{
-              width: 0,
-              height: 0,
-              borderTop: '5px solid transparent',
-              borderBottom: '5px solid transparent',
-              borderLeft: '8px solid #fff',
-              display: 'block',
-              marginLeft: 2,
-            }} />
-          </button>
-        </span>
+
+        {/* Editar — desabilitado em end-card (slide 12) que sempre usa tema editorial */}
+        <button
+          type="button"
+          onClick={scene.type === 'end-card' ? undefined : handleEditClick}
+          disabled={scene.type === 'end-card'}
+          title={scene.type === 'end-card' ? 'End-card sempre usa o tema editorial — não editável' : (isLocked ? 'Editar tema visual' : 'Editar cena')}
+          aria-label={scene.type === 'end-card' ? 'End-card não editável' : (isLocked ? 'Editar tema visual' : 'Editar cena')}
+          style={{
+            flex: '0 0 auto',
+            width: 24, height: 24,
+            background: 'transparent',
+            border: 'none',
+            padding: 0,
+            borderRadius: 4,
+            cursor: scene.type === 'end-card' ? 'not-allowed' : 'pointer',
+            color: scene.type === 'end-card' ? '#cbd5e1' : '#475569',
+            opacity: scene.type === 'end-card' ? 0.5 : 1,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 14,
+            transition: 'color 120ms ease, background 120ms ease',
+          }}
+          onMouseEnter={scene.type === 'end-card' ? undefined : (e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.background = '#f1f5f9'; }}
+          onMouseLeave={scene.type === 'end-card' ? undefined : (e) => { e.currentTarget.style.color = '#475569'; e.currentTarget.style.background = 'transparent'; }}
+        >
+          <i className="ph ph-pencil-simple" />
+        </button>
+
+        {/* Preview */}
+        <button
+          type="button"
+          onClick={handlePreviewClick}
+          title="Preview desta cena"
+          aria-label="Preview desta cena"
+          style={{
+            flex: '0 0 auto',
+            width: 24, height: 24,
+            background: 'transparent',
+            border: 'none',
+            padding: 0,
+            borderRadius: 4,
+            cursor: 'pointer',
+            color: '#475569',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 14,
+            transition: 'color 120ms ease, background 120ms ease',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.background = '#f1f5f9'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = '#475569'; e.currentTarget.style.background = 'transparent'; }}
+        >
+          <i className="ph ph-play" />
+        </button>
       </div>
     </div>
   );

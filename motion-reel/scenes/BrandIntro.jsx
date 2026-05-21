@@ -13,7 +13,7 @@ const KICKER = 'CONHEÇA';
 const LOGO = 'logo-cropware-pb-final.svg';
 const TAGLINE_LINES = ['Gestão de', 'Desenvolvimento', 'de Mercado'];
 
-export const BrandIntro = ({ start, end, theme = {} }) => {
+export const BrandIntro = ({ start, end, theme = {}, bgImage, bgImageBlur, bgOverlayOpacity, bgTexture, bgTextureOpacity, bgTextureInvert }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const durSec = Math.max(1, (end || 0) - (start || 0));
@@ -21,7 +21,7 @@ export const BrandIntro = ({ start, end, theme = {} }) => {
   const T = theme || {};
   const fg = T.fg || MR_COLORS.white;
   const accent = T.accent || MR_COLORS.greenBright;
-  const textShadow = T.textShadow || '0 2px 18px rgba(0,0,0,0.45)';
+  const textShadow = T.flat ? 'none' : (T.textShadow || '0 2px 18px rgba(0,0,0,0.45)');
 
   // Entrada cinematográfica (0 → 0.8s): fade + blur out + extra-zoom drift.
   // Depois disso entra o Ken Burns clássico (scale lento ao longo da cena).
@@ -40,7 +40,7 @@ export const BrandIntro = ({ start, end, theme = {} }) => {
   const kbTy = interpolate(frame, [0, durFrames], [0, -28], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  const imgBlur = (1 - enterP) * 22;
+  const imgBlur = (bgImageBlur != null ? bgImageBlur : 0) + (1 - enterP) * 22;
   const imgOpacity = enterP;
 
   // Overlay glass: fade in mais rápido. O blur do backdrop-filter sobe de 0
@@ -56,10 +56,13 @@ export const BrandIntro = ({ start, end, theme = {} }) => {
 
   return (
     <AbsoluteFill style={{ background: T.bg || MR_COLORS.slateAbyss, overflow: 'hidden' }}>
+      {/* Em temas flat: pula TODAS as camadas decorativas (imagem, glass, sheen,
+          depth, vignette, texture). Conteúdo renderiza sobre o bg color puro. */}
+      {!T.flat ? <>
       {/* Camada 1: imagem — entra com fade + blur out + extra-zoom, segue em Ken Burns.
           Visível por trás do vidro durante toda a cena. */}
       <AbsoluteFill style={{
-        backgroundImage: `url('${staticFile(T.bgImage || BG_IMAGE)}')`,
+        backgroundImage: `url('${staticFile(bgImage || T.bgImage || BG_IMAGE)}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         transform: `scale(${imgScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
@@ -75,8 +78,23 @@ export const BrandIntro = ({ start, end, theme = {} }) => {
         backdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(170%)`,
         WebkitBackdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(170%)`,
         background: T.glassTint || 'linear-gradient(180deg, rgba(20,63,44,0.32) 0%, rgba(20,63,44,0.50) 55%, rgba(10,42,28,0.72) 100%)',
-        opacity: overlayP,
+        opacity: overlayP * (bgOverlayOpacity != null ? bgOverlayOpacity : 1),
       }} />
+
+      {/* Camada 2.5: textura decorativa opcional (theme.bgTexture) — acima do
+          glass pra ficar visível, abaixo do sheen/depth/vinheta pra ainda ser
+          tonalizada pelas camadas finais. */}
+      {(bgTexture || T.bgTexture) ? (
+        <BackgroundTexture
+          src={bgTexture || T.bgTexture}
+          frame={frame}
+          fps={fps}
+          durFrames={durFrames}
+          opacity={overlayP * (bgTextureOpacity != null ? bgTextureOpacity : (T.bgTextureOpacity ?? 0.22))}
+          blendMode={T.bgTextureBlend || 'screen'}
+          filter={(bgTextureInvert !== false) ? 'invert(1) contrast(1.1)' : 'contrast(1.1)'}
+        />
+      ) : null}
 
       {/* Camada 3: TOP SHEEN — gradiente branco fino no topo simulando o brilho
           da luz batendo na superfície do vidro. */}
@@ -99,6 +117,7 @@ export const BrandIntro = ({ start, end, theme = {} }) => {
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
+      </> : null}
 
       {/* Camada 4: CONTEÚDO — position relative + zIndex pra ficar acima das ABS positioned acima */}
       <div style={{
@@ -116,10 +135,34 @@ export const BrandIntro = ({ start, end, theme = {} }) => {
         fontFamily: MR_FONTS.display,
       }}>
         <KickerBlock kicker={KICKER} delay={0.25} color={fg} accent={accent} textShadow={textShadow} />
-        <LogoReveal src={LOGO} delay={1.3} color={T.logoColor || fg} />
+        <LogoReveal src={LOGO} delay={1.3} color={T.logoColor || fg} flat={!!T.flat} />
         <TaglineBlock lines={TAGLINE_LINES} delay={2.6} color={fg} accent={accent} textShadow={textShadow} />
       </div>
     </AbsoluteFill>
+  );
+};
+
+// ─────────────── Background texture ───────────────
+// Camada decorativa opcional (theme.bgTexture). Ken Burns lento: zoom-in + drift
+// pra dar vida sem chamar atenção. Vai abaixo do glass pane → backdrop-blur
+// do glass borra suavemente e o glassTint tonaliza por cima.
+const BackgroundTexture = ({ src, frame, fps, durFrames, opacity = 1, blendMode, filter }) => {
+  const t = interpolate(frame, [0, durFrames], [0, 1], {
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart,
+  });
+  const scale = interpolate(t, [0, 1], [1.10, 1.22]);
+  const ty = interpolate(t, [0, 1], [12, -22]);
+  return (
+    <AbsoluteFill style={{
+      backgroundImage: `url('${staticFile(src)}')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      transform: `scale(${scale.toFixed(4)}) translateY(${ty.toFixed(2)}px)`,
+      transformOrigin: 'center',
+      opacity,
+      mixBlendMode: blendMode,
+      filter,
+    }} />
   );
 };
 
@@ -167,16 +210,6 @@ const KickerBlock = ({ kicker, delay = 0.25, color = MR_COLORS.white, accent = M
           showCursor={false}
         />
       </div>
-      {/* Underline verde brilhante — desenha da esquerda pra direita */}
-      <div style={{
-        width: 180,
-        height: 5,
-        background: accent,
-        transformOrigin: 'left center',
-        transform: `scaleX(${underlineP.toFixed(3)})`,
-        borderRadius: 2,
-        boxShadow: `0 0 24px ${accent}99`,
-      }} />
     </div>
   );
 };
@@ -184,7 +217,7 @@ const KickerBlock = ({ kicker, delay = 0.25, color = MR_COLORS.white, accent = M
 // ─────────────── Logo bloco ───────────────
 // Logo Cropware em BRANCO via CSS mask (SVG vira máscara, background = white).
 // Entrada: blur 16→0 + scale 1.10→1 + drift + opacity 0→1 + settle spring.
-const LogoReveal = ({ src, delay = 1.3, color = MR_COLORS.white }) => {
+const LogoReveal = ({ src, delay = 1.3, color = MR_COLORS.white, flat = false }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const enterP = interpolate(frame, [delay * fps, (delay + 0.8) * fps], [0, 1], {
@@ -217,7 +250,7 @@ const LogoReveal = ({ src, delay = 1.3, color = MR_COLORS.white }) => {
       background: color,
       transform: `scale(${scale.toFixed(4)}) translateY(${translateY.toFixed(2)}px)`,
       transformOrigin: 'center',
-      filter: `blur(${blurPx.toFixed(2)}px) drop-shadow(0 12px 48px rgba(0,0,0,0.45))`,
+      filter: `blur(${blurPx.toFixed(2)}px)${flat ? '' : ' drop-shadow(0 12px 48px rgba(0,0,0,0.45))'}`,
       opacity: enterP,
     }} />
   );
@@ -233,7 +266,6 @@ const TaglineBlock = ({ lines, delay = 2.6, color = MR_COLORS.white, accent = MR
       alignItems: 'center',
       gap: 18,
       marginTop: 14,
-      // Stacking context defensivo, mesma razão do KickerBlock.
       transform: 'translateZ(0)',
     }}>
       {lines.map((line, i) => {
@@ -264,17 +296,17 @@ const TaglineLine = ({ text, delay, emphasized, color = MR_COLORS.white, accent 
   return (
     <div style={{
       fontFamily: MR_FONTS.mono,
-      fontSize: emphasized ? 56 : 48,
+      fontSize: 56,
       fontWeight: 400,
       color: emphasized ? accent : color,
-      letterSpacing: emphasized ? '0.13em' : '0.16em',
+      letterSpacing: '0.13em',
       textTransform: 'uppercase',
       lineHeight: 1,
       whiteSpace: 'nowrap',
-      opacity: emphasized ? 1 : 0.9,
-      textShadow: emphasized
-        ? `${textShadow}, 0 0 28px ${accent}55`
-        : textShadow,
+      opacity: emphasized ? 1 : 0.92,
+      textShadow: textShadow === 'none'
+        ? 'none'
+        : (emphasized ? `${textShadow}, 0 0 28px ${accent}55` : textShadow),
     }}>
       {chars.map((ch, i) => {
         const start = delay + i * stagger;

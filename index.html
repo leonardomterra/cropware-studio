@@ -513,14 +513,7 @@
     align-items: center;
     gap: 18px;
   }
-  .download-loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(106, 197, 143, 0.2);
-    border-top-color: var(--green, #6ac58f);
-    border-radius: 50%;
-    animation: download-spin 0.9s linear infinite;
-  }
+  .download-loading-spinner { display: none; }
   @keyframes download-spin { to { transform: rotate(360deg); } }
   .download-loading-msg {
     font-family: 'Inter Tight', sans-serif;
@@ -542,7 +535,7 @@
     width: 0%;
     height: 100%;
     border-radius: inherit;
-    background: linear-gradient(90deg, #42AA7B, #82CCA5);
+    background: #3D3F3D;
     transition: width 220ms ease;
   }
   .download-loading-meta {
@@ -550,8 +543,9 @@
     display: flex;
     justify-content: space-between;
     gap: 16px;
-    font-family: 'Space Mono', ui-monospace, monospace;
-    font-size: 11px;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
     color: #64748b;
   }
   .download-loading-detail {
@@ -5102,17 +5096,97 @@
   #mrSceneEditUndo:hover { background: #fcd34d; }
   #mrSceneEditUndo .ph { font-size: 14px; }
 
-  .mr-scene-edit-box {
-    width: 580px;
+  /* Especificidade dobrada (.gen-modal-box.mr-scene-edit-box) pra sobrescrever
+     a regra base `.gen-modal-box { width: 540px }` que vem depois no CSS. */
+  .gen-modal-box.mr-scene-edit-box {
+    width: 1200px;
+    max-width: 96vw;
   }
-  .mr-scene-edit-box .gen-body {
-    padding: 26px 34px 24px;
-    gap: 22px;
+  .gen-modal-box.mr-scene-edit-box .gen-body {
+    padding: 22px 32px 22px;
+    gap: 20px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 292px;
+    column-gap: 0;
+    align-items: start;
+  }
+  /* Texture grid em UMA linha: 12 colunas, thumbs pequenos */
+  .gen-modal-box.mr-scene-edit-box .pc-news-texture-grid {
+    grid-template-columns: repeat(12, 1fr);
+    gap: 4px;
+  }
+  /* Theme picker no estilo do texture picker: 6 swatches pequenos em UMA linha,
+     sem label nem checkmark — só o quadrado de preview. */
+  .gen-modal-box.mr-scene-edit-box .mr-theme-cards {
+    grid-template-columns: repeat(8, 36px);
+    gap: 4px;
+    justify-content: start;
+  }
+  .gen-modal-box.mr-scene-edit-box .mr-theme-card {
+    width: 36px;
+    height: 36px;
+    min-height: 0;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    overflow: hidden;
+    position: relative;
+    transition: border-color 140ms, transform 140ms;
+  }
+  .gen-modal-box.mr-scene-edit-box .mr-theme-card:hover {
+    transform: scale(1.04);
+    background: transparent;
+  }
+  .gen-modal-box.mr-scene-edit-box .mr-theme-card.active {
+    border-color: #94a3b8;
+    background: transparent;
+  }
+  .gen-modal-box.mr-scene-edit-box .mr-theme-card .mr-theme-preview {
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
+  }
+  .gen-modal-box.mr-scene-edit-box .mr-theme-card .mr-theme-label,
+  .gen-modal-box.mr-scene-edit-box .mr-theme-card .mr-theme-check {
+    display: none;
+  }
+  .mr-scene-edit-box .gen-body > .mr-edit-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+    padding-right: 32px;
+  }
+  .mr-scene-edit-box .gen-body > .mr-edit-preview {
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: sticky;
+    top: 16px;
+    width: 292px;
+    padding-left: 32px;
+    border-left: 1px solid #cbd5e1;
+  }
+  .mr-edit-preview-mount {
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    background: #1A1B1A;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+  }
+  .mr-edit-preview-label {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 11px;
+    color: #64748b;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-transform: uppercase;
   }
   .mr-scene-edit-box .gen-actions {
-    padding: 18px 34px 26px;
-    border-top: 1px solid #f1f5f9;
-    gap: 12px;
+    display: none;
   }
   .mr-scene-meta {
     font-family: 'Inter Tight', sans-serif;
@@ -5193,8 +5267,24 @@
   .mr-theme-preview--vibrante {
     background: linear-gradient(135deg, #82CCA5 0%, #82CCA5 60%, #2A7B5A 60%, #2A7B5A 100%);
   }
-  .mr-theme-preview--claro {
-    background: linear-gradient(135deg, #F5F1EA 0%, #F5F1EA 60%, #42AA7B 60%, #42AA7B 100%);
+  .mr-theme-preview--floresta {
+    background: linear-gradient(135deg, #2A7B5A 0%, #2A7B5A 60%, #82CCA5 60%, #82CCA5 100%);
+  }
+  .mr-theme-preview--granito {
+    background: linear-gradient(135deg, #3D3F3D 0%, #3D3F3D 60%, #6AC58F 60%, #6AC58F 100%);
+  }
+  .mr-theme-preview--mineral {
+    background: linear-gradient(135deg, #5C605D 0%, #5C605D 60%, #6AC58F 60%, #6AC58F 100%);
+  }
+  .mr-theme-preview--carbono {
+    background: linear-gradient(135deg, #1A1B1A 0%, #1A1B1A 60%, #2A7B5A 60%, #2A7B5A 100%);
+  }
+  .mr-theme-preview--flatClaro {
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFFFFF 60%, #6AC58F 60%, #6AC58F 100%);
+    border: 1px solid #e2e8f0;
+  }
+  .mr-theme-preview--flatEscuro {
+    background: linear-gradient(135deg, #143F2C 0%, #143F2C 60%, #82CCA5 60%, #82CCA5 100%);
   }
   .pc-regen-badge {
     margin-left: auto;
@@ -7235,7 +7325,7 @@
   }
   .motion-reel-stage[data-view="player"] {
     height: 100%;
-    max-height: 920px;
+    max-height: 760px;
     aspect-ratio: 9 / 16;
     background: var(--mr-cream);
     font-family: var(--mr-font-display);
@@ -9802,12 +9892,7 @@ function updateEmptyStateVisibility() {
     emptyEl.classList.toggle('visible', empty);
     emptyEl.setAttribute('aria-hidden', empty ? 'false' : 'true');
     if (empty) {
-      const isReel = isMotionReelMode();
-      emptyEl.innerHTML = `
-        <div class="empty-state-title">${isReel ? 'Nenhum reel gerado ainda' : 'Nenhum conteúdo gerado ainda'}</div>
-        <div class="empty-state-sub">${isReel ? 'Use Ações e Gerar Reel para criar o primeiro Motion Reel. A grade aparece só para reels salvos.' : 'Use Ações para criar o primeiro conteúdo deste formato.'}</div>
-      `;
-      if (isReel) emptyEl.innerHTML = '';
+      emptyEl.innerHTML = '';
     }
   }
   if (scaler)  scaler.style.display = empty ? 'none' : '';
@@ -21805,6 +21890,18 @@ document.addEventListener('keydown', (e) => {
 });
 
 let _mrSceneEditingId = null;
+// Draft da cena durante edição. Todas as mudanças no dialog mutam ESTE objeto.
+// Só ao clicar "Aplicar Edição" o draft é comitado pra cfg.scenes[idx].
+// Ao fechar (X) sem aplicar, o draft é descartado.
+let _mrSceneDraft = null;
+
+// Helper: pega a cena viva (draft se editando, senão a real do cfg).
+function _mrLiveScene() {
+  if (_mrSceneDraft) return _mrSceneDraft;
+  const cfg = getActiveMotionReelConfig();
+  if (!cfg || !_mrSceneEditingId) return null;
+  return (cfg.scenes || []).find(s => s.id === _mrSceneEditingId) || null;
+}
 
 // Abre o modal de edição da cena. Carrega meta info e zera o prompt.
 function openMotionReelSceneEditor(sceneId) {
@@ -21819,6 +21916,8 @@ function openMotionReelSceneEditor(sceneId) {
     return;
   }
   _mrSceneEditingId = sceneId;
+  // Clona pra draft — tudo no dialog mexe aqui, não na cena real.
+  _mrSceneDraft = JSON.parse(JSON.stringify(scene));
   const isLocked = scene.locked === true;
   const meta = document.getElementById('mrSceneEditMeta');
   if (meta) meta.textContent = `${sceneId} · ${scene.type} · ${(scene.end - scene.start).toFixed(1)}s`;
@@ -21827,43 +21926,316 @@ function openMotionReelSceneEditor(sceneId) {
     prompt.value = '';
     prompt.disabled = isLocked;
     prompt.placeholder = isLocked
-      ? 'Cena fixa: apenas a seleção de tema está liberada.'
+      ? ''
       : 'ex: Muda o headline pra falar de NDVI. Troca o ícone do keyword para um animado de mapa. Adiciona um overlay rotating-rings.';
   }
   const submitBtn = document.getElementById('mrSceneEditSubmit');
   if (submitBtn) {
-    submitBtn.disabled = isLocked;
-    submitBtn.title = isLocked ? 'Cena fixa: use apenas o seletor de tema.' : '';
+    // Submit nunca é disabled — comita tema/textura/imagem mesmo em cenas fixas.
+    // Só a edição IA (instrução do textarea) é bloqueada em cena fixa.
+    submitBtn.disabled = false;
+    submitBtn.title = isLocked ? 'Cena fixa: apenas ajustes visuais (tema, textura, imagem)' : '';
   }
   const status = document.getElementById('mrSceneEditStatus');
-  if (status) status.textContent = isLocked ? 'Cena fixa: você pode ajustar apenas o tema visual.' : '';
+  if (status) status.textContent = '';
   // R16 — sync visual do seletor de tema e do botão Desfazer.
-  const activeTheme = scene.theme || cfg.theme || 'editorial';
+  // Lê do DRAFT (já clonado), não da cena real.
+  const activeTheme = _mrSceneDraft.theme || cfg.theme || 'editorial';
   _syncMrThemeCardSelection(activeTheme);
   _syncMrUndoButton();
+  // R19 — só mostra o controle "Trocar imagem" se a cena tem bgImage.
+  _syncMrSceneBgGroup(_mrSceneDraft);
+  // R20 — só mostra "Trocar textura" se a cena tem camada de textura.
+  _syncMrSceneTextureGroup(_mrSceneDraft);
   document.getElementById('mrSceneEditModal').classList.add('open');
+  // R21 — preview ao vivo no lado direito.
+  _refreshMrSceneEditPreview();
 }
+
+// Mount/refresh o Player de preview no painel direito do modal de edição.
+// Renderiza com o DRAFT (não com a cena real do cfg). Assim o preview reflete
+// as mudanças não-commitadas em tempo real.
+function _refreshMrSceneEditPreview() {
+  if (!_mrSceneDraft) return;
+  const cfg = getActiveMotionReelConfig();
+  if (!cfg) return;
+  const dur = Math.max(1.0, (_mrSceneDraft.end || 0) - (_mrSceneDraft.start || 0));
+  const singleSceneSb = {
+    ...cfg,
+    duration: dur,
+    scenes: [{ ..._mrSceneDraft, start: 0, end: dur, transitionIn: undefined }],
+  };
+  const mountEl = document.getElementById('mrSceneEditPreviewMount');
+  if (mountEl && typeof window.mountMotionReelPreviewPlayer === 'function') {
+    window.mountMotionReelPreviewPlayer(mountEl, singleSceneSb);
+  }
+}
+
+// Default de blur "em repouso" por scene type (depois da entrada Ken Burns).
+// O slider permite override. null = usa o default da cena.
+const MR_BG_BLUR_DEFAULTS = {
+  'brand-intro': 0, 'chapter': 0, 'quote': 0,
+  'headline': 8, 'scenario': 8, 'lower-third': 8, 'whatsapp-chat': 8,
+  'feature-list': 8, 'app-card': 0, 'keyword': 0,
+};
+
+// True quando o tema ativo no draft é flat (sem imagens/texturas/overlays).
+function _mrIsFlatTheme() {
+  if (!_mrSceneDraft) return false;
+  const cfg = getActiveMotionReelConfig();
+  const themeName = _mrSceneDraft.theme || (cfg && cfg.theme) || 'editorial';
+  return themeName === 'flatClaro' || themeName === 'flatEscuro';
+}
+
+function _syncMrSceneBgGroup(scene) {
+  const group = document.getElementById('mrSceneBgGroup');
+  if (!group) return;
+  const hasBg = scene && window.MR_SCENE_TYPES_WITH_BG && window.MR_SCENE_TYPES_WITH_BG.has(scene.type);
+  group.style.display = hasBg ? '' : 'none';
+  if (!hasBg) return;
+  _syncMrSceneBgBlur(scene);
+  _syncMrSceneBgOverlay(scene);
+  // Desabilita controles em temas flat (sem imagem).
+  const flat = _mrIsFlatTheme();
+  group.style.opacity = flat ? 0.4 : 1;
+  group.style.pointerEvents = flat ? 'none' : '';
+}
+
+function _syncMrSceneBgBlur(scene) {
+  const slider = document.getElementById('mrSceneBgBlur');
+  const label = document.getElementById('mrSceneBgBlurValue');
+  if (!slider || !label) return;
+  const def = MR_BG_BLUR_DEFAULTS[scene.type] != null ? MR_BG_BLUR_DEFAULTS[scene.type] : 8;
+  const px = scene.bgImageBlur != null ? scene.bgImageBlur : def;
+  slider.value = px;
+  label.textContent = `${px}px`;
+}
+
+function onMotionReelSceneBgBlur(value) {
+  if (!_mrSceneDraft) return;
+  const px = Math.max(0, Math.min(30, Number(value)));
+  _mrSceneDraft.bgImageBlur = px;
+  const labelEl = document.getElementById('mrSceneBgBlurValue');
+  if (labelEl) labelEl.textContent = `${px}px`;
+  _refreshMrSceneEditPreview();
+}
+
+window.onMotionReelSceneBgBlur = onMotionReelSceneBgBlur;
+
+function resetMotionReelSceneBgBlur() {
+  if (!_mrSceneDraft) return;
+  delete _mrSceneDraft.bgImageBlur;
+  _syncMrSceneBgBlur(_mrSceneDraft);
+  _refreshMrSceneEditPreview();
+}
+
+function resetMotionReelSceneTextureIntensity() {
+  if (!_mrSceneDraft) return;
+  delete _mrSceneDraft.bgTextureOpacity;
+  _syncMrSceneTextureIntensity(_mrSceneDraft);
+  _refreshMrSceneEditPreview();
+}
+
+// Default de overlay opacity por scene type — multiplicador da tonalização do
+// tema sobre a foto de fundo. null = usa o default natural da cena.
+const MR_BG_OVERLAY_DEFAULTS = {
+  'brand-intro': 1.0, 'chapter': 1.0, 'headline': 1.0,
+  'scenario': 1.0, 'quote': 1.0, 'lower-third': 1.0,
+  'whatsapp-chat': 0.62, // bgTint atual
+  'feature-list': 0.60,   // T.bg + 99
+  'app-card': 0.50,       // bgColor + 80
+  'keyword': 0.70,        // T.bg + b3
+};
+
+function _syncMrSceneBgOverlay(scene) {
+  const slider = document.getElementById('mrSceneBgOverlay');
+  const label = document.getElementById('mrSceneBgOverlayValue');
+  if (!slider || !label) return;
+  const def = MR_BG_OVERLAY_DEFAULTS[scene.type] != null ? MR_BG_OVERLAY_DEFAULTS[scene.type] : 0.6;
+  const opacity = scene.bgOverlayOpacity != null ? scene.bgOverlayOpacity : def;
+  const pct = Math.round(opacity * 100);
+  slider.value = pct;
+  label.textContent = `${pct}%`;
+}
+
+function onMotionReelSceneBgOverlay(value) {
+  if (!_mrSceneDraft) return;
+  const pct = Math.max(0, Math.min(100, Number(value)));
+  _mrSceneDraft.bgOverlayOpacity = pct / 100;
+  const labelEl = document.getElementById('mrSceneBgOverlayValue');
+  if (labelEl) labelEl.textContent = `${pct}%`;
+  _refreshMrSceneEditPreview();
+}
+
+function resetMotionReelSceneBgOverlay() {
+  if (!_mrSceneDraft) return;
+  delete _mrSceneDraft.bgOverlayOpacity;
+  _syncMrSceneBgOverlay(_mrSceneDraft);
+  _refreshMrSceneEditPreview();
+}
+
+window.resetMotionReelSceneBgBlur = resetMotionReelSceneBgBlur;
+window.resetMotionReelSceneTextureIntensity = resetMotionReelSceneTextureIntensity;
+window.onMotionReelSceneBgOverlay = onMotionReelSceneBgOverlay;
+window.resetMotionReelSceneBgOverlay = resetMotionReelSceneBgOverlay;
+
+// Defaults pros controles de textura (se a cena não tiver props setados).
+const MR_TEXTURE_OPACITY_DEFAULT = 0.22;
+const MR_TEXTURE_INVERT_DEFAULT = true;
+
+function _syncMrSceneTextureGroup(scene) {
+  const group = document.getElementById('mrSceneTextureGroup');
+  if (!group) return;
+  const hasTex = scene && window.MR_SCENE_TYPES_WITH_TEXTURE && window.MR_SCENE_TYPES_WITH_TEXTURE.has(scene.type);
+  group.style.display = hasTex ? '' : 'none';
+  if (!hasTex) return;
+  _buildMrSceneTextureGrid(scene);
+  _syncMrSceneTextureIntensity(scene);
+  _syncMrSceneTextureInvert(scene);
+  // Desabilita controles em temas flat (sem textura).
+  const flat = _mrIsFlatTheme();
+  group.style.opacity = flat ? 0.4 : 1;
+  group.style.pointerEvents = flat ? 'none' : '';
+}
+
+function _buildMrSceneTextureGrid(scene) {
+  const grid = document.getElementById('mrSceneTextureGrid');
+  if (!grid) return;
+  // Monta o grid uma vez (lazy) — depois só atualiza qual está active.
+  if (grid.dataset.wired !== 'true') {
+    grid.dataset.wired = 'true';
+    const pool = window.MR_TEXTURE_POOL_FULL || [];
+    pool.forEach(url => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'pc-news-texture-thumb';
+      btn.dataset.url = url;
+      btn.title = url.split('/').pop().replace(/\.(webp|jpg|jpeg|png)$/i, '');
+      const inner = document.createElement('span');
+      inner.className = 'pc-news-texture-thumb-inner';
+      inner.style.backgroundImage = `url('/${url}')`;
+      btn.appendChild(inner);
+      grid.appendChild(btn);
+    });
+    grid.addEventListener('click', e => {
+      const thumb = e.target.closest('.pc-news-texture-thumb');
+      if (!thumb) return;
+      _selectMrSceneTexture(thumb.dataset.url);
+    });
+  }
+  const current = scene.bgTexture;
+  grid.querySelectorAll('.pc-news-texture-thumb').forEach(thumb => {
+    thumb.classList.toggle('active', thumb.dataset.url === current);
+  });
+}
+
+function _selectMrSceneTexture(url) {
+  if (!_mrSceneDraft) return;
+  _mrSceneDraft.bgTexture = url;
+  _refreshMrSceneEditPreview();
+  const grid = document.getElementById('mrSceneTextureGrid');
+  if (grid) {
+    grid.querySelectorAll('.pc-news-texture-thumb').forEach(thumb => {
+      thumb.classList.toggle('active', thumb.dataset.url === url);
+    });
+  }
+}
+
+function _syncMrSceneTextureIntensity(scene) {
+  const slider = document.getElementById('mrSceneTextureIntensity');
+  const label = document.getElementById('mrSceneTextureIntensityValue');
+  if (!slider || !label) return;
+  const opacity = scene.bgTextureOpacity != null ? scene.bgTextureOpacity : MR_TEXTURE_OPACITY_DEFAULT;
+  const pct = Math.round(opacity * 100);
+  slider.value = pct;
+  label.textContent = `${pct}%`;
+}
+
+function onMotionReelSceneTextureIntensity(value) {
+  if (!_mrSceneDraft) return;
+  const pct = Math.max(0, Math.min(100, Number(value)));
+  _mrSceneDraft.bgTextureOpacity = pct / 100;
+  const labelEl = document.getElementById('mrSceneTextureIntensityValue');
+  if (labelEl) labelEl.textContent = `${pct}%`;
+  _refreshMrSceneEditPreview();
+}
+
+function _syncMrSceneTextureInvert(scene) {
+  const btn = document.getElementById('mrSceneTextureInvertBtn');
+  const label = document.getElementById('mrSceneTextureInvertLabel');
+  if (!btn || !label) return;
+  const inverted = scene.bgTextureInvert != null ? scene.bgTextureInvert : MR_TEXTURE_INVERT_DEFAULT;
+  btn.style.background = inverted ? '#111827' : '#f8fafc';
+  btn.style.color = inverted ? '#fff' : '#0f172a';
+  btn.style.borderColor = inverted ? '#111827' : '#e2e8f0';
+  label.textContent = inverted ? 'Cores invertidas' : 'Inverter cores';
+}
+
+function toggleMotionReelSceneTextureInvert() {
+  if (!_mrSceneDraft) return;
+  const current = _mrSceneDraft.bgTextureInvert != null ? _mrSceneDraft.bgTextureInvert : MR_TEXTURE_INVERT_DEFAULT;
+  _mrSceneDraft.bgTextureInvert = !current;
+  _syncMrSceneTextureInvert(_mrSceneDraft);
+  _refreshMrSceneEditPreview();
+}
+
+// Sorteia nova textura do pool pra cena ativa (botão "Aleatório"), evitando repetir.
+function swapMotionReelSceneTexture() {
+  if (!_mrSceneDraft) return;
+  if (!window.MR_SCENE_TYPES_WITH_TEXTURE || !window.MR_SCENE_TYPES_WITH_TEXTURE.has(_mrSceneDraft.type)) return;
+  const next = window.mrPickRandomTexture(_mrSceneDraft.bgTexture);
+  _selectMrSceneTexture(next);
+}
+
+window.swapMotionReelSceneTexture = swapMotionReelSceneTexture;
+window.onMotionReelSceneTextureIntensity = onMotionReelSceneTextureIntensity;
+window.toggleMotionReelSceneTextureInvert = toggleMotionReelSceneTextureInvert;
+
+// Sorteia nova imagem do pool pra cena ativa, evitando repetir a atual.
+function swapMotionReelSceneBg() {
+  if (!_mrSceneDraft) return;
+  if (!window.MR_SCENE_TYPES_WITH_BG || !window.MR_SCENE_TYPES_WITH_BG.has(_mrSceneDraft.type)) return;
+  const next = window.mrPickRandomBg(_mrSceneDraft.bgImage);
+  _mrSceneDraft.bgImage = next;
+  _refreshMrSceneEditPreview();
+}
+
+window.swapMotionReelSceneBg = swapMotionReelSceneBg;
+
+// Restaura o draft pro estado "padrão": remove customizações visuais (theme
+// override, bgImage, bgTexture, opacity, invert) — volta ao look default do
+// reel sem overrides por cena. Conteúdo (word/headline/items/etc) permanece.
+function restoreMotionReelSceneDefaults() {
+  if (!_mrSceneDraft) return;
+  delete _mrSceneDraft.theme;
+  delete _mrSceneDraft.bgImage;
+  delete _mrSceneDraft.bgTexture;
+  delete _mrSceneDraft.bgTextureOpacity;
+  delete _mrSceneDraft.bgTextureInvert;
+  // Re-sync UI a partir do draft limpo.
+  const cfg = getActiveMotionReelConfig();
+  const fallbackTheme = (cfg && cfg.theme) || 'editorial';
+  _syncMrThemeCardSelection(fallbackTheme);
+  _syncMrSceneBgGroup(_mrSceneDraft);
+  _syncMrSceneTextureGroup(_mrSceneDraft);
+  _refreshMrSceneEditPreview();
+}
+
+window.restoreMotionReelSceneDefaults = restoreMotionReelSceneDefaults;
 
 function closeMotionReelSceneEditor() {
   _mrSceneEditingId = null;
+  _mrSceneDraft = null;
   document.getElementById('mrSceneEditModal').classList.remove('open');
+  if (typeof window.unmountMotionReelPreviewPlayer === 'function') {
+    window.unmountMotionReelPreviewPlayer();
+  }
 }
 
-// Envia a cena atual + instrução pra Gemini, aplica resultado no storyboard.
+// Aplica o DRAFT na cena real do storyboard. Se tiver instrução no textarea,
+// também roda a edição IA (Gemini) no draft antes de comitar.
 async function submitMotionReelSceneEdit() {
-  if (!_mrSceneEditingId) return;
-  const cfgForLock = getActiveMotionReelConfig();
-  const sceneForLock = cfgForLock && (cfgForLock.scenes || []).find(s => s.id === _mrSceneEditingId);
-  if (sceneForLock && sceneForLock.locked === true) {
-    setMrEditStatus('Cena fixa: apenas a seleção de tema está liberada.', 'error');
-    return;
-  }
-  const prompt = document.getElementById('mrSceneEditPrompt');
-  const instruction = (prompt ? prompt.value : '').trim();
-  if (!instruction) {
-    setMrEditStatus('Descreva o que você quer mudar.', 'error');
-    return;
-  }
+  if (!_mrSceneEditingId || !_mrSceneDraft) return;
   const reel = motionReels[currentMotionReel];
   const cfg = getActiveMotionReelConfig();
   if (!cfg) {
@@ -21876,44 +22248,54 @@ async function submitMotionReelSceneEdit() {
     return;
   }
   const originalScene = cfg.scenes[sceneIdx];
+  const isLocked = originalScene.locked === true;
+  const prompt = document.getElementById('mrSceneEditPrompt');
+  const instruction = (prompt ? prompt.value : '').trim();
+  if (isLocked && instruction) {
+    setMrEditStatus('Cena fixa: apenas a seleção de tema está liberada.', 'error');
+    return;
+  }
 
   const submitBtn = document.getElementById('mrSceneEditSubmit');
   if (submitBtn) submitBtn.disabled = true;
-  setMrEditStatus('<i class="ph ph-hourglass"></i> Gemini editando cena...', '');
 
-  // R16 — empilha snapshot ANTES da edição IA pra permitir desfazer.
+  // Snapshot do estado atual ANTES de commitar — permite Desfazer.
   _pushMrSceneSnapshot(_mrSceneEditingId, JSON.parse(JSON.stringify(originalScene)));
 
   try {
-    const edited = await callGeminiMotionReelSceneEdit(originalScene, instruction);
-    // Preserva campos imutáveis (id, start, end, type, locked).
-    const merged = {
-      ...edited,
-      id: originalScene.id,
-      start: originalScene.start,
-      end: originalScene.end,
-      type: originalScene.type,
-      locked: originalScene.locked,
-    };
-    if (merged.type === 'keyword') {
-      merged.icon = mrResolveKeywordAnimatedIcon(merged.icon, merged.word, merged.theme || cfg.theme);
+    let finalScene = { ..._mrSceneDraft };
+    // Se há instrução IA, edita o draft via Gemini antes de comitar.
+    if (instruction) {
+      setMrEditStatus('<i class="ph ph-hourglass"></i> Gemini editando cena...', '');
+      const edited = await callGeminiMotionReelSceneEdit(_mrSceneDraft, instruction);
+      finalScene = {
+        ...edited,
+        // Preserva campos imutáveis + os overrides visuais do draft.
+        id: originalScene.id,
+        start: originalScene.start,
+        end: originalScene.end,
+        type: originalScene.type,
+        locked: originalScene.locked,
+        theme: _mrSceneDraft.theme || edited.theme,
+        bgImage: _mrSceneDraft.bgImage || edited.bgImage,
+        bgTexture: _mrSceneDraft.bgTexture || edited.bgTexture,
+        bgTextureOpacity: _mrSceneDraft.bgTextureOpacity != null ? _mrSceneDraft.bgTextureOpacity : edited.bgTextureOpacity,
+        bgTextureInvert: _mrSceneDraft.bgTextureInvert != null ? _mrSceneDraft.bgTextureInvert : edited.bgTextureInvert,
+      };
     }
-    mrSanitizeTransitionAudio(merged);
-    // Mantém referência ao objeto config (in-place update).
-    cfg.scenes[sceneIdx] = merged;
-    // Se for o reel da sidebar, atualiza o objeto também.
+    if (finalScene.type === 'keyword') {
+      finalScene.icon = mrResolveKeywordAnimatedIcon(finalScene.icon, finalScene.word, finalScene.theme || cfg.theme);
+    }
+    mrSanitizeTransitionAudio(finalScene);
+    // Commit: substitui a cena real pelo draft (eventualmente editado pela IA).
+    cfg.scenes[sceneIdx] = finalScene;
     if (reel && reel.config) reel.config = cfg;
-    // Persistência (R12): qualquer mutação salva no localStorage.
     saveMotionReelsToLocal();
-    // Re-monta o storyboard no Player/grid.
     if (typeof window.updateMotionReelStoryboard === 'function') {
       window.updateMotionReelStoryboard(cfg);
     }
-    setMrEditStatus('<i class="ph ph-check-circle"></i> Cena atualizada — modal fica aberto pra mais ajustes ou desfazer.', 'success');
-    // R16: clear prompt input pra próxima edição; modal fica aberto.
-    const promptEl = document.getElementById('mrSceneEditPrompt');
-    if (promptEl) promptEl.value = '';
     _syncMrUndoButton();
+    closeMotionReelSceneEditor();
   } catch (err) {
     console.error('[MotionReel] Falha na edição', err);
     setMrEditStatus(`<i class="ph ph-warning"></i> ${err.message || err}`, 'error');
@@ -21958,28 +22340,16 @@ function _syncMrThemeCardSelection(themeName) {
 // Aplica tema na cena selecionada (override scene.theme). Push snapshot
 // antes pra permitir desfazer. Atualiza grid via updateMotionReelStoryboard.
 function applyMrSceneTheme(themeName) {
-  if (!_mrSceneEditingId) return;
-  const validThemes = new Set(['editorial', 'vibrante', 'claro']);
+  if (!_mrSceneDraft) return;
+  const validThemes = new Set(['editorial', 'vibrante', 'floresta', 'granito', 'mineral', 'carbono', 'flatClaro', 'flatEscuro']);
   if (!validThemes.has(themeName)) return;
-  const reel = motionReels[currentMotionReel];
-  const cfg = getActiveMotionReelConfig();
-  if (!cfg) return;
-  const idx = (cfg.scenes || []).findIndex(s => s.id === _mrSceneEditingId);
-  if (idx < 0) return;
-  const before = JSON.parse(JSON.stringify(cfg.scenes[idx]));
-  // Só empilha snapshot se o tema realmente mudou — evita undo "vazio".
-  const currentTheme = before.theme || cfg.theme || 'editorial';
-  if (currentTheme === themeName) return;
-  _pushMrSceneSnapshot(_mrSceneEditingId, before);
-  cfg.scenes[idx] = { ...cfg.scenes[idx], theme: themeName };
-  if (reel && reel.config) reel.config = cfg;
-  saveMotionReelsToLocal();
-  if (typeof window.updateMotionReelStoryboard === 'function') {
-    window.updateMotionReelStoryboard(cfg);
-  }
+  // Mutação só no draft. Commit acontece em submitMotionReelSceneEdit.
+  _mrSceneDraft.theme = themeName;
   _syncMrThemeCardSelection(themeName);
-  _syncMrUndoButton();
-  setMrEditStatus(`<i class="ph ph-paint-bucket"></i> Tema "${themeName}" aplicado nesta cena.`, 'success');
+  // Re-sincroniza os grupos de imagem/textura — flat themes desabilitam.
+  _syncMrSceneBgGroup(_mrSceneDraft);
+  _syncMrSceneTextureGroup(_mrSceneDraft);
+  _refreshMrSceneEditPreview();
 }
 
 function undoLastMrSceneEdit() {
@@ -22085,10 +22455,6 @@ function updateMotionReelVisibility() {
       }
       if (scaler) scaler.hidden = true;
       if (emptyEl) {
-        emptyEl.innerHTML = `
-          <div class="empty-state-title">Nenhum reel gerado ainda</div>
-          <div class="empty-state-sub">Use Ações → Gerar Reel para criar o primeiro Motion Reel. A grade aparece só para reels salvos.</div>
-        `;
         emptyEl.innerHTML = '';
         emptyEl.classList.add('visible');
         emptyEl.setAttribute('aria-hidden', 'false');
@@ -22201,8 +22567,34 @@ TIPOS DE CENA (escolha o tipo certo pra cada momento — não repita mesmo tipo 
    Lista segura: "animatedicons:sustainability", "line-md:speed-loop", "line-md:speedometer-loop", "line-md:confirm", "line-md:check-all", "line-md:arrow-up-circle", "line-md:lightbulb", "line-md:map-marker-loop", "line-md:my-location-loop", "line-md:bell-alert-loop", "line-md:document-report", "line-md:phone-call-loop", "line-md:cog-loop", "line-md:star-pulsating-loop", "meteocons:pollen-grass-fill", "meteocons:pollen-tree-fill", "meteocons:clear-day-fill", "meteocons:partly-cloudy-day-fill", "meteocons:raindrops-fill", "meteocons:thermometer-sun-fill", "meteocons:wind-fill".
    Exemplos de icon por palavra: "Rápido"→"line-md:speed-loop", "Confiável"→"line-md:confirm", "Preciso"→"line-md:check-all", "Direto"→"line-md:arrow-up-circle", "Inteligente"→"line-md:lightbulb", "Conectado"→"line-md:map-marker-loop", "Safra"→"animatedicons:sustainability", "Clima"→"meteocons:partly-cloudy-day-fill".
 • "headline" — frase-hook editorial grande (estilo poster de filme). Usada no slot 02 logo após o intro pra preparar o tema. Visual já é hardcoded (imagem + Ken Burns + glass slate); IA preenche apenas o copy. Props: kicker (curto, MAIÚSCULA, 1-2 palavras tipo "VISÃO COMPLETA"), headline (1-2 frases curtas, MÁX 50-70 caracteres totais, tipo "Veja sua lavoura como nunca antes." pra NDVI ou "Antecipe o que vem do céu." pra clima). NÃO inventar números ou estatísticas — é uma frase de POSICIONAMENTO, não um dado.
-• "quote" — lista cinematográfica de palavras-chave do tema. Visual hardcoded: imagem com orvalho + glass slate + checks animados. Props: words (array com EXATAMENTE 5 palavras curtas, 1-2 palavras por item, sem frases longas). As palavras devem ser específicas do tema e não copy genérica de marca.
-• "feature-list" — título + 3-4 itens com ícone colorido. Use quando o tema permite enumerar partes/etapas/benefícios. Visual hardcoded (light theme — fundo branco/fog + cards brancos com ícone + texto). Props: kicker, title (curto, máx 4 palavras), items: array de 3-4 objetos { "text": "...", "icon": "set:name" }.
+• "quote" — lista cinematográfica de 5 palavras-chave do tema. Slot 10 do reel. Visual hardcoded: imagem com orvalho + glass slate + checks animados. Props: words (array com EXATAMENTE 5 palavras curtas, 1-2 palavras por item, sem frases longas).
+
+  POSICIONAMENTO: as 5 palavras formam um arco narrativo da rotina CDM — observar → analisar → decidir → executar → comprovar. Cada palavra é uma ETAPA do trabalho de desenvolvimento de mercado. Sem clichês motivacionais ("inovar", "transformar"), sem termos genéricos do agro ("plantar", "colher"), sem copy de marca ("crescer", "evoluir").
+
+  VOCABULÁRIO RECOMENDADO (escolha 5 do mesmo arco):
+    Observação: Mapear, Monitorar, Detectar, Observar, Visitar, Identificar
+    Análise: Analisar, Comparar, Validar, Avaliar, Diagnosticar, Mensurar
+    Decisão: Decidir, Priorizar, Posicionar, Direcionar, Recomendar
+    Execução: Rotear, Visitar, Demonstrar, Sustentar, Articular
+    Comprovação: Provar, Comprovar, Documentar, Registrar, Consolidar
+
+  EXEMPLOS por tema (referência de tom — NÃO copie literal):
+    Tema "NDVI":          ["Mapear", "Monitorar", "Comparar", "Decidir", "Provar"]
+    Tema "demonstrativa": ["Visitar", "Validar", "Documentar", "Sustentar", "Expandir"]
+    Tema "consultoria":   ["Observar", "Diagnosticar", "Recomendar", "Acompanhar", "Comprovar"]
+    Tema "carteira":      ["Mapear", "Priorizar", "Visitar", "Sustentar", "Fechar"]
+
+  PROIBIDO: clichês motivacionais ou copy de marca genérica.
+• "feature-list" — título + 3-4 itens com ícone colorido. Slot 05 do reel. Visual hardcoded (light theme — fundo branco/fog + cards brancos com ícone + texto). Use quando o tema permite enumerar partes/etapas/benefícios da rotina CDM. Props: kicker (curto MAIÚSCULA tipo "TUDO EM UM" / "NA PRÁTICA" / "NA ROTINA"), title (curto, máx 4 palavras, frase de cabeçalho), items: array de 3-4 objetos { "text": "...", "icon": "set:name" }.
+
+  POSICIONAMENTO: cada item descreve um COMPONENTE da rotina de quem desenvolve mercado (DM/GD/promotor/RTV/consultor), não uma feature de "app pra produtor". Os itens são partes do sistema operacional do trabalho comercial-técnico — visita, evidência, agenda, carteira, parceiro, validação, dossiê — ligados ao tema.
+
+  EXEMPLOS por tema (referência de tom):
+    Tema "NDVI":         items = [{text:"Mapeamento por satélite", ...}, {text:"Comparativo entre talhões", ...}, {text:"Evidência pronta pra carteira", ...}]
+    Tema "demonstrativa": items = [{text:"Roteirização de visitas", ...}, {text:"Validação técnica em campo", ...}, {text:"Dossiê automático por parceiro", ...}]
+    Tema "consultoria":   items = [{text:"Agenda técnica priorizada", ...}, {text:"Histórico por cliente", ...}, {text:"Relatório consolidado", ...}]
+
+  PROIBIDO: "tudo na palma da mão", "para o produtor", "controle da fazenda", "gestão agrícola". O foco é o trabalho de DM/GD/promotoria.
    ÍCONES via Iconify (use APENAS estes packs colorful pra hero scenes — escolha o ícone que melhor representa o item):
      - twemoji:* (Twitter emoji colorido — muito expressivo)
          exemplos: twemoji:satellite, twemoji:seedling, twemoji:ear-of-corn, twemoji:tractor, twemoji:globe-showing-americas, twemoji:droplet, twemoji:sun, twemoji:cloud, twemoji:bar-chart, twemoji:rocket, twemoji:gear, twemoji:check-mark-button, twemoji:speech-balloon, twemoji:handshake, twemoji:warning, twemoji:money-bag, twemoji:mobile-phone, twemoji:antenna-bars
@@ -22213,14 +22605,78 @@ TIPOS DE CENA (escolha o tipo certo pra cada momento — não repita mesmo tipo 
 • "cta" — fechamento com headline grande quando o tema é uma campanha ativa. Props: headline (curto), sublabel (descrição), handle (opcional).
 • "chapter" — pausa visual / divisor de seções no meio do reel. Numero grande "01/02/03" + título + subtitle. Use 1x quando o tema tem 2+ momentos distintos. Props: chapterNumber (1-9), chapterTitle (curto, 2-4 palavras), chapterSubtitle (opcional).
 • "lower-third" — overlay de menção rápida (faixa branca grande no rodapé, slide-in). Use 1x pra creditar pessoa, parceiro ou fonte. Props: name, subtitle, handle, cta (opcional).
-• "scenario" — mini-cenário narrativo de desenvolvimento de mercado (ex: "O time volta do campo. As evidências viram prioridade comercial antes da próxima visita."). Usada no slot 06 como ponte antes do "Em tempo real" do cap07. Visual hardcoded (imagem + glass slate); IA preenche kicker + scenario por tema. Props: kicker (curto, MAIÚSCULA, 2-3 palavras tipo "NA REGIÃO CERTA"), scenario (2-3 frases curtas separadas por \n, MÁX 100-130 caracteres totais, descrevendo um momento concreto de DM/GD, promotoria ou decisão comercial). NÃO inventar números — é uma descrição de cenário, não dado.
-• "app-card" — janela mockup do app Cropware ilustrando o tema como rotina de DM/GD. Use 1x MÁX quando o tema é sobre uma feature concreta. Caption deve soar como decisão de mercado, validação técnica ou geração de demanda, não como controle de fazenda. Props: kicker (opcional), caption (frase contexto), appType ("weather" | "satellite" | "alert" | "dashboard"), data: específico do tipo:
+• "scenario" — mini-cenário narrativo da rotina de quem CONSTRÓI mercado no campo. Slot 06 do reel; ponte antes do cap. 03. Visual hardcoded (imagem + glass slate); IA preenche kicker + scenario.
+
+  POSICIONAMENTO OBRIGATÓRIO (não negociável):
+    A cena descreve um MOMENTO CONCRETO da rotina de DM/GD/promotoria técnica/ATC/consultoria — NÃO é "o produtor abre o app", NÃO é "tudo na palma da mão", NÃO é "controle da lavoura". É a rotina de quem desenvolve mercado: equipe comercial, RTV, promotor, gestor de carteira, analista técnico-comercial. O cenário liga TEMA + uma decisão de mercado (priorizar cliente/região, validar tecnologia, sustentar venda com evidência, ativar área demonstrativa, alinhar parceiro, abrir oportunidade, consolidar adoção).
+
+  Props:
+    kicker  — curto, MAIÚSCULA, 2-3 palavras tipo "NA REGIÃO CERTA", "ANTES DA VISITA", "NA HORA DE DECIDIR", "DEPOIS DO CAMPO", "NA PRÓXIMA ROTA".
+    scenario — 2-3 frases curtas separadas por \n, MÁX 100-130 caracteres totais.
+
+  VOCABULÁRIO A USAR (escolha o que combina com o tema):
+    área demonstrativa, validação técnica, evidência de campo, dossiê técnico, posicionamento técnico,
+    carteira de clientes, parceiro, revenda, cooperativa, RTV, promotor, consultor, time comercial,
+    rota técnica, visita, agenda, próxima safra, expansão, adoção, geração de demanda,
+    inteligência de mercado, dado de campo virando decisão, prova de campo, comparativo entre talhões.
+
+  EXEMPLOS por contexto (use como referência de tom; NÃO copie literal):
+    • Tema "NDVI":         "O time volta do campo.\nAs evidências viram prioridade comercial antes da próxima visita."
+    • Tema "clima":        "Antes da equipe sair, a previsão já organiza a rota.\nO promotor chega na hora certa, com a evidência certa."
+    • Tema "demonstrativa":"A área demonstrativa fala primeiro.\nO dado de campo sustenta a próxima conversa com a revenda."
+    • Tema "consultoria":  "A visita técnica acaba.\nO dossiê fica pronto antes da equipe comercial chegar no parceiro."
+    • Tema "rota técnica": "A rota não é mais lista de endereços.\nÉ a sequência de oportunidades que merecem evidência hoje."
+
+  PROIBIDO no scenario:
+    - "Você abre o app", "na palma da mão", "controle da fazenda", "rotina do produtor".
+    - Linguagem motivacional ("o segredo está em...", "o agro do futuro chegou").
+    - Números/percentuais inventados.
+• "app-card" — janela mockup do app Cropware ilustrando o tema como rotina CDM (DM/GD/promotoria). Slot 08 do reel. Use quando o tema permite mostrar a tela em funcionamento.
+
+  POSICIONAMENTO: o app é a ferramenta de quem CONSTRÓI mercado, não um dashboard de produtor. O caption + kicker contextualizam o uso na rotina técnico-comercial — preparação de visita, comparativo pra parceiro, agenda priorizada, evidência consolidada. NÃO é "veja sua lavoura"; É "tenha o argumento técnico antes da próxima conversa".
+
+  EXEMPLOS de caption por tema:
+    Tema "clima":         "Janela climática certa pra abrir a rota técnica."
+    Tema "NDVI":          "Comparativo pronto antes da próxima conversa comercial."
+    Tema "alerta":        "Ação técnica priorizada antes do impacto na carteira."
+    Tema "demonstrativa": "Evidência consolidada pra sustentar a próxima venda."
+
+  Props: kicker (opcional, MAIÚSCULA, 2-3 palavras tipo "NO BOLSO DO PROMOTOR" / "NA RECEPÇÃO DO TIME"), caption (frase contexto, MÁX 60 caracteres), appType ("weather" | "satellite" | "alert" | "dashboard"), data: específico do tipo:
    - weather: { city, temp (number), condition, forecast: [{day, temp}, ...] }
    - satellite: { lot, ndvi (0-1) }   // NDVI map auto-gerado
    - alert: { title, message, severity: "alta"|"media"|"baixa" }
    - dashboard: { metrics: [{ label, value, unit?, trend?: "up"|"down" }, ...] (3 itens) }
-• "whatsapp-chat" — mockup de conversa WhatsApp entre equipe de campo/comercial e Cropware AI ilustrando o tema. Usada no slot 09. Visual hardcoded (phone mockup + UI WhatsApp); IA preenche "messages" com 3-4 mensagens alternando from="user" e from="ai". Cada mensagem deve ser CURTA (50-100 caracteres), conversacional, TEMA-ESPECÍFICA e voltada a decisão de DM/GD. Ex (NDVI): [{from:"user",text:"Qual área demonstrativa merece visita hoje?"},{from:"ai",text:"Talhão 12 segue forte. Talhão 7 perdeu vigor e pede checagem técnica."},{from:"user",text:"Isso muda a agenda comercial?"},{from:"ai",text:"Sim. Priorize a região oeste e leve o comparativo para o parceiro."}]. Props: messages (array de {from, text}).
+• "whatsapp-chat" — mockup de conversa WhatsApp entre equipe técnico-comercial e Cropware AI ilustrando o tema. Slot 09 do reel. Visual hardcoded (phone mockup + UI WhatsApp); IA preenche "messages" com 3-4 mensagens alternando from="user" e from="ai".
 
+  POSICIONAMENTO: o "user" é alguém da equipe que CONSTRÓI mercado — DM, GD, promotor, RTV, consultor, coordenador de carteira. NÃO é o produtor perguntando "como tá minha lavoura". É o profissional técnico-comercial decidindo:
+    - Onde priorizar visita / qual cliente atender primeiro
+    - Como sustentar venda com evidência técnica
+    - Qual região avançar / qual parceiro alinhar
+    - Como validar adoção / como medir resultado da demonstrativa
+  A AI responde com dados de campo, comparativos, recomendação de rota, evidência. CURTO (50-100 caracteres por msg), conversacional, técnico-comercial.
+
+  EXEMPLOS por tema (referência de tom):
+    Tema "NDVI":
+      [{from:"user",text:"Qual área demonstrativa merece visita hoje?"},
+       {from:"ai",text:"Talhão 12 segue forte. Talhão 7 caiu de vigor — sugiro checagem técnica."},
+       {from:"user",text:"Isso muda a agenda comercial?"},
+       {from:"ai",text:"Sim. Priorize a região oeste e leve o comparativo pro parceiro."}]
+    Tema "carteira":
+      [{from:"user",text:"Quais parceiros perderam atividade no último mês?"},
+       {from:"ai",text:"3 revendas da região centro caíram em frequência de visita."},
+       {from:"user",text:"Posso ver o histórico?"},
+       {from:"ai",text:"Sim, abrindo dossiê consolidado por carteira."}]
+    Tema "demonstrativa":
+      [{from:"user",text:"A área demonstrativa do parceiro 4 já tem resultado?"},
+       {from:"ai",text:"Tem. Vigor 0.82 contra 0.71 no comparativo regional."},
+       {from:"user",text:"Pode gerar o dossiê pra próxima visita?"},
+       {from:"ai",text:"Pronto. Inclui histórico, evidência e recomendação."}]
+
+  PROIBIDO: "como tá minha lavoura", "abri meu app hoje", "como tá meu talhão" — esse é tom de produtor. O user é técnico-comercial.
+
+  Props: messages (array de {from, text}).
+
+REGRA ATUALIZADA app-card: ignore o formato antigo de uma unica janela com 3 dados. Gere SEMPRE data.windows com EXATAMENTE 3 objetos, um por janela/funcionalidade. Cada objeto deve ter { "type": "weather"|"satellite"|"alert"|"dashboard", "title": "nome curto", "label": "contexto curto", "value": "dado curto", "unit": "opcional", "description": "1 frase curta de uso pratico", "status": "chip curto contextual", "accent": "var(--mr-greenAccent)|var(--mr-greenDeep)|var(--mr-greenBright)" }. Exemplos: clima = previsao, alerta climatico, agenda; NDVI = mapa de vigor, zona critica, comparativo; relatorios = evidencias, resumo, compartilhamento. STATUS: NUNCA use "ao vivo"/"tempo real"/"agora" — esses chips genéricos não agregam. Use status descritivo do conteúdo (ex: "safra 25/26", "ultimos 7d", "talhao 12", "validado", "tendencia", "comparativo", "consolidado"). ACCENT: priorize SEMPRE a familia verde (greenAccent/greenDeep/greenBright). Não use azure/amber em app-card — a cena 08 é institucional Cropware e precisa ficar 100% na paleta verde.
 PALETA DE CORES (use APENAS estes tokens literais — paleta MR_COLORS v2 curada):
 
 VERDES (5 derivações ao redor do verde Cropware oficial):
@@ -22392,18 +22848,37 @@ VOICEOVER POR CENA (importante — leia tudo antes de gerar texto):
 
   [05] feature-list (6s, custom) — enuncia as 3 features em UMA frase corrida,
        SEM listar com "primeiro, segundo, terceiro". Use conjunções naturais.
-       Limite: 13 palavras. Tom: confiante, prático.
-       Ex: "Monitora, diagnostica e guarda a história da sua safra inteira."
+       Limite: 13 palavras. Tom: confiante, consultivo. Fala da rotina CDM
+       (DM/GD/promotor/RTV), não de "app pra produtor".
+       PROIBIDO: "sua safra", "sua lavoura", "no seu campo" — voz de produtor.
+       Exemplos coerentes com o posicionamento:
+         • "Mapeia, compara e entrega a evidência pronta pro parceiro."
+         • "Valida em campo, consolida em dossiê e sustenta a venda."
+         • "Organiza a rota, prioriza o cliente e abre a próxima oportunidade."
 
-  [06] scenario (6s, custom) — CONTEMPLATIVO, ritmo lento. Pinta a cena que
-       o slide narra. Pode ser 1 frase longa ou 2 curtas. Use pausa de vírgula.
-       Limite: 13 palavras. Tom: cinematográfico, pausado.
-       Ex: "É manhã. Você abre o app, e o campo todo cabe na palma."
+  [06] scenario (6s, custom) — narra o momento de DM/GD que o slide pinta.
+       Tom consultivo e pausado, NÃO contemplativo abstrato. Liga TEMA a uma
+       decisão de mercado (cliente/região, área demonstrativa, validação,
+       evidência, geração de demanda). Pode ser 1 frase longa ou 2 curtas
+       com vírgula pra micro-respiro. Limite: 13 palavras.
+       PROIBIDO: "você abre o app", "tudo na palma", linguagem de produtor.
+       Exemplos coerentes com o posicionamento:
+         • "A visita acabou. O dossiê já organiza a próxima rota comercial."
+         • "Antes do time sair, a rota técnica já está priorizada."
+         • "A área demonstrativa fala primeiro, e o parceiro fecha depois."
+         • "O dado de campo vira a evidência que sustenta a próxima venda."
 
-  [08] app-card (6s, custom) — descreve o BENEFÍCIO do que está sendo mostrado
-       no mockup. Evite jargão técnico. Foca no que muda pro produtor.
-       Limite: 13 palavras. Tom: direto.
-       Ex: "Previsão precisa pro talhão certo, na hora que você precisa decidir."
+  [08] app-card (6s, custom) — narra o BENEFÍCIO de mercado que o mockup ilustra.
+       Foca no impacto pra quem desenvolve mercado (DM/GD/promotor/RTV/consultor),
+       não pro produtor. Evite jargão de feature; foca em decisão comercial-técnica.
+       Limite: 13 palavras. Tom: direto, consultivo.
+       PROIBIDO: "pra você decidir" (se "você" = produtor), "no seu talhão",
+       "tudo que você precisa" — esse é tom de app de produtor.
+       Exemplos coerentes com o posicionamento:
+         • "Previsão certa pra abrir a rota técnica antes da equipe sair."
+         • "Comparativo pronto pra sustentar a próxima conversa com o parceiro."
+         • "Evidência técnica direto no bolso, na hora da decisão comercial."
+         • "Alerta na hora certa, agenda técnica reorganizada antes do impacto."
 
   [11] lower-third (5s, locked) — CTA WhatsApp curta e convidativa.
        FORMATO sugerido: "Fala com a gente. [convite, 4-5 palavras]."
@@ -22467,14 +22942,31 @@ TEMA VISUAL (R16, top-level + override por cena, opcional):
     • "vibrante":  verde brilhante dominante + slate médio. Mood energético,
       expansivo, juvenil. Bom pra: campanhas virais, "uau" momentos,
       anúncios de promoção/safra.
-    • "claro":     cream/white + verde accent. Mood limpo, otimista,
-      onboarding. Bom pra: comunicação leve, tutoriais, novos clientes.
+    • "floresta":  verde escuro médio (greenForest) + accent verde claro.
+      Mood imersivo, natureza viva, conexão com o campo. Bom pra: campanhas
+      de identidade Cropware, temas de bioma, dados de campo, monitoramento.
+    • "granito":   slate médio escuro (slateDark) + verde Cropware oficial.
+      Mood sólido, corporativo equilibrado, mid-tone neutro com identidade.
+      Bom pra: lançamentos de produto, reels técnicos, demonstrações.
+    • "mineral":   slate cinza-verde (slateMid) + verde Cropware + tipografia firme.
+      Mood lab/precisão, neutro com caráter. Bom pra: validação técnica,
+      relatórios, comparativos, narrativa analítica.
+    • "carbono":   slate quase preto (slateAbyss) + verde escuro sóbrio (greenForest).
+      Mood premium sombrio, autoridade, alto contraste subdued. Bom pra:
+      cases de sucesso premium, posicionamento sênior, comunicação institucional.
+    • "flatClaro": fundo branco puro, texto preto, accent verde Cropware. SEM
+      imagens, texturas ou overlays — apenas a cor sólida. Mood minimalista,
+      direto, vibe tipografia. Bom pra: comunicação institucional clean,
+      manifestos, mensagens diretas.
+    • "flatEscuro": fundo verde quase preto (greenAbyss), texto branco, accent
+      verde claro. SEM imagens, texturas ou overlays. Espelho escuro do flat
+      claro. Bom pra: lançamentos sóbrios, alta autoridade, narrativa noturna.
 
   Cada cena pode opcionalmente OVERRIDE com seu próprio "theme" (mesma lista).
   Use só pra contraste pontual — manter coerência visual no reel todo é melhor.
 
   Ex: { "duration": 60, "theme": "vibrante", "scenes": [ ... ] }
-  Ex (override): { ..., "scenes": [{ ..., "theme": "claro" }, ...] }
+  Ex (override): { ..., "scenes": [{ ..., "theme": "crepusculo" }, ...] }
 
 ESTRUTURA OBRIGATÓRIA (R12 — formato 6+6, fixas + customizáveis):
   Gere SEMPRE 12 cenas, sendo 5 FIXAS e 7 CUSTOMIZÁVEIS pelo tema.
@@ -22773,7 +23265,12 @@ function mrResolveKeywordAnimatedIcon(icon, word, theme) {
   }
   if (MR_KEYWORD_ANIMATED_ICONS.has(rawIcon) && rawIcon !== MR_KEYWORD_ANIMATED_ICON_FALLBACK) return rawIcon;
   const themeName = String(theme || '').toLowerCase();
-  if (themeName === 'claro') return 'line-md:document-report';
+  if (themeName === 'floresta') return 'line-md:leaf-loop';
+  if (themeName === 'granito') return 'line-md:cog-loop';
+  if (themeName === 'mineral') return 'line-md:my-location-loop';
+  if (themeName === 'carbono') return 'line-md:moon-loop';
+  if (themeName === 'flatclaro') return 'line-md:sunny';
+  if (themeName === 'flatescuro') return 'line-md:moon';
   if (themeName === 'vibrante') return 'line-md:speed-loop';
   if (themeName === 'editorial') return 'line-md:map-marker-loop';
   return MR_KEYWORD_ANIMATED_ICON_FALLBACK;
@@ -22796,7 +23293,7 @@ function mrSeededRandom(seed) {
 }
 
 function mrAssignRandomSceneThemes(scenes, seed) {
-  const names = ['editorial', 'vibrante', 'claro'];
+  const names = ['editorial', 'vibrante', 'floresta', 'granito', 'mineral', 'carbono', 'flatClaro', 'flatEscuro'];
   const rand = mrSeededRandom(seed);
   let prev = '';
   (scenes || []).forEach((scene, idx) => {
@@ -22811,6 +23308,123 @@ function mrAssignRandomSceneThemes(scenes, seed) {
 
 // Valida e normaliza o storyboard vindo da IA. Garante consistência de
 // timing (end == próximo start) e remove campos que não conhecemos.
+// ─────────────── BG Pool (variedade de fundos por reel) ───────────────
+// Pool de imagens de fundo: 6 imagens-âncora do site Cropware + 39 fotos
+// convertidas via scripts/convert-bg-pool.mjs. A cada novo reel gerado
+// (ou ao clicar "Trocar imagem" no editor de cena), sorteamos uma daqui.
+// Pra atualizar o pool: rode `node scripts/convert-bg-pool.mjs` e ajuste
+// BG_POOL_SIZE abaixo.
+const BG_POOL_SIZE = 39;
+const BG_POOL_ANCHORS = [
+  'conheca-hero-bg.webp',
+  'conheca-campo-bg.webp',
+  'conheca-produto-bg.webp',
+  'conheca-solucao-bg.webp',
+  'conheca-gd-bg.webp',
+  'conheca-whatsapp-bg.webp',
+];
+const BG_POOL_FULL = [
+  ...BG_POOL_ANCHORS,
+  ...Array.from({ length: BG_POOL_SIZE }, (_, i) =>
+    `motion-reel/bg-pool/bg-pool-${String(i + 1).padStart(3, '0')}.webp`
+  ),
+];
+// Tipos de cena que renderizam bgImage (foto de fundo com Ken Burns).
+// Tipos sem bgImage (end-card, cta) não entram no sorteio.
+const SCENE_TYPES_WITH_BG = new Set([
+  'brand-intro', 'chapter', 'headline', 'scenario', 'quote',
+  'lower-third', 'whatsapp-chat',
+  'keyword', 'feature-list', 'app-card',
+]);
+
+function pickRandomBg(exclude) {
+  const candidates = exclude
+    ? BG_POOL_FULL.filter(p => p !== exclude)
+    : BG_POOL_FULL;
+  if (!candidates.length) return BG_POOL_FULL[0];
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+// Atribui bgImage aleatório a todas as cenas com bg, evitando repetição
+// imediata entre cenas adjacentes (visual lê melhor).
+function assignRandomBgs(scenes) {
+  const used = new Set();
+  let lastPick = null;
+  for (const s of scenes) {
+    if (!SCENE_TYPES_WITH_BG.has(s.type)) continue;
+    // Evita repetir o mesmo bg da cena anterior + tenta esgotar o pool antes
+    // de reciclar.
+    let candidates = BG_POOL_FULL.filter(p => !used.has(p) && p !== lastPick);
+    if (!candidates.length) {
+      used.clear();
+      candidates = BG_POOL_FULL.filter(p => p !== lastPick);
+    }
+    const pick = candidates[Math.floor(Math.random() * candidates.length)];
+    s.bgImage = pick;
+    used.add(pick);
+    lastPick = pick;
+  }
+}
+
+window.MR_BG_POOL_FULL = BG_POOL_FULL;
+window.MR_SCENE_TYPES_WITH_BG = SCENE_TYPES_WITH_BG;
+window.mrPickRandomBg = pickRandomBg;
+
+// ─────────────── Texture Pool (overlay sutil por cena) ───────────────
+// Texturas B&W (linhas, dots, halftone, wavy) que entram como camada
+// decorativa sobre o bgImage. Pool atualizado por
+// `node scripts/convert-texture-pool.mjs`.
+const TEXTURE_POOL_SIZE = 10;
+const TEXTURE_POOL_ANCHORS = [
+  // Texturas com nomes semânticos que vivem em texture-pool/ junto com as
+  // numeradas. Usadas como defaults pelos scene components também.
+  'motion-reel/texture-pool/topographic-curves.webp',
+  'motion-reel/texture-pool/13-texture.webp',
+];
+const TEXTURE_POOL_FULL = [
+  ...TEXTURE_POOL_ANCHORS,
+  ...Array.from({ length: TEXTURE_POOL_SIZE }, (_, i) =>
+    `motion-reel/texture-pool/texture-pool-${String(i + 1).padStart(3, '0')}.webp`
+  ),
+];
+// Cenas que renderizam camada de textura overlay (suporta scene.bgTexture).
+// Espelha SCENE_TYPES_WITH_BG pra que toda cena com "Trocar imagem" também
+// tenha "Trocar textura" no editor.
+const SCENE_TYPES_WITH_TEXTURE = new Set([
+  'brand-intro', 'chapter', 'headline', 'scenario', 'quote',
+  'lower-third', 'whatsapp-chat',
+  'keyword', 'feature-list', 'app-card',
+]);
+
+function pickRandomTexture(exclude) {
+  const candidates = exclude
+    ? TEXTURE_POOL_FULL.filter(p => p !== exclude)
+    : TEXTURE_POOL_FULL;
+  if (!candidates.length) return TEXTURE_POOL_FULL[0];
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+function assignRandomTextures(scenes) {
+  const used = new Set();
+  let lastPick = null;
+  for (const s of scenes) {
+    if (!SCENE_TYPES_WITH_TEXTURE.has(s.type)) continue;
+    let candidates = TEXTURE_POOL_FULL.filter(p => !used.has(p) && p !== lastPick);
+    if (!candidates.length) {
+      used.clear();
+      candidates = TEXTURE_POOL_FULL.filter(p => p !== lastPick);
+    }
+    const pick = candidates[Math.floor(Math.random() * candidates.length)];
+    s.bgTexture = pick;
+    used.add(pick);
+    lastPick = pick;
+  }
+}
+
+window.MR_TEXTURE_POOL_FULL = TEXTURE_POOL_FULL;
+window.MR_SCENE_TYPES_WITH_TEXTURE = SCENE_TYPES_WITH_TEXTURE;
+window.mrPickRandomTexture = pickRandomTexture;
+
 function mrValidateStoryboard(parsed, targetDuration) {
   if (!parsed || !Array.isArray(parsed.scenes) || !parsed.scenes.length) {
     throw new Error('Storyboard sem cenas.');
@@ -22827,7 +23441,7 @@ function mrValidateStoryboard(parsed, targetDuration) {
   });
   // R16: aceita storyboard.theme + scene.theme override. Reels antigos sem
   // theme → 'editorial' (mesmo visual de antes).
-  const validThemes = new Set(['editorial', 'vibrante', 'claro']);
+  const validThemes = new Set(['editorial', 'vibrante', 'floresta', 'granito', 'mineral', 'carbono', 'flatClaro', 'flatEscuro']);
   if (parsed.theme && !validThemes.has(parsed.theme)) delete parsed.theme;
   const validTypes = new Set(['brand-intro', 'keyword', 'headline', 'quote', 'feature-list', 'end-card', 'cta', 'chapter', 'lower-third', 'scenario', 'app-card', 'whatsapp-chat']);
   const validTransitions = new Set(['cut', 'fade', 'wipe-up', 'wipe-down', 'push-up', 'push-left', 'mask-circle', 'flash', 'zoom-blur', 'light-leak', 'cinematic-blur', 'ring-tunnel', 'glitch', 'slide-radial', 'glass-frost', 'iris-square', 'drift-fade', 'light-streak']);
@@ -22857,9 +23471,9 @@ function mrValidateStoryboard(parsed, targetDuration) {
         s.transitionIn = { type: 'fade', dur: 0.4, easing: 'in-out-cubic' };
       }
     }
-    // Sanitiza background: descarta campos antigos (bgImage/kenBurns/bgOverlay)
-    // e valida o objeto novo `background` (tipo + payload).
-    delete s.bgImage; delete s.kenBurns; delete s.bgOverlay;
+    // Sanitiza background legacy. bgImage AGORA é mantido (overrides theme
+    // bg). kenBurns/bgOverlay seguem descontinuados.
+    delete s.kenBurns; delete s.bgOverlay;
     if (s.background) {
       if (!s.background.type || !validBgTypes.has(s.background.type)) {
         delete s.background;
@@ -22930,6 +23544,13 @@ function mrValidateStoryboard(parsed, targetDuration) {
       };
     }
   });
+  // R19: pool de bgImage aleatório por cena pra dar variedade visual entre
+  // reels. Cenas SEM bg type ficam intactas; cenas com bg ganham foto random
+  // do pool (incluindo locked — só o fundo varia, identidade visual mantém).
+  assignRandomBgs(scenes);
+  // R20: pool de textura overlay aleatório nos slides que suportam camada
+  // decorativa B&W (linhas/dots/halftone/wavy). Sutil por padrão.
+  assignRandomTextures(scenes);
   // Reescala duração total pra bater com o alvo. R7: target default = 60s.
   const totalAi = cursor;
   const target = Number(targetDuration) || 60;
@@ -22970,6 +23591,60 @@ function mrTitleFromTheme(theme, maxLen = 36) {
   const cut = t.slice(0, maxLen);
   const sp = cut.lastIndexOf(' ');
   return (sp > 18 ? cut.slice(0, sp) : cut).trim() + '…';
+}
+
+// Gera um título editorial curto (3-6 palavras) pro card do reel na lista
+// lateral. Voz Cropware: tema de DM/GD/desenvolvimento de mercado, sem
+// linguagem motivacional vazia, sem clichês de "agro do futuro". Retorna
+// null em caso de erro — chamador usa mrTitleFromTheme como fallback.
+async function suggestMotionReelTitle(theme) {
+  try {
+    const systemPrompt = `Você é editor da Cropware (plataforma de gestão de desenvolvimento de mercado e geração de demanda no agro). Cria títulos curtos pro card do Reel na lista lateral do studio.
+
+REGRAS:
+- 3 a 6 palavras
+- Português do Brasil
+- Claro, sem aspas, sem ponto final, sem emojis, sem hashtag
+- Captura a ESSÊNCIA editorial do tema (não é o tema em si, é um título de capa)
+- Tom: editorial, consultivo, agro técnico-comercial
+- Quando fizer sentido, prefira vocabulário Cropware: desenvolvimento de mercado, geração de demanda, validação técnica, área demonstrativa, evidência, rota técnica, carteira, parceiro, posicionamento técnico
+- PROIBIDO: clichês ("o segredo do agro", "agro do futuro"), linguagem motivacional vazia, qualquer menção a "para o produtor" ou "controle de fazenda"
+
+Responda SEMPRE em JSON: {"title":"..."}.`;
+    const userPrompt = `Tema do Reel: ${theme}\n\nGere apenas o título editorial curto em JSON.`;
+    const resp = await fetchGeminiWithRetry(
+      `${SUPABASE_URL}/functions/v1/gemini`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_ANON}`,
+        },
+        body: JSON.stringify({
+          model: 'gemini-2.5-flash',
+          body: {
+            contents: [{ parts: [{ text: userPrompt }] }],
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+            generationConfig: { responseMimeType: 'application/json' },
+          },
+        }),
+      },
+      'Título Motion Reel'
+    );
+    const data = await resp.json();
+    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+    const parsed = JSON.parse(match[0]);
+    const title = (parsed.title || '').toString().trim()
+      .replace(/^["'`]+|["'`]+$/g, '') // tira aspas residuais
+      .replace(/\.$/, '');             // tira ponto final residual
+    if (!title) return null;
+    return title.length > 60 ? title.slice(0, 58) + '…' : title;
+  } catch (e) {
+    console.warn('suggestMotionReelTitle failed:', e);
+    return null;
+  }
 }
 
 // Troca o reel ativo (em motion-reel mode). Chamado por buildSidebar→goTo
@@ -23101,12 +23776,17 @@ async function generateMotionReel() {
   btn.textContent = 'Gerando...';
   setGenStatus('<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Gemini montando storyboard do Reel...', '');
   try {
-    const parsed = await callGeminiMotionReelStoryboard(theme, tone, duration);
+    // Storyboard + título editorial em paralelo — o título é leve e roda em
+    // background; se falhar, cai no truncamento do tema.
+    const [parsed, aiTitle] = await Promise.all([
+      callGeminiMotionReelStoryboard(theme, tone, duration),
+      suggestMotionReelTitle(theme),
+    ]);
     const cfg = mrValidateStoryboard(parsed, duration);
     const timestamp = Date.now();
     const reel = {
       id: `motion-reel-${timestamp}`,
-      title: mrTitleFromTheme(theme, 36),
+      title: aiTitle || mrTitleFromTheme(theme, 36),
       sub: `Reel · ${Math.round(cfg.duration)}s · ${cfg.scenes.length} cenas`,
       theme,
       tone,
@@ -23341,10 +24021,7 @@ window.closeMotionReelScenePreview = closeMotionReelScenePreview;
       <button class="gen-close" onclick="closeMotionReelSceneEditor()"><i class="ph ph-x"></i></button>
     </div>
     <div class="gen-body">
-      <div class="gen-group">
-        <label>Cena selecionada</label>
-        <div class="mr-scene-meta" id="mrSceneEditMeta"></div>
-      </div>
+      <div class="mr-edit-controls">
       <div class="gen-group">
         <label>Tema visual</label>
         <div class="mr-theme-cards" id="mrThemeCards">
@@ -23358,28 +24035,103 @@ window.closeMotionReelScenePreview = closeMotionReelScenePreview;
             <span class="mr-theme-label">Vibrante</span>
             <span class="mr-theme-check" aria-hidden="true"></span>
           </button>
-          <button class="mr-theme-card" data-theme="claro" onclick="applyMrSceneTheme('claro')" type="button" aria-label="Tema claro" title="Claro">
-            <div class="mr-theme-preview mr-theme-preview--claro"></div>
-            <span class="mr-theme-label">Claro</span>
+          <button class="mr-theme-card" data-theme="floresta" onclick="applyMrSceneTheme('floresta')" type="button" aria-label="Tema floresta" title="Floresta">
+            <div class="mr-theme-preview mr-theme-preview--floresta"></div>
+            <span class="mr-theme-label">Floresta</span>
+            <span class="mr-theme-check" aria-hidden="true"></span>
+          </button>
+          <button class="mr-theme-card" data-theme="granito" onclick="applyMrSceneTheme('granito')" type="button" aria-label="Tema granito" title="Granito">
+            <div class="mr-theme-preview mr-theme-preview--granito"></div>
+            <span class="mr-theme-label">Granito</span>
+            <span class="mr-theme-check" aria-hidden="true"></span>
+          </button>
+          <button class="mr-theme-card" data-theme="mineral" onclick="applyMrSceneTheme('mineral')" type="button" aria-label="Tema mineral" title="Mineral">
+            <div class="mr-theme-preview mr-theme-preview--mineral"></div>
+            <span class="mr-theme-label">Mineral</span>
+            <span class="mr-theme-check" aria-hidden="true"></span>
+          </button>
+          <button class="mr-theme-card" data-theme="carbono" onclick="applyMrSceneTheme('carbono')" type="button" aria-label="Tema carbono" title="Carbono">
+            <div class="mr-theme-preview mr-theme-preview--carbono"></div>
+            <span class="mr-theme-label">Carbono</span>
+            <span class="mr-theme-check" aria-hidden="true"></span>
+          </button>
+          <button class="mr-theme-card" data-theme="flatClaro" onclick="applyMrSceneTheme('flatClaro')" type="button" aria-label="Tema flat claro" title="Flat Claro">
+            <div class="mr-theme-preview mr-theme-preview--flatClaro"></div>
+            <span class="mr-theme-label">Flat Claro</span>
+            <span class="mr-theme-check" aria-hidden="true"></span>
+          </button>
+          <button class="mr-theme-card" data-theme="flatEscuro" onclick="applyMrSceneTheme('flatEscuro')" type="button" aria-label="Tema flat escuro" title="Flat Escuro">
+            <div class="mr-theme-preview mr-theme-preview--flatEscuro"></div>
+            <span class="mr-theme-label">Flat Escuro</span>
             <span class="mr-theme-check" aria-hidden="true"></span>
           </button>
         </div>
       </div>
+      <div class="gen-group" id="mrSceneTextureGroup" style="display:none">
+        <label>Textura overlay</label>
+        <div class="pc-news-texture-grid" id="mrSceneTextureGrid"></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
+          <span style="font-size:12px;color:#64748b;font-family:'Inter Tight',sans-serif;flex:0 0 76px">Intensidade</span>
+          <input type="range" id="mrSceneTextureIntensity" min="0" max="100" step="2" value="22"
+                 style="flex:1;cursor:pointer;accent-color:#3D3F3D" oninput="onMotionReelSceneTextureIntensity(this.value)">
+          <span id="mrSceneTextureIntensityValue" style="height:24px;min-width:44px;padding:0 8px;font-size:12px;color:#475569;font-family:'Inter Tight',sans-serif;background:#f8fafc;border:1px solid #e2e8f0;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box">22%</span>
+          <button type="button" onclick="resetMotionReelSceneTextureIntensity()" title="Redefinir intensidade ao padrão"
+                  style="width:24px;height:24px;padding:0;border:1px solid #e2e8f0;border-radius:5px;background:#f8fafc;color:#64748b;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:11px">
+            <i class="ph ph-arrow-counter-clockwise"></i>
+          </button>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+          <button type="button" id="mrSceneTextureInvertBtn" onclick="toggleMotionReelSceneTextureInvert()"
+                  style="padding:7px 12px;border:1px solid #e2e8f0;border-radius:7px;background:#f8fafc;color:#0f172a;cursor:pointer;font-size:13px;font-family:'Inter Tight',sans-serif;display:flex;align-items:center;gap:6px;transition:background 120ms ease, border-color 120ms ease">
+            <i class="ph ph-swap"></i><span id="mrSceneTextureInvertLabel">Inverter cores</span>
+          </button>
+        </div>
+      </div>
+      <div class="gen-group" id="mrSceneBgGroup" style="display:none">
+        <label>Imagem de fundo</label>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:0">
+          <span style="font-size:12px;color:#64748b;font-family:'Inter Tight',sans-serif;flex:0 0 76px">Desfoque</span>
+          <input type="range" id="mrSceneBgBlur" min="0" max="30" step="1" value="8"
+                 style="flex:1;cursor:pointer;accent-color:#3D3F3D" oninput="onMotionReelSceneBgBlur(this.value)">
+          <span id="mrSceneBgBlurValue" style="height:24px;min-width:44px;padding:0 8px;font-size:12px;color:#475569;font-family:'Inter Tight',sans-serif;background:#f8fafc;border:1px solid #e2e8f0;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box">8px</span>
+          <button type="button" onclick="resetMotionReelSceneBgBlur()" title="Redefinir desfoque ao padrão da cena"
+                  style="width:24px;height:24px;padding:0;border:1px solid #e2e8f0;border-radius:5px;background:#f8fafc;color:#64748b;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:11px">
+            <i class="ph ph-arrow-counter-clockwise"></i>
+          </button>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+          <span style="font-size:12px;color:#64748b;font-family:'Inter Tight',sans-serif;flex:0 0 76px">Overlay</span>
+          <input type="range" id="mrSceneBgOverlay" min="0" max="100" step="2" value="60"
+                 style="flex:1;cursor:pointer;accent-color:#3D3F3D" oninput="onMotionReelSceneBgOverlay(this.value)">
+          <span id="mrSceneBgOverlayValue" style="height:24px;min-width:44px;padding:0 8px;font-size:12px;color:#475569;font-family:'Inter Tight',sans-serif;background:#f8fafc;border:1px solid #e2e8f0;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box">60%</span>
+          <button type="button" onclick="resetMotionReelSceneBgOverlay()" title="Redefinir overlay ao padrão da cena"
+                  style="width:24px;height:24px;padding:0;border:1px solid #e2e8f0;border-radius:5px;background:#f8fafc;color:#64748b;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:11px">
+            <i class="ph ph-arrow-counter-clockwise"></i>
+          </button>
+        </div>
+        <button type="button" id="mrSceneSwapBg" onclick="swapMotionReelSceneBg()" title="Sortear nova imagem do pool"
+                style="padding:7px 12px;border:1px solid #e2e8f0;border-radius:7px;background:#f8fafc;color:#0f172a;cursor:pointer;font-size:13px;font-family:'Inter Tight',sans-serif;display:inline-flex;align-self:flex-start;align-items:center;gap:6px;transition:background 120ms ease;margin-top:10px">
+          <i class="ph ph-shuffle"></i>Aleatório
+        </button>
+      </div>
       <div class="gen-group">
         <label>Editar conteúdo com IA</label>
-        <textarea id="mrSceneEditPrompt" rows="3" placeholder="ex: Muda o headline pra falar de NDVI. Troca o ícone do keyword para um animado de mapa. Adiciona um overlay rotating-rings."
-          style="width:100%;padding:11px 14px;border:1px solid #e2e8f0;border-radius:9px;font-size:14px;font-family:'Inter Tight',sans-serif;resize:vertical;min-height:80px;background:#f8fafc;color:#0f172a;"></textarea>
+        <input type="text" id="mrSceneEditPrompt" placeholder="ex: Muda o headline pra falar de NDVI. Troca o ícone do keyword."
+          onkeydown="if(event.key==='Enter'){event.preventDefault();submitMotionReelSceneEdit();}"
+          style="width:100%;padding:11px 14px;border:1px solid #e2e8f0;border-radius:9px;font-size:14px;font-family:'Inter Tight',sans-serif;background:#f8fafc;color:#0f172a;" />
       </div>
       <div id="mrSceneEditStatus" style="font-size:13px;color:#64748b;min-height:18px;"></div>
-    </div>
-    <div class="gen-actions">
-      <button class="pc-regen-undo" id="mrSceneEditUndo" type="button" style="display:none" onclick="undoLastMrSceneEdit()" title="Desfazer última alteração">
-        <i class="ph ph-arrow-counter-clockwise"></i>Desfazer
-      </button>
-      <div style="display:flex;gap:10px;margin-left:auto">
-        <button class="btn btn-primary" id="mrSceneEditSubmit" type="button" onclick="submitMotionReelSceneEdit()">
-          Aplicar Edição
-        </button>
+      </div><!-- /.mr-edit-controls -->
+      <div class="mr-edit-preview">
+        <div id="mrSceneEditPreviewMount" class="mr-edit-preview-mount"></div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+          <button class="btn btn-primary" id="mrSceneEditSubmit" type="button" onclick="submitMotionReelSceneEdit()" style="width:100%;background:#3D3F3D;border-color:#3D3F3D;color:#fff" onmouseenter="this.style.background='#5C605D';this.style.borderColor='#5C605D'" onmouseleave="this.style.background='#3D3F3D';this.style.borderColor='#3D3F3D'">
+            Aplicar Edição
+          </button>
+          <button class="btn btn-secondary" type="button" onclick="restoreMotionReelSceneDefaults()" title="Volta a cena ao padrão (remove tema, imagem e textura customizados)" style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:6px">
+            <i class="ph ph-arrow-counter-clockwise"></i> Restaurar padrão
+          </button>
+        </div>
       </div>
     </div>
   </div>
