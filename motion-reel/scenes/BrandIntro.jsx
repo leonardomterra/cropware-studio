@@ -180,7 +180,7 @@ const KickerBlock = ({ kicker, delay = 0.25, color = MR_COLORS.white, accent = M
   });
   const breathPhase = Math.max(0, frame / fps - (underlineStart + 0.6));
   const breathSin = Math.sin(breathPhase * Math.PI / 1.4);
-  const letterSpacing = 0.14 + breathSin * 0.02;
+  const letterSpacing = 0.12 + breathSin * 0.02;
 
   return (
     <div style={{
@@ -299,7 +299,7 @@ const TaglineLine = ({ text, delay, emphasized, color = MR_COLORS.white, accent 
       fontSize: 56,
       fontWeight: 400,
       color: emphasized ? accent : color,
-      letterSpacing: '0.13em',
+      letterSpacing: '0.12em',
       textTransform: 'uppercase',
       lineHeight: 1,
       whiteSpace: 'nowrap',

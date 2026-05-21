@@ -123,11 +123,11 @@ export const Headline = ({
             text={String(kicker).toUpperCase()}
             delay={0.4}
             dur={0.5}
-            fromEm={0.18}
-            toEm={0.32}
+            fromEm={0.06}
+            toEm={0.12}
             style={{
               fontFamily: MR_FONTS.mono,
-              fontSize: 44,
+              fontSize: 48,
               fontWeight: 400,
               color: T.kickerColor || T.accent,
               textTransform: 'uppercase',

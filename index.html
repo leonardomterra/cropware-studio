@@ -556,6 +556,29 @@
     color: #64748b;
     text-align: center;
     line-height: 1.35;
+    white-space: pre-line;
+  }
+  .download-loading-cancel {
+    margin-top: 6px;
+    padding: 8px 22px;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+  }
+  .download-loading-cancel:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #94a3b8;
+  }
+  .download-loading-cancel:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
   }
 
   /* ── CANVAS AREA (header + stage + slide-nav bar) ── */
@@ -7325,7 +7348,7 @@
   }
   .motion-reel-stage[data-view="player"] {
     height: 100%;
-    max-height: 760px;
+    max-height: 640px;
     aspect-ratio: 9 / 16;
     background: var(--mr-cream);
     font-family: var(--mr-font-display);
@@ -21665,6 +21688,12 @@ function showDownloadLoading(msg, opts = {}) {
   if (progressBar) progressBar.style.width = `${Math.max(0, Math.min(100, opts.progress || 0))}%`;
   if (pctEl) pctEl.textContent = opts.progress == null ? '' : `${Math.round(opts.progress)}%`;
   if (detailEl) detailEl.textContent = opts.detail || '';
+  const cancelBtn = document.getElementById('downloadLoadingCancel');
+  if (cancelBtn) {
+    cancelBtn.hidden = !opts.cancellable;
+    cancelBtn.disabled = false;
+    cancelBtn.textContent = 'Cancelar';
+  }
   _downloadLoadingStartedAt = Date.now();
   if (_downloadLoadingTimer) clearInterval(_downloadLoadingTimer);
   if (elapsedEl) elapsedEl.textContent = '00:00';
@@ -21695,8 +21724,27 @@ function hideDownloadLoading() {
     clearInterval(_downloadLoadingTimer);
     _downloadLoadingTimer = null;
   }
+  const cancelBtn = document.getElementById('downloadLoadingCancel');
+  if (cancelBtn) cancelBtn.hidden = true;
   if (modal) modal.hidden = true;
 }
+
+// Cancela o render do MP4 em andamento: aborta o fetch local + manda o
+// servidor matar o processo Remotion.
+let _motionReelRenderAbort = null;
+let _motionReelRenderCancelled = false;
+async function cancelMotionReelRender() {
+  const btn = document.getElementById('downloadLoadingCancel');
+  if (btn) { btn.disabled = true; btn.textContent = 'Cancelando...'; }
+  _motionReelRenderCancelled = true;
+  try {
+    await fetch('/api/render-reel-cancel', { method: 'POST' });
+  } catch (err) {
+    console.warn('[MotionReel] cancel request falhou', err);
+  }
+  try { _motionReelRenderAbort && _motionReelRenderAbort.abort(); } catch {}
+}
+window.cancelMotionReelRender = cancelMotionReelRender;
 
 // ═══════════════════════════════════════════════════════════════════
 // MOTION REEL ENGINE
@@ -21932,10 +21980,21 @@ function openMotionReelSceneEditor(sceneId) {
   const submitBtn = document.getElementById('mrSceneEditSubmit');
   if (submitBtn) {
     // Submit nunca é disabled — comita tema/textura/imagem mesmo em cenas fixas.
-    // Só a edição IA (instrução do textarea) é bloqueada em cena fixa.
     submitBtn.disabled = false;
     submitBtn.title = isLocked ? 'Cena fixa: apenas ajustes visuais (tema, textura, imagem)' : '';
   }
+  // Regerar conteúdo só faz sentido em cenas editáveis. Lock em cenas fixas.
+  const regenBtn = document.getElementById('mrSceneRegenBtn');
+  if (regenBtn) {
+    regenBtn.disabled = isLocked;
+    regenBtn.style.opacity = isLocked ? '0.45' : '1';
+    regenBtn.style.cursor = isLocked ? 'not-allowed' : 'pointer';
+    regenBtn.title = isLocked ? 'Cena fixa: regeração de conteúdo bloqueada' : 'Regerar conteúdo (com ou sem instrução)';
+  }
+  // Reset do estado de "reverter regeração" toda vez que abre o editor.
+  _mrSceneRegenPrev = null;
+  const revertBtn = document.getElementById('mrSceneRegenRevertBtn');
+  if (revertBtn) revertBtn.style.display = 'none';
   const status = document.getElementById('mrSceneEditStatus');
   if (status) status.textContent = '';
   // R16 — sync visual do seletor de tema e do botão Desfazer.
@@ -21963,7 +22022,11 @@ function _refreshMrSceneEditPreview() {
   const singleSceneSb = {
     ...cfg,
     duration: dur,
-    scenes: [{ ..._mrSceneDraft, start: 0, end: dur, transitionIn: undefined }],
+    // Deep clone defensivo — Remotion Player memoiza inputProps por referência
+    // profunda; sem clone, toggles que só viram boolean (ex: bgTextureInvert)
+    // exigem 2 cliques pra atualizar o preview.
+    scenes: [JSON.parse(JSON.stringify({ ..._mrSceneDraft, start: 0, end: dur, transitionIn: undefined }))],
+    _previewNonce: Date.now(),
   };
   const mountEl = document.getElementById('mrSceneEditPreviewMount');
   if (mountEl && typeof window.mountMotionReelPreviewPlayer === 'function') {
@@ -22248,13 +22311,6 @@ async function submitMotionReelSceneEdit() {
     return;
   }
   const originalScene = cfg.scenes[sceneIdx];
-  const isLocked = originalScene.locked === true;
-  const prompt = document.getElementById('mrSceneEditPrompt');
-  const instruction = (prompt ? prompt.value : '').trim();
-  if (isLocked && instruction) {
-    setMrEditStatus('Cena fixa: apenas a seleção de tema está liberada.', 'error');
-    return;
-  }
 
   const submitBtn = document.getElementById('mrSceneEditSubmit');
   if (submitBtn) submitBtn.disabled = true;
@@ -22263,31 +22319,13 @@ async function submitMotionReelSceneEdit() {
   _pushMrSceneSnapshot(_mrSceneEditingId, JSON.parse(JSON.stringify(originalScene)));
 
   try {
-    let finalScene = { ..._mrSceneDraft };
-    // Se há instrução IA, edita o draft via Gemini antes de comitar.
-    if (instruction) {
-      setMrEditStatus('<i class="ph ph-hourglass"></i> Gemini editando cena...', '');
-      const edited = await callGeminiMotionReelSceneEdit(_mrSceneDraft, instruction);
-      finalScene = {
-        ...edited,
-        // Preserva campos imutáveis + os overrides visuais do draft.
-        id: originalScene.id,
-        start: originalScene.start,
-        end: originalScene.end,
-        type: originalScene.type,
-        locked: originalScene.locked,
-        theme: _mrSceneDraft.theme || edited.theme,
-        bgImage: _mrSceneDraft.bgImage || edited.bgImage,
-        bgTexture: _mrSceneDraft.bgTexture || edited.bgTexture,
-        bgTextureOpacity: _mrSceneDraft.bgTextureOpacity != null ? _mrSceneDraft.bgTextureOpacity : edited.bgTextureOpacity,
-        bgTextureInvert: _mrSceneDraft.bgTextureInvert != null ? _mrSceneDraft.bgTextureInvert : edited.bgTextureInvert,
-      };
-    }
+    const finalScene = { ..._mrSceneDraft };
     if (finalScene.type === 'keyword') {
       finalScene.icon = mrResolveKeywordAnimatedIcon(finalScene.icon, finalScene.word, finalScene.theme || cfg.theme);
     }
     mrSanitizeTransitionAudio(finalScene);
-    // Commit: substitui a cena real pelo draft (eventualmente editado pela IA).
+    // Commit: substitui a cena real pelo draft (apenas overrides visuais).
+    // Regeneração de conteúdo via IA fica no botão dedicado "Regerar".
     cfg.scenes[sceneIdx] = finalScene;
     if (reel && reel.config) reel.config = cfg;
     saveMotionReelsToLocal();
@@ -22303,6 +22341,81 @@ async function submitMotionReelSceneEdit() {
     if (submitBtn) submitBtn.disabled = false;
   }
 }
+
+// Regenera o conteúdo da cena ATIVA via Gemini, com ou sem instrução.
+// Atualiza só o draft + preview — não fecha o modal nem commita ao storyboard.
+// Locked scenes têm o botão disabled.
+async function regenerateMotionReelSceneContent() {
+  if (!_mrSceneEditingId || !_mrSceneDraft) return;
+  const cfg = getActiveMotionReelConfig();
+  if (!cfg) {
+    setMrEditStatus('Nenhum reel ativo para regerar.', 'error');
+    return;
+  }
+  const sceneIdx = (cfg.scenes || []).findIndex(s => s.id === _mrSceneEditingId);
+  if (sceneIdx < 0) {
+    setMrEditStatus('Cena não encontrada.', 'error');
+    return;
+  }
+  const originalScene = cfg.scenes[sceneIdx];
+  if (originalScene.locked === true) {
+    setMrEditStatus('Cena fixa: regeração de conteúdo bloqueada.', 'error');
+    return;
+  }
+  const promptEl = document.getElementById('mrSceneEditPrompt');
+  const instruction = (promptEl ? promptEl.value : '').trim();
+  const regenBtn = document.getElementById('mrSceneRegenBtn');
+  if (regenBtn) regenBtn.disabled = true;
+  setMrEditStatus('<i class="ph ph-hourglass"></i> Gemini regerando conteúdo...', '');
+  // Snapshot do draft ANTES de mutar — usado pelo botão Reverter.
+  _mrSceneRegenPrev = JSON.parse(JSON.stringify(_mrSceneDraft));
+  try {
+    const edited = await callGeminiMotionReelSceneEdit(_mrSceneDraft, instruction);
+    // Mescla com draft preservando overrides visuais (tema, bg, textura, opacidades).
+    _mrSceneDraft = {
+      ...edited,
+      id: originalScene.id,
+      start: originalScene.start,
+      end: originalScene.end,
+      type: originalScene.type,
+      locked: originalScene.locked,
+      theme: _mrSceneDraft.theme || edited.theme,
+      bgImage: _mrSceneDraft.bgImage || edited.bgImage,
+      bgImageBlur: _mrSceneDraft.bgImageBlur != null ? _mrSceneDraft.bgImageBlur : edited.bgImageBlur,
+      bgOverlayOpacity: _mrSceneDraft.bgOverlayOpacity != null ? _mrSceneDraft.bgOverlayOpacity : edited.bgOverlayOpacity,
+      bgTexture: _mrSceneDraft.bgTexture || edited.bgTexture,
+      bgTextureOpacity: _mrSceneDraft.bgTextureOpacity != null ? _mrSceneDraft.bgTextureOpacity : edited.bgTextureOpacity,
+      bgTextureInvert: _mrSceneDraft.bgTextureInvert != null ? _mrSceneDraft.bgTextureInvert : edited.bgTextureInvert,
+    };
+    if (_mrSceneDraft.type === 'keyword') {
+      _mrSceneDraft.icon = mrResolveKeywordAnimatedIcon(_mrSceneDraft.icon, _mrSceneDraft.word, _mrSceneDraft.theme || cfg.theme);
+    }
+    _refreshMrSceneEditPreview();
+    setMrEditStatus('', '');
+    const revertBtn = document.getElementById('mrSceneRegenRevertBtn');
+    if (revertBtn) revertBtn.style.display = 'inline-flex';
+  } catch (err) {
+    console.error('[MotionReel] Falha na regeração', err);
+    setMrEditStatus(`<i class="ph ph-warning"></i> ${err.message || err}`, 'error');
+    _mrSceneRegenPrev = null;
+  } finally {
+    if (regenBtn) regenBtn.disabled = originalScene.locked === true;
+  }
+}
+window.regenerateMotionReelSceneContent = regenerateMotionReelSceneContent;
+
+// Reverte a última regeração — restaura o draft ao snapshot anterior.
+let _mrSceneRegenPrev = null;
+function revertMotionReelSceneRegen() {
+  if (!_mrSceneRegenPrev) return;
+  _mrSceneDraft = _mrSceneRegenPrev;
+  _mrSceneRegenPrev = null;
+  _refreshMrSceneEditPreview();
+  const revertBtn = document.getElementById('mrSceneRegenRevertBtn');
+  if (revertBtn) revertBtn.style.display = 'none';
+  setMrEditStatus('', '');
+}
+window.revertMotionReelSceneRegen = revertMotionReelSceneRegen;
 
 function setMrEditStatus(msg, tone) {
   const el = document.getElementById('mrSceneEditStatus');
@@ -22396,6 +22509,23 @@ REGRAS DURAS:
 7. Overlays válidos: rotating-rings · pulse-circle · particle-drift · line-draw · curve-trace · light-streak · vignette-breath
 8. Ícones (feature-list items): use Iconify (twemoji:* ou noto:*) — exemplos: twemoji:satellite, twemoji:seedling, twemoji:ear-of-corn
 9. Se a cena for "keyword", o campo icon deve ser animado. Use APENAS: animatedicons:sustainability, line-md:speed-loop, line-md:speedometer-loop, line-md:confirm, line-md:check-all, line-md:arrow-up-circle, line-md:lightbulb, line-md:map-marker-loop, line-md:my-location-loop, line-md:bell-alert-loop, line-md:document-report, line-md:phone-call-loop, line-md:cog-loop, line-md:star-pulsating-loop, meteocons:pollen-grass-fill, meteocons:pollen-tree-fill, meteocons:clear-day-fill, meteocons:partly-cloudy-day-fill, meteocons:raindrops-fill, meteocons:thermometer-sun-fill, meteocons:wind-fill. NUNCA use twemoji:* ou noto:* em keyword.
+10. APP-CARD (type === "app-card") — janelas SÓ NÚMERO:
+    O campo data.windows é um array de exatamente 3 janelas. Cada janela é uma MÉTRICA NUMÉRICA, NÃO texto.
+    - value: SEMPRE um número puro como string (com sinal/decimal/%/+- se fizer sentido). NUNCA palavra ("mapa", "alta", "!", "validado").
+    - unit: unidade textual separada (ex: "%", "sacas/ha", "graus", "talhoes", "ha", "h", "visitas", "fazendas").
+    - NUNCA embuta a unidade no value (errado: "+5 sacas/ha" + unit "ha" → duplica). Certo: value "+5", unit "sacas/ha".
+    - label: rótulo curto da métrica em CAIXA ALTA (eyebrow). Ex: "SETOR NORTE", "TALHAO 12", "PRODUTIVIDADE", "HISTORICO".
+    - status: chip curto contextual ("Safra 25/26", "Ultimos 7d", "Dossier 007", "Janela 48h"). Nunca "ao vivo"/"tempo real"/"agora".
+    - accent: SEMPRE família verde (greenAccent/greenDeep/greenBright). Nunca azure/amber.
+    - Métricas válidas do CDM agro: NDVI, umidade, temperatura, sacas/ha, ha monitorados, talhões, fazendas, visitas, dossiês, alertas, dias, horas, %, comparativos.
+    - NÃO inclua description nas janelas (campo descontinuado — UI ignora).
+11. VOICEOVER (campo "voiceover.text"): se a cena ATUAL tem voiceover e você ALTEROU o conteúdo visível (texto, items, words, headline, scenario, caption etc), REGENERE também o voiceover.text pra ficar coerente com o novo conteúdo. Mantenha:
+    - Português brasileiro, tom editorial e consultivo.
+    - Vocabulário CDM agro (DM, GD, promotor, RTV, dossiê, área demonstrativa). NUNCA fale "sua safra", "sua lavoura", "no seu campo" — esses termos pertencem a app pra produtor, não ao Cropware.
+    - Orçamento de palavras: ~2.5 palavras/segundo. Cena de 4s ≤ 8 palavras, 5s ≤ 10, 6s ≤ 13. NUNCA estoure.
+    - Uma frase só, ponto final. Sem listas com "primeiro/segundo/terceiro".
+    - Não literal: parafraseia o conteúdo visual, não repete palavra por palavra.
+    Se a cena NÃO tem voiceover hoje, NÃO adicione um. Cenas silenciosas (keyword, chapter, whatsapp-chat, quote) ficam sem voz.
 
 CENA ATUAL:
 ${JSON.stringify(scene, null, 2)}
@@ -22405,7 +22535,9 @@ OUTPUT: APENAS o JSON da cena editada, começando em { e terminando em }. Sem pr
 
 async function callGeminiMotionReelSceneEdit(scene, instruction) {
   const systemPrompt = buildMotionReelSceneEditPrompt(scene);
-  const userPrompt = `Instrução do usuário: ${instruction}\n\nRetorne a cena editada (JSON apenas).`;
+  const userPrompt = instruction && instruction.trim()
+    ? `Instrução do usuário: ${instruction.trim()}\n\nRetorne a cena editada (JSON apenas).`
+    : `Sem instrução específica: gere uma VARIAÇÃO criativa do conteúdo desta cena (novos textos/palavras/items mantendo o mesmo tema editorial e tom da Cropware). Mantenha schema, id, start, end, type, locked intactos.\n\nRetorne a cena variada (JSON apenas).`;
   const resp = await fetchGeminiWithRetry(
     `${SUPABASE_URL}/functions/v1/gemini`,
     {
@@ -22676,7 +22808,41 @@ TIPOS DE CENA (escolha o tipo certo pra cada momento — não repita mesmo tipo 
 
   Props: messages (array de {from, text}).
 
-REGRA ATUALIZADA app-card: ignore o formato antigo de uma unica janela com 3 dados. Gere SEMPRE data.windows com EXATAMENTE 3 objetos, um por janela/funcionalidade. Cada objeto deve ter { "type": "weather"|"satellite"|"alert"|"dashboard", "title": "nome curto", "label": "contexto curto", "value": "dado curto", "unit": "opcional", "description": "1 frase curta de uso pratico", "status": "chip curto contextual", "accent": "var(--mr-greenAccent)|var(--mr-greenDeep)|var(--mr-greenBright)" }. Exemplos: clima = previsao, alerta climatico, agenda; NDVI = mapa de vigor, zona critica, comparativo; relatorios = evidencias, resumo, compartilhamento. STATUS: NUNCA use "ao vivo"/"tempo real"/"agora" — esses chips genéricos não agregam. Use status descritivo do conteúdo (ex: "safra 25/26", "ultimos 7d", "talhao 12", "validado", "tendencia", "comparativo", "consolidado"). ACCENT: priorize SEMPRE a familia verde (greenAccent/greenDeep/greenBright). Não use azure/amber em app-card — a cena 08 é institucional Cropware e precisa ficar 100% na paleta verde.
+REGRA ATUALIZADA app-card (R23 — janelas SÓ NÚMERO): gere SEMPRE data.windows com EXATAMENTE 3 objetos. Cada objeto:
+{
+  "type": "weather"|"satellite"|"alert"|"dashboard",
+  "title": "nome curto (uppercase no chrome da janela)",
+  "label": "ROTULO CURTO da metrica (vira eyebrow uppercase mono)",
+  "value": "NUMERO puro como string — sem texto",
+  "unit": "unidade textual curta",
+  "status": "chip curto contextual",
+  "accent": "var(--mr-greenAccent)|var(--mr-greenDeep)|var(--mr-greenBright)"
+}
+
+REGRA DURA — VALUE É SEMPRE UM NÚMERO:
+  As janelas do app-card são MÉTRICAS NUMÉRICAS. NUNCA texto descritivo, NUNCA palavras isoladas tipo "mapa", "alta", "!", "validado", "comparativo". Sempre um NÚMERO (com sinal/decimal/percentual se fizer sentido), e a unidade vai SEPARADA em "unit".
+  VÁLIDO:    value: "85"      unit: "%"           label: "UMIDADE DO SOLO"
+  VÁLIDO:    value: "0.78"    unit: ""            label: "NDVI MEDIO"
+  VÁLIDO:    value: "+5"      unit: "sacas/ha"    label: "PRODUTIVIDADE"
+  VÁLIDO:    value: "32"      unit: "graus"       label: "TEMPERATURA"
+  VÁLIDO:    value: "12"      unit: "talhoes"     label: "AREA MONITORADA"
+  VÁLIDO:    value: "36"      unit: "h"           label: "JANELA DE ACAO"
+  VÁLIDO:    value: "3"       unit: "visitas"     label: "AGENDA TECNICA"
+  VÁLIDO:    value: "82"      unit: "fazendas"    label: "CARTEIRA ATIVA"
+  VÁLIDO:    value: "+12"     unit: "%"           label: "COMPARATIVO"
+  INVÁLIDO:  value: "mapa"           ❌ não é número
+  INVÁLIDO:  value: "alta"           ❌ não é número
+  INVÁLIDO:  value: "!"              ❌ não é número
+  INVÁLIDO:  value: "validado"       ❌ vira label, não value
+  INVÁLIDO:  value: "+5 sacas/ha"    ❌ unidade duplica (unit já carrega)
+
+Use métricas concretas da rotina CDM/agro: NDVI, umidade, temperatura, sacas/ha, ha monitorados, talhões, fazendas, visitas, dossiês, alertas, dias, horas, %, comparativos. Sempre que possível, valor com 1-4 caracteres no número líder (deixa visualmente equilibrado).
+
+LABEL: rótulo curto da métrica em maiúsculas (vira o eyebrow mono uppercase). Ex: "SETOR NORTE", "TALHAO 12", "PRODUTIVIDADE", "HISTORICO", "PRODUTO X". NUNCA repita o título do app.
+
+STATUS: chip curto descritivo do contexto (NUNCA "ao vivo"/"tempo real"/"agora"). Ex: "Safra 25/26", "Ultimos 7d", "Dados 24h", "Dossier 007", "Janela 48h", "Validado", "Tendencia", "Consolidado", "Comparativo".
+
+ACCENT: SEMPRE da família verde (greenAccent/greenDeep/greenBright). Não use azure/amber — a cena 08 é institucional Cropware.
 PALETA DE CORES (use APENAS estes tokens literais — paleta MR_COLORS v2 curada):
 
 VERDES (5 derivações ao redor do verde Cropware oficial):
@@ -23857,12 +24023,15 @@ async function downloadMotionReelMP4() {
     const userId = (currentUser && currentUser.id) || 'anon';
     showDownloadLoading(
       hasVoiceover ? 'Gerando narração e preparando render...' : 'Preparando render do MP4...',
-      { progress: 2, detail: 'Não feche esta aba.' }
+      { progress: 2, detail: 'Não feche esta aba.', cancellable: true }
     );
+    _motionReelRenderCancelled = false;
+    _motionReelRenderAbort = new AbortController();
     const resp = await fetch('/api/render-reel', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ storyboard: cfgForRender, reelId, userId, progress: true }),
+      signal: _motionReelRenderAbort.signal,
     });
     if (!resp.ok) {
       let detail = '';
@@ -23887,6 +24056,10 @@ async function downloadMotionReelMP4() {
       for (const line of lines) {
         if (!line.trim()) continue;
         const event = JSON.parse(line);
+        if (event.type === 'cancelled') {
+          _motionReelRenderCancelled = true;
+          throw new Error('Render cancelado pelo usuário.');
+        }
         if (event.type === 'error') {
           throw new Error(event.detail || event.message || 'Render falhou.');
         }
@@ -23914,15 +24087,23 @@ async function downloadMotionReelMP4() {
     setGenStatus(`<i class="ph ph-check-circle sz-18" style="margin-right:6px"></i>MP4 pronto: ${reelId}.mp4 (${sizeMb.toFixed(2)} MB).`, 'success');
   } catch (err) {
     renderFailed = true;
-    console.error('[MotionReel] Falha no render', err);
-    setDownloadProgress('Falha ao renderizar MP4.', { progress: 0, detail: err.message || String(err) });
-    setGenStatus(`<i class="ph ph-warning sz-18" style="margin-right:6px"></i>Falha: ${err.message || err}`, 'error');
+    if (_motionReelRenderCancelled || err.name === 'AbortError') {
+      console.log('[MotionReel] render cancelado pelo usuário.');
+      setDownloadProgress('Render cancelado.', { progress: 0, detail: '' });
+      setGenStatus('<i class="ph ph-x-circle sz-18" style="margin-right:6px"></i>Render cancelado.', '');
+    } else {
+      console.error('[MotionReel] Falha no render', err);
+      setDownloadProgress('Falha ao renderizar MP4.', { progress: 0, detail: err.message || String(err) });
+      setGenStatus(`<i class="ph ph-warning sz-18" style="margin-right:6px"></i>Falha: ${err.message || err}`, 'error');
+    }
   } finally {
-    if (renderFailed) {
+    if (renderFailed && !_motionReelRenderCancelled) {
       setTimeout(() => hideDownloadLoading(), 3500);
     } else {
       hideDownloadLoading();
     }
+    _motionReelRenderAbort = null;
+    _motionReelRenderCancelled = false;
     if (dlBtn) {
       dlBtn.disabled = false;
       dlBtn.innerHTML = originalLabel;
@@ -23961,6 +24142,7 @@ window.closeMotionReelScenePreview = closeMotionReelScenePreview;
       <span id="downloadLoadingElapsed">00:00</span>
     </div>
     <div class="download-loading-detail" id="downloadLoadingDetail"></div>
+    <button type="button" class="download-loading-cancel" id="downloadLoadingCancel" onclick="cancelMotionReelRender()">Cancelar</button>
   </div>
 </div>
 
@@ -24009,7 +24191,6 @@ window.closeMotionReelScenePreview = closeMotionReelScenePreview;
       <i class="ph ph-x"></i>
     </button>
     <div id="mrScenePreviewMount" class="mr-preview-mount"></div>
-    <div id="mrScenePreviewLabel" class="mr-preview-label"></div>
   </div>
 </div>
 
@@ -24116,9 +24297,23 @@ window.closeMotionReelScenePreview = closeMotionReelScenePreview;
       </div>
       <div class="gen-group">
         <label>Editar conteúdo com IA</label>
-        <input type="text" id="mrSceneEditPrompt" placeholder="ex: Muda o headline pra falar de NDVI. Troca o ícone do keyword."
-          onkeydown="if(event.key==='Enter'){event.preventDefault();submitMotionReelSceneEdit();}"
-          style="width:100%;padding:11px 14px;border:1px solid #e2e8f0;border-radius:9px;font-size:14px;font-family:'Inter Tight',sans-serif;background:#f8fafc;color:#0f172a;" />
+        <div style="display:flex;gap:8px;align-items:stretch">
+          <input type="text" id="mrSceneEditPrompt" placeholder="ex: Muda o headline pra falar de NDVI. Troca o ícone do keyword. (opcional)"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();regenerateMotionReelSceneContent();}"
+            style="flex:1;padding:11px 14px;border:1px solid #e2e8f0;border-radius:9px;font-size:14px;font-family:'Inter Tight',sans-serif;background:#f8fafc;color:#0f172a;" />
+          <button type="button" id="mrSceneRegenRevertBtn" onclick="revertMotionReelSceneRegen()" title="Reverter última regeração"
+            style="display:none;padding:0 14px;border:1px solid #e2e8f0;border-radius:5px;background:#f8fafc;color:#0f172a;cursor:pointer;font-size:13px;font-family:'Inter Tight',sans-serif;align-items:center;gap:6px;transition:background 120ms ease,border-color 120ms ease;flex:0 0 auto"
+            onmouseenter="this.style.background='#e2e8f0';this.style.borderColor='#94a3b8'"
+            onmouseleave="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
+            <i class="ph ph-arrow-counter-clockwise"></i>Reverter
+          </button>
+          <button type="button" id="mrSceneRegenBtn" onclick="regenerateMotionReelSceneContent()" title="Regerar conteúdo da cena (com ou sem instrução)"
+            style="padding:0 16px;border:1px solid #3D3F3D;border-radius:5px;background:#3D3F3D;color:#fff;cursor:pointer;font-size:13px;font-family:'Inter Tight',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:background 120ms ease,border-color 120ms ease;flex:0 0 auto"
+            onmouseenter="if(!this.disabled){this.style.background='#5C605D';this.style.borderColor='#5C605D'}"
+            onmouseleave="if(!this.disabled){this.style.background='#3D3F3D';this.style.borderColor='#3D3F3D'}">
+            <i class="ph ph-arrows-clockwise"></i>Regerar
+          </button>
+        </div>
       </div>
       <div id="mrSceneEditStatus" style="font-size:13px;color:#64748b;min-height:18px;"></div>
       </div><!-- /.mr-edit-controls -->

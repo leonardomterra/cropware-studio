@@ -39,6 +39,116 @@ function normalizeWords(words, items, features) {
   return cleaned.length ? cleaned : DEFAULT_WORDS;
 }
 
+// Resolve um ícone Phosphor coerente com o significado do verbo. Mapeia por
+// substrings (ordem importa — mais específico primeiro). Cobre o vocabulário
+// CDM agro: mapear/monitorar/prever/decidir/provar + verbos derivados que a
+// IA pode gerar livremente (visitar, analisar, comparar, validar, etc).
+// Pool de ícones Phosphor seguros (confirmados no @iconify-json/ph standard).
+// Evita variantes raras (radar, seal-check, crystal-ball) que podem não estar
+// no bundle — quando o glifo não carrega, a UI renderiza nada (gap visível).
+const QUOTE_ICON_MAP = [
+  // Mapeamento espacial / georreferenciamento / posicionamento
+  { test: /\b(mape|geor|localiz|posic|coordenad|onde|territor|talh|setor)/, icon: 'ph:map-trifold' },
+  // Observação contínua / monitoramento / acompanhamento
+  { test: /\b(monitor|observ|acompanh|vigi|rastr|seguir)/, icon: 'ph:pulse' },
+  // Previsão / antecipação
+  { test: /\b(prev|antec|projet|estim|forecast|prognost)/, icon: 'ph:cloud-arrow-up' },
+  // Decisão / escolha
+  { test: /\b(decid|escolh|defin|prioriz|julg|opt)/, icon: 'ph:check-square' },
+  // Prova / evidência / validação / certificação
+  { test: /\b(prov|valid|comprov|evidenc|atest|confirm|certif)/, icon: 'ph:certificate' },
+  // Visita / rota / campo
+  { test: /\b(visit|rota|ir |viaj|desloc|percorr|caminh|trilh)/, icon: 'ph:map-pin' },
+  // Análise / diagnóstico / investigação
+  { test: /\b(analis|diagnost|investig|examin|estud|interpret|pesquis)/, icon: 'ph:magnifying-glass' },
+  // Comparação / benchmark
+  { test: /\b(compar|benchmark|confront|contrast|cotej)/, icon: 'ph:arrows-left-right' },
+  // Recomendação / sugestão / insight / orientação
+  { test: /\b(recomend|suger|insight|orient|aconselh|indic|dica)/, icon: 'ph:lightbulb' },
+  // Compartilhamento / colaboração / distribuição
+  { test: /\b(compartilh|colabor|partilh|divulg|distribu|envia)/, icon: 'ph:share-network' },
+  // Identificação / detecção / foco / alvo
+  { test: /\b(identific|detect|encontr|reconhec|alvo|focar|mira)/, icon: 'ph:target' },
+  // Planejamento / agenda / cronograma
+  { test: /\b(planej|agend|cronograma|organiz|prepar|estrutur)/, icon: 'ph:calendar-check' },
+  // Sustentabilidade / cultivo / produção agrícola
+  { test: /\b(sustent|cultiv|plant|crescer|produz|fertil|safra|lavour|colher)/, icon: 'ph:plant' },
+  // Demonstração / amostra / apresentação
+  { test: /\b(demonstr|amostr|exibi|mostr|apresent|expor)/, icon: 'ph:flag' },
+  // Gestão / administração / controle
+  { test: /\b(gerenc|administr|gest|control|cuidar|coordenar)/, icon: 'ph:squares-four' },
+  // Notificação / alerta / aviso
+  { test: /\b(notific|alert|avis|sinaliz|comunic)/, icon: 'ph:bell-ringing' },
+  // Cálculo / medição / quantificação
+  { test: /\b(calcul|medi|mensur|quantif|conta|somar|computar)/, icon: 'ph:calculator' },
+  // Registro / documentação / dossiê
+  { test: /\b(registr|document|dossi|anot|catalog|arquiv|fichar)/, icon: 'ph:notebook' },
+  // Avaliação / scoring / classificação
+  { test: /\b(avali|pontu|class|rank|nota|score|julgar)/, icon: 'ph:gauge' },
+  // Entrega / envio / pacote
+  { test: /\b(entreg|deliver|despach|pacote|encaminh)/, icon: 'ph:package' },
+  // Otimização / performance / velocidade / eficiência
+  { test: /\b(otimi|maximi|acelerar|melhor|eficien|performance|impuls)/, icon: 'ph:speedometer' },
+  // Conexão / integração / vínculo
+  { test: /\b(conect|integr|liga|vincul|associ|sincron|unir)/, icon: 'ph:plugs-connected' },
+  // Transformação / evolução / crescimento / escala
+  { test: /\b(transform|evol|cresci|expan|escal|mudan)/, icon: 'ph:trend-up' },
+  // Garantia / segurança / proteção
+  { test: /\b(garant|asseg|proteg|segur|defend|preserv)/, icon: 'ph:shield-check' },
+  // Exploração / descoberta / orientação
+  { test: /\b(explor|descob|revel|desbrav|naveg)/, icon: 'ph:compass' },
+  // Visualização / clareza / vista
+  { test: /\b(visualiz|enxerg|ver |vista|clare|nítid|focar)/, icon: 'ph:eye' },
+  // Tempo / agilidade / urgência / velocidade
+  { test: /\b(rapid|agil|veloc|urgen|tempo|instant)/, icon: 'ph:lightning' },
+  // Consulta / atendimento / diálogo
+  { test: /\b(consult|atend|relacionam|reun|conversar|dialog|conex)/, icon: 'ph:chats-circle' },
+  // Resultado / sucesso / conquista
+  { test: /\b(result|sucess|conquist|alcanc|ganha|venc)/, icon: 'ph:trophy' },
+  // Inovação / criação / desenvolvimento
+  { test: /\b(inov|criar|inventar|desenvolv|model|construir|gerar)/, icon: 'ph:sparkle' },
+  // Estratégia / plano de jogo
+  { test: /\b(estrat|tatic|plano|abordagem|método)/, icon: 'ph:chess-knight' },
+  // Foco / atenção / concentração
+  { test: /\b(foco|concentr|priori|aten)/, icon: 'ph:crosshair' },
+  // Dados / informação / inteligência
+  { test: /\b(dado|inform|inteligenc|conhec)/, icon: 'ph:database' },
+];
+
+// Pool de fallback — quando o verbo não bate em nenhum padrão acima, escolhe
+// deterministicamente um destes 8 ícones via hash do texto. Garante variedade
+// visual mesmo pra vocabulário fora do mapa (ao invés de todos os "verbos
+// estranhos" virarem o mesmo check-circle).
+const QUOTE_FALLBACK_ICONS = [
+  'ph:check-circle',
+  'ph:star',
+  'ph:hand-pointing',
+  'ph:plus-circle',
+  'ph:rocket-launch',
+  'ph:arrow-up-right',
+  'ph:circle-wavy-check',
+  'ph:medal',
+];
+
+function hashWord(word) {
+  let h = 0;
+  for (let i = 0; i < word.length; i++) {
+    h = ((h << 5) - h) + word.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h);
+}
+
+function resolveQuoteIcon(word) {
+  const w = String(word || '').toLowerCase();
+  for (const { test, icon } of QUOTE_ICON_MAP) {
+    if (test.test(w)) return icon;
+  }
+  // Sem match: deterministicamente escolhe do pool de fallback (mesma palavra
+  // sempre vira o mesmo ícone, mas palavras diferentes ficam variadas).
+  return QUOTE_FALLBACK_ICONS[hashWord(w) % QUOTE_FALLBACK_ICONS.length];
+}
+
 export const Quote = ({ start, end, words, items, features, theme, bgImage: bgImageProp, bgImageBlur, bgOverlayOpacity, bgTexture, bgTextureOpacity, bgTextureInvert }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -183,7 +293,7 @@ export const Quote = ({ start, end, words, items, features, theme, bgImage: bgIm
                   filter: iconFilter,
                 }}>
                   <StaticMotionIcon
-                    icon="ph:check-circle"
+                    icon={resolveQuoteIcon(feature)}
                     size={72}
                     color={iconColor}
                   />
@@ -194,7 +304,7 @@ export const Quote = ({ start, end, words, items, features, theme, bgImage: bgIm
                   fontFamily: MR_FONTS.mono,
                   fontSize: 68,
                   fontWeight: 400,
-                  letterSpacing: '0.06em',
+                  letterSpacing: '0.12em',
                   lineHeight: 1.0,
                   color: textColor,
                   textShadow: textShadow === 'none' ? 'none' : `${textShadow}, 0 0 ${Math.round(18 + highlightP * 18)}px ${highlightColor}${Math.round(glowOpacity * 255).toString(16).padStart(2, '0')}`,

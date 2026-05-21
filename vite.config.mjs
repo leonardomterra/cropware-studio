@@ -9,6 +9,8 @@ import { generateVoiceoverForStoryboard, loadDotEnv } from './motion-reel/voiceo
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = __dirname;
 let activeMotionReelRender = null;
+let activeRenderChild = null;
+let activeRenderCancelled = false;
 
 function sendProgress(res, payload) {
   res.write(`${JSON.stringify({ ts: Date.now(), ...payload })}\n`);
@@ -187,6 +189,7 @@ const motionReelApi = {
           windowsHide: true,
           shell: process.platform === 'win32',
         });
+        activeRenderChild = child;
 
         let stderrBuf = '';
         let lastRenderProgress = 25;
@@ -203,7 +206,7 @@ const motionReelApi = {
               stage: 'rendering',
               progress: estimate,
               message: 'Renderizando MP4...',
-              detail: 'O Remotion ainda está trabalhando. Esta etapa pode ficar silenciosa por alguns minutos.',
+              detail: 'O Remotion ainda está trabalhando.\nEsta etapa pode ficar silenciosa por alguns minutos.',
             });
           }
         }, 5000) : null;
@@ -255,6 +258,19 @@ const motionReelApi = {
           child.on('close', resolve);
         });
         if (heartbeat) clearInterval(heartbeat);
+        activeRenderChild = null;
+        if (activeRenderCancelled) {
+          console.log('[render-reel] cancelado pelo usuário.');
+          if (progressMode) {
+            sendProgress(res, { type: 'cancelled', stage: 'cancelled', progress: 0, message: 'Render cancelado.' });
+            res.end();
+            return;
+          }
+          res.statusCode = 499;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ error: 'Render cancelado pelo usuário.' }));
+          return;
+        }
         if (exitCode !== 0) {
           console.error(`[render-reel] Remotion falhou (exit ${exitCode}):`, stderrBuf.slice(0, 500));
           if (progressMode) {
@@ -338,8 +354,40 @@ const motionReelApi = {
       } finally {
         if (activeMotionReelRender === requestRenderKey) {
           activeMotionReelRender = null;
+          activeRenderChild = null;
+          activeRenderCancelled = false;
         }
       }
+    });
+
+    server.middlewares.use('/api/render-reel-cancel', async (req, res) => {
+      if (req.method !== 'POST') {
+        res.statusCode = 405;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: 'Method not allowed. Use POST.' }));
+        return;
+      }
+      if (!activeRenderChild) {
+        res.statusCode = 404;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: 'Nenhum render em andamento.' }));
+        return;
+      }
+      activeRenderCancelled = true;
+      try {
+        if (process.platform === 'win32') {
+          // No Windows, child foi via shell — usa taskkill no PID + filhos.
+          spawn('taskkill', ['/PID', String(activeRenderChild.pid), '/T', '/F'], { windowsHide: true });
+        } else {
+          activeRenderChild.kill('SIGTERM');
+        }
+        console.log('[render-reel] cancel solicitado, matando processo.');
+      } catch (err) {
+        console.warn('[render-reel] erro ao matar processo:', err.message);
+      }
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ ok: true }));
     });
   },
 };

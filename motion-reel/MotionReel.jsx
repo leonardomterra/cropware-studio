@@ -137,7 +137,7 @@ export const MotionReel = ({ storyboard }) => {
     // Locked scenes são 100% hardcoded nos componentes — ignoram overlays do
     // storyboard (mesmo que reels antigos em cache tenham herdado overlays
     // antes do refactor). Customização visual só nas custom scenes.
-    const sceneOverlays = scene.locked === true || scene.type === 'feature-list'
+    const sceneOverlays = scene.locked === true || scene.type === 'feature-list' || scene.type === 'scenario' || scene.type === 'quote'
       ? null
       : scene.overlays;
     // Tema resolvido por cena (theme.js per-slide-type). Locked scenes não

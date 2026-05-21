@@ -106,6 +106,10 @@ export const KickerReveal = ({ text, delay = 0, dur = 0.5, fromEm = 0.15, toEm =
     <div style={{
       opacity: p,
       letterSpacing: `${fromEm + (toEm - fromEm) * p}em`,
+      // text-wrap: balance distribui as palavras pra deixar linhas com largura
+      // próxima quando o texto quebra (kickers longos como "GESTAO NA PALMA
+      // DA MAO"). No-op em textos sem quebra.
+      textWrap: 'balance',
       ...style,
     }}>{text}</div>
   );

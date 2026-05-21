@@ -141,7 +141,7 @@ export const Chapter = ({ chapterNumber = 2, start, end, theme = {}, bgImage, bg
         alignItems: 'center',
         justifyContent: 'center',
         padding: '0 80px',
-        gap: 38,
+        gap: 56,
         color: fg,
         fontFamily: MR_FONTS.display,
         textAlign: 'center',
@@ -176,7 +176,7 @@ export const Chapter = ({ chapterNumber = 2, start, end, theme = {}, bgImage, bg
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: 10,
+            gap: 56,
             maxWidth: 920,
             color: fg,
             textShadow,
@@ -184,7 +184,7 @@ export const Chapter = ({ chapterNumber = 2, start, end, theme = {}, bgImage, bg
           }}>
             <div style={{
               fontFamily: MR_FONTS.display,
-              fontSize: 128,
+              fontSize: 110,
               fontWeight: 700,
               lineHeight: 0.92,
               letterSpacing: '-0.045em',
@@ -200,7 +200,7 @@ export const Chapter = ({ chapterNumber = 2, start, end, theme = {}, bgImage, bg
             </div>
             <div style={{
               fontFamily: MR_FONTS.grotesk,
-              fontSize: 88,
+              fontSize: 72,
               fontWeight: 500,
               lineHeight: 1.08,
               letterSpacing: '-0.02em',
@@ -221,7 +221,7 @@ export const Chapter = ({ chapterNumber = 2, start, end, theme = {}, bgImage, bg
         ) : (
           <div style={{
             fontFamily: MR_FONTS.display,
-            fontSize: 128,
+            fontSize: 110,
             fontWeight: 700,
             lineHeight: 0.95,
             letterSpacing: '-0.04em',
@@ -247,7 +247,7 @@ export const Chapter = ({ chapterNumber = 2, start, end, theme = {}, bgImage, bg
           >
             <div style={{
               fontFamily: MR_FONTS.grotesk,
-              fontSize: 58,
+              fontSize: 72,
               fontWeight: 400,
               lineHeight: 1.18,
               letterSpacing: '-0.018em',
@@ -270,7 +270,7 @@ export const Chapter = ({ chapterNumber = 2, start, end, theme = {}, bgImage, bg
               height={4}
               style={{ boxShadow: accentGlowWide, borderRadius: 2 }}
             />
-            <GlassCard delay={1.45} padding="34px 56px">
+            <GlassCard delay={1.45} padding="46px 68px">
               <IconsRow icons={cfg.icons} delayStart={1.6} stagger={0.22} color={T.iconColor || fg} shadow={iconShadow} />
             </GlassCard>
           </>
@@ -283,7 +283,7 @@ export const Chapter = ({ chapterNumber = 2, start, end, theme = {}, bgImage, bg
 // ─────────────── IconsRow ───────────────
 // Fila horizontal de ícones Iconify (line-md tem animações próprias) com
 // entrada staggered: spring (scale + translateY) + fade pra cada um.
-const IconsRow = ({ icons, delayStart = 0, stagger = 0.2, size = 120, gap = 44, color, shadow }) => {
+const IconsRow = ({ icons, delayStart = 0, stagger = 0.2, size = 120, gap = 56, color, shadow }) => {
   return (
     <div style={{
       display: 'flex',

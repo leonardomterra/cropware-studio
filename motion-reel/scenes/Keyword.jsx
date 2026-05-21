@@ -108,11 +108,15 @@ export const Keyword = ({
       ) : null}
 
       {/* Camada 1: textura ÚNICA sobre o bg — pool (bgTexture) com fallback
-          pra keyword-texture.webp. Blend-mode/filter + intensidade controláveis. */}
+          pra keyword-texture.webp. Blend-mode/filter + intensidade controláveis.
+          Ken Burns lento na textura (zoom + drift sutil + leve rotação) pra dar
+          vida à camada e evitar sensação estática. */}
       <AbsoluteFill style={{
         backgroundImage: `url('${staticFile(bgTexture || T.bgTexture || 'keyword-texture.webp')}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        transform: `scale(${interpolate(frame, [0, durFrames], [1.08, 1.22], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }).toFixed(4)}) translate(${interpolate(frame, [0, durFrames], [-12, 14], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }).toFixed(2)}px, ${interpolate(frame, [0, durFrames], [10, -18], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }).toFixed(2)}px) rotate(${interpolate(frame, [0, durFrames], [-1.2, 1.2], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }).toFixed(3)}deg)`,
+        transformOrigin: 'center',
         mixBlendMode: T.textureMode || 'multiply',
         filter: (bgTextureInvert != null ? bgTextureInvert : false)
           ? `invert(1) contrast(1.1) ${T.textureFilter || ''}`

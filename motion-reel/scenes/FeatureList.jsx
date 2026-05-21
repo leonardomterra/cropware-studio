@@ -118,7 +118,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
         alignItems: 'flex-start',
         justifyContent: 'center',
         padding: '0 80px',
-        gap: 38,
+        gap: 54,
         boxSizing: 'border-box',
       }}>
         {kicker ? (
@@ -126,11 +126,11 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
             text={String(kicker).toUpperCase()}
             delay={0}
             dur={0.4}
-            fromEm={T.kickerLetterSpacingFrom ?? 0.08}
-            toEm={T.kickerLetterSpacingTo ?? 0.16}
+            fromEm={T.kickerLetterSpacingFrom ?? 0.06}
+            toEm={T.kickerLetterSpacingTo ?? 0.12}
             style={{
               fontFamily: MR_FONTS.mono,
-              fontSize: T.kickerFontSize || 42,
+              fontSize: T.kickerFontSize || 48,
               fontWeight: 400,
               lineHeight: 1.18,
               maxWidth: T.kickerMaxWidth || 760,
@@ -145,7 +145,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
         {title ? (
           <div style={{
             fontFamily: MR_FONTS.display,
-            fontSize: T.titleFontSize || 116,
+            fontSize: T.titleFontSize || 96,
             fontWeight: 700,
             lineHeight: 0.95,
             letterSpacing: '-0.04em',
@@ -162,10 +162,10 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
         <div style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: 18,
+          gap: 28,
           width: '100%',
           maxWidth: 920,
-          marginTop: 8,
+          marginTop: 16,
         }}>
           {items.map((rawItem, i) => {
             const item = typeof rawItem === 'string' ? { text: rawItem } : (rawItem || {});
@@ -183,9 +183,9 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
               <div key={i} style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 28,
-                padding: '20px 28px',
-                minHeight: 160,
+                gap: 36,
+                padding: '28px 36px',
+                minHeight: 172,
                 background: MR_COLORS.white,
                 borderRadius: 18,
                 boxShadow: T.flat ? 'none' : '0 12px 32px rgba(0,0,0,0.14), 0 2px 4px rgba(0,0,0,0.06)',

@@ -7,7 +7,7 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, staticFile } from 'remotion';
 import { MR_COLORS, MR_FONTS, resolveColor } from '../theme.js';
 import { MR_THEMES } from '../themes.js';
-import { EASE, SceneBackdrop, FadeSlide, SceneTextureBackdrop } from '../helpers.jsx';
+import { EASE, SceneBackdrop, FadeSlide, SceneTextureBackdrop, IconifyIcon, AccentBar } from '../helpers.jsx';
 
 const FALLBACK = MR_THEMES.editorial.perSlide['app-card'];
 
@@ -30,10 +30,12 @@ export const AppCard = ({
   start, end,
 }) => {
   // bg/fg do storyboard têm prioridade (compat com reels antigos); senão cai
-  // pro theme atual (per-slide-type).
+  // pro theme atual (per-slide-type). EXCEÇÃO: temas flat são auto-contidos —
+  // ignoram bg/fg do storyboard pra garantir paleta consistente (branco no
+  // flatClaro, verde-quase-preto no flatEscuro).
   const T = theme || FALLBACK;
-  const bgColor = bg ? resolveColor(bg) : T.bg;
-  const fgColor = fg ? resolveColor(fg) : T.fg;
+  const bgColor = T.flat ? T.bg : (bg ? resolveColor(bg) : T.bg);
+  const fgColor = T.flat ? T.fg : (fg ? resolveColor(fg) : T.fg);
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const durSec = (end || 0) - (start || 0);
@@ -67,7 +69,7 @@ export const AppCard = ({
     <AbsoluteFill style={{
       background: bgColor, color: fgColor,
       flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      padding: '120px 80px', gap: 36, fontFamily: MR_FONTS.display,
+      padding: '140px 80px', gap: 52, fontFamily: MR_FONTS.display,
     }}>
       {!T.flat ? <>
       {/* Camada 0: foto de fundo com Ken Burns + overlay de tonalização */}
@@ -89,7 +91,12 @@ export const AppCard = ({
           }} />
         </>
       ) : null}
-      <SceneBackdrop background={background} durSec={durSec} />
+      {/* SceneBackdrop = textura legacy (dots/lines/noise) que vinha de
+          storyboards antigos com `background: { type: 'texture' }`. Renderiza
+          AbsoluteFill com cor sólida → cobre a bgImage do pool. Por isso só
+          renderiza quando NÃO há bgImage (mantém compat com reels antigos sem
+          pool, mas não invalida o pool atual). */}
+      {!resolvedBgImage ? <SceneBackdrop background={background} durSec={durSec} /> : null}
       {resolvedBgTexture ? (
         <SceneTextureBackdrop
           src={resolvedBgTexture}
@@ -104,7 +111,7 @@ export const AppCard = ({
           text={kicker}
           delay={0}
           dur={0.5}
-          style={{ fontFamily: MR_FONTS.mono, fontSize: 42, fontWeight: 400, color: T.kickerColor || T.accent, textTransform: 'uppercase', lineHeight: 1.15, textAlign: 'center', maxWidth: 880, ...(T.flat ? { textShadow: 'none' } : {}) }}
+          style={{ fontFamily: MR_FONTS.mono, fontSize: 48, fontWeight: 400, color: T.kickerColor || T.accent, textTransform: 'uppercase', lineHeight: 1.15, textAlign: 'center', maxWidth: 880, ...(T.flat ? { textShadow: 'none' } : {}) }}
           allowWrap
         />
       ) : null}
@@ -118,12 +125,29 @@ export const AppCard = ({
           }}>{caption}</div>
         </FadeSlide>
       ) : null}
+      {/* Linha accent acima das janelas — eco do AccentBar do cap 3 (slide 7).
+          Cor: T.barColor → T.accent (verde do tema). Em temas com bg escuro
+          (greenAbyss/slateAbyss), white pega melhor → branca se T.fg for white. */}
+      <AccentBar
+        delay={0.4}
+        dur={0.55}
+        origin="center"
+        color={T.barColor || T.accent || MR_COLORS.greenAccent}
+        width={420}
+        height={4}
+        style={{
+          borderRadius: 2,
+          boxShadow: T.flat ? 'none' : `0 0 24px ${T.accent || MR_COLORS.greenAccent}aa`,
+          marginTop: 12,
+          marginBottom: 12,
+        }}
+      />
       {/* Janela mockup — wrapper com transformação animada */}
       <div style={{
         width: 820,
         display: 'flex',
         flexDirection: 'column',
-        gap: 22,
+        gap: 32,
         transform: `translateY(${offsetY.toFixed(2)}px) scale(${scale.toFixed(4)})`,
         opacity: enterSpring,
         color: MR_COLORS.slateAbyss,
@@ -158,12 +182,17 @@ const StableKickerReveal = ({ text, delay = 0, dur = 0.5, style, allowWrap = fal
   const y = (1 - p) * 8;
   return (
     <div style={{
-      letterSpacing: '0.4em',
+      letterSpacing: '0.12em',
       clipPath: `inset(0 ${hiddenRight.toFixed(2)}% 0 0)`,
       filter: `blur(${blur.toFixed(2)}px)`,
       transform: `translateY(${y.toFixed(2)}px)`,
       textShadow: '0 2px 12px rgba(0,0,0,0.34)',
       whiteSpace: allowWrap ? 'normal' : 'nowrap',
+      // text-wrap: balance distribui as palavras pra deixar as linhas com
+      // largura próxima — evita "gestao na palma da / mao" e produz
+      // "gestao na / palma da mao". Chromium suporta nativo (Remotion roda
+      // em Chrome headless no render).
+      textWrap: allowWrap ? 'balance' : undefined,
       ...style,
     }}>{text}</div>
   );
@@ -268,6 +297,19 @@ const FeatureWindow = ({ item, index, frame, fps, flat }) => {
   const enterX = (1 - p) * 140 * enterDir;
   const tilt = [-1.2, 1.1, -0.45][index] || 0;
   const valueText = item.value == null ? '' : String(item.value);
+  // Split inteligente: separa o número líder da unidade textual embutida no
+  // value. Exemplos: "+5 sacas/ha" → ["+5", "sacas/ha"]; "85%" → ["85%", ""];
+  // "100L/ha" → ["100", "L/ha"]; "32" → ["32", ""]. Quando o value já carrega
+  // a unidade, ignora item.unit (evita duplicação tipo "+5 sacas/ha/ha").
+  const valueParts = (() => {
+    const m = valueText.match(/^([+\-]?\d+(?:[.,]\d+)?%?)\s*(.*)$/);
+    if (m && m[1]) {
+      const lead = m[1];
+      const tail = (m[2] || '').trim();
+      return { lead, tail: tail || item.unit || '' };
+    }
+    return { lead: valueText, tail: item.unit || '' };
+  })();
 
   return (
     <div style={{
@@ -284,69 +326,145 @@ const FeatureWindow = ({ item, index, frame, fps, flat }) => {
       <AppChrome title={item.title} compact />
       <div style={{
         display: 'grid',
-        gridTemplateColumns: '148px 1fr',
-        gap: 24,
+        gridTemplateColumns: '180px 1fr',
+        gap: 38,
         alignItems: 'center',
-        padding: '26px 30px 30px',
-        minHeight: 154,
+        padding: '34px 44px',
+        minHeight: 190,
         background: `linear-gradient(135deg, ${MR_COLORS.white} 0%, ${MR_COLORS.fog} 100%)`,
       }}>
-        <MiniAppVisual type={item.type} accent={item.accent} frame={frame} fps={fps} />
-        <div>
-          <div style={{ fontFamily: MR_FONTS.display, fontSize: 26, fontWeight: 500, letterSpacing: '-0.005em', color: item.accent, marginBottom: 10 }}>{item.label}</div>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 10 }}>
-            <span style={{ fontFamily: MR_FONTS.display, fontSize: valueText.length > 5 ? 46 : 62, fontWeight: 700, lineHeight: 0.92, letterSpacing: '-0.03em', color: MR_COLORS.slateAbyss }}>{valueText}</span>
-            {item.unit ? <span style={{ fontFamily: MR_FONTS.display, fontSize: 28, fontWeight: 500, color: MR_COLORS.slateMid }}>{item.unit}</span> : null}
+        <MiniAppVisual type={item.type} accent={item.accent} frame={frame} fps={fps} index={index} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
+          {/* Linha superior: eyebrow (label) à esquerda, status pill à direita. */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <div style={{
+              fontFamily: MR_FONTS.mono,
+              fontSize: 22,
+              fontWeight: 400,
+              letterSpacing: '0.10em',
+              textTransform: 'uppercase',
+              color: item.accent,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              flex: '1 1 auto',
+              minWidth: 0,
+            }}>{item.label}</div>
+            {item.status ? (
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '7px 14px',
+                borderRadius: 8,
+                background: `${item.accent}14`,
+                fontFamily: MR_FONTS.mono,
+                fontSize: 20,
+                fontWeight: 400,
+                letterSpacing: '0.06em',
+                color: item.accent,
+                textTransform: 'uppercase',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+              }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: item.accent }} />
+                {item.status}
+              </div>
+            ) : null}
           </div>
-          <div style={{ fontFamily: MR_FONTS.display, fontSize: 28, fontWeight: 400, lineHeight: 1.22, letterSpacing: '-0.01em', color: MR_COLORS.slateDark }}>{item.description}</div>
-          {item.status ? (
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 16, fontFamily: MR_FONTS.display, fontSize: 20, fontWeight: 500, letterSpacing: '-0.005em', color: MR_COLORS.slateMid, textTransform: 'capitalize' }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: item.accent }} />
-              {item.status}
-            </div>
-          ) : null}
+          {/* Número grande + sufixo (unidade) — único foco visual abaixo. */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+            <span style={{
+              fontFamily: MR_FONTS.display,
+              fontSize: 70,
+              fontWeight: 700,
+              lineHeight: 0.9,
+              letterSpacing: '-0.035em',
+              color: MR_COLORS.slateAbyss,
+            }}>{valueParts.lead}</span>
+            {valueParts.tail ? (
+              <span style={{
+                fontFamily: MR_FONTS.display,
+                fontSize: 32,
+                fontWeight: 500,
+                letterSpacing: '-0.01em',
+                color: MR_COLORS.slateMid,
+              }}>{valueParts.tail}</span>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-const MiniAppVisual = ({ type, accent, frame, fps }) => {
-  const pulse = 0.92 + 0.08 * Math.sin((frame / fps) * Math.PI * 1.5);
-  if (type === 'satellite') {
-    return (
-      <div style={{ width: 132, height: 116, borderRadius: 18, overflow: 'hidden', display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 3, padding: 8, background: '#dfe8df', boxShadow: `inset 0 0 0 2px ${MR_COLORS.greenDeep}33` }}>
-        {Array.from({ length: 25 }).map((_, i) => {
-          const n = Math.sin(i * 1.7);
-          const tone = n > 0.58 ? MR_COLORS.greenBright
-                     : n > 0.0  ? MR_COLORS.greenAccent
-                     : n > -0.5 ? MR_COLORS.greenDeep
-                     :            MR_COLORS.greenForest;
-          return <span key={i} style={{ borderRadius: 4, background: tone, opacity: 0.92 }} />;
-        })}
-      </div>
-    );
-  }
-  if (type === 'alert') {
-    return (
-      <div style={{ width: 118, height: 118, borderRadius: '50%', background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center', transform: `scale(${pulse.toFixed(3)})`, boxShadow: `0 18px 34px ${accent}44` }}>
-        <span style={{ fontFamily: MR_FONTS.display, fontSize: 68, fontWeight: 800, color: MR_COLORS.white }}>!</span>
-      </div>
-    );
-  }
-  if (type === 'weather') {
-    return (
-      <div style={{ width: 132, height: 118, position: 'relative' }}>
-        <div style={{ position: 'absolute', left: 22, top: 14, width: 74, height: 74, borderRadius: '50%', background: MR_COLORS.amber, boxShadow: `0 0 0 12px ${MR_COLORS.amber}22` }} />
-        <div style={{ position: 'absolute', left: 36, bottom: 16, width: 78, height: 42, borderRadius: 24, background: MR_COLORS.white, boxShadow: '0 12px 24px rgba(0,0,0,0.16)' }} />
-      </div>
-    );
-  }
+// Mapeia o tipo da janela pra um ícone Phosphor inerente ao tema. Mantém
+// linguagem visual unificada (todos em um card cinza) — só o glifo muda.
+// Variantes `-fill` do Phosphor (silhuetas sólidas) garantem peso visual
+// idêntico entre os glifos — `ph:` regular tem strokes de espessura variável.
+// Cor única (slateDark) também unifica visualmente; o accent verde fica só no
+// eyebrow label.
+const APP_WINDOW_ICONS = {
+  weather:   'ph:cloud-sun-fill',
+  satellite: 'ph:map-trifold-fill',
+  alert:     'ph:bell-fill',
+  dashboard: 'ph:chart-bar-fill',
+};
+
+const MiniAppVisual = ({ type, frame = 0, fps = 30, index = 0 }) => {
+  const icon = APP_WINDOW_ICONS[type] || APP_WINDOW_ICONS.dashboard;
+  // Entrada: spring atrasada por janela (cada uma "acende" depois que a janela
+  // pousa). Stagger de 0.18s ecoa o stagger da própria janela.
+  const enter = spring({
+    frame: frame - (0.85 + index * 0.18) * fps,
+    fps,
+    config: { damping: 12, stiffness: 130, mass: 0.7 },
+  });
+  const enterOpacity = Math.min(1, enter * 1.4);
+  const enterScale = 0.5 + 0.5 * enter;
+  // Breath contínuo — escala ±3% pra dar vida sem distrair. Cada ícone tem
+  // fase deslocada pelo index → não sincronizam (mais natural).
+  const tSec = frame / fps;
+  const breath = 1 + Math.sin(tSec * Math.PI * 0.6 + index * 0.9) * 0.03;
+  const iconScale = enterScale * breath;
+  // Glow pulsando atrás do ícone — sutil, intensidade 8-22% modulada por seno.
+  const glowAlpha = 0.10 + 0.10 * (0.5 + 0.5 * Math.sin(tSec * Math.PI * 0.5 + index * 1.1));
+  const glowScale = 0.9 + 0.1 * (0.5 + 0.5 * Math.sin(tSec * Math.PI * 0.5 + index * 1.1));
   return (
-    <div style={{ width: 132, height: 116, borderRadius: 18, padding: 18, background: `${accent}18`, boxShadow: `inset 0 0 0 2px ${accent}44`, display: 'flex', alignItems: 'flex-end', gap: 10 }}>
-      {[0.5, 0.78, 0.62].map((h, i) => (
-        <span key={i} style={{ width: 24, height: `${Math.round(h * 78)}px`, borderRadius: 8, background: i === 1 ? accent : MR_COLORS.slateLight }} />
-      ))}
+    <div style={{
+      width: 168,
+      height: 148,
+      borderRadius: 22,
+      background: MR_COLORS.fog,
+      boxShadow: 'inset 0 0 0 1px rgba(15,23,42,0.06)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      overflow: 'hidden',
+      // Verde único pra todos os ícones — a variação cromática fica no eyebrow
+      // e na pill, não no glifo principal (que precisa parecer "do mesmo set").
+      color: MR_COLORS.greenAccent,
+    }}>
+      {/* Halo verde pulsando atrás do ícone — dá sensação de "live signal". */}
+      <div style={{
+        position: 'absolute',
+        width: 120,
+        height: 120,
+        borderRadius: '50%',
+        background: `radial-gradient(circle at center, ${MR_COLORS.greenAccent}${Math.round(glowAlpha * 255).toString(16).padStart(2, '0')} 0%, transparent 65%)`,
+        transform: `scale(${glowScale.toFixed(3)})`,
+        opacity: enterOpacity,
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        transform: `scale(${iconScale.toFixed(3)})`,
+        opacity: enterOpacity,
+        transformOrigin: 'center',
+        display: 'flex',
+      }}>
+        <IconifyIcon icon={icon} size={88} />
+      </div>
     </div>
   );
 };
@@ -355,21 +473,21 @@ const MiniAppVisual = ({ type, accent, frame, fps }) => {
 // Sem borderBottom — a separação chrome/body fica só pela troca de cor de fundo.
 const AppChrome = ({ title, compact = false }) => (
   <div style={{
-    height: compact ? 46 : 56,
+    height: compact ? 56 : 68,
     background: MR_COLORS.fog,
     display: 'flex',
     alignItems: 'center',
-    padding: compact ? '0 16px' : '0 20px',
+    padding: compact ? '0 22px' : '0 26px',
     position: 'relative',
   }}>
-    <div style={{ display: 'flex', gap: compact ? 7 : 8 }}>
-      <span style={{ width: compact ? 11 : 14, height: compact ? 11 : 14, borderRadius: '50%', background: '#FF5F57' }} />
-      <span style={{ width: compact ? 11 : 14, height: compact ? 11 : 14, borderRadius: '50%', background: '#FEBC2E' }} />
-      <span style={{ width: compact ? 11 : 14, height: compact ? 11 : 14, borderRadius: '50%', background: '#28C840' }} />
+    <div style={{ display: 'flex', gap: compact ? 12 : 13 }}>
+      <span style={{ width: compact ? 19 : 21, height: compact ? 19 : 21, borderRadius: '50%', background: '#FF5F57' }} />
+      <span style={{ width: compact ? 19 : 21, height: compact ? 19 : 21, borderRadius: '50%', background: '#FEBC2E' }} />
+      <span style={{ width: compact ? 19 : 21, height: compact ? 19 : 21, borderRadius: '50%', background: '#28C840' }} />
     </div>
     <div style={{
       position: 'absolute', left: 0, right: 0, textAlign: 'center',
-      fontFamily: MR_FONTS.mono, fontSize: compact ? 16 : 22, fontWeight: 500,
+      fontFamily: MR_FONTS.mono, fontSize: compact ? 23 : 28, fontWeight: 500,
       color: MR_COLORS.slateDark, letterSpacing: '0.08em',
       textTransform: 'uppercase',
     }}>{title}</div>
