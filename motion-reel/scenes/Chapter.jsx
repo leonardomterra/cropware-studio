@@ -36,13 +36,18 @@ const CHAPTER_CONFIGS = {
 
 const SLATE_TINT = 'linear-gradient(180deg, rgba(26,27,26,0.40) 0%, rgba(26,27,26,0.58) 55%, rgba(10,10,10,0.78) 100%)';
 
-export const Chapter = ({ chapterNumber = 2, start, end }) => {
+export const Chapter = ({ chapterNumber = 2, start, end, theme = {} }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const durSec = Math.max(1, (end || 0) - (start || 0));
   const durFrames = durSec * fps;
 
   const cfg = CHAPTER_CONFIGS[chapterNumber] || CHAPTER_CONFIGS[2];
+  const T = theme || {};
+  const fg = T.fg || MR_COLORS.white;
+  const accent = T.accent || MR_COLORS.greenBright;
+  const subtitleColor = T.subtitleColor || fg;
+  const textShadow = T.textShadow || '0 4px 28px rgba(0,0,0,0.55)';
 
   // ──── Entrada cinematográfica (mesma da BrandIntro) ────
   const enterP = interpolate(frame, [0, 0.8 * fps], [0, 1], {
@@ -65,10 +70,10 @@ export const Chapter = ({ chapterNumber = 2, start, end }) => {
   });
 
   return (
-    <AbsoluteFill style={{ background: MR_COLORS.slateAbyss, overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: T.bg || MR_COLORS.slateAbyss, overflow: 'hidden' }}>
       {/* Camada 1: imagem do site Cropware com Ken Burns */}
       <AbsoluteFill style={{
-        backgroundImage: `url('${staticFile(cfg.image)}')`,
+        backgroundImage: `url('${staticFile(T.bgImage || cfg.image)}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         transform: `scale(${imgScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
@@ -81,27 +86,27 @@ export const Chapter = ({ chapterNumber = 2, start, end }) => {
       <AbsoluteFill style={{
         backdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(140%)`,
         WebkitBackdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(140%)`,
-        background: SLATE_TINT,
+        background: T.glassTint || SLATE_TINT,
         opacity: overlayP,
       }} />
 
       {/* Camada 3: top sheen */}
       <AbsoluteFill style={{
-        background: 'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 14%, rgba(255,255,255,0) 30%)',
+        background: T.topSheen || 'linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 14%, rgba(255,255,255,0) 30%)',
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
 
       {/* Camada 4: bottom depth */}
       <AbsoluteFill style={{
-        background: 'linear-gradient(0deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.18) 20%, rgba(0,0,0,0) 42%)',
+        background: T.bottomDepth || 'linear-gradient(0deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.18) 20%, rgba(0,0,0,0) 42%)',
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
 
       {/* Camada 5: vinheta */}
       <AbsoluteFill style={{
-        background: 'radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.45) 100%)',
+        background: T.vignette || 'radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.45) 100%)',
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
@@ -120,7 +125,7 @@ export const Chapter = ({ chapterNumber = 2, start, end }) => {
         justifyContent: 'center',
         padding: '0 80px',
         gap: 38,
-        color: MR_COLORS.white,
+        color: fg,
         fontFamily: MR_FONTS.display,
         textAlign: 'center',
       }}>
@@ -131,7 +136,7 @@ export const Chapter = ({ chapterNumber = 2, start, end }) => {
             delay={0.1}
             playbackRate={1.0}
             loop
-            tint={cfg.lottieTint}
+            tint={T.iconColor || cfg.lottieTint}
             style={{
               filter: 'drop-shadow(0 18px 48px rgba(0,0,0,0.55))',
               marginBottom: -80,
@@ -143,10 +148,10 @@ export const Chapter = ({ chapterNumber = 2, start, end }) => {
             delay={0.85}
             dur={0.45}
             origin="center"
-            color={MR_COLORS.greenBright}
+            color={accent}
             width={120}
             height={4}
-            style={{ boxShadow: `0 0 24px ${MR_COLORS.greenBright}99`, borderRadius: 2 }}
+            style={{ boxShadow: `0 0 24px ${accent}99`, borderRadius: 2 }}
           />
         ) : null}
         <div style={{
@@ -156,8 +161,8 @@ export const Chapter = ({ chapterNumber = 2, start, end }) => {
           lineHeight: 0.95,
           letterSpacing: '-0.04em',
           maxWidth: 920,
-          color: MR_COLORS.white,
-          textShadow: '0 4px 28px rgba(0,0,0,0.55)',
+          color: fg,
+          textShadow,
           transform: 'translateZ(0)',
         }}>
           <CharReveal
@@ -181,9 +186,9 @@ export const Chapter = ({ chapterNumber = 2, start, end }) => {
               lineHeight: 1.2,
               letterSpacing: '-0.015em',
               maxWidth: 820,
-              color: MR_COLORS.white,
+              color: subtitleColor,
               opacity: 0.9,
-              textShadow: '0 2px 16px rgba(0,0,0,0.45)',
+              textShadow: T.subtitleShadow || '0 2px 16px rgba(0,0,0,0.45)',
             }}>{cfg.subtitle}</div>
           </FadeSlide>
         ) : null}
@@ -193,12 +198,12 @@ export const Chapter = ({ chapterNumber = 2, start, end }) => {
               delay={1.25}
               dur={0.55}
               origin="center"
-              color={MR_COLORS.greenBright}
+              color={accent}
               width={520}
               height={4}
-              style={{ boxShadow: `0 0 28px ${MR_COLORS.greenBright}99`, borderRadius: 2 }}
+              style={{ boxShadow: `0 0 28px ${accent}99`, borderRadius: 2 }}
             />
-            <IconsRow icons={cfg.icons} delayStart={1.6} stagger={0.22} />
+            <IconsRow icons={cfg.icons} delayStart={1.6} stagger={0.22} color={T.iconColor || fg} />
           </>
         ) : null}
       </div>

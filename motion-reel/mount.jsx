@@ -8,26 +8,11 @@
 //
 // O vanilla JS controla o modo via window.setMotionReelView(mode).
 import { createRoot } from 'react-dom/client';
-import { Player, Thumbnail } from '@remotion/player';
-import { staticFile } from 'remotion';
+import { Player } from '@remotion/player';
 
 import { MotionReel } from './MotionReel.jsx';
 import { MOTION_REEL_DEFAULT, computeReelDurationInFrames } from './default-storyboard.js';
 import { loadMotionReelFonts } from './fonts.js';
-
-// Mapping de scene.id → arquivo de thumb pré-renderizado em public/thumbs/.
-// Locked scenes são idênticas em todo reel (hardcoded nos componentes), então
-// reutilizamos as mesmas PNGs pra default e gerados. Gerados com `npm run reel:thumbs`.
-// Vantagem: usa a mesma pipeline do render final, sem o artifact "bolinha fantasma"
-// que o <Thumbnail> dinâmico do @remotion/player produz em algumas cenas complexas.
-const LOCKED_THUMB_FILES = {
-  'intro':           'thumbs/01-intro.png',
-  'chapter-1':       'thumbs/04-chapter-1.png',
-  'chapter-2':       'thumbs/07-chapter-2.png',
-  'quote':           'thumbs/10-quote.png',
-  'lower-third-cta': 'thumbs/11-lower-third.png',
-  'end':             'thumbs/12-end-card.png',
-};
 
 loadMotionReelFonts();
 
@@ -149,6 +134,23 @@ function ReelGridView({ storyboard }) {
 }
 
 function ReelThumbCard({ scene, sceneNumber, isLocked, storyboard, durationInFrames, frameToShow }) {
+  const fps = storyboard.fps || 30;
+  const sceneDurSec = Math.max(1, (scene.end || 0) - (scene.start || 0));
+  const thumbDurationInFrames = Math.max(1, Math.round(sceneDurSec * fps));
+  const thumbStoryboard = {
+    ...storyboard,
+    duration: sceneDurSec,
+    audio: null,
+    music: null,
+    scenes: [{
+      ...scene,
+      start: 0,
+      end: sceneDurSec,
+      transitionIn: undefined,
+      voiceover: undefined,
+      sfx: undefined,
+    }],
+  };
   const handleEditClick = (e) => {
     e.stopPropagation();
     if (typeof window.onMotionReelSceneClick === 'function') {
@@ -162,26 +164,18 @@ function ReelThumbCard({ scene, sceneNumber, isLocked, storyboard, durationInFra
     }
   };
   // Click no card inteiro: editáveis abrem edit, fixos abrem preview.
-  const handleCardClick = () => {
-    if (isLocked) {
-      if (typeof window.onMotionReelScenePreview === 'function') window.onMotionReelScenePreview(scene.id);
-    } else {
-      if (typeof window.onMotionReelSceneClick === 'function') window.onMotionReelSceneClick(scene.id, { locked: false });
-    }
-  };
   // Largura fixa via flex-basis (4 cols + 3 gaps de 12px).
   // O wrapper externo só estabelece width + position relative; a aspect 9:16
   // é forçada via padding-bottom no inner ratio-box (% relativo à largura
   // do PARENT). Tudo absoluto dentro = nunca extrapola altura.
   return (
     <div
-      onClick={handleCardClick}
       style={{
         // 6 cols × 2 rows. Gap 12px × 5 = 60px.
         flex: '0 0 calc((100% - 60px) / 6)',
         maxWidth: 'calc((100% - 60px) / 6)',
         position: 'relative',
-        cursor: 'pointer',
+        cursor: 'default',
         display: 'flex',
         flexDirection: 'column',
         gap: 6,
@@ -209,30 +203,39 @@ function ReelThumbCard({ scene, sceneNumber, isLocked, storyboard, durationInFra
             e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.20)';
           }}
         >
-          {scene.locked && LOCKED_THUMB_FILES[scene.id] ? (
+          {false ? (
             // Locked scenes: usa PNG pré-renderizada via `npm run reel:thumbs`.
             // Renderiza limpo, sem o artifact do <Thumbnail> dinâmico.
-            <img
-              src={staticFile(LOCKED_THUMB_FILES[scene.id])}
-              alt={scene.type}
-              draggable={false}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                display: 'block',
-                userSelect: 'none',
-              }}
-            />
-          ) : (
-            <Thumbnail
+            <Player
               component={MotionReel}
-              inputProps={{ storyboard }}
+              inputProps={{ storyboard: thumbStoryboard }}
               compositionWidth={storyboard.width || 1080}
               compositionHeight={storyboard.height || 1920}
-              durationInFrames={durationInFrames}
-              fps={storyboard.fps || 30}
-              frameToDisplay={frameToShow}
+              durationInFrames={thumbDurationInFrames}
+              fps={fps}
+              controls={false}
+              autoPlay
+              loop
+              muted
+              clickToPlay={false}
+              doubleClickToFullscreen={false}
+              acknowledgeRemotionLicense
+              style={{ width: '100%', height: '100%' }}
+            />
+          ) : (
+            <Player
+              component={MotionReel}
+              inputProps={{ storyboard: thumbStoryboard }}
+              compositionWidth={storyboard.width || 1080}
+              compositionHeight={storyboard.height || 1920}
+              durationInFrames={thumbDurationInFrames}
+              fps={fps}
+              controls={false}
+              autoPlay
+              loop
+              muted
+              clickToPlay={false}
+              doubleClickToFullscreen={false}
               acknowledgeRemotionLicense
               style={{ width: '100%', height: '100%' }}
             />
@@ -258,57 +261,116 @@ function ReelThumbCard({ scene, sceneNumber, isLocked, storyboard, durationInFra
           display: 'flex',
           alignItems: 'center',
           gap: 6,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
         }}>
-          <span style={{ color: '#80847F', fontFamily: '"Space Mono", ui-monospace, monospace', fontSize: 11 }}>{sceneNumber}</span>
-          <span style={{ textTransform: 'lowercase', overflow: 'hidden', textOverflow: 'ellipsis' }}>{scene.type}</span>
+          <span style={{
+            minWidth: 30,
+            height: 25,
+            padding: '0 8px',
+            borderRadius: 6,
+            background: '#e5e7eb',
+            color: '#475569',
+            fontFamily: '"Inter Tight", system-ui, sans-serif',
+            fontSize: 13,
+            fontWeight: 600,
+            lineHeight: '25px',
+            textAlign: 'center',
+          }}>{sceneNumber}</span>
+          <span
+            title={isLocked ? 'Cena fixa' : 'Cena livre'}
+            style={{
+              minWidth: 47,
+              height: 25,
+              padding: '0 9px',
+              borderRadius: 6,
+              background: isLocked ? '#e5e7eb' : '#d1fae5',
+              color: isLocked ? '#475569' : '#166534',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: '"Inter Tight", system-ui, sans-serif',
+              fontSize: 13,
+              fontWeight: 600,
+              lineHeight: 1,
+              letterSpacing: 0,
+              flex: '0 0 auto',
+            }}
+          >
+            {isLocked ? 'Fixo' : 'Livre'}
+          </span>
         </span>
         {/* Ações: preview (sempre) + edit (só editáveis) ou lock (só fixas) */}
-        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <button
+            type="button"
+            onClick={handleEditClick}
+            title={isLocked ? 'Editar tema visual' : 'Editar cena'}
+            style={{
+              background: '#111827',
+              border: '1px solid #111827',
+              minHeight: 25,
+              padding: '0 9px',
+              borderRadius: 6,
+              cursor: 'pointer',
+              color: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: '"Inter Tight", system-ui, sans-serif',
+              fontSize: 13,
+              fontWeight: 600,
+              lineHeight: 1,
+              letterSpacing: 0,
+              transition: 'background 120ms ease, border-color 120ms ease, transform 120ms ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#334155';
+              e.currentTarget.style.borderColor = '#334155';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#111827';
+              e.currentTarget.style.borderColor = '#111827';
+              e.currentTarget.style.transform = '';
+            }}
+          >
+            Editar
+          </button>
           <button
             type="button"
             onClick={handlePreviewClick}
             title="Preview desta cena"
             style={{
-              background: 'transparent',
-              border: 'none',
-              padding: 4,
+              width: 25,
+              height: 25,
+              background: '#111827',
+              border: '1px solid #111827',
+              padding: 0,
               borderRadius: 6,
               cursor: 'pointer',
-              color: '#5C605D',
+              color: '#fff',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'background 120ms ease, color 120ms ease',
+              transition: 'background 120ms ease, border-color 120ms ease, transform 120ms ease',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.06)'; e.currentTarget.style.color = '#1A1B1A'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#5C605D'; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#334155';
+              e.currentTarget.style.borderColor = '#334155';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#111827';
+              e.currentTarget.style.borderColor = '#111827';
+              e.currentTarget.style.transform = '';
+            }}
           >
-            <i className="ph ph-play" style={{ fontSize: 16, display: 'block' }}></i>
+            <span style={{
+              width: 0,
+              height: 0,
+              borderTop: '5px solid transparent',
+              borderBottom: '5px solid transparent',
+              borderLeft: '8px solid #fff',
+              display: 'block',
+              marginLeft: 2,
+            }} />
           </button>
-          {isLocked ? (
-            <i className="ph ph-lock-simple" title="Cena fixa" style={{ fontSize: 16, color: '#80847F', display: 'block' }}></i>
-          ) : (
-            <button
-              type="button"
-              onClick={handleEditClick}
-              title="Editar com IA"
-              style={{
-                background: 'transparent',
-                border: 'none',
-                padding: 4,
-                borderRadius: 6,
-                cursor: 'pointer',
-                color: '#42AA7B',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'background 120ms ease, color 120ms ease',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(106,197,143,0.15)'; e.currentTarget.style.color = '#2A7B5A'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#42AA7B'; }}
-            >
-              <i className="ph ph-pencil-simple" style={{ fontSize: 16, display: 'block' }}></i>
-            </button>
-          )}
         </span>
       </div>
     </div>

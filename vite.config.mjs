@@ -109,8 +109,18 @@ const motionReelApi = {
         let finalStoryboard = storyboard;
         if (hasVoiceover && !skipVoiceover) {
           if (!env.ELEVENLABS_API_KEY) {
-            console.warn('[render-reel] voiceover pedido mas ELEVENLABS_API_KEY não configurada — pulando');
-            if (progressMode) sendProgress(res, { type: 'stage', stage: 'voiceover-skip', progress: 18, message: 'Voiceover sem chave ElevenLabs. Pulando narração.' });
+            const message = 'Voiceover solicitado, mas ELEVENLABS_API_KEY não está configurada.';
+            const detail = 'Crie um arquivo .env na raiz do projeto com ELEVENLABS_API_KEY e reinicie o npm run dev.';
+            console.warn(`[render-reel] ${message}`);
+            if (progressMode) {
+              sendProgress(res, { type: 'error', stage: 'voiceover', progress: 0, message, detail });
+              res.end();
+              return;
+            }
+            res.statusCode = 400;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: message, details: detail }));
+            return;
           } else {
             console.log(`[render-reel] gerando voiceover (ElevenLabs)...`);
             if (progressMode) sendProgress(res, { type: 'stage', stage: 'voiceover', progress: 6, message: 'Gerando narração com ElevenLabs...' });
@@ -165,15 +175,42 @@ const motionReelApi = {
         console.log(`[render-reel] iniciando Remotion render → ${outPath}`);
         if (progressMode) sendProgress(res, { type: 'stage', stage: 'render', progress: 25, message: 'Iniciando Remotion...' });
 
-        const remotionBin = path.join(PROJECT_ROOT, 'node_modules', '.bin', 'remotion');
+        const remotionBin = path.join(
+          PROJECT_ROOT,
+          'node_modules',
+          '.bin',
+          process.platform === 'win32' ? 'remotion.cmd' : 'remotion'
+        );
         const args = ['render', 'motion-reel/index.js', 'MotionReel', outPath, `--props=${propsPath}`, '--gl=angle'];
-        const child = spawn(remotionBin, args, { cwd: PROJECT_ROOT });
+        const child = spawn(remotionBin, args, {
+          cwd: PROJECT_ROOT,
+          windowsHide: true,
+          shell: process.platform === 'win32',
+        });
 
         let stderrBuf = '';
+        let lastRenderProgress = 25;
+        let sawEncodingProgress = false;
+        const renderStartedAt = Date.now();
+        const heartbeat = progressMode ? setInterval(() => {
+          if (sawEncodingProgress) return;
+          const elapsedSec = Math.max(0, (Date.now() - renderStartedAt) / 1000);
+          const estimate = Math.min(88, 36 + elapsedSec * 0.28);
+          if (estimate > lastRenderProgress + 1) {
+            lastRenderProgress = estimate;
+            sendProgress(res, {
+              type: 'render',
+              stage: 'rendering',
+              progress: estimate,
+              message: 'Renderizando MP4...',
+              detail: 'O Remotion ainda está trabalhando. Esta etapa pode ficar silenciosa por alguns minutos.',
+            });
+          }
+        }, 5000) : null;
         child.stderr.on('data', d => { stderrBuf += d.toString(); });
         child.stdout.on('data', d => {
           const s = d.toString();
-          const lines = s.split('\n').filter(l => l.trim());
+          const lines = s.split(/[\r\n]+/).filter(l => l.trim());
           lines.forEach(line => {
             // Sinaliza só linhas relevantes pro log do servidor (sem spam de Rendered N/total).
             if (!/Rendered \d/.test(line)) console.log(`  [remotion] ${line}`);
@@ -184,19 +221,20 @@ const motionReelApi = {
               sendProgress(res, {
                 type: 'render',
                 stage: 'bundling',
-                progress: Math.min(35, 25 + pct * 0.10),
+                progress: Math.max(lastRenderProgress, Math.min(35, 25 + pct * 0.10)),
                 message: `Empacotando composição (${pct}%)...`,
               });
               return;
             }
             const encoded = line.match(/Encoded\s+(\d+)\/(\d+)/i);
             if (encoded) {
+              sawEncodingProgress = true;
               const done = Number(encoded[1]) || 0;
               const total = Number(encoded[2]) || 1;
               sendProgress(res, {
                 type: 'render',
                 stage: 'encoding',
-                progress: Math.min(92, 35 + (done / total) * 57),
+                progress: Math.max(lastRenderProgress, Math.min(92, 35 + (done / total) * 57)),
                 message: `Renderizando frames ${done}/${total}...`,
                 framesDone: done,
                 framesTotal: total,
@@ -209,7 +247,14 @@ const motionReelApi = {
           });
         });
 
-        const exitCode = await new Promise(resolve => child.on('close', resolve));
+        const exitCode = await new Promise((resolve) => {
+          child.on('error', (err) => {
+            stderrBuf += `\n${err.stack || err.message || String(err)}`;
+            resolve(1);
+          });
+          child.on('close', resolve);
+        });
+        if (heartbeat) clearInterval(heartbeat);
         if (exitCode !== 0) {
           console.error(`[render-reel] Remotion falhou (exit ${exitCode}):`, stderrBuf.slice(0, 500));
           if (progressMode) {

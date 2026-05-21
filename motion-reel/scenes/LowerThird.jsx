@@ -13,11 +13,12 @@ const SUBTITLE = 'Tire suas dúvidas no WhatsApp.';
 // Glass verde mais claro (greenAccent → greenForest → greenAbyss).
 const GREEN_TINT_LIGHT = 'linear-gradient(180deg, rgba(106,197,143,0.55) 0%, rgba(42,123,90,0.75) 55%, rgba(20,63,44,0.90) 100%)';
 
-export const LowerThird = ({ start, end }) => {
+export const LowerThird = ({ start, end, theme = {} }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const durSec = Math.max(1, (end || 0) - (start || 0));
   const durFrames = durSec * fps;
+  const T = theme || {};
 
   // ── Entrada cinematográfica (mesma family das outras locked) ──
   const enterP = interpolate(frame, [0, 0.8 * fps], [0, 1], {
@@ -58,10 +59,10 @@ export const LowerThird = ({ start, end }) => {
   const lottieScale = 0.85 + 0.15 * lottieIn;
 
   return (
-    <AbsoluteFill style={{ background: MR_COLORS.greenAbyss, overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: T.bg || MR_COLORS.greenAbyss, overflow: 'hidden' }}>
       {/* Camada 1: imagem (equipe no campo) com Ken Burns + blur defensivo */}
       <AbsoluteFill style={{
-        backgroundImage: `url('${staticFile(BG_IMAGE)}')`,
+        backgroundImage: `url('${staticFile(T.bgImage || BG_IMAGE)}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         transform: `scale(${imgScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
@@ -74,27 +75,27 @@ export const LowerThird = ({ start, end }) => {
       <AbsoluteFill style={{
         backdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(150%)`,
         WebkitBackdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(150%)`,
-        background: GREEN_TINT_LIGHT,
+        background: T.glassTint || GREEN_TINT_LIGHT,
         opacity: overlayP,
       }} />
 
       {/* Camada 3: top sheen */}
       <AbsoluteFill style={{
-        background: 'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 14%, rgba(255,255,255,0) 30%)',
+        background: T.topSheen || 'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 14%, rgba(255,255,255,0) 30%)',
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
 
       {/* Camada 4: bottom depth */}
       <AbsoluteFill style={{
-        background: 'linear-gradient(0deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.18) 22%, rgba(0,0,0,0) 42%)',
+        background: T.bottomDepth || 'linear-gradient(0deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.18) 22%, rgba(0,0,0,0) 42%)',
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
 
       {/* Camada 5: vinheta */}
       <AbsoluteFill style={{
-        background: 'radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.40) 100%)',
+        background: T.vignette || 'radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.40) 100%)',
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
@@ -137,8 +138,8 @@ export const LowerThird = ({ start, end }) => {
         {/* Card branco — só título + subtítulo (sem botão) */}
         <div style={{
           width: 820,
-          background: MR_COLORS.white,
-          color: MR_COLORS.slateAbyss,
+          background: T.cardBg || MR_COLORS.white,
+          color: T.cardFg || MR_COLORS.slateAbyss,
           borderRadius: 36,
           padding: '52px 64px',
           display: 'flex',
@@ -147,7 +148,7 @@ export const LowerThird = ({ start, end }) => {
           justifyContent: 'center',
           gap: 18,
           textAlign: 'center',
-          boxShadow: '0 32px 64px rgba(0,0,0,0.40)',
+          boxShadow: T.cardShadow || '0 32px 64px rgba(0,0,0,0.40)',
           opacity: cardIn,
           transform: `translateY(${cardOffset.toFixed(2)}px)`,
           willChange: 'transform',
@@ -158,7 +159,7 @@ export const LowerThird = ({ start, end }) => {
             fontWeight: 700,
             lineHeight: 0.95,
             letterSpacing: '-0.035em',
-            color: MR_COLORS.slateAbyss,
+            color: T.titleColor || MR_COLORS.slateAbyss,
             opacity: interpolate(frame, [0.65 * fps, 1.05 * fps], [0, 1], {
               extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuint,
             }),
@@ -169,7 +170,7 @@ export const LowerThird = ({ start, end }) => {
             fontWeight: 500,
             lineHeight: 1.2,
             letterSpacing: '-0.015em',
-            color: MR_COLORS.slateMid,
+            color: T.subtitleColor || MR_COLORS.slateMid,
             opacity: interpolate(frame, [0.85 * fps, 1.25 * fps], [0, 1], {
               extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuint,
             }),

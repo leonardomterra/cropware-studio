@@ -1,6 +1,6 @@
 // Storyboard padrão de 60s — 12 cenas em grade 4×3 (R12).
 //
-// Estrutura: 6 cenas FIXAS (locked) + 6 CUSTOMIZÁVEIS por tema.
+// Estrutura: 5 cenas FIXAS (locked) + 7 CUSTOMIZÁVEIS por tema.
 // - locked: true   → identidade Cropware (mesmas em todo reel — não devem
 //                    ser editadas pela IA nem pelo editor de prompt).
 // - locked: false  → tema-específicas (IA gera, usuário edita por prompt).
@@ -15,7 +15,7 @@
 //   07  30.0  → 34.0  chapter        FIXA   Cap. 03 · Resultados
 //   08  34.0  → 40.0  app-card       custom Mock app ilustrando feature
 //   09  40.0  → 44.0  whatsapp-chat  custom Conversa user × Cropware AI (R13 substituiu kw-direct)
-//   10  44.0  → 50.0  quote          FIXA   Depoimento genérico de cliente
+//   10  44.0  → 50.0  quote          custom 5 palavras tema-específicas
 //   11  50.0  → 55.0  lower-third    FIXA   WhatsApp Lottie + "Fala com a gente"
 //   12  55.0  → 60.0  end-card       FIXA   Logo + tagline + "Seguir"
 export const MOTION_REEL_DEFAULT = {
@@ -138,9 +138,6 @@ export const MOTION_REEL_DEFAULT = {
         type: 'texture',
         texture: { kind: 'dots', color: 'var(--mr-slateDark)', intensity: 0.18 },
       },
-      overlays: [
-        { type: 'rotating-rings', color: 'var(--mr-greenBright)', opacity: 0.15, count: 3, origin: 'top-right' },
-      ],
       transitionIn: { type: 'push-up', dur: 0.5, easing: 'in-out-cubic' },
     },
     // ─────────────── 09 KW-DIRECT (custom) ───────────────
@@ -156,13 +153,13 @@ export const MOTION_REEL_DEFAULT = {
       ],
       transitionIn: { type: 'zoom-blur', dur: 0.45, easing: 'out-quart', sfx: 'ui-confirm-modern', sfxOffset: 0.06, sfxVolume: 0.07 },
     },
-    // ─────────────── 10 QUOTE (FIXA) ───────────────
-    // Cena hardcoded em Quote.jsx: imagem `og-bg.webp` (close folha com orvalho)
-    // + Ken Burns + glass slate leve + "A fazenda inteira, num só lugar." · Cropware.
+    // ─────────────── 10 QUOTE (custom) ───────────────
+    // Visual fixo em Quote.jsx: imagem `og-bg.webp` (close folha com orvalho)
+    // + Ken Burns + glass slate leve. IA preenche `words` com 5 palavras do tema.
     {
       id: 'quote', start: 44.0, end: 50.0, type: 'quote',
-      locked: true,
-      transitionIn: { type: 'wipe-down', dur: 0.5, easing: 'in-out-quart' },
+      words: ['Mapear', 'Monitorar', 'Prever', 'Decidir', 'Provar'],
+      transitionIn: { type: 'zoom-blur', dur: 0.5, easing: 'out-quart', sfx: 'whoosh-fast-cinematic', sfxOffset: 0.02, sfxVolume: 0.08 },
     },
     // ─────────────── 11 LOWER-THIRD CTA (FIXA) ───────────────
     // Cena hardcoded em LowerThird.jsx: WhatsApp Lottie + "Fala com a gente" +
@@ -170,7 +167,7 @@ export const MOTION_REEL_DEFAULT = {
     {
       id: 'lower-third-cta', start: 50.0, end: 55.0, type: 'lower-third',
       locked: true,
-      transitionIn: { type: 'push-up', dur: 0.45, easing: 'in-out-cubic' },
+      transitionIn: { type: 'glass-frost', dur: 0.58, easing: 'out-quart', sfx: 'ui-confirm-modern', sfxOffset: 0.02, sfxVolume: 0.07 },
     },
     // ─────────────── 12 END-CARD (FIXA) ───────────────
     {

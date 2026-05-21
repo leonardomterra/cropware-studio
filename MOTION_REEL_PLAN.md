@@ -69,7 +69,7 @@ cropware-studio/
 │       ├── BrandIntro.jsx        FIXA — cap01 "Conheça"
 │       ├── Headline.jsx          custom — cap02 kicker + headline editorial
 │       ├── Keyword.jsx           custom — texture verde + ícone + word
-│       ├── Quote.jsx             FIXA — cap10 depoimento genérico
+│       ├── Quote.jsx             custom — cap10 lista de 5 palavras por tema
 │       ├── FeatureList.jsx       custom — cards + textura real de papel
 │       ├── Scenario.jsx          custom — cap06 paragrafo narrativo
 │       ├── WhatsAppChat.jsx      custom — cap09 iPhone mockup conversa
@@ -80,12 +80,12 @@ cropware-studio/
 │       └── AppCard.jsx           custom — cap08 mockup weather/satellite/etc
 ├── scripts/
 │   ├── generate-voiceover.mjs        CLI wrapper de voiceover-core.mjs
-│   ├── render-locked-thumbs.mjs      R12 — gera PNGs das 6 cenas locked em public/thumbs/
+│   ├── render-locked-thumbs.mjs      R12 — gera PNGs das cenas locked em public/thumbs/
 │   ├── upload-motion-reel-music.mjs  R15 — sobe MP3s de public/audio/ pro R2 via Worker
 │   └── upload-motion-reel-sfx.mjs    R16 — sobe SFX pro R2 (batch dir ou arquivo)
 └── public/
     └── thumbs/                   PNGs pré-renderizadas das locked scenes
-                                  (01-intro, 04-chapter-1, 07-chapter-2, 10-quote,
+                                  (01-intro, 04-chapter-1, 07-chapter-2,
                                   11-lower-third, 12-end-card)
 ```
 
@@ -93,8 +93,8 @@ cropware-studio/
 
 ### Storyboard default 60s — 12 cenas em grade 4×3 (R12)
 
-6 cenas **FIXAS** (locked: true — identidade Cropware, hardcoded nos componentes) +
-6 cenas **CUSTOMIZÁVEIS** (locked: false — IA preenche conteúdo por tema).
+5 cenas **FIXAS** (locked: true — identidade Cropware, hardcoded nos componentes) +
+7 cenas **CUSTOMIZÁVEIS** (locked: false — IA preenche conteúdo por tema).
 
 | #  | Tempo       | Tipo            | Lock     | Função |
 |----|-------------|-----------------|----------|--------|
@@ -107,7 +107,7 @@ cropware-studio/
 | 07 | 30.0→34.0   | chapter         | **FIXA** | "Capítulo 03 · Resultados" |
 | 08 | 34.0→40.0   | app-card        | custom   | Mockup app (weather/satellite/etc) |
 | 09 | 40.0→44.0   | whatsapp-chat   | custom   | iPhone mockup com conversa user↔AI (R12, substituiu kw-direct) |
-| 10 | 44.0→50.0   | quote           | **FIXA** | "A fazenda inteira, num só lugar." |
+| 10 | 44.0→50.0   | quote           | custom   | 5 palavras-chave aderentes ao tema |
 | 11 | 50.0→55.0   | lower-third     | **FIXA** | WhatsApp Lottie + "Fala com a gente" |
 | 12 | 55.0→60.0   | end-card        | **FIXA** | Logo + tagline + handle |
 
@@ -118,7 +118,7 @@ cropware-studio/
 | brand-intro | Hero `conheca-hero-bg.webp` + Ken Burns + overlay verde + CONHEÇA typewriter + logo + tagline | Abertura |
 | headline | Imagem `conheca-solucao-bg.webp` + Ken Burns + glass slate + kicker + headline + accent bar | Headline editorial |
 | keyword | Textura verde tintada (multiply) + 1 ícone Iconify animado + word Space Mono + underline | Puxar atenção |
-| quote | Imagem `og-bg.webp` (folha+orvalho) + Ken Burns + glass slate + frase + atribuição "· Cropware" | Depoimentos |
+| quote | Imagem por tema (`og-bg.webp`, `conheca-gd-bg.webp`, `conheca-solucao-bg.webp`) + Ken Burns + overlay temático + 5 palavras com checks animados | Síntese temática |
 | feature-list | Light theme (fundo branco/fog) + kicker + título + 3-4 cards com ícones Iconify verdes | Enumerar features |
 | scenario | Imagem `conheca-campo-bg.webp` + Ken Burns + glass slate + kicker + paragrafo narrativo `\n`-separado | Cenário/storytelling |
 | whatsapp-chat | iPhone mockup com iOS status bar + WhatsApp header (#075E54) + bolhas + input bar | Conversa user↔AI |

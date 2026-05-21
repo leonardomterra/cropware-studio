@@ -9,9 +9,10 @@ const LOGO_URL = 'logo-cropware-pb-final.svg';
 const TAGLINE = 'O agro é Cropware.';
 const HANDLE = '@cropware.app';
 
-export const EndCard = ({ start, end }) => {
+export const EndCard = ({ start, end, theme = {} }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const T = theme || {};
 
   // Logo: scale 0.92→1 + fade em 450ms.
   const logoP = interpolate(frame, [0, 0.45 * fps], [0, 1], {
@@ -44,8 +45,8 @@ export const EndCard = ({ start, end }) => {
   const isFollowing = frame >= 2.05 * fps;
   return (
     <AbsoluteFill style={{
-      background: MR_COLORS.white,
-      color: MR_COLORS.slateAbyss,
+      background: T.bg || MR_COLORS.white,
+      color: T.fg || MR_COLORS.slateAbyss,
       flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       padding: '0 80px', gap: 44, fontFamily: MR_FONTS.display,
     }}>
@@ -67,7 +68,7 @@ export const EndCard = ({ start, end }) => {
           maskPosition: 'center',
           WebkitMaskRepeat: 'no-repeat',
           maskRepeat: 'no-repeat',
-          background: MR_COLORS.greenAccent,
+          background: T.logoColor || MR_COLORS.greenAccent,
         }} />
       </div>
 
@@ -75,14 +76,14 @@ export const EndCard = ({ start, end }) => {
         <div style={{
           fontFamily: MR_FONTS.grotesk, fontSize: 56, fontWeight: 500,
           lineHeight: 1.15, letterSpacing: '-0.015em', textAlign: 'center', maxWidth: 820,
-          color: MR_COLORS.slateAbyss,
+          color: T.fg || MR_COLORS.slateAbyss,
         }}>{TAGLINE}</div>
       </HorizontalClipReveal>
 
       {/* Instagram-style CTA card — row layout: perfil à esquerda, botão à direita.
           Slide-up + bounce na entrada, botão "Seguir" com press-in animation. */}
       <div style={{
-        background: MR_COLORS.white,
+        background: T.cardBg || MR_COLORS.white,
         borderRadius: 32,
         padding: '28px 36px',
         width: 880,
@@ -91,7 +92,7 @@ export const EndCard = ({ start, end }) => {
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 24,
-        boxShadow: '0 32px 64px rgba(0,0,0,0.45)',
+        boxShadow: T.cardShadow || '0 32px 64px rgba(0,0,0,0.45)',
         opacity: ctaSpring,
         transform: `translateY(${(1 - ctaSpring) * 80}px) scale(${0.94 + 0.06 * ctaSpring})`,
         marginTop: 12,
@@ -101,10 +102,10 @@ export const EndCard = ({ start, end }) => {
           {/* Avatar circular — circulo branco com a Lottie do Instagram animada (cores nativas, loop). */}
           <div style={{
             width: 88, height: 88, borderRadius: '50%',
-            background: MR_COLORS.white,
+            background: T.avatarBg || MR_COLORS.white,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: `3px solid ${MR_COLORS.white}`,
-            boxShadow: `0 0 0 2px ${MR_COLORS.greenAccent}`,
+            border: `3px solid ${T.avatarBg || MR_COLORS.white}`,
+            boxShadow: `0 0 0 2px ${T.logoColor || MR_COLORS.greenAccent}`,
             flexShrink: 0,
             overflow: 'hidden',
           }}>
@@ -119,13 +120,13 @@ export const EndCard = ({ start, end }) => {
           </div>
           <div style={{
             fontFamily: MR_FONTS.display, fontSize: 36, fontWeight: 700,
-            letterSpacing: '-0.02em', color: MR_COLORS.slateAbyss, lineHeight: 1,
+            letterSpacing: '-0.02em', color: T.handleColor || T.fg || MR_COLORS.slateAbyss, lineHeight: 1,
           }}>{HANDLE}</div>
         </div>
         {/* DIREITA: botão Seguir / Seguindo */}
         <div style={{
-          background: isFollowing ? MR_COLORS.fog : MR_COLORS.greenAccent,
-          color: isFollowing ? MR_COLORS.slateAbyss : MR_COLORS.white,
+          background: isFollowing ? (T.followingBg || MR_COLORS.fog) : (T.buttonBg || MR_COLORS.greenAccent),
+          color: isFollowing ? (T.followingFg || MR_COLORS.slateAbyss) : (T.buttonFg || MR_COLORS.white),
           padding: '16px 44px',
           borderRadius: 14,
           fontFamily: MR_FONTS.display, fontWeight: 600, fontSize: 30,
@@ -134,8 +135,8 @@ export const EndCard = ({ start, end }) => {
           transform: `scale(${buttonScale})`,
           transformOrigin: 'center',
           boxShadow: isFollowing
-            ? `inset 0 0 0 2px ${MR_COLORS.slateLight}55`
-            : `0 8px 20px ${MR_COLORS.greenAccent}55`,
+            ? `inset 0 0 0 2px ${(T.followingBorder || MR_COLORS.slateLight)}55`
+            : `0 8px 20px ${(T.buttonBg || MR_COLORS.greenAccent)}55`,
           flexShrink: 0,
         }}>
           {isFollowing ? (

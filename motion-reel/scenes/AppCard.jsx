@@ -4,12 +4,14 @@
 //
 // Padrão visual: a janela "voa" de baixo + scale 0.94→1, conteúdo interno
 // faz stagger fade-in. No final, leve float ±6px pra dar vida.
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from 'remotion';
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, staticFile } from 'remotion';
 import { MR_COLORS, MR_FONTS, resolveColor } from '../theme.js';
 import { MR_THEMES } from '../themes.js';
-import { EASE, SceneBackdrop, KickerReveal, FadeSlide } from '../helpers.jsx';
+import { EASE, SceneBackdrop, FadeSlide } from '../helpers.jsx';
 
 const FALLBACK = MR_THEMES.editorial.perSlide['app-card'];
+const TOPO_RELIEF = 'motion-reel/textures/topographic-paper-relief.jpg';
+const TOPO_LINES = 'motion-reel/textures/topographic-contour-lines.jpg';
 
 export const AppCard = ({
   bg, fg,
@@ -47,14 +49,13 @@ export const AppCard = ({
       padding: '120px 80px', gap: 36, fontFamily: MR_FONTS.display,
     }}>
       <SceneBackdrop background={background} durSec={durSec} />
+      <TopographicTextureBackdrop config={T.topographic} durSec={durSec} />
       {kicker ? (
-        <KickerReveal
+        <StableKickerReveal
           text={kicker}
           delay={0}
           dur={0.5}
-          fromEm={0.18}
-          toEm={0.4}
-          style={{ fontFamily: MR_FONTS.mono, fontSize: 32, fontWeight: 400, color: T.accent, textTransform: 'uppercase' }}
+          style={{ fontFamily: MR_FONTS.mono, fontSize: 32, fontWeight: 400, color: T.kickerColor || T.accent, textTransform: 'uppercase' }}
         />
       ) : null}
       {caption ? (
@@ -62,6 +63,8 @@ export const AppCard = ({
           <div style={{
             fontFamily: MR_FONTS.grotesk, fontSize: 56, fontWeight: 500,
             lineHeight: 1.15, letterSpacing: '-0.015em', textAlign: 'center', maxWidth: 880,
+            color: T.captionColor || fgColor,
+            textShadow: T.captionShadow || 'none',
           }}>{caption}</div>
         </FadeSlide>
       ) : null}
@@ -79,6 +82,89 @@ export const AppCard = ({
         <AppChrome title={data.windowTitle || defaultTitle(appType)} />
         <AppBody appType={appType} data={data} frame={frame} fps={fps} />
       </div>
+    </AbsoluteFill>
+  );
+};
+
+const StableKickerReveal = ({ text, delay = 0, dur = 0.5, style }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const delayF = delay * fps;
+  const durF = dur * fps;
+  const p = interpolate(frame, [delayF, delayF + durF], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+    easing: EASE.outQuart,
+  });
+  const hiddenRight = (1 - p) * 100;
+  const blur = (1 - p) * 4;
+  const y = (1 - p) * 8;
+  return (
+    <div style={{
+      letterSpacing: '0.4em',
+      clipPath: `inset(0 ${hiddenRight.toFixed(2)}% 0 0)`,
+      filter: `blur(${blur.toFixed(2)}px)`,
+      transform: `translateY(${y.toFixed(2)}px)`,
+      textShadow: '0 2px 12px rgba(0,0,0,0.34)',
+      whiteSpace: 'nowrap',
+      ...style,
+    }}>{text}</div>
+  );
+};
+
+const TopographicTextureBackdrop = ({ config, durSec }) => {
+  if (!config) return null;
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const durFrames = Math.max(1, (durSec || 6) * fps);
+  const t = interpolate(frame, [0, durFrames], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+    easing: EASE.inOutCubic,
+  });
+  const reliefX = interpolate(t, [0, 1], [-34, 18]);
+  const reliefY = interpolate(t, [0, 1], [18, -28]);
+  const linesX = interpolate(t, [0, 1], [42, -26]);
+  const linesY = interpolate(t, [0, 1], [-30, 24]);
+  const lineRotate = interpolate(t, [0, 1], [-1.2, 1.4]);
+  const reliefScale = interpolate(t, [0, 1], [1.18, 1.26]);
+  const lineScale = interpolate(t, [0, 1], [1.28, 1.36]);
+
+  return (
+    <AbsoluteFill style={{ overflow: 'hidden', pointerEvents: 'none' }}>
+      <AbsoluteFill style={{
+        backgroundImage: `url('${staticFile(TOPO_RELIEF)}')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        opacity: config.paperOpacity == null ? 0.3 : config.paperOpacity,
+        mixBlendMode: config.paperBlend || 'overlay',
+        filter: config.filter || 'grayscale(1) contrast(1.08)',
+        transform: `translate(${reliefX.toFixed(2)}px, ${reliefY.toFixed(2)}px) scale(${reliefScale.toFixed(4)})`,
+        transformOrigin: 'center',
+      }} />
+      <AbsoluteFill style={{
+        backgroundImage: `url('${staticFile(TOPO_LINES)}')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        opacity: config.lineOpacity == null ? 0.24 : config.lineOpacity,
+        mixBlendMode: config.lineBlend || 'screen',
+        filter: config.filter || 'grayscale(1) contrast(1.08)',
+        transform: `translate(${linesX.toFixed(2)}px, ${linesY.toFixed(2)}px) rotate(${lineRotate.toFixed(3)}deg) scale(${lineScale.toFixed(4)})`,
+        transformOrigin: 'center',
+      }} />
+      <AbsoluteFill style={{
+        background: config.tint || 'linear-gradient(145deg, rgba(20,63,44,0.68), rgba(26,27,26,0.82))',
+        mixBlendMode: 'normal',
+      }} />
+      <AbsoluteFill style={{
+        background: config.glow || 'radial-gradient(circle at 74% 18%, rgba(130,204,165,0.20), transparent 34%)',
+        mixBlendMode: 'screen',
+        opacity: 0.9,
+      }} />
+      <AbsoluteFill style={{
+        background: 'radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.30) 100%)',
+        opacity: 0.72,
+      }} />
     </AbsoluteFill>
   );
 };

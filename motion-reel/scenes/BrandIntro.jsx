@@ -13,11 +13,15 @@ const KICKER = 'CONHEÇA';
 const LOGO = 'logo-cropware-pb-final.svg';
 const TAGLINE_LINES = ['Gestão de', 'Desenvolvimento', 'de Mercado'];
 
-export const BrandIntro = ({ start, end }) => {
+export const BrandIntro = ({ start, end, theme = {} }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const durSec = Math.max(1, (end || 0) - (start || 0));
   const durFrames = durSec * fps;
+  const T = theme || {};
+  const fg = T.fg || MR_COLORS.white;
+  const accent = T.accent || MR_COLORS.greenBright;
+  const textShadow = T.textShadow || '0 2px 18px rgba(0,0,0,0.45)';
 
   // Entrada cinematográfica (0 → 0.8s): fade + blur out + extra-zoom drift.
   // Depois disso entra o Ken Burns clássico (scale lento ao longo da cena).
@@ -51,11 +55,11 @@ export const BrandIntro = ({ start, end }) => {
   });
 
   return (
-    <AbsoluteFill style={{ background: MR_COLORS.slateAbyss, overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: T.bg || MR_COLORS.slateAbyss, overflow: 'hidden' }}>
       {/* Camada 1: imagem — entra com fade + blur out + extra-zoom, segue em Ken Burns.
           Visível por trás do vidro durante toda a cena. */}
       <AbsoluteFill style={{
-        backgroundImage: `url('${staticFile(BG_IMAGE)}')`,
+        backgroundImage: `url('${staticFile(T.bgImage || BG_IMAGE)}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         transform: `scale(${imgScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
@@ -70,28 +74,28 @@ export const BrandIntro = ({ start, end }) => {
       <AbsoluteFill style={{
         backdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(170%)`,
         WebkitBackdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(170%)`,
-        background: 'linear-gradient(180deg, rgba(20,63,44,0.32) 0%, rgba(20,63,44,0.50) 55%, rgba(10,42,28,0.72) 100%)',
+        background: T.glassTint || 'linear-gradient(180deg, rgba(20,63,44,0.32) 0%, rgba(20,63,44,0.50) 55%, rgba(10,42,28,0.72) 100%)',
         opacity: overlayP,
       }} />
 
       {/* Camada 3: TOP SHEEN — gradiente branco fino no topo simulando o brilho
           da luz batendo na superfície do vidro. */}
       <AbsoluteFill style={{
-        background: 'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 12%, rgba(255,255,255,0) 28%)',
+        background: T.topSheen || 'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 12%, rgba(255,255,255,0) 28%)',
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
 
       {/* Camada 4: BOTTOM DEPTH — sombra interna na base pra dar peso/3D ao vidro. */}
       <AbsoluteFill style={{
-        background: 'linear-gradient(0deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.18) 18%, rgba(0,0,0,0) 38%)',
+        background: T.bottomDepth || 'linear-gradient(0deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.18) 18%, rgba(0,0,0,0) 38%)',
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
 
       {/* Camada 5: vinheta sutil pra focar atenção no centro */}
       <AbsoluteFill style={{
-        background: 'radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.40) 100%)',
+        background: T.vignette || 'radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.40) 100%)',
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
@@ -108,12 +112,12 @@ export const BrandIntro = ({ start, end }) => {
         justifyContent: 'center',
         padding: '0 80px',
         gap: 44,
-        color: MR_COLORS.white,
+        color: fg,
         fontFamily: MR_FONTS.display,
       }}>
-        <KickerBlock kicker={KICKER} delay={0.25} />
-        <LogoReveal src={LOGO} delay={1.3} />
-        <TaglineBlock lines={TAGLINE_LINES} delay={2.6} />
+        <KickerBlock kicker={KICKER} delay={0.25} color={fg} accent={accent} textShadow={textShadow} />
+        <LogoReveal src={LOGO} delay={1.3} color={T.logoColor || fg} />
+        <TaglineBlock lines={TAGLINE_LINES} delay={2.6} color={fg} accent={accent} textShadow={textShadow} />
       </div>
     </AbsoluteFill>
   );
@@ -122,7 +126,7 @@ export const BrandIntro = ({ start, end }) => {
 // ─────────────── Kicker bloco ───────────────
 // Typewriter "CONHEÇA" branco + underline verde desenhando + leve breath
 // no letter-spacing depois que termina de digitar.
-const KickerBlock = ({ kicker, delay = 0.25 }) => {
+const KickerBlock = ({ kicker, delay = 0.25, color = MR_COLORS.white, accent = MR_COLORS.greenBright, textShadow = '0 2px 18px rgba(0,0,0,0.45)' }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const charDur = 0.09;
@@ -150,11 +154,11 @@ const KickerBlock = ({ kicker, delay = 0.25 }) => {
         fontFamily: MR_FONTS.mono,
         fontSize: 64,
         fontWeight: 400,
-        color: MR_COLORS.white,
+        color,
         letterSpacing: `${letterSpacing.toFixed(3)}em`,
         textTransform: 'uppercase',
         lineHeight: 1,
-        textShadow: '0 2px 18px rgba(0,0,0,0.45)',
+        textShadow,
       }}>
         <TypewriterText
           text={kicker}
@@ -167,11 +171,11 @@ const KickerBlock = ({ kicker, delay = 0.25 }) => {
       <div style={{
         width: 180,
         height: 5,
-        background: MR_COLORS.greenBright,
+        background: accent,
         transformOrigin: 'left center',
         transform: `scaleX(${underlineP.toFixed(3)})`,
         borderRadius: 2,
-        boxShadow: `0 0 24px ${MR_COLORS.greenBright}99`,
+        boxShadow: `0 0 24px ${accent}99`,
       }} />
     </div>
   );
@@ -180,7 +184,7 @@ const KickerBlock = ({ kicker, delay = 0.25 }) => {
 // ─────────────── Logo bloco ───────────────
 // Logo Cropware em BRANCO via CSS mask (SVG vira máscara, background = white).
 // Entrada: blur 16→0 + scale 1.10→1 + drift + opacity 0→1 + settle spring.
-const LogoReveal = ({ src, delay = 1.3 }) => {
+const LogoReveal = ({ src, delay = 1.3, color = MR_COLORS.white }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const enterP = interpolate(frame, [delay * fps, (delay + 0.8) * fps], [0, 1], {
@@ -210,7 +214,7 @@ const LogoReveal = ({ src, delay = 1.3 }) => {
       maskPosition: 'center',
       WebkitMaskRepeat: 'no-repeat',
       maskRepeat: 'no-repeat',
-      background: MR_COLORS.white,
+      background: color,
       transform: `scale(${scale.toFixed(4)}) translateY(${translateY.toFixed(2)}px)`,
       transformOrigin: 'center',
       filter: `blur(${blurPx.toFixed(2)}px) drop-shadow(0 12px 48px rgba(0,0,0,0.45))`,
@@ -221,14 +225,14 @@ const LogoReveal = ({ src, delay = 1.3 }) => {
 
 // ─────────────── Tagline bloco ───────────────
 // 3 linhas Space Mono uppercase em branco com char-reveal staggered.
-const TaglineBlock = ({ lines, delay = 2.6 }) => {
+const TaglineBlock = ({ lines, delay = 2.6, color = MR_COLORS.white, accent = MR_COLORS.greenBright, textShadow = '0 2px 16px rgba(0,0,0,0.45)' }) => {
   return (
     <div style={{
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      gap: 14,
-      marginTop: 8,
+      gap: 18,
+      marginTop: 14,
       // Stacking context defensivo, mesma razão do KickerBlock.
       transform: 'translateZ(0)',
     }}>
@@ -241,6 +245,9 @@ const TaglineBlock = ({ lines, delay = 2.6 }) => {
             text={line}
             delay={lineDelay}
             emphasized={isMid}
+            color={color}
+            accent={accent}
+            textShadow={textShadow}
           />
         );
       })}
@@ -248,7 +255,7 @@ const TaglineBlock = ({ lines, delay = 2.6 }) => {
   );
 };
 
-const TaglineLine = ({ text, delay, emphasized }) => {
+const TaglineLine = ({ text, delay, emphasized, color = MR_COLORS.white, accent = MR_COLORS.greenBright, textShadow = '0 2px 16px rgba(0,0,0,0.45)' }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const chars = [...(text || '').toUpperCase()];
@@ -257,15 +264,17 @@ const TaglineLine = ({ text, delay, emphasized }) => {
   return (
     <div style={{
       fontFamily: MR_FONTS.mono,
-      fontSize: emphasized ? 46 : 40,
+      fontSize: emphasized ? 56 : 48,
       fontWeight: 400,
-      color: emphasized ? MR_COLORS.greenBright : MR_COLORS.white,
-      letterSpacing: emphasized ? '0.14em' : '0.18em',
+      color: emphasized ? accent : color,
+      letterSpacing: emphasized ? '0.13em' : '0.16em',
       textTransform: 'uppercase',
       lineHeight: 1,
       whiteSpace: 'nowrap',
-      opacity: emphasized ? 1 : 0.88,
-      textShadow: '0 2px 16px rgba(0,0,0,0.45)',
+      opacity: emphasized ? 1 : 0.9,
+      textShadow: emphasized
+        ? `${textShadow}, 0 0 28px ${accent}55`
+        : textShadow,
     }}>
       {chars.map((ch, i) => {
         const start = delay + i * stagger;
@@ -279,7 +288,8 @@ const TaglineLine = ({ text, delay, emphasized }) => {
           <span key={i} style={{
             display: 'inline-block',
             opacity: p,
-            transform: `translateY(${(1 - p) * 14}px)`,
+            filter: `blur(${((1 - p) * 7).toFixed(2)}px)`,
+            transform: `translateY(${(1 - p) * 18}px) scale(${(0.96 + p * 0.04).toFixed(3)})`,
             // inline-block + letter-spacing colapsa o glifo de espaço em alguns
             // navegadores; forçamos largura explícita em em (escala com fontSize).
             width: isSpace ? '0.5em' : undefined,

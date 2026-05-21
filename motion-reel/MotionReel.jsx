@@ -81,7 +81,7 @@ export const MotionReel = ({ storyboard }) => {
       // SFX dispara no meio da transição por default (pico visual em
       // progress=0.5). tIn.sfxOffset é um ajuste relativo a esse meio:
       // negativo antecipa, positivo atrasa.
-      const shouldPlaySfx = scene.locked !== true || scene.id === 'end';
+      const shouldPlaySfx = scene.locked !== true || scene.id === 'end' || scene.id === 'lower-third-cta';
       if (tIn.sfx && shouldPlaySfx) {
         const sfxUrl = resolveSfxUrl(tIn.sfx);
         if (sfxUrl) {

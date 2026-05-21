@@ -1,32 +1,64 @@
-// Cena 10 — FEATURE LIST (locked).
+// Cena 10 — FEATURE LIST.
 // Visual gêmeo dos cap01/04/07: imagem do site Cropware (close de folha com
-// orvalho) + Ken Burns lento + glass pane slate + lista das 7 principais
-// funcionalidades. Storyboard NÃO controla nada aqui — tudo hardcoded.
+// orvalho) + Ken Burns lento + glass pane slate + lista de 5 palavras-chave.
+// Storyboard controla apenas as palavras; o visual continua hardcoded.
 import { AbsoluteFill, Sequence, useCurrentFrame, useVideoConfig, interpolate, staticFile } from 'remotion';
 import { MR_COLORS, MR_FONTS } from '../theme.js';
 import { FadeSlide, IconifyIcon, EASE } from '../helpers.jsx';
 
 const BG_IMAGE = 'og-bg.webp';
-// Verbos de ação que narram o fluxo: observar → prever → decidir → agir → provar.
-const FEATURES = [
+// Fallback quando um storyboard antigo não trouxer palavras customizadas.
+const DEFAULT_WORDS = [
   'Mapear',
   'Monitorar',
   'Prever',
-  'Acompanhar',
   'Decidir',
-  'Agir',
   'Provar',
 ];
 
 // Glass mais leve que cap04/07 pra deixar o detalhe das folhas/orvalho
 // respirarem mais (essa cena é poética, não dramática).
 const SLATE_TINT_LIGHT = 'linear-gradient(180deg, rgba(26,27,26,0.30) 0%, rgba(26,27,26,0.48) 55%, rgba(10,10,10,0.66) 100%)';
+const TOP_SHEEN = 'linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 14%, rgba(255,255,255,0) 28%)';
+const BOTTOM_DEPTH = 'linear-gradient(0deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.16) 22%, rgba(0,0,0,0) 42%)';
+const VIGNETTE = 'radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.42) 100%)';
 
-export const Quote = ({ start, end }) => {
+function normalizeWords(words, items, features) {
+  const source = Array.isArray(words) ? words : (Array.isArray(items) ? items : features);
+  const list = Array.isArray(source)
+    ? source.map(item => {
+      if (typeof item === 'string') return item;
+      if (item && typeof item.text === 'string') return item.text;
+      return '';
+    })
+    : [];
+  const cleaned = list
+    .map(word => String(word || '').trim())
+    .filter(Boolean)
+    .slice(0, 5);
+  return cleaned.length ? cleaned : DEFAULT_WORDS;
+}
+
+export const Quote = ({ start, end, words, items, features, theme }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const durSec = Math.max(1, (end || 0) - (start || 0));
   const durFrames = durSec * fps;
+  const T = theme || {};
+  const bgImage = T.bgImage || BG_IMAGE;
+  const bgColor = T.bg || MR_COLORS.slateAbyss;
+  const textColor = T.fg || MR_COLORS.white;
+  const iconColor = T.iconColor || MR_COLORS.greenBright;
+  const glassTint = T.glassTint || SLATE_TINT_LIGHT;
+  const topSheen = T.topSheen || TOP_SHEEN;
+  const bottomDepth = T.bottomDepth || BOTTOM_DEPTH;
+  const vignette = T.vignette || VIGNETTE;
+  const textShadow = T.textShadow || '0 2px 16px rgba(0,0,0,0.5)';
+  const iconFilter = T.iconFilter || 'drop-shadow(0 2px 8px rgba(0,0,0,0.4))';
+  const highlightColor = T.highlightColor || iconColor;
+  const listParallaxY = interpolate(frame, [0, durFrames], [10, -10], {
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
+  });
 
   // ── Entrada cinematográfica (mesma family das outras locked) ──
   const enterP = interpolate(frame, [0, 0.8 * fps], [0, 1], {
@@ -52,10 +84,10 @@ export const Quote = ({ start, end }) => {
   });
 
   return (
-    <AbsoluteFill style={{ background: MR_COLORS.slateAbyss, overflow: 'hidden' }}>
+    <AbsoluteFill style={{ background: bgColor, overflow: 'hidden' }}>
       {/* Camada 1: imagem (close folhas com orvalho) com Ken Burns */}
       <AbsoluteFill style={{
-        backgroundImage: `url('${staticFile(BG_IMAGE)}')`,
+        backgroundImage: `url('${staticFile(bgImage)}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         transform: `scale(${imgScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
@@ -68,27 +100,27 @@ export const Quote = ({ start, end }) => {
       <AbsoluteFill style={{
         backdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(135%)`,
         WebkitBackdropFilter: `blur(${glassBlur.toFixed(2)}px) saturate(135%)`,
-        background: SLATE_TINT_LIGHT,
+        background: glassTint,
         opacity: overlayP,
       }} />
 
       {/* Camada 3: top sheen */}
       <AbsoluteFill style={{
-        background: 'linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 14%, rgba(255,255,255,0) 28%)',
+        background: topSheen,
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
 
       {/* Camada 4: bottom depth */}
       <AbsoluteFill style={{
-        background: 'linear-gradient(0deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.16) 22%, rgba(0,0,0,0) 42%)',
+        background: bottomDepth,
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
 
       {/* Camada 5: vinheta */}
       <AbsoluteFill style={{
-        background: 'radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.42) 100%)',
+        background: vignette,
         opacity: overlayP,
         pointerEvents: 'none',
       }} />
@@ -105,13 +137,20 @@ export const Quote = ({ start, end }) => {
         justifyContent: 'center',
         padding: '0 100px',
         gap: 34,
-        color: MR_COLORS.white,
+        color: textColor,
         fontFamily: MR_FONTS.mono,
         textAlign: 'left',
+        transform: `translateY(${listParallaxY.toFixed(2)}px)`,
       }}>
-        {FEATURES.map((feature, i) => {
+        {normalizeWords(words, items, features).map((feature, i) => {
           const itemDelay = 0.35 + i * 0.13;
           const startFrame = Math.round(itemDelay * fps);
+          const itemFrame = frame - startFrame;
+          const highlightP = interpolate(itemFrame, [0, 0.18 * fps, 0.55 * fps], [0, 1, 0], {
+            extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart,
+          });
+          const glowOpacity = highlightP * 0.34;
+          const glowScale = 1 + highlightP * 0.018;
           return (
             <FadeSlide
               key={feature}
@@ -123,6 +162,8 @@ export const Quote = ({ start, end }) => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 28,
+                transform: `scale(${glowScale.toFixed(4)})`,
+                transformOrigin: 'left center',
               }}>
                 {/* Sequence atrasa o mount do IconifyIcon — a animação CSS do
                     line-md (desenho do traço) começa só quando o item surge. */}
@@ -131,23 +172,25 @@ export const Quote = ({ start, end }) => {
                     width: 72,
                     height: 72,
                     flexShrink: 0,
-                    filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.4))',
+                    filter: iconFilter,
                   }}>
                     <IconifyIcon
                       icon="line-md:confirm"
                       size={72}
-                      color={MR_COLORS.greenBright}
+                      color={iconColor}
                     />
                   </div>
                 </Sequence>
                 <span style={{
+                  position: 'relative',
+                  display: 'inline-block',
                   fontFamily: MR_FONTS.mono,
                   fontSize: 68,
                   fontWeight: 400,
                   letterSpacing: '0.06em',
                   lineHeight: 1.0,
-                  color: MR_COLORS.white,
-                  textShadow: '0 2px 16px rgba(0,0,0,0.5)',
+                  color: textColor,
+                  textShadow: `${textShadow}, 0 0 ${Math.round(18 + highlightP * 18)}px ${highlightColor}${Math.round(glowOpacity * 255).toString(16).padStart(2, '0')}`,
                   transform: 'translateZ(0)',
                 }}>{feature.toUpperCase()}</span>
               </div>
