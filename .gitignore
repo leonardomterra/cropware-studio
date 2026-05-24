@@ -28,3 +28,7 @@ skills-lock.json
 
 # Arquivos de teste/scratch
 test-reel*.json
+
+# Logs do dev-server (gerados pelo vite quando rodado em background)
+dev-server.log
+dev-server.err.log
