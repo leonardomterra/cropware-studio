@@ -3,11 +3,11 @@
 // em slateAbyss, Instagram CTA card animado (perfil à esquerda, botão à direita).
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, Easing, staticFile, spring } from 'remotion';
 import { MR_COLORS, MR_FONTS } from '../theme.js';
-import { HorizontalClipReveal, LottieAsset } from '../helpers.jsx';
+import { LottieAsset, EASE } from '../helpers.jsx';
 
 const LOGO_URL = 'logo-cropware-pb-final.svg';
 const APP_STORE_BADGE_URL = 'app-store-badge-motion.webp';
-const TAGLINE = 'O agro é Cropware.';
+const TAGLINE_LINES = ['Inteligência para', 'quem constrói mercado'];
 const HANDLE = '@cropware.app';
 
 export const EndCard = ({ start, end, theme = {} }) => {
@@ -82,13 +82,11 @@ export const EndCard = ({ start, end, theme = {} }) => {
         }} />
       </div>
 
-      <HorizontalClipReveal delay={0.55} dur={0.5} style={{ marginTop: -32 }}>
-        <div style={{
-          fontFamily: MR_FONTS.grotesk, fontSize: 56, fontWeight: 500,
-          lineHeight: 1.15, letterSpacing: '-0.015em', textAlign: 'center', maxWidth: 820,
-          color: T.fg || MR_COLORS.slateAbyss,
-        }}>{TAGLINE}</div>
-      </HorizontalClipReveal>
+      <TaglineReveal
+        lines={TAGLINE_LINES}
+        delay={0.55}
+        color={T.fg || MR_COLORS.slateAbyss}
+      />
 
       {/* Instagram-style CTA card — row layout: perfil à esquerda, botão à direita. */}
       <div style={{
@@ -198,5 +196,60 @@ export const EndCard = ({ start, end, theme = {} }) => {
         }} />
       </div>
     </AbsoluteFill>
+  );
+};
+
+// Tagline 2-linhas com entrada elegante e stagger entre linhas.
+// Cada linha: opacity 0→1 + translateY 18→0 + blur 8→0 + letter-spacing
+// 0.10em→0.02em (efeito "settle in" — letras se acomodam). Stagger de 0.18s
+// entre as linhas. Pós-entrada, breath sutil no letter-spacing pra dar vida.
+const TaglineReveal = ({ lines, delay = 0, color }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const tSec = frame / fps;
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 2,
+      marginTop: -28,
+      maxWidth: 880,
+    }}>
+      {lines.map((line, i) => {
+        const lineDelay = delay + i * 0.18;
+        const dur = 0.7;
+        const p = interpolate(frame, [lineDelay * fps, (lineDelay + dur) * fps], [0, 1], {
+          extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuint,
+        });
+        // Letter-spacing animado: começa solto (0.10em) e fecha pra 0.02em.
+        // Depois da entrada, oscila ±0.004em em respiro sutil.
+        const lsBase = interpolate(p, [0, 1], [0.10, 0.02]);
+        const breathPhase = Math.max(0, tSec - (lineDelay + dur));
+        const breath = Math.sin(breathPhase * 0.9 + i * 0.7) * 0.004;
+        const letterSpacing = lsBase + (p >= 1 ? breath : 0);
+        const blur = (1 - p) * 8;
+        const ty = (1 - p) * 18;
+        return (
+          <div
+            key={i}
+            style={{
+              fontFamily: MR_FONTS.alumni,
+              fontSize: 64,
+              fontWeight: 500,
+              lineHeight: 1.05,
+              letterSpacing: `${letterSpacing.toFixed(4)}em`,
+              textAlign: 'center',
+              whiteSpace: 'nowrap',
+              textTransform: 'uppercase',
+              color,
+              opacity: p,
+              filter: `blur(${blur.toFixed(2)}px)`,
+              transform: `translateY(${ty.toFixed(2)}px) translateZ(0)`,
+            }}
+          >{line}</div>
+        );
+      })}
+    </div>
   );
 };

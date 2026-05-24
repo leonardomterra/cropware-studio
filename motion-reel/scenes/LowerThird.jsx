@@ -33,7 +33,7 @@ export const LowerThird = ({ start, end, theme = {}, bgImage, bgImageBlur, bgOve
   });
   // Blur permanente 8px + 14px adicionais na entrada — não depende de
   // backdrop-filter da glass layer (defensivo pra Thumbnail).
-  const imgBlur = (bgImageBlur != null ? bgImageBlur : 8) + (1 - enterP) * 14;
+  const imgBlur = (bgImageBlur != null ? bgImageBlur : 6) + (1 - enterP) * 14;
   const imgOpacity = enterP;
   const overlayP = interpolate(frame, [0, 0.5 * fps], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart,

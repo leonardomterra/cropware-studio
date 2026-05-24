@@ -40,7 +40,7 @@ export const BrandIntro = ({ start, end, theme = {}, bgImage, bgImageBlur, bgOve
   const kbTy = interpolate(frame, [0, durFrames], [0, -28], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  const imgBlur = (bgImageBlur != null ? bgImageBlur : 0) + (1 - enterP) * 22;
+  const imgBlur = (bgImageBlur != null ? bgImageBlur : 6) + (1 - enterP) * 22;
   const imgOpacity = enterP;
 
   // Overlay glass: fade in mais rápido. O blur do backdrop-filter sobe de 0
@@ -194,9 +194,9 @@ const KickerBlock = ({ kicker, delay = 0.25, color = MR_COLORS.white, accent = M
       transform: 'translateZ(0)',
     }}>
       <div style={{
-        fontFamily: MR_FONTS.mono,
-        fontSize: 64,
-        fontWeight: 400,
+        fontFamily: MR_FONTS.alumni,
+        fontSize: 76,
+        fontWeight: 500,
         color,
         letterSpacing: `${letterSpacing.toFixed(3)}em`,
         textTransform: 'uppercase',
@@ -295,11 +295,11 @@ const TaglineLine = ({ text, delay, emphasized, color = MR_COLORS.white, accent 
   const charDur = 0.32;
   return (
     <div style={{
-      fontFamily: MR_FONTS.mono,
-      fontSize: 56,
-      fontWeight: 400,
+      fontFamily: MR_FONTS.alumni,
+      fontSize: 68,
+      fontWeight: 500,
       color: emphasized ? accent : color,
-      letterSpacing: '0.12em',
+      letterSpacing: '0.10em',
       textTransform: 'uppercase',
       lineHeight: 1,
       whiteSpace: 'nowrap',

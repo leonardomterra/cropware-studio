@@ -9,12 +9,12 @@
 //   01  00.0  →  6.0  brand-intro    FIXA   Conheça o Cropware
 //   02  05.0  → 10.0  headline       custom Headline editorial (R12 substituiu stat-card)
 //   03  10.0  → 14.0  keyword        custom Palavra-chave + ícone Iconify
-//   04  14.0  → 18.0  chapter        FIXA   Cap. 02 · No campo
-//   05  18.0  → 24.0  feature-list   custom 3 features tema-específicas
-//   06  24.0  → 30.0  scenario       custom Mini-cenário narrativo (R13 substituiu data-chart)
+//   04  14.0  → 20.0  feature-list   custom 3 features tema-específicas (R24 swap c/ chapter)
+//   05  20.0  → 24.0  chapter        FIXA   Cap. 02 · No campo (buffer silencioso entre voz)
+//   06  24.0  → 30.0  scenario       custom Mini-cenário narrativo
 //   07  30.0  → 34.0  chapter        FIXA   Cap. 03 · Resultados
 //   08  34.0  → 40.0  app-card       custom Mock app ilustrando feature
-//   09  40.0  → 44.0  whatsapp-chat  custom Conversa user × Cropware AI (R13 substituiu kw-direct)
+//   09  40.0  → 44.0  whatsapp-chat  custom Conversa user × Cropware AI
 //   10  44.0  → 50.0  quote          custom 5 palavras tema-específicas
 //   11  50.0  → 55.0  lower-third    FIXA   WhatsApp Lottie + "Fala com a gente"
 //   12  55.0  → 60.0  end-card       FIXA   Logo + tagline + "Seguir"
@@ -35,7 +35,7 @@ export const MOTION_REEL_DEFAULT = {
   // subir nova MP3 com `npm run reel:upload-music <file>` e usar a URL retornada.
   audio: {
     music: 'https://cropware-r2-worker.leonardoterra-comercial.workers.dev/images/studio/_motion-reel/audio/viacheslavstarostin-country-western-texas-background-music-361672.mp3',
-    volume: 0.18,
+    volume: 0.14,
     fadeIn: 1.5,
     fadeOut: 2.5,
   },
@@ -72,23 +72,14 @@ export const MOTION_REEL_DEFAULT = {
       // é uma transição suave de blur/zoom, fica em harmonia com o resto.
       transitionIn: { type: 'cinematic-blur', dur: 0.55, easing: 'in-out-cubic', sfx: 'impact-snap-dry', sfxOffset: 0.08, sfxVolume: 0.08 },
     },
-    // ─────────────── 04 CHAPTER-1 (FIXA) ───────────────
-    // Cena hardcoded em Chapter.jsx: imagem `conheca-produto-bg.webp`
-    // (drone aéreo de talhões) + Ken Burns + glass pane slate +
-    // "Capítulo 02 · No campo · Onde toda decisão começa.".
-    {
-      id: 'chapter-1', start: 14.0, end: 18.0, type: 'chapter',
-      locked: true,
-      chapterNumber: 2,
-      // light-leak é mantido como alias legado, mas renderiza como
-      // drift-fade discreto na engine pra nunca cair em magenta.
-      transitionIn: { type: 'light-leak', dur: 1.0 },
-    },
-    // ─────────────── 05 FEATURE-LIST (custom) ───────────────
+    // ─────────────── 04 FEATURE-LIST (custom) ───────────────
+    // R24: swap com chapter-1. Agora feature-list (narrado, 6s) vem ANTES do
+    // chapter (silencioso, 4s), criando buffer silencioso antes do scenario
+    // (também narrado). Evita encavalamento de voiceover entre 05→06.
     // Visual fixo em FeatureList.jsx (light theme, fundo branco/fog + cards
     // brancos com ícone + texto). IA preenche kicker, title, items.
     {
-      id: 'features-1', start: 18.0, end: 24.0, type: 'feature-list',
+      id: 'features-1', start: 14.0, end: 20.0, type: 'feature-list',
       kicker: 'TUDO EM UM',
       title: 'Tudo na palma.',
       items: [
@@ -97,6 +88,18 @@ export const MOTION_REEL_DEFAULT = {
         { text: 'Histórico completo de safra', icon: 'twemoji:bar-chart' },
       ],
       transitionIn: { type: 'push-up', dur: 0.5, easing: 'in-out-cubic' },
+    },
+    // ─────────────── 05 CHAPTER-1 (FIXA — buffer silencioso) ───────────────
+    // Cena hardcoded em Chapter.jsx: imagem `conheca-produto-bg.webp`
+    // (drone aéreo de talhões) + Ken Burns + glass pane slate +
+    // "Capítulo 02 · No campo · Onde toda decisão começa.".
+    {
+      id: 'chapter-1', start: 20.0, end: 24.0, type: 'chapter',
+      locked: true,
+      chapterNumber: 2,
+      // light-leak é mantido como alias legado, mas renderiza como
+      // drift-fade discreto na engine pra nunca cair em magenta.
+      transitionIn: { type: 'light-leak', dur: 1.0 },
     },
     // ─────────────── 06 SCENARIO (custom) ───────────────
     // Mini-cenário narrativo (ex: "É manhã. Você abre o Cropware..."). Visual

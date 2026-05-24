@@ -12,7 +12,7 @@ import { MR_COLORS, MR_FONTS } from '../theme.js';
 import { MR_THEMES } from '../themes.js';
 import { EASE, SceneTextureBackdrop } from '../helpers.jsx';
 
-const FALLBACK = MR_THEMES.editorial.perSlide['whatsapp-chat'];
+const FALLBACK = MR_THEMES.escuro.perSlide['whatsapp-chat'];
 
 const WHATSAPP_GREEN = '#25D366';
 const WALLPAPER_BG = '#E5DDD3';
@@ -28,7 +28,16 @@ const DEFAULT_MESSAGES = [
   { from: 'ai',   text: 'Padrão sugere falta de nitrogênio. Quer abrir um plano de adubação?' },
 ];
 
-export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, bgImage, bgImageBlur, bgOverlayOpacity, bgTexture, bgTextureOpacity, bgTextureInvert, start, end }) => {
+// Converte hex (#aabbcc) em "r,g,b" pra usar em rgba(). Aceita ou rejeita inválido.
+const _hexToRgb = (hex) => {
+  const h = String(hex || '').replace('#', '').trim();
+  if (h.length !== 6) return null;
+  const n = parseInt(h, 16);
+  if (Number.isNaN(n)) return null;
+  return `${(n >> 16) & 0xff},${(n >> 8) & 0xff},${n & 0xff}`;
+};
+
+export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, bgImage, bgImageBlur, bgOverlayOpacity, overlayColor, bgTexture, bgTextureOpacity, bgTextureInvert, start, end }) => {
   const T = theme || FALLBACK;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -48,7 +57,7 @@ export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, bgImage, bgIm
   const kbTy = interpolate(frame, [0, durFrames], [0, -32], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  const imgBlur = (bgImageBlur != null ? bgImageBlur : 8) + (1 - enterP) * 14;
+  const imgBlur = (bgImageBlur != null ? bgImageBlur : 6) + (1 - enterP) * 14;
   const imgOpacity = enterP;
   const overlayP = interpolate(frame, [0, 0.5 * fps], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart,
@@ -77,11 +86,13 @@ export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, bgImage, bgIm
         opacity: imgOpacity,
       }} />
 
-      {/* Camada 1.5: tint sólido por cima da imagem (tema-driven — escuro no
-          editorial/vibrante; tom azul-petróleo quente no crepúsculo) */}
+      {/* Camada 1.5: tint sólido por cima da imagem — usa scene.overlayColor
+          quando setado (R26: padronização cross-scene), senão T.bgTint tema-driven. */}
       <AbsoluteFill style={{
-        background: T.bgTint || 'rgba(26,27,26,0.78)',
-        opacity: overlayP * (bgOverlayOpacity != null ? (bgOverlayOpacity / 0.62) : 1),
+        background: overlayColor
+          ? `rgba(${_hexToRgb(overlayColor) || '26,27,26'},0.78)`
+          : (T.bgTint || 'rgba(26,27,26,0.78)'),
+        opacity: overlayP * (bgOverlayOpacity != null ? (bgOverlayOpacity / 0.55) : 1),
         pointerEvents: 'none',
       }} />
 

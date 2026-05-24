@@ -8,7 +8,7 @@
 //
 // O vanilla JS controla o modo via window.setMotionReelView(mode).
 import { createRoot } from 'react-dom/client';
-import { useRef, useState, useLayoutEffect } from 'react';
+import { useRef, useState, useLayoutEffect, useEffect } from 'react';
 import { Player } from '@remotion/player';
 
 import { MotionReel } from './MotionReel.jsx';
@@ -21,7 +21,7 @@ let _root = null;
 let _container = null;
 let _state = {
   storyboard: MOTION_REEL_DEFAULT,
-  view: 'player', // 'player' | 'grid'
+  view: 'grid', // 'player' | 'grid' — default = grid (sincronizado com _motionReelView no index.html)
 };
 
 // Render dispatcher — chamado em todas as mudanças de state.
@@ -36,11 +36,21 @@ function renderRoot() {
 }
 
 // ── Player view (default) ───────────────────────────────────────────
+// Ref global do Player ativo — usado pra expor seekTo/play via window pra
+// que o vanilla JS reinicie o reel quando, por ex., a trilha de música muda.
+let _playerRef = null;
+
 function ReelPlayerView({ storyboard }) {
   const fps = storyboard.fps || 30;
   const durationInFrames = computeReelDurationInFrames(storyboard);
+  const ref = useRef(null);
+  useEffect(() => {
+    _playerRef = ref.current;
+    return () => { if (_playerRef === ref.current) _playerRef = null; };
+  }, []);
   return (
     <Player
+      ref={ref}
       component={MotionReel}
       inputProps={{ storyboard }}
       durationInFrames={durationInFrames}
@@ -58,6 +68,16 @@ function ReelPlayerView({ storyboard }) {
       style={{ width: '100%', height: '100%' }}
     />
   );
+}
+
+function restartMotionReelPlayback() {
+  if (!_playerRef) return;
+  try {
+    _playerRef.seekTo(0);
+    _playerRef.play();
+  } catch (err) {
+    console.warn('[MotionReel] restartPlayback falhou', err);
+  }
 }
 
 // ── Grid view ───────────────────────────────────────────────────────
@@ -274,102 +294,107 @@ function ReelThumbCard({ scene, sceneNumber, isLocked, storyboard, durationInFra
             border: '2px solid rgba(15,23,42,0.10)',
             pointerEvents: 'none',
           }} />
+
+          {/* Barra semitransparente overlay no rodapé do thumb com número +
+              lock + ações. Glass dark com backdrop blur. Ícones brancos. */}
+          <div style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 4,
+            padding: '6px 10px',
+            background: 'rgba(0, 0, 0, 0.45)',
+            backdropFilter: 'blur(10px) saturate(140%)',
+            WebkitBackdropFilter: 'blur(10px) saturate(140%)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            fontFamily: 'var(--ds-font, "Roboto Flex"), system-ui, sans-serif',
+            fontStretch: '90%',
+            boxSizing: 'border-box',
+          }}>
+            {/* Número da cena — Pathway Extreme branco */}
+            <span style={{
+              flex: '0 0 auto',
+              minWidth: 22,
+              fontFamily: '"Pathway Extreme", var(--ds-font, "Roboto Flex"), system-ui, sans-serif',
+              fontStretch: '90%',
+              fontSize: 14,
+              fontWeight: 400,
+              color: 'rgba(255, 255, 255, 0.95)',
+              letterSpacing: '0.04em',
+              textAlign: 'center',
+            }}>{sceneNumber}</span>
+
+            {/* Lock status (não-clicável). Verde = livre, vermelho = fixo. */}
+            <span
+              title={isLocked ? 'Cena fixa' : 'Cena livre'}
+              style={{
+                flex: '0 0 auto',
+                width: 24, height: 24,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 14,
+                color: isLocked ? '#f87171' : '#4ade80',
+              }}
+            >
+              <i className={isLocked ? 'ph ph-lock-simple' : 'ph ph-lock-simple-open'} />
+            </span>
+
+            {/* Editar — desabilitado em end-card */}
+            <button
+              type="button"
+              onClick={scene.type === 'end-card' ? undefined : handleEditClick}
+              disabled={scene.type === 'end-card'}
+              title={scene.type === 'end-card' ? 'End-card sempre usa o tema editorial — não editável' : (isLocked ? 'Editar tema visual' : 'Editar cena')}
+              aria-label={scene.type === 'end-card' ? 'End-card não editável' : (isLocked ? 'Editar tema visual' : 'Editar cena')}
+              style={{
+                flex: '0 0 auto',
+                width: 24, height: 24,
+                background: 'transparent',
+                border: 'none',
+                padding: 0,
+                borderRadius: 4,
+                cursor: scene.type === 'end-card' ? 'not-allowed' : 'pointer',
+                color: scene.type === 'end-card' ? 'rgba(255, 255, 255, 0.30)' : 'rgba(255, 255, 255, 0.85)',
+                opacity: scene.type === 'end-card' ? 0.5 : 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 14,
+                transition: 'color 120ms ease, background 120ms ease',
+              }}
+              onMouseEnter={scene.type === 'end-card' ? undefined : (e) => { e.currentTarget.style.color = '#ffffff'; e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'; }}
+              onMouseLeave={scene.type === 'end-card' ? undefined : (e) => { e.currentTarget.style.color = 'rgba(255, 255, 255, 0.85)'; e.currentTarget.style.background = 'transparent'; }}
+            >
+              <i className="ph ph-pencil-simple" />
+            </button>
+
+            {/* Preview */}
+            <button
+              type="button"
+              onClick={handlePreviewClick}
+              title="Preview desta cena"
+              aria-label="Preview desta cena"
+              style={{
+                flex: '0 0 auto',
+                width: 24, height: 24,
+                background: 'transparent',
+                border: 'none',
+                padding: 0,
+                borderRadius: 4,
+                cursor: 'pointer',
+                color: 'rgba(255, 255, 255, 0.85)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 14,
+                transition: 'color 120ms ease, background 120ms ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#ffffff'; e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255, 255, 255, 0.85)'; e.currentTarget.style.background = 'transparent'; }}
+            >
+              <i className="ph ph-play" />
+            </button>
+          </div>
         </div>
-      </div>
-
-      {/* Card unificado abaixo do thumb: número + lock-status + ações.
-          Largura = mesma do thumb (medida via ResizeObserver) pra acompanhar
-          quando o thumb encolhe por restrição de altura da célula. */}
-      <div style={{
-        width: thumbWidth != null ? `${thumbWidth}px` : '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 4,
-        padding: '6px 8px',
-        borderRadius: 8,
-        background: '#ffffff',
-        border: '1px solid rgba(15,23,42,0.08)',
-        boxShadow: '0 2px 6px rgba(15,23,42,0.04)',
-        fontFamily: '"Inter Tight", system-ui, sans-serif',
-        boxSizing: 'border-box',
-      }}>
-        {/* Número da cena */}
-        <span style={{
-          flex: '0 0 auto',
-          minWidth: 22,
-          fontSize: 11,
-          fontWeight: 600,
-          color: '#475569',
-          letterSpacing: '0.04em',
-          textAlign: 'center',
-        }}>{sceneNumber}</span>
-
-        {/* Lock status (não-clicável, só indica) */}
-        <span
-          title={isLocked ? 'Cena fixa' : 'Cena livre'}
-          style={{
-            flex: '0 0 auto',
-            width: 24, height: 24,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 14,
-            color: '#475569',
-          }}
-        >
-          <i className={isLocked ? 'ph ph-lock-simple' : 'ph ph-lock-simple-open'} />
-        </span>
-
-        {/* Editar — desabilitado em end-card (slide 12) que sempre usa tema editorial */}
-        <button
-          type="button"
-          onClick={scene.type === 'end-card' ? undefined : handleEditClick}
-          disabled={scene.type === 'end-card'}
-          title={scene.type === 'end-card' ? 'End-card sempre usa o tema editorial — não editável' : (isLocked ? 'Editar tema visual' : 'Editar cena')}
-          aria-label={scene.type === 'end-card' ? 'End-card não editável' : (isLocked ? 'Editar tema visual' : 'Editar cena')}
-          style={{
-            flex: '0 0 auto',
-            width: 24, height: 24,
-            background: 'transparent',
-            border: 'none',
-            padding: 0,
-            borderRadius: 4,
-            cursor: scene.type === 'end-card' ? 'not-allowed' : 'pointer',
-            color: scene.type === 'end-card' ? '#cbd5e1' : '#475569',
-            opacity: scene.type === 'end-card' ? 0.5 : 1,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 14,
-            transition: 'color 120ms ease, background 120ms ease',
-          }}
-          onMouseEnter={scene.type === 'end-card' ? undefined : (e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.background = '#f1f5f9'; }}
-          onMouseLeave={scene.type === 'end-card' ? undefined : (e) => { e.currentTarget.style.color = '#475569'; e.currentTarget.style.background = 'transparent'; }}
-        >
-          <i className="ph ph-pencil-simple" />
-        </button>
-
-        {/* Preview */}
-        <button
-          type="button"
-          onClick={handlePreviewClick}
-          title="Preview desta cena"
-          aria-label="Preview desta cena"
-          style={{
-            flex: '0 0 auto',
-            width: 24, height: 24,
-            background: 'transparent',
-            border: 'none',
-            padding: 0,
-            borderRadius: 4,
-            cursor: 'pointer',
-            color: '#475569',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 14,
-            transition: 'color 120ms ease, background 120ms ease',
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.background = '#f1f5f9'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = '#475569'; e.currentTarget.style.background = 'transparent'; }}
-        >
-          <i className="ph ph-play" />
-        </button>
       </div>
     </div>
   );
@@ -455,5 +480,6 @@ if (typeof window !== 'undefined') {
   window.updateMotionReelStoryboard = updateStoryboard;
   window.mountMotionReelPreviewPlayer = mountPreviewPlayer;
   window.unmountMotionReelPreviewPlayer = unmountPreviewPlayer;
+  window.restartMotionReelPlayback = restartMotionReelPlayback;
   window.MOTION_REEL_DEFAULT_STORYBOARD = MOTION_REEL_DEFAULT;
 }

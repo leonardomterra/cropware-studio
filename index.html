@@ -6,7 +6,7 @@
 <title>Cropware — Studio de Posts</title>
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Alumni+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Familjen+Grotesk:wght@400..700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Alumni+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Familjen+Grotesk:wght@400..700&family=Sora:wght@400;500;600;700;800&family=Roboto+Flex:wdth,wght@25..151,100..900&family=Pathway+Extreme:wdth,wght@75..125,400..700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.11/dist/html2canvas-pro.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -55,14 +55,17 @@
     margin-bottom: 28px;
   }
   .login-subtitle {
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px; color: #64748b;
     margin-bottom: 28px;
   }
   .login-input {
     width: 100%; padding: 12px 14px;
     border: 1px solid #e2e8f0; border-radius: 6px;
-    font-size: 14px; font-family: 'Inter Tight', sans-serif;
+    font-size: 14px;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     outline: none; transition: border-color 0.2s;
     margin-bottom: 14px;
   }
@@ -73,13 +76,14 @@
   }
   .login-btn {
     width: 100%; padding: 12px;
-    background: #475569; color: #fff; border: none; border-radius: 6px;
+    background: var(--ds-color-primary); color: var(--ds-color-on-primary); border: none; border-radius: var(--ds-btn-radius);
     font-size: 14px; font-weight: 400; cursor: pointer;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     display: flex; align-items: center; justify-content: center; gap: 6px;
     transition: background 0.2s;
   }
-  .login-btn:hover { background: #334155; }
+  .login-btn:hover { background: var(--ds-color-primary-hover); }
   .login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .login-manage-btn {
     width: 100%;
@@ -92,7 +96,8 @@
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -106,7 +111,8 @@
   }
   .login-msg {
     margin-top: 16px; font-size: 13px;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     min-height: 20px;
   }
   .login-msg.success { color: #16a34a; }
@@ -126,7 +132,8 @@
   .logout-email {
     font-size: 13px;
     color: #f8fafc;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -142,8 +149,9 @@
     background: #fff;
     color: #dc2626;
     border: 1px solid #fecaca;
-    border-radius: 4px;
-    font-family: 'Inter Tight', sans-serif;
+    border-radius: var(--ds-btn-radius);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -164,23 +172,26 @@
     --field-focus-border: rgba(203, 213, 225, 0.96);
     --text: #0f172a;
     --muted: rgba(15,23,42,0.62);
+    /* R25: legacy `--btn-*` reapontados pros tokens novos do design system.
+       Permite que TODOS os botões existentes que herdam essas variáveis pulem
+       direto pro padrão slate dark sem precisar refatorar cada CSS rule. */
     --btn-height: 36px;
-    --btn-radius: 4px;
+    --btn-radius: 8px;
     --btn-font-size: 14px;
     --btn-font-weight: 300;
-    --btn-pad-x: 13px;
+    --btn-pad-x: 14px;
     --btn-gap: 8px;
-    --btn-dark-bg: #111827;
-    --btn-dark-bg-hover: #020617;
+    --btn-dark-bg: #3D3F3D;
+    --btn-dark-bg-hover: #5C605D;
     --btn-dark-text: #fff;
     --btn-mid-bg: #e5e7eb;
     --btn-mid-bg-hover: #d1d5db;
     --btn-mid-text: #374151;
     --btn-light-bg: #fff;
-    --btn-light-bg-hover: #f8fafc;
-    --btn-light-text: #4b5563;
-    --btn-light-border: rgba(156, 163, 175, 0.54);
-    --btn-light-border-hover: rgba(107, 114, 128, 0.48);
+    --btn-light-bg-hover: #f1f5f9;
+    --btn-light-text: #0f172a;
+    --btn-light-border: #e2e8f0;
+    --btn-light-border-hover: #cbd5e1;
     --btn-danger-bg: #fee2e2;
     --btn-danger-bg-hover: #fecaca;
     --btn-danger-text: #991b1b;
@@ -208,7 +219,11 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Inter Tight', sans-serif;
+    /* R25 — fonte UI padrão do Studio: Roboto Flex com axis wdth 90. As
+       fontes especiais (Inter Tight / Familjen Grotesk / Space Mono) ficam
+       só nos posts/reels via classes específicas dentro do canvas. */
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     -webkit-font-smoothing: antialiased;
     text-rendering: geometricPrecision;
     height: 100vh;
@@ -260,7 +275,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     position: sticky;
     top: 0;
     z-index: 80;
@@ -332,17 +348,19 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    padding: 7px 12px;
+    gap: 8px;
+    padding: 0 14px;
+    height: var(--ds-btn-h);
     background: rgba(255,255,255,0.08);
     color: #fff;
     border: 1px solid rgba(255,255,255,0.18);
-    border-radius: 6px;
-    font-family: 'Inter Tight', sans-serif;
+    border-radius: var(--ds-btn-radius);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     font-weight: 400;
     cursor: pointer;
-    transition: background 140ms, border-color 140ms;
+    transition: var(--ds-btn-transition);
   }
   .app-logout-btn:hover {
     background: rgba(255,255,255,0.14);
@@ -358,7 +376,8 @@
     /* sem border-right — corpo e header têm bordas próprias */
     overflow: hidden;
     padding: 0;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     display: flex;
     flex-direction: column;
     min-height: 0;
@@ -377,7 +396,8 @@
   .aside-empty {
     padding: 22px 16px;
     color: #64748b;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
   }
   .aside-empty-title {
     font-size: 14px;
@@ -402,12 +422,13 @@
     flex-shrink: 0;
     padding: 0 16px;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     color: #fff;
     border-bottom: 1px solid rgba(255,255,255,0.08);
     border-right: 1px solid rgba(0,0,0,0.35);
     background: #1e293b;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -417,13 +438,14 @@
   .aside-label {
     flex-shrink: 0;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     color: #fff;
     padding: 0 16px;
     border-bottom: 1px solid rgba(255,255,255,0.08);
     border-right: 1px solid rgba(0,0,0,0.35);
     background: #1e293b;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -467,7 +489,8 @@
     font-size: 14px;
     font-weight: 400;
     color: var(--text);
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -482,7 +505,8 @@
     font-size: 11px;
     font-weight: 400;
     color: rgba(71, 85, 105, 0.65);
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     margin-top: 4px;
     line-height: 1;
     letter-spacing: 0.02em;
@@ -516,7 +540,8 @@
   .download-loading-spinner { display: none; }
   @keyframes download-spin { to { transform: rotate(360deg); } }
   .download-loading-msg {
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 500;
     color: var(--text, #0f172a);
@@ -543,38 +568,42 @@
     display: flex;
     justify-content: space-between;
     gap: 16px;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 400;
-    color: #64748b;
+    color: var(--ds-text-muted);
   }
   .download-loading-detail {
     width: 100%;
     min-height: 16px;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 12px;
-    color: #64748b;
+    color: var(--ds-text-muted);
     text-align: center;
     line-height: 1.35;
     white-space: pre-line;
   }
   .download-loading-cancel {
     margin-top: 6px;
-    padding: 8px 22px;
-    font-family: 'Inter Tight', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: #64748b;
-    background: transparent;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
+    height: var(--ds-btn-h);
+    padding: 0 22px;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: var(--ds-font-size);
+    font-weight: var(--ds-font-weight);
+    color: var(--ds-text-muted);
+    background: var(--ds-color-secondary-bg);
+    border: 1px solid var(--ds-color-secondary-border);
+    border-radius: var(--ds-btn-radius);
     cursor: pointer;
-    transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+    transition: var(--ds-btn-transition);
   }
   .download-loading-cancel:hover {
-    background: #f1f5f9;
-    color: #0f172a;
-    border-color: #94a3b8;
+    background: var(--ds-color-secondary-bg-hover);
+    color: var(--ds-text);
+    border-color: var(--ds-color-secondary-border-hover);
   }
   .download-loading-cancel:disabled {
     opacity: 0.55;
@@ -597,11 +626,12 @@
     flex-shrink: 0;
     padding: 0 16px;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     color: #fff;
     border-bottom: 1px solid rgba(255,255,255,0.08);
     background: #1e293b;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     display: flex;
     align-items: center;
     height: 44px;
@@ -3661,7 +3691,8 @@
     border: none;
     color: #cbd5e1;
     font-size: 13px;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-weight: 500;
     padding: 5px 10px;
     border-radius: 5px;
@@ -4018,7 +4049,8 @@
     display: none;
     flex-direction: column;
     overflow: hidden;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     min-height: 0;
   }
   #postControls.visible { display: flex; }
@@ -4598,7 +4630,8 @@
     border: none;
     background: transparent;
     color: var(--text);
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
@@ -4620,7 +4653,8 @@
     width: 100%;
     padding: 0 4px;
     border: none;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 500;
     color: var(--text);
@@ -4649,7 +4683,8 @@
     border: 1px solid var(--border);
     border-radius: 4px;
     cursor: pointer;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     color: var(--text);
     transition: border-color 120ms, box-shadow 120ms;
@@ -4670,7 +4705,8 @@
   .pc-color-btn-label {
     flex: 1;
     text-align: left;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 300;
     letter-spacing: 0;
@@ -4716,7 +4752,8 @@
     background: white;
     border: 1px solid var(--border);
     border-radius: 4px;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 300;
     color: var(--text);
@@ -5109,7 +5146,8 @@
     color: #92400e;
     border: none;
     cursor: pointer;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     font-weight: 500;
     transition: background-color 140ms;
@@ -5140,40 +5178,10 @@
   }
   /* Theme picker no estilo do texture picker: 6 swatches pequenos em UMA linha,
      sem label nem checkmark — só o quadrado de preview. */
-  .gen-modal-box.mr-scene-edit-box .mr-theme-cards {
-    grid-template-columns: repeat(8, 36px);
-    gap: 4px;
-    justify-content: start;
-  }
-  .gen-modal-box.mr-scene-edit-box .mr-theme-card {
-    width: 36px;
-    height: 36px;
-    min-height: 0;
-    padding: 0;
-    border: 2px solid transparent;
-    border-radius: 4px;
-    background: transparent;
-    overflow: hidden;
-    position: relative;
-    transition: border-color 140ms, transform 140ms;
-  }
-  .gen-modal-box.mr-scene-edit-box .mr-theme-card:hover {
-    transform: scale(1.04);
-    background: transparent;
-  }
-  .gen-modal-box.mr-scene-edit-box .mr-theme-card.active {
-    border-color: #94a3b8;
-    background: transparent;
-  }
-  .gen-modal-box.mr-scene-edit-box .mr-theme-card .mr-theme-preview {
-    width: 100%;
-    height: 100%;
-    border-radius: 2px;
-  }
-  .gen-modal-box.mr-scene-edit-box .mr-theme-card .mr-theme-label,
-  .gen-modal-box.mr-scene-edit-box .mr-theme-card .mr-theme-check {
-    display: none;
-  }
+  /* Legacy `.mr-theme-cards` (grid de 36×36 swatches) removido — substituído
+     pelo dropdown .ds-dropdown. As classes .mr-theme-card no HTML continuam
+     pra compat com `_syncMrThemeCardSelection`, mas o styling vem de
+     .ds-dropdown__option agora. */
   .mr-scene-edit-box .gen-body > .mr-edit-controls {
     display: flex;
     flex-direction: column;
@@ -5201,7 +5209,8 @@
     box-shadow: 0 8px 24px rgba(0,0,0,0.22);
   }
   .mr-edit-preview-label {
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 11px;
     color: #64748b;
     letter-spacing: 0.04em;
@@ -5212,7 +5221,8 @@
     display: none;
   }
   .mr-scene-meta {
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     line-height: 1.35;
     color: #64748b;
@@ -5225,89 +5235,664 @@
     cursor: not-allowed;
   }
 
-  /* R16 — cards de seleção de tema visual do motion-reel */
-  .mr-theme-cards {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-    width: 100%;
+  /* ────────────────────────────────────────────────────────────────
+     DESIGN SYSTEM v1 (R25) — tokens globais + classes utilitárias.
+     Aplicado por opt-in via .ds-btn nas refatorações graduais.
+     Fonte UI: Roboto Flex (wdth 90, weight 300).
+     ──────────────────────────────────────────────────────────────── */
+  :root {
+    --ds-font: 'Roboto Flex', system-ui, sans-serif;
+    --ds-font-stretch: 90%;
+    --ds-font-size: 14px;
+    --ds-font-weight: 300;
+    --ds-text: #0f172a;
+    --ds-text-muted: #64748b;
+
+    --ds-color-primary: #3D3F3D;
+    --ds-color-primary-hover: #5C605D;
+    --ds-color-primary-disabled: #94a3b8;
+    --ds-color-on-primary: #ffffff;
+
+    --ds-color-secondary-bg: #ffffff;
+    --ds-color-secondary-bg-hover: #f1f5f9;
+    --ds-color-secondary-border: #e2e8f0;
+    --ds-color-secondary-border-hover: #cbd5e1;
+    --ds-color-secondary-text: #0f172a;
+
+    /* Paleta NEUTRAL (shadcn/tailwind). Em uso piloto no conjunto fine-adjust
+       + mini button. Propagar gradualmente pra sistema todo conforme valida. */
+    --ds-neutral-50:  #fafafa;
+    --ds-neutral-100: #f5f5f5;
+    --ds-neutral-200: #e5e5e5;
+    --ds-neutral-300: #d4d4d4;
+    --ds-neutral-400: #a3a3a3;
+    --ds-neutral-500: #737373;
+    --ds-neutral-600: #525252;
+    --ds-neutral-700: #404040;
+    --ds-neutral-800: #262626;
+    --ds-neutral-900: #171717;
+    --ds-neutral-950: #0a0a0a;
+
+    --ds-btn-h: 36px;
+    --ds-btn-icon-size: 32px;
+    --ds-btn-radius: 8px;
+    --ds-btn-pad: 0 14px;
+    --ds-btn-gap: 8px;
+    --ds-btn-transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
   }
-  .mr-theme-card {
-    width: 100%;
-    min-height: 48px;
-    padding: 8px 10px;
-    border: 1px solid #dbe3ec;
-    border-radius: 8px;
-    background: #fff;
+  .ds-btn {
+    height: var(--ds-btn-h);
+    padding: var(--ds-btn-pad);
+    border-radius: var(--ds-btn-radius);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: var(--ds-font-size);
+    font-weight: var(--ds-font-weight);
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--ds-btn-gap);
     cursor: pointer;
+    border: 1px solid transparent;
+    transition: var(--ds-btn-transition);
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+  .ds-btn[disabled],
+  .ds-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+  /* Primary — slate dark, fill */
+  .ds-btn--primary {
+    background: var(--ds-color-primary);
+    border-color: var(--ds-color-primary);
+    color: var(--ds-color-on-primary);
+  }
+  .ds-btn--primary:hover:not(:disabled) {
+    background: var(--ds-color-primary-hover);
+    border-color: var(--ds-color-primary-hover);
+  }
+  /* Secondary — outline */
+  .ds-btn--secondary {
+    background: var(--ds-color-secondary-bg);
+    border-color: var(--ds-color-secondary-border);
+    color: var(--ds-color-secondary-text);
+  }
+  .ds-btn--secondary:hover:not(:disabled) {
+    background: var(--ds-color-secondary-bg-hover);
+    border-color: var(--ds-color-secondary-border-hover);
+  }
+  /* Toggle ativo — usado em "Cores invertidas" quando inverted=true */
+  .ds-btn--toggle-active {
+    background: var(--ds-color-primary);
+    border-color: var(--ds-color-primary);
+    color: var(--ds-color-on-primary);
+  }
+  /* Icon-only — quadrado, mesma altura padrão */
+  .ds-btn--icon {
+    width: var(--ds-btn-icon-size);
+    height: var(--ds-btn-icon-size);
+    padding: 0;
+    flex-shrink: 0;
+  }
+  /* Mini button — altura menor, cinza claro, uppercase Pathway Extreme.
+     Pra ações secundárias dentro de cards (Restaurar, Redefinir, Limpar, etc).
+     Reutilizável: aplique class="ds-btn-mini" em qualquer botão. */
+  .ds-btn-mini {
+    height: 24px;
+    padding: 0 12px;
+    background: var(--ds-neutral-100);
+    border: 1px solid var(--ds-neutral-200);
+    border-radius: 3px;
+    color: var(--ds-neutral-500);
+    cursor: pointer;
+    font-family: 'Pathway Extreme', var(--ds-font);
+    font-stretch: 90%;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: var(--ds-btn-transition);
+    box-sizing: border-box;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+  .ds-btn-mini:hover:not(:disabled) {
+    background: var(--ds-neutral-200);
+  }
+  .ds-btn-mini:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .ds-btn-mini .ph {
+    font-size: 13px;
+    flex: 0 0 auto;
+  }
+  /* Badges de valor ao lado dos sliders */
+  .ds-value-badge {
+    height: var(--ds-btn-icon-size);
+    min-width: 52px;
+    padding: 0 10px;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ds-text-muted);
+    background: var(--ds-color-secondary-bg);
+    border: 1px solid var(--ds-color-secondary-border);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  /* Label inline (antes de slider) */
+  .ds-row-label {
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ds-text-muted);
+    flex: 0 0 80px;
+  }
+  /* Slider com accent uniforme — opt-in via .ds-slider OU dentro de containers
+     que padronizam (.mr-scene-edit-box, .gen-modal-box, etc). */
+  .ds-slider,
+  .mr-scene-edit-box input[type="range"] {
+    accent-color: var(--ds-color-primary);
+    cursor: pointer;
+  }
+  /* Tipografia global do dialog */
+  .mr-scene-edit-box,
+  .mr-scene-edit-box .gen-body,
+  .mr-scene-edit-box label {
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+  }
+  .mr-scene-edit-box label {
+    font-weight: 400;
+    color: var(--ds-text);
+  }
+  .mr-scene-edit-box #mrSceneEditPrompt {
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    height: var(--ds-btn-h);
+    padding: 0 14px;
+    border-radius: var(--ds-btn-radius);
+    border: 1px solid var(--ds-color-secondary-border);
+    background: var(--ds-color-secondary-bg);
+    color: var(--ds-text);
+    font-size: var(--ds-font-size);
+    font-weight: var(--ds-font-weight);
+    box-sizing: border-box;
+  }
+  .mr-scene-edit-box #mrSceneEditPrompt::placeholder {
+    color: var(--ds-text-muted);
+  }
+  .mr-scene-edit-box #mrSceneEditPrompt:focus {
+    outline: none;
+    border-color: var(--ds-color-secondary-border-hover);
+  }
+
+  /* ────────────────────────────────────────────────────────────────
+     Fine-adjust card — padrão unificado pra ajustes percentuais/numéricos.
+     Estrutura: header com label → slider full-width → footer com stepper
+     +/- + valor editável + reset. Card sutil cria respiro visual e separa
+     grupos lógicos de ajustes.
+     ──────────────────────────────────────────────────────────────── */
+  .ds-fineadjust {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--ds-neutral-200);
+    border-radius: var(--ds-btn-radius);
+    background: var(--ds-neutral-50);
+    box-sizing: border-box;
+  }
+  /* Zona destacada do slider — bg branco contra o card neutral-50. Extende
+     até as bordas cancelando o padding lateral; recompõe padding interno
+     pra alinhar o slider com o label. */
+  .ds-fineadjust__slider-zone {
+    margin: 0 -14px -12px;
+    padding: 12px 14px;
+    background: #ffffff;
+    border-top: 1px solid var(--ds-neutral-200);
+    border-radius: 0 0 calc(var(--ds-btn-radius) - 1px) calc(var(--ds-btn-radius) - 1px);
+  }
+  .ds-fineadjust__label {
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ds-neutral-500);
+    letter-spacing: 0;
+    text-transform: none;
+    /* Layout flex: text | sep | input | sep | redefinir. Divisória agora é
+       o border-top do .ds-fineadjust__slider-zone — não precisa de border
+       aqui no label. */
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    gap: 9px;
-    transition: border-color 140ms, background-color 140ms, box-shadow 140ms, transform 140ms;
-    font-family: 'Inter Tight', sans-serif;
+    gap: 10px;
   }
-  .mr-theme-card:hover {
-    border-color: #94a3b8;
-    background: #f8fafc;
-    transform: translateY(-1px);
+  .ds-fineadjust__label-text {
+    flex: 0 0 auto;
   }
-  .mr-theme-card.active {
-    border-color: #475569;
-    background: #f8fafc;
-    box-shadow: none;
+  .ds-fineadjust__label-sep {
+    color: var(--ds-neutral-300);
+    font-weight: 400;
+    flex: 0 0 auto;
   }
-  .mr-theme-preview {
-    width: 30px;
+  /* Input editável do valor — mesmo formato visual do .ds-btn-mini
+     (Pathway Extreme condensada, uppercase, peso 600, 12px). Especificidade
+     dobrada (.ds-fineadjust .ds-fineadjust__label-value) pra vencer a regra
+     genérica `.gen-group input` que define padding/border-radius 14px/8px. */
+  .ds-fineadjust .ds-fineadjust__label-value {
+    flex: 0 0 auto;
+    width: 56px;
     height: 24px;
-    border-radius: 5px;
-    flex: 0 0 auto;
-    margin-bottom: 0;
+    padding: 0 8px;
+    border: 1px solid var(--ds-neutral-200);
+    border-radius: 3px;
+    background: var(--ds-neutral-50);
+    color: var(--ds-neutral-700);
+    font-family: 'Pathway Extreme', var(--ds-font);
+    font-stretch: 90%;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+    outline: none;
+    cursor: text;
+    transition: var(--ds-btn-transition);
+    box-sizing: border-box;
+    font-variant-numeric: tabular-nums;
+    -moz-appearance: textfield;
   }
-  .mr-theme-label {
-    color: #334155;
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1;
+  .ds-fineadjust .ds-fineadjust__label-value::-webkit-inner-spin-button,
+  .ds-fineadjust .ds-fineadjust__label-value::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
-  .mr-theme-check {
-    width: 13px;
-    height: 13px;
-    border: 1px solid #cbd5e1;
+  .ds-fineadjust .ds-fineadjust__label-value:hover {
+    background: var(--ds-neutral-100);
+  }
+  .ds-fineadjust .ds-fineadjust__label-value:focus {
+    background: #ffffff;
+    border-color: var(--ds-neutral-400) !important;
+  }
+  .ds-fineadjust__slider {
+    width: 100%;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+    background: transparent !important;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-appearance: none;
+    appearance: none;
+    accent-color: transparent;
+    height: 16px;
+  }
+  /* Sobrescreve a regra global body :where(input...):focus que pinta uma
+     border-color slate-300 nos inputs — quebra o visual do slider quando
+     o foco vai pra ele (após click no +/- ou drag). */
+  .ds-fineadjust__slider:focus,
+  .ds-fineadjust__slider:focus-visible {
+    border: 0 !important;
+    border-color: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  /* Track: trilho fino (3px) com split via gradient — slate até --fill%, light
+     depois. O thumb fica visualmente bem maior que o trilho. */
+  .ds-fineadjust__slider::-webkit-slider-runnable-track {
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(
+      to right,
+      var(--ds-color-primary) 0%,
+      var(--ds-neutral-800) calc(var(--fill, 0) * 1%),
+      var(--ds-neutral-200) calc(var(--fill, 0) * 1%),
+      var(--ds-neutral-200) 100%
+    );
+  }
+  .ds-fineadjust__slider::-moz-range-track {
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(
+      to right,
+      var(--ds-color-primary) 0%,
+      var(--ds-neutral-800) calc(var(--fill, 0) * 1%),
+      var(--ds-neutral-200) calc(var(--fill, 0) * 1%),
+      var(--ds-neutral-200) 100%
+    );
+  }
+  /* Thumb: bolinha 14px slate, centralizada verticalmente sobre o trilho 3px
+     via margin-top negativo de (14-3)/2 = 5.5 → 6px (arredondado). */
+  .ds-fineadjust__slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
-    margin-left: auto;
-    background: #fff;
-    box-shadow: inset 0 0 0 3px #fff;
+    background: var(--ds-neutral-800);
+    border: none;
+    margin-top: -6px;
+    cursor: pointer;
+  }
+  .ds-fineadjust__slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--ds-neutral-800);
+    border: none;
+    cursor: pointer;
+  }
+  .ds-fineadjust__row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ds-fineadjust__step {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid var(--ds-neutral-200);
+    border-radius: 6px;
+    background: #ffffff;
+    color: var(--ds-neutral-800);
+    cursor: pointer;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--ds-btn-transition);
+    flex-shrink: 0;
+  }
+  .ds-fineadjust__step:hover:not(:disabled) {
+    background: var(--ds-neutral-100);
+    border-color: var(--ds-neutral-300);
+  }
+  .ds-fineadjust__step:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .ds-fineadjust__value {
+    flex: 0 0 auto;
+    width: 64px;
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--ds-neutral-200);
+    border-radius: 6px;
+    background: #ffffff;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ds-neutral-800);
+    text-align: center;
+    outline: none;
+    transition: border-color 120ms ease;
+    box-sizing: border-box;
+    font-variant-numeric: tabular-nums;
+    -moz-appearance: textfield;
+  }
+  .ds-fineadjust__value::-webkit-inner-spin-button,
+  .ds-fineadjust__value::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .ds-fineadjust__value:focus {
+    border-color: var(--ds-neutral-400);
+  }
+  /* Reset agora vive na linha do label, alinhado naturalmente com os outros
+     itens (texto, sep, input). Sem margin-left:auto — fica junto, não voa
+     pra direita. Estilo visual vem de .ds-btn-mini aplicada no mesmo elemento. */
+  .ds-fineadjust__reset {
     flex: 0 0 auto;
   }
-  .mr-theme-card.active .mr-theme-check {
-    border-color: #475569;
-    background: #475569;
+
+  /* ════════════════════════════════════════════════════════════════
+     .ds-dropdown — Seletor dropdown reutilizável de estilos/temas.
+     ─────────────────────────────────────────────────────────────────
+     ESTRUTURA HTML:
+       <div class="ds-dropdown" id="myDropdown">
+         <button class="ds-dropdown__trigger"
+                 onclick="toggleDsDropdown('myDropdown', event)">
+           <span class="ds-dropdown__swatch [modifier-class]"></span>
+           <span class="ds-dropdown__value">Label do ativo</span>
+           <i class="ph ph-caret-down ds-dropdown__chevron"></i>
+         </button>
+         <div class="ds-dropdown__menu" role="listbox">
+           <button class="ds-dropdown__option [active?]"
+                   data-value="opt1"
+                   onclick="selecionar('opt1'); closeDsDropdown('myDropdown')">
+             <span class="ds-dropdown__swatch [modifier]"></span>
+             <span class="ds-dropdown__option-label">Opção 1</span>
+             <i class="ph ph-check ds-dropdown__check"></i>
+           </button>
+           ...
+         </div>
+       </div>
+
+     COMPORTAMENTO:
+       - Open via class .open no container (toggleDsDropdown adiciona)
+       - Click fora fecha (listener global no document — já registrado)
+       - Apenas 1 dropdown aberto por vez (toggleDsDropdown fecha outros)
+
+     PALETA: tudo em neutral. Swatch usa modifier classes externas (ex:
+     .mr-theme-preview--editorial) que definem só o background gradient.
+     ──────────────────────────────────────────────────────────────── */
+  .ds-dropdown {
+    position: relative;
+    width: 100%;
   }
-  .mr-theme-preview--editorial {
+  .ds-dropdown__trigger {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    background: var(--ds-neutral-50);
+    border: 1px solid var(--ds-neutral-200);
+    border-radius: 4px;
+    color: var(--ds-neutral-800);
+    cursor: pointer;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: 14px;
+    font-weight: 400;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: var(--ds-btn-transition);
+    box-sizing: border-box;
+    text-align: left;
+  }
+  .ds-dropdown__trigger:hover { background: var(--ds-neutral-100); border-color: var(--ds-neutral-300); }
+  .ds-dropdown.open .ds-dropdown__trigger {
+    background: var(--ds-neutral-50);
+    border-color: var(--ds-neutral-400);
+  }
+  .ds-dropdown__swatch {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid var(--ds-neutral-300);
+  }
+  /* Modifier pra swatches de textura — zoom de 400% pra mostrar um recorte
+     identificável do padrão (texturas detalhadas ficam ilegíveis em cover). */
+  .ds-dropdown__swatch--texture {
+    background-size: 400%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .ds-dropdown__value {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+  .ds-dropdown__chevron {
+    flex: 0 0 auto;
+    font-size: 16px;
+    color: var(--ds-neutral-500);
+    transition: transform 180ms ease;
+  }
+  .ds-dropdown.open .ds-dropdown__chevron { transform: rotate(180deg); }
+  .ds-dropdown__menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid var(--ds-neutral-200);
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    padding: 4px;
+    display: none;
+    z-index: 30;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+  .ds-dropdown.open .ds-dropdown__menu { display: block; }
+  .ds-dropdown__option {
+    width: 100%;
+    padding: 8px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 5px;
+    color: var(--ds-neutral-800);
+    cursor: pointer;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: 14px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    transition: background 120ms ease;
+  }
+  .ds-dropdown__option:hover { background: var(--ds-neutral-100); }
+  .ds-dropdown__option.active { background: var(--ds-neutral-200); }
+  .ds-dropdown__option.active:hover { background: var(--ds-neutral-200); }
+  .ds-dropdown__option-label {
+    flex: 1 1 auto;
+  }
+  .ds-dropdown__check {
+    flex: 0 0 auto;
+    font-size: 16px;
+    color: var(--ds-neutral-800);
+    opacity: 0;
+  }
+  .ds-dropdown__option.active .ds-dropdown__check { opacity: 1; }
+
+  /* Track card (lista de seleção: trilhas, presets, etc) */
+  .ds-track-card {
+    text-align: left;
+    padding: 14px 16px;
+    border: 1px solid var(--ds-color-secondary-border);
+    border-radius: var(--ds-btn-radius);
+    background: var(--ds-color-secondary-bg);
+    cursor: pointer;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: var(--ds-btn-transition);
+  }
+  .ds-track-card:hover {
+    background: #f8fafc;
+    border-color: var(--ds-color-secondary-border-hover);
+  }
+  .ds-track-card--active {
+    background: var(--ds-color-secondary-bg-hover);
+    border-color: var(--ds-color-primary);
+  }
+  .ds-track-card__icon {
+    font-size: 24px;
+    color: #94a3b8;
+    flex-shrink: 0;
+  }
+  .ds-track-card--active .ds-track-card__icon {
+    color: var(--ds-color-primary);
+  }
+  .ds-track-card__body {
+    flex: 1;
+    min-width: 0;
+  }
+  .ds-track-card__title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ds-text);
+    margin-bottom: 2px;
+  }
+  .ds-track-card__desc {
+    font-size: 12px;
+    color: var(--ds-text-muted);
+  }
+  .ds-track-card__check {
+    font-size: 22px;
+    color: var(--ds-color-primary);
+    flex-shrink: 0;
+  }
+
+  /* Dialogs do motion-reel: tipografia do header e body via tokens */
+  #mrMusicDialog .gen-modal-box,
+  #mrMusicDialog label,
+  .mr-scene-edit-box {
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+  }
+  #mrMusicDialog .gen-modal-header span {
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-weight: 500;
+  }
+
+  /* R16/R25 — Estilos legacy de `.mr-theme-card` (grid de cards 100% + check)
+     removidos. O seletor virou .ds-dropdown. As classes mr-theme-preview e
+     mr-theme-preview--* permanecem porque definem os swatches gradient
+     de cada tema, usados tanto no trigger quanto nas options do dropdown. */
+  /* Swatches dos 4 temas atuais. Aliases p/ os legacy permanecem
+     definidos abaixo (apontam pro tema mapeado) caso algum reel salvo
+     ainda renderize a classe legacy. */
+  .mr-theme-preview--claro {
+    background: linear-gradient(135deg, #F5F1EA 0%, #F5F1EA 60%, #2A7B5A 60%, #2A7B5A 100%);
+  }
+  .mr-theme-preview--escuro {
     background: linear-gradient(135deg, #1A1B1A 0%, #1A1B1A 60%, #82CCA5 60%, #82CCA5 100%);
   }
-  .mr-theme-preview--vibrante {
-    background: linear-gradient(135deg, #82CCA5 0%, #82CCA5 60%, #2A7B5A 60%, #2A7B5A 100%);
-  }
-  .mr-theme-preview--floresta {
-    background: linear-gradient(135deg, #2A7B5A 0%, #2A7B5A 60%, #82CCA5 60%, #82CCA5 100%);
-  }
-  .mr-theme-preview--granito {
-    background: linear-gradient(135deg, #3D3F3D 0%, #3D3F3D 60%, #6AC58F 60%, #6AC58F 100%);
-  }
-  .mr-theme-preview--mineral {
-    background: linear-gradient(135deg, #5C605D 0%, #5C605D 60%, #6AC58F 60%, #6AC58F 100%);
-  }
-  .mr-theme-preview--carbono {
-    background: linear-gradient(135deg, #1A1B1A 0%, #1A1B1A 60%, #2A7B5A 60%, #2A7B5A 100%);
-  }
   .mr-theme-preview--flatClaro {
-    background: linear-gradient(135deg, #FFFFFF 0%, #FFFFFF 60%, #6AC58F 60%, #6AC58F 100%);
-    border: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFFFFF 60%, #2A7B5A 60%, #2A7B5A 100%);
   }
   .mr-theme-preview--flatEscuro {
     background: linear-gradient(135deg, #143F2C 0%, #143F2C 60%, #82CCA5 60%, #82CCA5 100%);
+  }
+  /* Aliases legacy → mapeiam visualmente pro tema novo correspondente. */
+  .mr-theme-preview--editorial,
+  .mr-theme-preview--vibrante,
+  .mr-theme-preview--floresta,
+  .mr-theme-preview--granito,
+  .mr-theme-preview--mineral,
+  .mr-theme-preview--carbono {
+    background: linear-gradient(135deg, #1A1B1A 0%, #1A1B1A 60%, #82CCA5 60%, #82CCA5 100%);
   }
   .pc-regen-badge {
     margin-left: auto;
@@ -5420,7 +6005,8 @@
     padding: 8px 10px;
     border: 1px solid var(--border);
     border-radius: 4px;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     color: var(--text);
     background: white;
@@ -5432,14 +6018,15 @@
   .pc-apply-all-btn {
     width: 100%;
     border: none;
-    background: #334155;
+    background: var(--ds-color-primary);
     padding: 12px 24px;
     font-size: 14px;
     font-weight: 400;
-    color: #fff;
+    color: var(--ds-color-on-primary);
     cursor: pointer;
-    border-radius: 4px;
-    font-family: 'Inter Tight', sans-serif;
+    border-radius: var(--ds-btn-radius);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -5540,9 +6127,11 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 12px 24px;
-    border-radius: 4px;
-    font-family: 'Inter Tight', sans-serif;
+    padding: 0 18px;
+    height: var(--ds-btn-h);
+    border-radius: var(--ds-btn-radius);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 400;
     border: none;
@@ -5622,10 +6211,12 @@
   .legend-open-btn {
     border: none;
     background: #e2e8f0;
-    color: #475569;
-    border-radius: 6px;
-    padding: 8px 14px;
-    font-family: 'Inter Tight', sans-serif;
+    color: var(--ds-text-muted);
+    border-radius: var(--ds-btn-radius);
+    height: var(--ds-btn-h);
+    padding: 0 14px;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     font-weight: 400;
     cursor: pointer;
@@ -5702,7 +6293,8 @@
   }
   @keyframes regenSpin { to { transform: rotate(360deg); } }
   .regen-loading-label {
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     color: #334155;
     text-align: center;
@@ -5748,7 +6340,8 @@
     line-height: 1.5;
     color: var(--text);
     font-weight: 400;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     outline: none;
     white-space: pre-wrap;
     cursor: text;
@@ -5777,7 +6370,8 @@
     background: transparent;
     color: #64748b;
     border: 0;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     font-weight: 400;
     padding: 6px 0;
@@ -5808,9 +6402,10 @@
 
   .legend-label {
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
     color: #0f172a;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     letter-spacing: 0;
     text-transform: none;
   }
@@ -5825,7 +6420,8 @@
     background: #fff;
     border: 1px solid #cbd5e1;
     color: #64748b;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 12px;
     font-weight: 500;
     padding: 6px 12px;
@@ -5861,9 +6457,10 @@
   }
   .legend-ads-label {
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
     color: #334155;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
   }
   .legend-ads-text {
     min-height: 48px;
@@ -5884,11 +6481,12 @@
     background: rgba(74,162,118,0.12);
     color: #475569;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 500;
     padding: 4px 10px;
     border-radius: 20px;
     border: 1px solid rgba(74,162,118,0.25);
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
   }
 
   /* ── THUMB DELETE ── */
@@ -5926,26 +6524,28 @@
   .btn-gen-ai,
   .btn-actions-menu-trigger {
     width: 100%;
-    padding: 8px 14px;
+    height: var(--ds-btn-h);
+    padding: 0 14px;
     background: #e2e8f0;
-    color: #475569;
+    color: var(--ds-text-muted);
     border: none;
-    border-radius: 6px;
-    font-family: 'Inter Tight', sans-serif;
-    font-size: 14px;
-    font-weight: 300;
+    border-radius: var(--ds-btn-radius);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: var(--ds-font-size);
+    font-weight: var(--ds-font-weight);
     cursor: pointer;
-    transition: background 0.15s;
+    transition: var(--ds-btn-transition);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
+    gap: 8px;
   }
   .btn-gen-ai:hover,
   .btn-actions-menu-trigger:hover,
   .btn-actions-menu-trigger[aria-expanded="true"] {
     background: #cbd5e1;
-    color: #0f172a;
+    color: var(--ds-text);
   }
   .btn-actions-menu-trigger {
     justify-content: space-between;
@@ -5984,26 +6584,27 @@
   }
   .actions-menu-btn {
     width: 100%;
-    min-height: 34px;
-    padding: 8px 10px;
+    min-height: var(--ds-btn-h);
+    padding: 0 12px;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--ds-btn-radius);
     background: transparent;
-    color: #475569;
-    font-family: 'Inter Tight', sans-serif;
-    font-size: 14px;
-    font-weight: 300;
+    color: var(--ds-text);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: var(--ds-font-size);
+    font-weight: var(--ds-font-weight);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 9px;
+    gap: 10px;
     text-align: left;
-    transition: background 140ms, color 140ms;
+    transition: var(--ds-btn-transition);
   }
   .actions-menu-btn:hover:not(:disabled) {
-    background: #f1f5f9;
-    color: #0f172a;
+    background: var(--ds-color-secondary-bg-hover);
+    color: var(--ds-text);
   }
   .actions-menu-btn:disabled {
     opacity: 0.45;
@@ -6015,25 +6616,27 @@
   }
   .actions-menu-divider {
     height: 1px;
-    background: #e2e8f0;
+    background: var(--ds-color-secondary-border);
     margin: 4px 2px;
   }
   .btn-cfg {
     width: 100%;
-    padding: 8px 12px;
+    height: var(--ds-btn-h);
+    padding: 0 14px;
     background: #e2e8f0;
-    color: #475569;
+    color: var(--ds-text-muted);
     border: none;
-    border-radius: 6px;
-    font-family: 'Inter Tight', sans-serif;
+    border-radius: var(--ds-btn-radius);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     font-weight: 400;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
+    transition: var(--ds-btn-transition);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
+    gap: 8px;
   }
   .btn-cfg:hover {
     background: #cbd5e1;
@@ -6041,12 +6644,14 @@
   }
   .btn-download {
     width: 100%;
-    padding: 10px 12px;
-    background: #0f172a;
-    color: #fff;
+    height: var(--ds-btn-h);
+    padding: 0 14px;
+    background: var(--ds-color-primary);
+    color: var(--ds-color-on-primary);
     border: none;
-    border-radius: 4px;
-    font-family: 'Inter Tight', sans-serif;
+    border-radius: var(--ds-btn-radius);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 15px;
     font-weight: 500;
     cursor: pointer;
@@ -6111,10 +6716,11 @@
     border-radius: 10px 10px 0 0;
   }
   .gen-modal-header > span {
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 16px;
-    font-weight: 600;
-    color: #0f172a;
+    font-weight: 500;
+    color: var(--ds-text);
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -6124,15 +6730,17 @@
     border: none;
     color: #94a3b8;
     cursor: pointer;
-    padding: 6px;
-    border-radius: 4px;
+    width: var(--ds-btn-icon-size);
+    height: var(--ds-btn-icon-size);
+    padding: 0;
+    border-radius: var(--ds-btn-radius);
     line-height: 1;
-    transition: all 0.15s;
+    transition: var(--ds-btn-transition);
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
-  .gen-close:hover { background: #f1f5f9; color: #0f172a; }
+  .gen-close:hover { background: var(--ds-color-secondary-bg-hover); color: var(--ds-text); }
   .gen-body {
     padding: 24px 28px 28px;
     display: flex;
@@ -6145,7 +6753,8 @@
     gap: 8px;
   }
   .gen-group label {
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 400;
     letter-spacing: 0;
@@ -6153,11 +6762,12 @@
     color: #334155;
   }
   .gen-group input, .gen-group textarea, .gen-group select {
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
-    padding: 11px 14px;
+    padding: 10px 14px;
     border: 1px solid #e2e8f0;
-    border-radius: 9px;
+    border-radius: var(--ds-btn-radius);
     color: #0f172a;
     background: #f8fafc;
     outline: none;
@@ -6177,7 +6787,8 @@
     background: #fff;
   }
   .gen-group small {
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 11px;
     color: #94a3b8;
   }
@@ -6231,7 +6842,8 @@
     background: transparent;
     border: none;
     color: #475569;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     cursor: pointer;
     transition: color 140ms;
@@ -6246,7 +6858,8 @@
     text-decoration: none;
   }
   .gen-chip {
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 400;
     padding: 7px 12px;
@@ -6275,10 +6888,11 @@
   }
   .news-search-btn {
     border: none;
-    border-radius: 8px;
-    background: #1e293b;
-    color: #fff;
-    font-family: 'Inter Tight', sans-serif;
+    border-radius: var(--ds-btn-radius);
+    background: var(--ds-color-primary);
+    color: var(--ds-color-on-primary);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     font-weight: 500;
     padding: 0 14px;
@@ -6289,7 +6903,7 @@
     gap: 7px;
     white-space: nowrap;
   }
-  .news-search-btn:hover { background: #0f172a; }
+  .news-search-btn:hover { background: var(--ds-color-primary-hover); }
   .news-search-btn:disabled { opacity: 0.55; cursor: wait; }
   .news-cards {
     display: grid;
@@ -6345,7 +6959,8 @@
     border-radius: 7px;
     background: #e2e8f0;
     color: #334155;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     padding: 7px 10px;
     cursor: pointer;
@@ -6380,7 +6995,8 @@
   .gen-dropzone-inner {
     padding: 26px;
     text-align: center;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     color: #94a3b8;
     pointer-events: none;
@@ -6407,7 +7023,8 @@
     border: 1px solid #e2e8f0;
   }
   .gen-status {
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     color: #64748b;
     min-height: 18px;
@@ -6427,11 +7044,11 @@
     justify-content: center;
   }
   .gen-actions .btn-primary {
-    background: #334155;
-    color: #fff;
+    background: var(--ds-color-primary);
+    color: var(--ds-color-on-primary);
   }
-  .gen-actions .btn-primary:hover { background: #1e293b; }
-  .gen-actions .btn-primary:disabled { background: #64748b; opacity: 1; }
+  .gen-actions .btn-primary:hover { background: var(--ds-color-primary-hover); }
+  .gen-actions .btn-primary:disabled { background: var(--ds-color-primary-disabled); opacity: 1; }
   /* Toast de erro de persistência (Supabase / localStorage) */
   .persist-toast {
     position: fixed;
@@ -6442,7 +7059,8 @@
     color: #fff;
     padding: 14px 18px;
     border-radius: 10px;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     line-height: 1.45;
     box-shadow: 0 10px 28px rgba(220,38,38,0.28);
@@ -6481,7 +7099,8 @@
     gap: 18px;
     text-align: center;
     color: var(--muted);
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     padding: 40px;
   }
   .empty-state.visible { display: flex; }
@@ -6528,12 +7147,13 @@
   .pc-upload-btn {
     min-height: var(--btn-height);
     border-radius: var(--btn-radius);
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: var(--btn-font-size);
     font-weight: var(--btn-font-weight);
     letter-spacing: 0;
     line-height: 1.2;
-    padding: 8px var(--btn-pad-x);
+    padding: 0 var(--btn-pad-x);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -6644,13 +7264,13 @@
 
   .actions-menu-btn {
     background: transparent;
-    color: var(--btn-light-text);
+    color: var(--ds-text);
     border: none;
     justify-content: flex-start;
   }
   .actions-menu-btn:hover:not(:disabled) {
-    background: var(--btn-light-bg-hover);
-    color: #111827;
+    background: var(--ds-color-secondary-bg-hover);
+    color: var(--ds-text);
   }
 
   .btn-actions-menu-trigger {
@@ -6686,7 +7306,8 @@
   .studio-mode-select {
     width: 100%;
     box-sizing: border-box;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 300;
     color: var(--text);
@@ -6711,12 +7332,13 @@
   .studio-mode-trigger {
     width: 100%;
     min-height: var(--btn-height);
-    padding: 8px 11px;
+    padding: 0 14px;
     border: 1px solid rgba(203, 213, 225, 0.82);
     border-radius: var(--btn-radius);
     background: #fff;
-    color: #111827;
-    font-family: 'Inter Tight', sans-serif;
+    color: var(--ds-text);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 300;
     line-height: 1.2;
@@ -6765,7 +7387,8 @@
   .studio-mode-menu-group {
     padding: 7px 9px 4px;
     color: #94a3b8;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 12px;
     font-weight: 400;
     letter-spacing: 0;
@@ -6774,13 +7397,14 @@
   }
   .studio-mode-menu-btn {
     width: 100%;
-    min-height: 34px;
-    padding: 8px 10px;
+    min-height: var(--ds-btn-h);
+    padding: 0 12px;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--ds-btn-radius);
     background: transparent;
-    color: #4b5563;
-    font-family: 'Inter Tight', sans-serif;
+    color: var(--ds-text);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 300;
     line-height: 1.2;
@@ -6816,12 +7440,13 @@
   .cw-select-trigger {
     width: 100%;
     min-height: var(--btn-height);
-    padding: 8px 11px;
+    padding: 0 14px;
     border: 1px solid rgba(203, 213, 225, 0.82);
     border-radius: var(--btn-radius);
     background: #fff;
-    color: #111827;
-    font-family: 'Inter Tight', sans-serif;
+    color: var(--ds-text);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 300;
     line-height: 1.2;
@@ -6870,7 +7495,8 @@
   .cw-select-menu-group {
     padding: 7px 9px 4px;
     color: #94a3b8;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 12px;
     font-weight: 400;
     letter-spacing: 0;
@@ -6879,13 +7505,14 @@
   }
   .cw-select-option {
     width: 100%;
-    min-height: 34px;
-    padding: 8px 10px;
+    min-height: var(--ds-btn-h);
+    padding: 0 12px;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--ds-btn-radius);
     background: transparent;
-    color: #4b5563;
-    font-family: 'Inter Tight', sans-serif;
+    color: var(--ds-text);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 300;
     line-height: 1.2;
@@ -6925,7 +7552,8 @@
     background-repeat: no-repeat !important;
     background-position: right 10px center !important;
     color: #0f172a !important;
-    font-family: 'Inter Tight', sans-serif !important;
+    font-family: var(--ds-font) !important;
+    font-stretch: var(--ds-font-stretch) !important;
     font-size: 14px !important;
     font-weight: 300 !important;
     line-height: 1.35 !important;
@@ -7011,7 +7639,8 @@
     width: 36px;
     padding: 0;
     gap: 0;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     font-weight: 500;
   }
@@ -7036,7 +7665,8 @@
     background: #334155;
   }
   .slide-nav-label {
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     font-weight: 500;
     color: #64748b;
@@ -7050,7 +7680,8 @@
 
   /* ── CAROUSEL BADGE (sidebar) ── */
   .thumb-badge {
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     color: #94a3b8;
     font-weight: 400;
@@ -7302,40 +7933,67 @@
     align-items: center;
     justify-content: flex-start;
     gap: 12px;
-    padding: 8px 16px 0;
+    padding: 8px 16px 8px;
     box-sizing: border-box;
+    background: var(--ds-neutral-50);
   }
   .motion-reel-scaler[hidden] { display: none !important; }
 
   /* Toggle Player ↔ Grid (R12). */
+  /* Segmented control com indicador deslizante. O ::before atua como pill
+     branco que transita entre as duas opções via translateX baseado em
+     --active (0 = primeiro botão, 1 = segundo). Botões em si ficam
+     transparentes em cima do indicador. */
   .mr-view-toggle {
+    position: relative;
     display: flex;
-    gap: 4px;
-    background: rgba(0,0,0,0.05);
-    border-radius: 10px;
-    padding: 4px;
+    background: var(--ds-neutral-200);
+    border: 1px solid var(--ds-neutral-300);
+    border-radius: 8px;
+    padding: 3px;
     flex-shrink: 0;
+    --active: 0;
+  }
+  .mr-view-toggle::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: calc((100% - 6px) / 2);
+    background: var(--ds-neutral-800);
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+    transform: translateX(calc(var(--active) * 100%));
+    transition: transform 220ms cubic-bezier(0.4, 0.0, 0.2, 1);
+    z-index: 0;
   }
   .mr-view-btn {
+    position: relative;
+    z-index: 1;
     background: transparent;
-    color: #5C605D;
+    color: var(--ds-neutral-500);
     border: none;
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 500;
-    font-family: inherit;
+    padding: 6px 28px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 400;
+    font-family: 'Pathway Extreme', var(--ds-font);
+    font-stretch: 90%;
+    letter-spacing: 0.04em;
+    text-transform: capitalize;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    transition: background 120ms ease, color 120ms ease;
+    justify-content: center;
+    gap: 8px;
+    flex: 1 1 auto;
+    min-width: 130px;
+    transition: color 180ms ease;
   }
-  .mr-view-btn:hover { color: #1A1B1A; }
+  .mr-view-btn:hover { color: var(--ds-neutral-700); }
   .mr-view-btn.active {
-    background: #FFFFFF;
-    color: #1A1B1A;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    color: #ffffff;
   }
   .mr-view-btn .ph { font-size: 14px; }
 
@@ -7348,8 +8006,11 @@
   }
   .motion-reel-stage[data-view="player"] {
     height: 100%;
-    max-height: 640px;
+    max-height: 520px;
     aspect-ratio: 9 / 16;
+    /* Auto vertical margin centraliza o palco no espaço livre do scaler
+       após o toggle, mantendo o toggle ancorado em cima. */
+    margin: auto 0;
     background: var(--mr-cream);
     font-family: var(--mr-font-display);
     color: var(--mr-dark);
@@ -7396,7 +8057,8 @@
   }
   .mr-preview-label {
     color: #fff;
-    font-family: 'Inter Tight', sans-serif;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     letter-spacing: 0.04em;
     text-align: center;
@@ -8910,8 +9572,8 @@
         <div class="motion-reel-scaler" id="motionReelScaler" hidden>
           <!-- Toggle Player ↔ Grid view (R12) -->
           <div class="mr-view-toggle" id="mrViewToggle">
-            <button type="button" class="mr-view-btn active" data-view="player" onclick="setMotionReelViewMode('player')"><i class="ph ph-play"></i>Player</button>
-            <button type="button" class="mr-view-btn" data-view="grid" onclick="setMotionReelViewMode('grid')"><i class="ph ph-squares-four"></i>Grid</button>
+            <button type="button" class="mr-view-btn active" data-view="grid" onclick="setMotionReelViewMode('grid')"><i class="ph ph-squares-four"></i>Grid</button>
+            <button type="button" class="mr-view-btn" data-view="player" onclick="setMotionReelViewMode('player')"><i class="ph ph-play"></i>Player</button>
           </div>
           <div class="motion-reel-stage" id="motionReelStage">
             <!-- Conteúdo renderizado pelo Remotion Player ou Grid via mount.jsx -->
@@ -9797,9 +10459,13 @@ function buildSidebar() {
       <i class="ph ph-caret-up"></i>
     </button>
     <div class="actions-menu" id="actionsMenu">
+      ${isMotionReelMode() ? `
+      <button class="actions-menu-btn" type="button" onclick="closeActionsMenu(); openMotionReelMusicDialog()" title="Escolher trilha sonora do reel">
+        <i class="ph ph-music-notes"></i>Trilha
+      </button>` : `
       <button class="actions-menu-btn" type="button" onclick="closeActionsMenu(); openConfig()" title="Configurar Estilo">
         <i class="ph ph-sliders-horizontal"></i>Estilo
-      </button>
+      </button>`}
       <button class="actions-menu-btn" type="button" onclick="closeActionsMenu(); openGenerator()" title="${genLabelText || genLabel}">
         <i class="ph ph-plus"></i>Novo
       </button>
@@ -12578,6 +13244,12 @@ function setActiveLegend(text) {
 
 function updatePostControls(idx) {
   const panel = document.getElementById('postControls');
+  // Motion Reel não usa essa sidebar — formato/modelo/seção/escalas são
+  // controlados via dialog de edição de cena, não no painel lateral.
+  if (typeof isMotionReelMode === 'function' && isMotionReelMode()) {
+    panel.classList.remove('visible');
+    return;
+  }
   const post = getActivePost();
   if (!post || !post.isGenerated) {
     panel.classList.remove('visible');
@@ -13313,21 +13985,27 @@ function openColorDropdown(target, anchorEl) {
   dd.style.left = `${Math.max(12, left)}px`;
   dd.style.top  = `${Math.max(12, top)}px`;
   // Marca a célula ativa conforme a cor atual
-  const post = getActivePost();
-  const currentColor = post ? (
-    target === 'accent'         ? post.accent             :
-    target === 'dashCard'       ? post.dashCardColor      :
-    target === 'revistaBlock'   ? post.revistaBlockColor  :
-    target === 'splitBlock'     ? post.splitBlockColor    :
-    target === 'columnBlock'    ? post.columnBlockColor   :
-    target === 'frameColor'     ? post.frameColor         :
-    target === 'signalCard'     ? post.signalCardColor    :
-    target === 'signalIcon'     ? post.signalIconColor    :
-    target === 'logoCropwareBg' ? post.logoCropwareBgColor :
-    target === 'logoCropwareIcon' ? post.logoCropwareIconColor :
-    target === 'mockupBar'      ? post.mockupBarColor     :
-    post.overlayColor
-  ) : null;
+  let currentColor = null;
+  if (target === 'mrSceneOverlay') {
+    // R26: motion-reel — lê do draft de cena, não do post ativo.
+    currentColor = (typeof _mrSceneDraft !== 'undefined' && _mrSceneDraft) ? _mrSceneDraft.overlayColor : null;
+  } else {
+    const post = getActivePost();
+    currentColor = post ? (
+      target === 'accent'         ? post.accent             :
+      target === 'dashCard'       ? post.dashCardColor      :
+      target === 'revistaBlock'   ? post.revistaBlockColor  :
+      target === 'splitBlock'     ? post.splitBlockColor    :
+      target === 'columnBlock'    ? post.columnBlockColor   :
+      target === 'frameColor'     ? post.frameColor         :
+      target === 'signalCard'     ? post.signalCardColor    :
+      target === 'signalIcon'     ? post.signalIconColor    :
+      target === 'logoCropwareBg' ? post.logoCropwareBgColor :
+      target === 'logoCropwareIcon' ? post.logoCropwareIconColor :
+      target === 'mockupBar'      ? post.mockupBarColor     :
+      post.overlayColor
+    ) : null;
+  }
   // Cell [0]: sempre "Sem cor" — disponível em todos os pickers de cor.
   const cells = dd.querySelectorAll('.pc-color-cell');
   const firstCell = cells[0];
@@ -13392,12 +14070,22 @@ function applyAccentToCarouselSlides(color) {
 }
 
 function applyColorChoice(color, targetOverride) {
-  const post = getActivePost();
-  if (!post || !post.isGenerated) return;
-  const postEl = document.getElementById(post.id);
   const target = targetOverride !== undefined ? targetOverride : activeColorTarget;
   // Normaliza 'none' → 'transparent' antes de aplicar.
   if (color === 'none') color = 'transparent';
+  // R26: motion-reel scene overlay — fluxo separado (escreve no _mrSceneDraft,
+  // não em getActivePost). Retorna antes da lógica de post.
+  if (target === 'mrSceneOverlay') {
+    if (_mrSceneDraft) {
+      _mrSceneDraft.overlayColor = color === 'transparent' ? null : color;
+      if (typeof _syncMrSceneOverlayColor === 'function') _syncMrSceneOverlayColor(_mrSceneDraft);
+      if (typeof _refreshMrSceneEditPreview === 'function') _refreshMrSceneEditPreview();
+    }
+    return;
+  }
+  const post = getActivePost();
+  if (!post || !post.isGenerated) return;
+  const postEl = document.getElementById(post.id);
   if (target === 'accent') {
     if (!applyAccentToCarouselSlides(color)) {
       post.accent = color;
@@ -21856,8 +22544,8 @@ function scaleMotionReel() { /* layout 100% via CSS agora */ }
 // Toggle de visibilidade do palco. Chamado no fim de switchMode().
 // Quando entra em motion-reel: esconde post-scaler/slide-nav/empty-state,
 // View state: 'player' (preview com playback) | 'grid' (4×3 thumbs editáveis).
-// Persistido só em memória; default = 'player'.
-let _motionReelView = 'player';
+// Persistido só em memória; default = 'grid' (visão geral do reel primeiro).
+let _motionReelView = 'grid';
 
 function getActiveMotionReelConfig() {
   const reel = motionReels[currentMotionReel];
@@ -21874,6 +22562,11 @@ function setMotionReelViewMode(mode) {
   if (stage) stage.dataset.view = mode;
   document.querySelectorAll('.mr-view-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.view === mode);
+  });
+  // Indicador deslizante: --active = 0 (grid, primeiro) ou 1 (player, segundo).
+  // CSS faz a translateX animada do pill entre as duas posições.
+  document.querySelectorAll('.mr-view-toggle').forEach(t => {
+    t.style.setProperty('--active', mode === 'player' ? 1 : 0);
   });
   if (typeof window.setMotionReelView === 'function') {
     window.setMotionReelView(mode);
@@ -21987,8 +22680,7 @@ function openMotionReelSceneEditor(sceneId) {
   const regenBtn = document.getElementById('mrSceneRegenBtn');
   if (regenBtn) {
     regenBtn.disabled = isLocked;
-    regenBtn.style.opacity = isLocked ? '0.45' : '1';
-    regenBtn.style.cursor = isLocked ? 'not-allowed' : 'pointer';
+    // disabled prop já aplica opacity/cursor via .ds-btn:disabled — sem inline override.
     regenBtn.title = isLocked ? 'Cena fixa: regeração de conteúdo bloqueada' : 'Regerar conteúdo (com ou sem instrução)';
   }
   // Reset do estado de "reverter regeração" toda vez que abre o editor.
@@ -21999,7 +22691,7 @@ function openMotionReelSceneEditor(sceneId) {
   if (status) status.textContent = '';
   // R16 — sync visual do seletor de tema e do botão Desfazer.
   // Lê do DRAFT (já clonado), não da cena real.
-  const activeTheme = _mrSceneDraft.theme || cfg.theme || 'editorial';
+  const activeTheme = _mrSceneDraft.theme || cfg.theme || 'escuro';
   _syncMrThemeCardSelection(activeTheme);
   _syncMrUndoButton();
   // R19 — só mostra o controle "Trocar imagem" se a cena tem bgImage.
@@ -22036,54 +22728,140 @@ function _refreshMrSceneEditPreview() {
 
 // Default de blur "em repouso" por scene type (depois da entrada Ken Burns).
 // O slider permite override. null = usa o default da cena.
+// R26 — padronizado: todas as cenas com bg usam blur default 6 (mesmo valor
+// do MR_DEFAULT_SCENE_STYLE). Antes variava por cena (0, 8) e isso confundia
+// quando o usuário ajustava o slider e via efeitos diferentes em cenas diferentes.
 const MR_BG_BLUR_DEFAULTS = {
-  'brand-intro': 0, 'chapter': 0, 'quote': 0,
-  'headline': 8, 'scenario': 8, 'lower-third': 8, 'whatsapp-chat': 8,
-  'feature-list': 8, 'app-card': 0, 'keyword': 0,
+  'brand-intro': 6, 'chapter': 6, 'quote': 6,
+  'headline': 6, 'scenario': 6, 'lower-third': 6, 'whatsapp-chat': 6,
+  'feature-list': 6, 'app-card': 6, 'keyword': 6,
 };
 
 // True quando o tema ativo no draft é flat (sem imagens/texturas/overlays).
 function _mrIsFlatTheme() {
   if (!_mrSceneDraft) return false;
   const cfg = getActiveMotionReelConfig();
-  const themeName = _mrSceneDraft.theme || (cfg && cfg.theme) || 'editorial';
+  const rawName = _mrSceneDraft.theme || (cfg && cfg.theme) || 'escuro';
+  const themeName = _normalizeThemeName ? _normalizeThemeName(rawName) : rawName;
   return themeName === 'flatClaro' || themeName === 'flatEscuro';
 }
 
 function _syncMrSceneBgGroup(scene) {
   const group = document.getElementById('mrSceneBgGroup');
+  const overlayGroup = document.getElementById('mrSceneOverlayGroup');
   if (!group) return;
   const hasBg = scene && window.MR_SCENE_TYPES_WITH_BG && window.MR_SCENE_TYPES_WITH_BG.has(scene.type);
   group.style.display = hasBg ? '' : 'none';
+  if (overlayGroup) overlayGroup.style.display = hasBg ? '' : 'none';
   if (!hasBg) return;
   _syncMrSceneBgBlur(scene);
   _syncMrSceneBgOverlay(scene);
-  // Desabilita controles em temas flat (sem imagem).
+  _syncMrSceneOverlayColor(scene);
+  // Desabilita controles em temas flat (sem imagem/overlay).
   const flat = _mrIsFlatTheme();
-  group.style.opacity = flat ? 0.4 : 1;
-  group.style.pointerEvents = flat ? 'none' : '';
+  const opacity = flat ? 0.4 : 1;
+  const pe = flat ? 'none' : '';
+  group.style.opacity = opacity;
+  group.style.pointerEvents = pe;
+  if (overlayGroup) { overlayGroup.style.opacity = opacity; overlayGroup.style.pointerEvents = pe; }
+}
+
+// R26 — Atualiza o swatch + label do color picker do overlay com a cor
+// atual da cena. Quando null, exibe "Padrão do tema" e swatch translúcido.
+function _syncMrSceneOverlayColor(scene) {
+  const swatch = document.getElementById('mrOverlayColorSwatch');
+  const label = document.getElementById('mrOverlayColorLabel');
+  if (!swatch || !label) return;
+  const color = scene && scene.overlayColor;
+  if (color) {
+    swatch.style.background = color;
+    swatch.style.opacity = '1';
+    label.textContent = color.toUpperCase();
+  } else {
+    swatch.style.background = 'repeating-linear-gradient(45deg, #e5e5e5 0 4px, #fafafa 4px 8px)';
+    swatch.style.opacity = '0.7';
+    label.textContent = 'Padrão do tema';
+  }
+}
+window._syncMrSceneOverlayColor = _syncMrSceneOverlayColor;
+
+// Pinta a faixa preenchida do slider .ds-fineadjust com base no valor atual.
+// Lê min/max do elemento e escreve --fill (0-100) — o CSS usa pra desenhar o
+// gradient da trilha.
+function _paintFineAdjustFill(slider) {
+  if (!slider) return;
+  const min = Number(slider.min) || 0;
+  const max = Number(slider.max) || 100;
+  const v = Number(slider.value) || 0;
+  const pct = max > min ? ((v - min) / (max - min)) * 100 : 0;
+  slider.style.setProperty('--fill', String(pct));
+}
+
+// Mapeamento bipolar: posição do slider (0-100) ↔ valor de dados. Garante
+// que o valor default da cena caia exatamente no MEIO do slider (posição 50).
+// Esquerda do meio = 0 até default, direita = default até max. Slider mais
+// "intuitivo" — adjusts pra cima ou pra baixo do padrão têm o mesmo espaço.
+function _bipolarPosToData(pos, def, min, max) {
+  const p = Math.max(0, Math.min(100, Number(pos) || 0));
+  if (def <= min || def >= max) return min + (max - min) * (p / 100);
+  if (p <= 50) return min + (def - min) * (p / 50);
+  return def + (max - def) * ((p - 50) / 50);
+}
+function _bipolarDataToPos(data, def, min, max) {
+  const d = Math.max(min, Math.min(max, Number(data) || 0));
+  if (def <= min || def >= max) return ((d - min) / (max - min)) * 100;
+  if (d <= def) return 50 * (d - min) / (def - min);
+  return 50 + 50 * (d - def) / (max - def);
+}
+
+function _mrBgBlurDef(scene) {
+  return MR_BG_BLUR_DEFAULTS[scene.type] != null ? MR_BG_BLUR_DEFAULTS[scene.type] : 8;
 }
 
 function _syncMrSceneBgBlur(scene) {
   const slider = document.getElementById('mrSceneBgBlur');
-  const label = document.getElementById('mrSceneBgBlurValue');
-  if (!slider || !label) return;
-  const def = MR_BG_BLUR_DEFAULTS[scene.type] != null ? MR_BG_BLUR_DEFAULTS[scene.type] : 8;
+  const input = document.getElementById('mrSceneBgBlurValue');
+  if (!slider || !input) return;
+  const def = _mrBgBlurDef(scene);
   const px = scene.bgImageBlur != null ? scene.bgImageBlur : def;
-  slider.value = px;
-  label.textContent = `${px}px`;
+  slider.value = _bipolarDataToPos(px, def, 0, 30);
+  if (input !== document.activeElement) input.value = px;
+  _paintFineAdjustFill(slider);
 }
 
-function onMotionReelSceneBgBlur(value) {
+function onMotionReelSceneBgBlur(pos) {
   if (!_mrSceneDraft) return;
-  const px = Math.max(0, Math.min(30, Number(value)));
+  const def = _mrBgBlurDef(_mrSceneDraft);
+  const px = Math.round(_bipolarPosToData(pos, def, 0, 30));
   _mrSceneDraft.bgImageBlur = px;
-  const labelEl = document.getElementById('mrSceneBgBlurValue');
-  if (labelEl) labelEl.textContent = `${px}px`;
+  const input = document.getElementById('mrSceneBgBlurValue');
+  if (input && input !== document.activeElement) input.value = px;
+  _paintFineAdjustFill(document.getElementById('mrSceneBgBlur'));
   _refreshMrSceneEditPreview();
+}
+function onMotionReelSceneBgBlurInput(value) {
+  if (!_mrSceneDraft) return;
+  const px = Math.max(0, Math.min(30, Number(value) || 0));
+  _mrSceneDraft.bgImageBlur = px;
+  const slider = document.getElementById('mrSceneBgBlur');
+  if (slider) {
+    const def = _mrBgBlurDef(_mrSceneDraft);
+    slider.value = _bipolarDataToPos(px, def, 0, 30);
+    _paintFineAdjustFill(slider);
+  }
+  _refreshMrSceneEditPreview();
+}
+function stepMotionReelSceneBgBlur(delta) {
+  if (!_mrSceneDraft) return;
+  const def = _mrBgBlurDef(_mrSceneDraft);
+  const current = _mrSceneDraft.bgImageBlur != null ? _mrSceneDraft.bgImageBlur : def;
+  const next = Math.max(0, Math.min(30, current + delta));
+  onMotionReelSceneBgBlurInput(next);
 }
 
 window.onMotionReelSceneBgBlur = onMotionReelSceneBgBlur;
+window.onMotionReelSceneBgBlurInput = onMotionReelSceneBgBlurInput;
+window.stepMotionReelSceneBgBlur = stepMotionReelSceneBgBlur;
 
 function resetMotionReelSceneBgBlur() {
   if (!_mrSceneDraft) return;
@@ -22110,24 +22888,51 @@ const MR_BG_OVERLAY_DEFAULTS = {
   'keyword': 0.70,        // T.bg + b3
 };
 
-function _syncMrSceneBgOverlay(scene) {
-  const slider = document.getElementById('mrSceneBgOverlay');
-  const label = document.getElementById('mrSceneBgOverlayValue');
-  if (!slider || !label) return;
-  const def = MR_BG_OVERLAY_DEFAULTS[scene.type] != null ? MR_BG_OVERLAY_DEFAULTS[scene.type] : 0.6;
-  const opacity = scene.bgOverlayOpacity != null ? scene.bgOverlayOpacity : def;
-  const pct = Math.round(opacity * 100);
-  slider.value = pct;
-  label.textContent = `${pct}%`;
+function _mrBgOverlayDefPct(scene) {
+  const d = MR_BG_OVERLAY_DEFAULTS[scene.type] != null ? MR_BG_OVERLAY_DEFAULTS[scene.type] : 0.6;
+  return Math.round(d * 100);
 }
 
-function onMotionReelSceneBgOverlay(value) {
+function _syncMrSceneBgOverlay(scene) {
+  const slider = document.getElementById('mrSceneBgOverlay');
+  const input = document.getElementById('mrSceneBgOverlayValue');
+  if (!slider || !input) return;
+  const defPct = _mrBgOverlayDefPct(scene);
+  const opacity = scene.bgOverlayOpacity != null ? scene.bgOverlayOpacity : (defPct / 100);
+  const pct = Math.round(opacity * 100);
+  slider.value = _bipolarDataToPos(pct, defPct, 0, 100);
+  if (input !== document.activeElement) input.value = pct;
+  _paintFineAdjustFill(slider);
+}
+
+function onMotionReelSceneBgOverlay(pos) {
   if (!_mrSceneDraft) return;
-  const pct = Math.max(0, Math.min(100, Number(value)));
+  const defPct = _mrBgOverlayDefPct(_mrSceneDraft);
+  const pct = Math.round(_bipolarPosToData(pos, defPct, 0, 100));
   _mrSceneDraft.bgOverlayOpacity = pct / 100;
-  const labelEl = document.getElementById('mrSceneBgOverlayValue');
-  if (labelEl) labelEl.textContent = `${pct}%`;
+  const input = document.getElementById('mrSceneBgOverlayValue');
+  if (input && input !== document.activeElement) input.value = pct;
+  _paintFineAdjustFill(document.getElementById('mrSceneBgOverlay'));
   _refreshMrSceneEditPreview();
+}
+function onMotionReelSceneBgOverlayInput(value) {
+  if (!_mrSceneDraft) return;
+  const pct = Math.max(0, Math.min(100, Number(value) || 0));
+  _mrSceneDraft.bgOverlayOpacity = pct / 100;
+  const slider = document.getElementById('mrSceneBgOverlay');
+  if (slider) {
+    const defPct = _mrBgOverlayDefPct(_mrSceneDraft);
+    slider.value = _bipolarDataToPos(pct, defPct, 0, 100);
+    _paintFineAdjustFill(slider);
+  }
+  _refreshMrSceneEditPreview();
+}
+function stepMotionReelSceneBgOverlay(delta) {
+  if (!_mrSceneDraft) return;
+  const defPct = _mrBgOverlayDefPct(_mrSceneDraft);
+  const currentPct = _mrSceneDraft.bgOverlayOpacity != null ? Math.round(_mrSceneDraft.bgOverlayOpacity * 100) : defPct;
+  const nextPct = Math.max(0, Math.min(100, currentPct + delta));
+  onMotionReelSceneBgOverlayInput(nextPct);
 }
 
 function resetMotionReelSceneBgOverlay() {
@@ -22140,6 +22945,8 @@ function resetMotionReelSceneBgOverlay() {
 window.resetMotionReelSceneBgBlur = resetMotionReelSceneBgBlur;
 window.resetMotionReelSceneTextureIntensity = resetMotionReelSceneTextureIntensity;
 window.onMotionReelSceneBgOverlay = onMotionReelSceneBgOverlay;
+window.onMotionReelSceneBgOverlayInput = onMotionReelSceneBgOverlayInput;
+window.stepMotionReelSceneBgOverlay = stepMotionReelSceneBgOverlay;
 window.resetMotionReelSceneBgOverlay = resetMotionReelSceneBgOverlay;
 
 // Defaults pros controles de textura (se a cena não tiver props setados).
@@ -22148,89 +22955,142 @@ const MR_TEXTURE_INVERT_DEFAULT = true;
 
 function _syncMrSceneTextureGroup(scene) {
   const group = document.getElementById('mrSceneTextureGroup');
+  const adjustGroup = document.getElementById('mrSceneTextureAdjustGroup');
   if (!group) return;
   const hasTex = scene && window.MR_SCENE_TYPES_WITH_TEXTURE && window.MR_SCENE_TYPES_WITH_TEXTURE.has(scene.type);
   group.style.display = hasTex ? '' : 'none';
+  if (adjustGroup) adjustGroup.style.display = hasTex ? '' : 'none';
   if (!hasTex) return;
   _buildMrSceneTextureGrid(scene);
   _syncMrSceneTextureIntensity(scene);
   _syncMrSceneTextureInvert(scene);
   // Desabilita controles em temas flat (sem textura).
   const flat = _mrIsFlatTheme();
-  group.style.opacity = flat ? 0.4 : 1;
-  group.style.pointerEvents = flat ? 'none' : '';
+  const opacity = flat ? 0.4 : 1;
+  const pe = flat ? 'none' : '';
+  group.style.opacity = opacity;
+  group.style.pointerEvents = pe;
+  if (adjustGroup) { adjustGroup.style.opacity = opacity; adjustGroup.style.pointerEvents = pe; }
+}
+
+function _textureLabelFor(url) {
+  const pool = window.MR_TEXTURE_POOL_FULL || [];
+  const idx = pool.indexOf(url);
+  return idx >= 0 ? `Textura ${String(idx + 1).padStart(2, '0')}` : 'Textura';
 }
 
 function _buildMrSceneTextureGrid(scene) {
-  const grid = document.getElementById('mrSceneTextureGrid');
-  if (!grid) return;
-  // Monta o grid uma vez (lazy) — depois só atualiza qual está active.
-  if (grid.dataset.wired !== 'true') {
-    grid.dataset.wired = 'true';
+  const menu = document.getElementById('mrSceneTextureGrid');
+  if (!menu) return;
+  // Monta o menu de opções uma vez (lazy) — depois só atualiza qual está active.
+  if (menu.dataset.wired !== 'true') {
+    menu.dataset.wired = 'true';
     const pool = window.MR_TEXTURE_POOL_FULL || [];
-    pool.forEach(url => {
+    pool.forEach((url, i) => {
+      const label = `Textura ${String(i + 1).padStart(2, '0')}`;
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'pc-news-texture-thumb';
+      btn.className = 'ds-dropdown__option';
       btn.dataset.url = url;
-      btn.title = url.split('/').pop().replace(/\.(webp|jpg|jpeg|png)$/i, '');
-      const inner = document.createElement('span');
-      inner.className = 'pc-news-texture-thumb-inner';
-      inner.style.backgroundImage = `url('/${url}')`;
-      btn.appendChild(inner);
-      grid.appendChild(btn);
-    });
-    grid.addEventListener('click', e => {
-      const thumb = e.target.closest('.pc-news-texture-thumb');
-      if (!thumb) return;
-      _selectMrSceneTexture(thumb.dataset.url);
+      btn.dataset.label = label;
+      btn.setAttribute('role', 'option');
+      const swatch = document.createElement('span');
+      swatch.className = 'ds-dropdown__swatch ds-dropdown__swatch--texture';
+      swatch.style.backgroundImage = `url('/${url}')`;
+      btn.appendChild(swatch);
+      const lbl = document.createElement('span');
+      lbl.className = 'ds-dropdown__option-label';
+      lbl.textContent = label;
+      btn.appendChild(lbl);
+      const check = document.createElement('i');
+      check.className = 'ph ph-check ds-dropdown__check';
+      btn.appendChild(check);
+      btn.addEventListener('click', () => {
+        _selectMrSceneTexture(url);
+        closeDsDropdown('mrTextureDropdown');
+      });
+      menu.appendChild(btn);
     });
   }
-  const current = scene.bgTexture;
-  grid.querySelectorAll('.pc-news-texture-thumb').forEach(thumb => {
-    thumb.classList.toggle('active', thumb.dataset.url === current);
+  _syncMrTextureDropdownTrigger(scene.bgTexture);
+  menu.querySelectorAll('.ds-dropdown__option').forEach(opt => {
+    opt.classList.toggle('active', opt.dataset.url === scene.bgTexture);
   });
+}
+
+function _syncMrTextureDropdownTrigger(url) {
+  const swatch = document.getElementById('mrTextureDropdownSwatch');
+  const value = document.getElementById('mrTextureDropdownValue');
+  if (swatch && url) {
+    swatch.style.backgroundImage = `url('/${url}')`;
+  }
+  if (value) value.textContent = _textureLabelFor(url);
 }
 
 function _selectMrSceneTexture(url) {
   if (!_mrSceneDraft) return;
   _mrSceneDraft.bgTexture = url;
   _refreshMrSceneEditPreview();
-  const grid = document.getElementById('mrSceneTextureGrid');
-  if (grid) {
-    grid.querySelectorAll('.pc-news-texture-thumb').forEach(thumb => {
-      thumb.classList.toggle('active', thumb.dataset.url === url);
+  const menu = document.getElementById('mrSceneTextureGrid');
+  if (menu) {
+    menu.querySelectorAll('.ds-dropdown__option').forEach(opt => {
+      opt.classList.toggle('active', opt.dataset.url === url);
     });
   }
+  _syncMrTextureDropdownTrigger(url);
 }
+
+const MR_TEXTURE_OPACITY_DEFAULT_PCT = Math.round(MR_TEXTURE_OPACITY_DEFAULT * 100);
 
 function _syncMrSceneTextureIntensity(scene) {
   const slider = document.getElementById('mrSceneTextureIntensity');
-  const label = document.getElementById('mrSceneTextureIntensityValue');
-  if (!slider || !label) return;
+  const input = document.getElementById('mrSceneTextureIntensityValue');
+  if (!slider || !input) return;
   const opacity = scene.bgTextureOpacity != null ? scene.bgTextureOpacity : MR_TEXTURE_OPACITY_DEFAULT;
   const pct = Math.round(opacity * 100);
-  slider.value = pct;
-  label.textContent = `${pct}%`;
+  slider.value = _bipolarDataToPos(pct, MR_TEXTURE_OPACITY_DEFAULT_PCT, 0, 100);
+  if (input !== document.activeElement) input.value = pct;
+  _paintFineAdjustFill(slider);
 }
 
-function onMotionReelSceneTextureIntensity(value) {
+function onMotionReelSceneTextureIntensity(pos) {
   if (!_mrSceneDraft) return;
-  const pct = Math.max(0, Math.min(100, Number(value)));
+  const pct = Math.round(_bipolarPosToData(pos, MR_TEXTURE_OPACITY_DEFAULT_PCT, 0, 100));
   _mrSceneDraft.bgTextureOpacity = pct / 100;
-  const labelEl = document.getElementById('mrSceneTextureIntensityValue');
-  if (labelEl) labelEl.textContent = `${pct}%`;
+  const input = document.getElementById('mrSceneTextureIntensityValue');
+  if (input && input !== document.activeElement) input.value = pct;
+  _paintFineAdjustFill(document.getElementById('mrSceneTextureIntensity'));
   _refreshMrSceneEditPreview();
 }
+function onMotionReelSceneTextureIntensityInput(value) {
+  if (!_mrSceneDraft) return;
+  const pct = Math.max(0, Math.min(100, Number(value) || 0));
+  _mrSceneDraft.bgTextureOpacity = pct / 100;
+  const slider = document.getElementById('mrSceneTextureIntensity');
+  if (slider) {
+    slider.value = _bipolarDataToPos(pct, MR_TEXTURE_OPACITY_DEFAULT_PCT, 0, 100);
+    _paintFineAdjustFill(slider);
+  }
+  _refreshMrSceneEditPreview();
+}
+function stepMotionReelSceneTextureIntensity(delta) {
+  if (!_mrSceneDraft) return;
+  const currentPct = _mrSceneDraft.bgTextureOpacity != null
+    ? Math.round(_mrSceneDraft.bgTextureOpacity * 100)
+    : MR_TEXTURE_OPACITY_DEFAULT_PCT;
+  const nextPct = Math.max(0, Math.min(100, currentPct + delta));
+  onMotionReelSceneTextureIntensityInput(nextPct);
+}
+window.onMotionReelSceneTextureIntensityInput = onMotionReelSceneTextureIntensityInput;
+window.stepMotionReelSceneTextureIntensity = stepMotionReelSceneTextureIntensity;
 
 function _syncMrSceneTextureInvert(scene) {
   const btn = document.getElementById('mrSceneTextureInvertBtn');
   const label = document.getElementById('mrSceneTextureInvertLabel');
   if (!btn || !label) return;
   const inverted = scene.bgTextureInvert != null ? scene.bgTextureInvert : MR_TEXTURE_INVERT_DEFAULT;
-  btn.style.background = inverted ? '#111827' : '#f8fafc';
-  btn.style.color = inverted ? '#fff' : '#0f172a';
-  btn.style.borderColor = inverted ? '#111827' : '#e2e8f0';
+  btn.classList.toggle('ds-btn--toggle-active', inverted);
+  btn.classList.toggle('ds-btn--secondary', !inverted);
   label.textContent = inverted ? 'Cores invertidas' : 'Inverter cores';
 }
 
@@ -22277,7 +23137,7 @@ function restoreMotionReelSceneDefaults() {
   delete _mrSceneDraft.bgTextureInvert;
   // Re-sync UI a partir do draft limpo.
   const cfg = getActiveMotionReelConfig();
-  const fallbackTheme = (cfg && cfg.theme) || 'editorial';
+  const fallbackTheme = (cfg && cfg.theme) || 'escuro';
   _syncMrThemeCardSelection(fallbackTheme);
   _syncMrSceneBgGroup(_mrSceneDraft);
   _syncMrSceneTextureGroup(_mrSceneDraft);
@@ -22445,16 +23305,74 @@ function _syncMrUndoButton() {
   btn.style.display = stack.length ? 'inline-flex' : 'none';
 }
 
-function _syncMrThemeCardSelection(themeName) {
-  const cards = document.querySelectorAll('#mrThemeCards .mr-theme-card');
-  cards.forEach(c => c.classList.toggle('active', c.dataset.theme === themeName));
+// R26: temas legacy mapeiam pros novos no display do dropdown.
+const MR_THEME_LEGACY_MAP = {
+  editorial: 'escuro', vibrante: 'escuro', floresta: 'escuro',
+  granito: 'escuro', mineral: 'escuro', carbono: 'escuro',
+};
+
+function _normalizeThemeName(name) {
+  return MR_THEME_LEGACY_MAP[name] || name || 'escuro';
 }
+
+function _syncMrThemeCardSelection(themeName) {
+  const displayName = _normalizeThemeName(themeName);
+  const cards = document.querySelectorAll('#mrThemeCards .mr-theme-card');
+  cards.forEach(c => c.classList.toggle('active', c.dataset.theme === displayName));
+  // Atualiza o trigger do dropdown — swatch + label do tema ativo.
+  const trigger = document.getElementById('mrThemeDropdownSwatch');
+  const valueEl = document.getElementById('mrThemeDropdownValue');
+  if (trigger) {
+    // Remove qualquer classe mr-theme-preview--* anterior antes de adicionar a nova.
+    trigger.className = 'ds-dropdown__swatch mr-theme-preview--' + displayName;
+  }
+  if (valueEl) {
+    const active = Array.from(cards).find(c => c.dataset.theme === displayName);
+    valueEl.textContent = active ? (active.dataset.label || displayName) : displayName;
+  }
+}
+
+// ── ds-dropdown — helpers genéricos pra qualquer dropdown .ds-dropdown.
+// Use via onclick="toggleDsDropdown('myId', event)" no trigger e
+// onclick="...action(); closeDsDropdown('myId')" nas options.
+function toggleDsDropdown(dropdownId, event) {
+  if (event) event.stopPropagation();
+  const dd = document.getElementById(dropdownId);
+  if (!dd) return;
+  const wasOpen = dd.classList.contains('open');
+  // Fecha outros dropdowns abertos (single-open policy).
+  document.querySelectorAll('.ds-dropdown.open').forEach(d => {
+    if (d !== dd) d.classList.remove('open');
+  });
+  dd.classList.toggle('open', !wasOpen);
+}
+
+function closeDsDropdown(dropdownId) {
+  const dd = document.getElementById(dropdownId);
+  if (dd) dd.classList.remove('open');
+}
+
+// Click no doc fora de qualquer .ds-dropdown aberto fecha. Listener uma vez só.
+document.addEventListener('click', (e) => {
+  document.querySelectorAll('.ds-dropdown.open').forEach(dd => {
+    if (!dd.contains(e.target)) dd.classList.remove('open');
+  });
+});
+
+window.toggleDsDropdown = toggleDsDropdown;
+window.closeDsDropdown = closeDsDropdown;
+// Aliases retrocompat — chamadas existentes no HTML que ainda usam o nome
+// específico do dropdown de tema. Redirecionam pros genéricos.
+window.toggleMrThemeDropdown = (event) => toggleDsDropdown('mrThemeDropdown', event);
+window.closeMrThemeDropdown = () => closeDsDropdown('mrThemeDropdown');
 
 // Aplica tema na cena selecionada (override scene.theme). Push snapshot
 // antes pra permitir desfazer. Atualiza grid via updateMotionReelStoryboard.
 function applyMrSceneTheme(themeName) {
   if (!_mrSceneDraft) return;
-  const validThemes = new Set(['editorial', 'vibrante', 'floresta', 'granito', 'mineral', 'carbono', 'flatClaro', 'flatEscuro']);
+  // R26: temas atuais + legacy (mapeados via normalizeThemeName). Aceitamos
+  // os antigos pra não quebrar reels já salvos no localStorage.
+  const validThemes = new Set(['claro', 'escuro', 'flatClaro', 'flatEscuro', 'editorial', 'vibrante', 'floresta', 'granito', 'mineral', 'carbono']);
   if (!validThemes.has(themeName)) return;
   // Mutação só no draft. Commit acontece em submitMotionReelSceneEdit.
   _mrSceneDraft.theme = themeName;
@@ -22481,7 +23399,7 @@ function undoLastMrSceneEdit() {
   if (typeof window.updateMotionReelStoryboard === 'function') {
     window.updateMotionReelStoryboard(cfg);
   }
-  const restoredTheme = snap.theme || cfg.theme || 'editorial';
+  const restoredTheme = snap.theme || cfg.theme || 'escuro';
   _syncMrThemeCardSelection(restoredTheme);
   _syncMrUndoButton();
   setMrEditStatus('<i class="ph ph-arrow-counter-clockwise"></i> Última alteração desfeita.', 'success');
@@ -22579,6 +23497,10 @@ function updateMotionReelVisibility() {
     if (postScaler) postScaler.style.display = 'none';
     if (slideNav) slideNav.style.display = 'none';
     if (legendOpenRow) legendOpenRow.style.display = 'none';
+    // Esconde a sidebar de controles de post (Formato/Modelo/Seção/Hook/etc).
+    // Motion Reel usa o dialog de edição de cena pra ajustes finos.
+    const postCtrl = document.getElementById('postControls');
+    if (postCtrl) postCtrl.classList.remove('visible');
     const hasActiveReel = !!getActiveMotionReelConfig();
     const emptyEl = document.getElementById('emptyState');
     if (!hasActiveReel) {
@@ -22744,7 +23666,7 @@ TIPOS DE CENA (escolha o tipo certo pra cada momento — não repita mesmo tipo 
 
   Props:
     kicker  — curto, MAIÚSCULA, 2-3 palavras tipo "NA REGIÃO CERTA", "ANTES DA VISITA", "NA HORA DE DECIDIR", "DEPOIS DO CAMPO", "NA PRÓXIMA ROTA".
-    scenario — 2-3 frases curtas separadas por \n, MÁX 100-130 caracteres totais.
+    scenario — 2-3 frases curtas separadas por \n (CARACTERE ESCAPE de JSON, NÃO use <br/>, <br>, /n, ou \\\\n), MÁX 100-130 caracteres totais.
 
   VOCABULÁRIO A USAR (escolha o que combina com o tema):
     área demonstrativa, validação técnica, evidência de campo, dossiê técnico, posicionamento técnico,
@@ -22999,6 +23921,10 @@ VOICEOVER POR CENA (importante — leia tudo antes de gerar texto):
     [09] whatsapp-chat — o mockup da conversa é o conteúdo; voz atrapalha
     [10] quote         — as palavras na tela falam por si; narrar é redundante
 
+  CENAS COM VOICEOVER (OBRIGATÓRIO em TODAS as 7 listadas abaixo — não pule nenhuma):
+    [01] brand-intro · [02] headline · [05] feature-list · [06] scenario · [08] app-card · [11] lower-third · [12] end-card
+  Se você omitir voiceover de qualquer uma dessas 7 cenas (especialmente [11] lower-third e [12] end-card, que são o CTA final do reel), o resultado fica incompleto — o reel termina mudo justo no momento de conversão. NÃO esqueça.
+
   CENAS COM VOICEOVER (7 das 12) — diretrizes ESPECÍFICAS por tipo:
 
   [01] brand-intro (6s, locked) — abertura institucional, tom acolhedor.
@@ -23051,10 +23977,15 @@ VOICEOVER POR CENA (importante — leia tudo antes de gerar texto):
        Limite: 10 palavras.
        Ex: "Fala com a gente. Tira suas dúvidas no WhatsApp agora."
 
-  [12] end-card (5s, locked) — assinatura. Encerra com a marca + handle falado.
+  [12] end-card (5s, locked) — assinatura. Encerra com posicionamento + handle falado.
        "Arroba cropware ponto app" (escreva por extenso, não use "@").
-       Limite: 10 palavras.
-       Ex: "O agro é Cropware. Em arroba cropware ponto app."
+       Limite: 12 palavras.
+       Posicionamento: o app é pra QUEM CONSTRÓI MERCADO no campo (RTV, promotor,
+       CDM, gestor de carteira, consultor técnico) — NÃO é "app pro produtor",
+       NÃO use "o agro é Cropware". Eco do visual: "INTELIGÊNCIA PARA QUEM
+       CONSTRÓI MERCADO" (uppercase, 2 linhas). Não repita literal — parafraseie.
+       Ex: "Inteligência para quem constrói mercado. Em arroba cropware ponto app."
+       Ex: "Cropware. A inteligência de quem constrói mercado no campo. Em arroba cropware ponto app."
 
   REGRAS GERAIS DO TEXTO:
     - PT-BR natural, sem inglês ou jargão técnico desnecessário
@@ -23096,43 +24027,31 @@ OVERLAYS DECORATIVOS (scene.overlays — opcional, array, máx 2 por cena, NÃO 
   • { "type": "vignette-breath", color (escuro), intensity (0-1, default 0.45) }
     Vinheta radial pulsando. Bom em cenas dark pra dar profundidade.
 
-TEMA VISUAL (R16, top-level + override por cena, opcional):
-  Adicione "theme" no NÍVEL RAIZ do storyboard pra definir a paleta visual
-  de todas as 6 cenas customizáveis. Locked scenes não são afetadas (são
-  hardcoded com identidade Cropware).
+TEMA VISUAL (R26, top-level + override por cena, opcional):
+  Adicione "theme" no NÍVEL RAIZ do storyboard pra definir o modo visual de
+  todas as cenas customizáveis. Locked scenes não são afetadas.
 
-  3 temas disponíveis (escolha 1 baseado no MOOD pretendido):
-    • "editorial" (default): slate escuro + verde profundo. Mood premium,
-      calmo, cinematográfico. Bom pra: reels institucionais sérios,
-      lançamentos de tecnologia, comunicação B2B.
-    • "vibrante":  verde brilhante dominante + slate médio. Mood energético,
-      expansivo, juvenil. Bom pra: campanhas virais, "uau" momentos,
-      anúncios de promoção/safra.
-    • "floresta":  verde escuro médio (greenForest) + accent verde claro.
-      Mood imersivo, natureza viva, conexão com o campo. Bom pra: campanhas
-      de identidade Cropware, temas de bioma, dados de campo, monitoramento.
-    • "granito":   slate médio escuro (slateDark) + verde Cropware oficial.
-      Mood sólido, corporativo equilibrado, mid-tone neutro com identidade.
-      Bom pra: lançamentos de produto, reels técnicos, demonstrações.
-    • "mineral":   slate cinza-verde (slateMid) + verde Cropware + tipografia firme.
-      Mood lab/precisão, neutro com caráter. Bom pra: validação técnica,
-      relatórios, comparativos, narrativa analítica.
-    • "carbono":   slate quase preto (slateAbyss) + verde escuro sóbrio (greenForest).
-      Mood premium sombrio, autoridade, alto contraste subdued. Bom pra:
-      cases de sucesso premium, posicionamento sênior, comunicação institucional.
-    • "flatClaro": fundo branco puro, texto preto, accent verde Cropware. SEM
-      imagens, texturas ou overlays — apenas a cor sólida. Mood minimalista,
-      direto, vibe tipografia. Bom pra: comunicação institucional clean,
-      manifestos, mensagens diretas.
-    • "flatEscuro": fundo verde quase preto (greenAbyss), texto branco, accent
-      verde claro. SEM imagens, texturas ou overlays. Espelho escuro do flat
-      claro. Bom pra: lançamentos sóbrios, alta autoridade, narrativa noturna.
+  4 temas disponíveis:
+    • "escuro" (default): bg escuro (slate/greenAbyss), texto branco e accent
+      verde claro. Mood premium, autoridade, alto contraste. Bom pra reels
+      institucionais sérios, lançamentos, cases premium.
+    • "claro": bg claro (cream/white), texto e ícones em verde escuro + slate.
+      Mood editorial luminoso, ar de fotojornalismo, leitura limpa.
+    • "flatClaro": fundo branco sólido, sem imagens/texturas/overlays. Texto
+      preto, accent verde escuro. Minimalista, manifesto, tipografia.
+    • "flatEscuro": fundo verde quase preto, sem imagens/texturas/overlays.
+      Texto branco, accent verde claro. Espelho escuro do flat claro.
 
-  Cada cena pode opcionalmente OVERRIDE com seu próprio "theme" (mesma lista).
-  Use só pra contraste pontual — manter coerência visual no reel todo é melhor.
+  OVERLAY (apenas escuro/claro, opcional):
+  Cada cena pode declarar "overlayColor" em hex (ex: "#143F2C") pra
+  customizar a cor do glass overlay sobre a imagem de fundo. Se omitido,
+  usa o default do tema. NÃO use em flat — flat ignora overlay.
 
-  Ex: { "duration": 60, "theme": "vibrante", "scenes": [ ... ] }
-  Ex (override): { ..., "scenes": [{ ..., "theme": "crepusculo" }, ...] }
+  REGRA R27: NÃO declare "theme" por cena. O sistema força "escuro" em todas
+  as cenas (exceto end-card locked) pra garantir unidade visual do reel.
+  Use overlayColor por cena se quiser variar a cor do tint sobre a foto.
+  Ex: { "duration": 60, "theme": "escuro", "scenes": [ ... ] }
+  Ex (overlay): { ..., "scenes": [{ ..., "overlayColor": "#2A7B5A" }, ...] }
 
 ESTRUTURA OBRIGATÓRIA (R12 — formato 6+6, fixas + customizáveis):
   Gere SEMPRE 12 cenas, sendo 5 FIXAS e 7 CUSTOMIZÁVEIS pelo tema.
@@ -23161,12 +24080,12 @@ ESTRUTURA OBRIGATÓRIA (R12 — formato 6+6, fixas + customizáveis):
        { "id": "intro", "type": "brand-intro", "locked": true,
          "transitionIn": { "type": "fade", "dur": 0.3, "easing": "out-expo" } }
 
-  [04] chapter LOCKED:
-       { "id": "chapter-1", "type": "chapter", "locked": true,
+  [05] chapter LOCKED (Cap. 2 — "No campo, onde toda decisão começa"):
+       { "id": "chapter-1", "type": "chapter", "locked": true, "chapterNumber": 2,
          "transitionIn": { "type": "light-leak", "dur": 1.0 } }
 
-  [07] chapter LOCKED:
-       { "id": "chapter-2", "type": "chapter", "locked": true,
+  [07] chapter LOCKED (Cap. 3 — "Em tempo real, toda informação que o agro precisa"):
+       { "id": "chapter-2", "type": "chapter", "locked": true, "chapterNumber": 3,
          "transitionIn": { "type": "cinematic-blur", "dur": 0.6 } }
 
   [11] lower-third LOCKED:
@@ -23239,10 +24158,10 @@ EXEMPLO COMPLETO (storyboard minimal — pra você ver o formato esperado):
       "voiceover": { "text": "Monitoramento, diagnóstico e histórico — tudo na sua mão." },
       "transitionIn": { "type": "push-up", "dur": 0.5, "easing": "in-out-cubic" } },
     { "id": "end", "start": 18, "end": 22, "type": "end-card",
-      "logoUrl": "logo-cropware-pb-final.svg", "tagline": "O agro é Cropware.", "handle": "@cropware.app",
+      "logoUrl": "logo-cropware-pb-final.svg", "tagline": "INTELIGÊNCIA PARA QUEM CONSTRÓI MERCADO", "handle": "@cropware.app",
       "bg": "var(--mr-slateAbyss)", "fg": "var(--mr-white)",
       "background": { "type": "gradient", "gradient": { "kind": "breathing-radial", "colors": ["var(--mr-greenAbyss)", "var(--mr-slateAbyss)"], "breathScale": 1.08 } },
-      "voiceover": { "text": "Encontra a gente em arroba cropware ponto app." },
+      "voiceover": { "text": "Inteligência para quem constrói mercado. Em arroba cropware ponto app." },
       "transitionIn": { "type": "ring-tunnel", "dur": 0.7, "easing": "in-out-cubic", "sfx": "impact-thud", "sfxVolume": 0.09 } }
   ]
 }
@@ -23458,17 +24377,33 @@ function mrSeededRandom(seed) {
   };
 }
 
-function mrAssignRandomSceneThemes(scenes, seed) {
-  const names = ['editorial', 'vibrante', 'floresta', 'granito', 'mineral', 'carbono', 'flatClaro', 'flatEscuro'];
-  const rand = mrSeededRandom(seed);
-  let prev = '';
-  (scenes || []).forEach((scene, idx) => {
-    if (!scene || scene.theme) return;
-    let options = names.filter(name => name !== prev);
-    if (idx === 0) options = names;
-    const picked = options[Math.floor(rand() * options.length)] || names[0];
-    scene.theme = picked;
-    prev = picked;
+// R26: aplica defaults de estilo padronizados a TODAS as cenas que ainda
+// não setaram esses props. O padrão de geração inicial é uniforme: tema
+// "escuro" (texto claro), textura-005, desfoque leve, overlay com cor verde
+// escura (#1e5550) e intensidade média. Usuário customiza por cena no
+// editor; reels regerados perdem esses defaults só nas cenas modificadas.
+const MR_DEFAULT_SCENE_STYLE = {
+  theme: 'escuro',
+  bgTexture: 'motion-reel/texture-pool/texture-pool-005.webp',
+  bgTextureOpacity: 0.22,
+  bgImageBlur: 6,
+  overlayColor: '#1e5550',
+  bgOverlayOpacity: 0.55,
+};
+
+function mrAssignRandomSceneThemes(scenes /*, seed */) {
+  (scenes || []).forEach(scene => {
+    if (!scene) return;
+    // R27: força "escuro" (texto claro) em TODAS as cenas exceto end-card —
+    // o end-card é locked, hardcoded com paleta clara (logo verde, botões
+    // brancos). IA por vezes sorteia "claro" no slide 8 (app-card) ou outras
+    // e isso quebra a unidade visual do reel; sobrescrevemos sem dó.
+    if (scene.type !== 'end-card') scene.theme = MR_DEFAULT_SCENE_STYLE.theme;
+    if (scene.bgTexture == null) scene.bgTexture = MR_DEFAULT_SCENE_STYLE.bgTexture;
+    if (scene.bgTextureOpacity == null) scene.bgTextureOpacity = MR_DEFAULT_SCENE_STYLE.bgTextureOpacity;
+    if (scene.bgImageBlur == null) scene.bgImageBlur = MR_DEFAULT_SCENE_STYLE.bgImageBlur;
+    if (scene.overlayColor == null) scene.overlayColor = MR_DEFAULT_SCENE_STYLE.overlayColor;
+    if (scene.bgOverlayOpacity == null) scene.bgOverlayOpacity = MR_DEFAULT_SCENE_STYLE.bgOverlayOpacity;
   });
 }
 
@@ -23540,12 +24475,10 @@ window.mrPickRandomBg = pickRandomBg;
 // Texturas B&W (linhas, dots, halftone, wavy) que entram como camada
 // decorativa sobre o bgImage. Pool atualizado por
 // `node scripts/convert-texture-pool.mjs`.
-const TEXTURE_POOL_SIZE = 10;
+const TEXTURE_POOL_SIZE = 22;
 const TEXTURE_POOL_ANCHORS = [
-  // Texturas com nomes semânticos que vivem em texture-pool/ junto com as
-  // numeradas. Usadas como defaults pelos scene components também.
-  'motion-reel/texture-pool/topographic-curves.webp',
-  'motion-reel/texture-pool/13-texture.webp',
+  // Anchors semânticos removidos — pool agora é 100% numerado (001-022)
+  // ordenado da textura MAIS CLARA pra mais escura via luminance média.
 ];
 const TEXTURE_POOL_FULL = [
   ...TEXTURE_POOL_ANCHORS,
@@ -23607,7 +24540,9 @@ function mrValidateStoryboard(parsed, targetDuration) {
   });
   // R16: aceita storyboard.theme + scene.theme override. Reels antigos sem
   // theme → 'editorial' (mesmo visual de antes).
-  const validThemes = new Set(['editorial', 'vibrante', 'floresta', 'granito', 'mineral', 'carbono', 'flatClaro', 'flatEscuro']);
+  // R26: temas atuais + legacy (mapeados via normalizeThemeName). Aceitamos
+  // os antigos pra não quebrar reels já salvos no localStorage.
+  const validThemes = new Set(['claro', 'escuro', 'flatClaro', 'flatEscuro', 'editorial', 'vibrante', 'floresta', 'granito', 'mineral', 'carbono']);
   if (parsed.theme && !validThemes.has(parsed.theme)) delete parsed.theme;
   const validTypes = new Set(['brand-intro', 'keyword', 'headline', 'quote', 'feature-list', 'end-card', 'cta', 'chapter', 'lower-third', 'scenario', 'app-card', 'whatsapp-chat']);
   const validTransitions = new Set(['cut', 'fade', 'wipe-up', 'wipe-down', 'push-up', 'push-left', 'mask-circle', 'flash', 'zoom-blur', 'light-leak', 'cinematic-blur', 'ring-tunnel', 'glitch', 'slide-radial', 'glass-frost', 'iris-square', 'drift-fade', 'light-streak']);
@@ -23615,6 +24550,32 @@ function mrValidateStoryboard(parsed, targetDuration) {
   const validOverlayTypes = new Set(['rotating-rings', 'pulse-circle', 'particle-drift', 'line-draw', 'curve-trace', 'light-streak', 'vignette-breath']);
   const scenes = parsed.scenes.filter(s => validTypes.has(s.type));
   if (!scenes.length) throw new Error('Nenhuma cena com tipo válido.');
+  // R26: força chapterNumber correto baseado no id da cena (chapter-1 = cap 2,
+  // chapter-2 = cap 3). A IA frequentemente omite esse campo e os 2 chapters
+  // viram duplicados (ambos renderizam cap 2 por default).
+  scenes.forEach(s => {
+    if (s.type === 'chapter') {
+      if (s.id === 'chapter-1') s.chapterNumber = 2;
+      else if (s.id === 'chapter-2') s.chapterNumber = 3;
+      else if (s.chapterNumber == null) s.chapterNumber = 2;
+    }
+  });
+  // R27: normaliza quebras de linha em campos de texto. IA às vezes retorna
+  // "<br/>", "<br>", "<br />" ou "\\n" literal em vez de \n real — esses
+  // renderizam como texto cru no Remotion (que só converte \n via white-space:
+  // pre-line). Cobre todos os strings das cenas defensivamente.
+  const _normalizeBreaks = (val) => {
+    if (typeof val !== 'string') return val;
+    return val
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/\\n/g, '\n')
+      .replace(/\r\n/g, '\n');
+  };
+  scenes.forEach(s => {
+    Object.keys(s).forEach(k => {
+      if (typeof s[k] === 'string') s[k] = _normalizeBreaks(s[k]);
+    });
+  });
   mrAssignRandomSceneThemes(scenes, `${Date.now()}-${Math.random()}-${parsed.theme || ''}`);
   // Renormaliza timing: respeita as proporções da IA mas força encadeamento limpo.
   // R7: cenas mais longas (4.5-7s) pra alvo de 60s.
@@ -23730,7 +24691,7 @@ function mrValidateStoryboard(parsed, targetDuration) {
     duration: target,
     brand: 'Cropware',
     logoUrl: 'logo-cropware-pb-final.svg',
-    theme: parsed.theme || 'editorial',
+    theme: parsed.theme || 'escuro',
     scenes,
     ...(defaultAudio ? { audio: defaultAudio } : {}),
   };
@@ -23843,6 +24804,34 @@ function _motionReelsStorageKey() {
 }
 function normalizeMotionReelConfig(cfg) {
   if (!cfg || !Array.isArray(cfg.scenes)) return cfg;
+  // R27: normaliza quebras de linha em campos string. Reels gerados antes do
+  // fix podem ter "<br/>" cru salvos em scene.scenario, etc — corrigimos
+  // toda vez que o reel é lido, fica idempotente.
+  cfg.scenes.forEach(scene => {
+    if (!scene) return;
+    Object.keys(scene).forEach(k => {
+      if (typeof scene[k] === 'string') {
+        scene[k] = scene[k]
+          .replace(/<br\s*\/?>/gi, '\n')
+          .replace(/\\n/g, '\n')
+          .replace(/\r\n/g, '\n');
+      }
+    });
+  });
+  // R27: substitui narração antiga do end-card pela versão reposicionada —
+  // só quando bate um dos padrões legacy conhecidos, evita sobrescrever
+  // customizações manuais. Inclui a primeira versão "pra" → atual "para".
+  const NEW_ENDCARD_VO = 'Inteligência para quem constrói mercado. Em arroba cropware ponto app.';
+  cfg.scenes.forEach(scene => {
+    if (scene && scene.type === 'end-card' && scene.voiceover && typeof scene.voiceover.text === 'string') {
+      const t = scene.voiceover.text.trim();
+      if (/^O agro é Cropware\.?\s*(Em arroba cropware ponto app\.?)?\s*$/i.test(t) ||
+          /^Encontra a gente em arroba cropware ponto app\.?\s*$/i.test(t) ||
+          /^Intelig[êe]ncia pra quem constr[óo]i mercado\.?\s*(Em arroba cropware ponto app\.?)?\s*$/i.test(t)) {
+        scene.voiceover.text = NEW_ENDCARD_VO;
+      }
+    }
+  });
   cfg.scenes.forEach(scene => {
     if (!scene) return;
     if (scene.type === 'quote') {
@@ -24116,6 +25105,132 @@ window.addEventListener('resize', () => {
   if (isMotionReelMode()) scaleMotionReel();
 });
 
+// R24 — registry de trilhas sonoras. Cada trilha é { id, label, description, url }.
+// Pra adicionar: drop o MP3 em public/audio/, rode
+// `node scripts/upload-motion-reel-music.mjs` e adicione uma entrada aqui.
+const MR_R2_AUDIO = 'https://cropware-r2-worker.leonardoterra-comercial.workers.dev/images/studio/_motion-reel/audio';
+const MR_MUSIC_TRACKS = [
+  {
+    id: 'country-western-viacheslav',
+    label: 'Country Western · Viacheslav',
+    description: 'Acústico, leve, vibe americana — padrão atual.',
+    url: `${MR_R2_AUDIO}/viacheslavstarostin-country-western-texas-background-music-361672.mp3`,
+  },
+  {
+    id: 'the-mountain',
+    label: 'The Mountain · Western',
+    description: 'Tom expansivo, paisagem aberta.',
+    url: `${MR_R2_AUDIO}/the_mountain-american-western-country-496543.mp3`,
+  },
+  {
+    id: 'tatamusic-country',
+    label: 'Country Texas · Tatamusic',
+    description: 'Country clássico, ritmo médio.',
+    url: `${MR_R2_AUDIO}/tatamusic-country-western-texas-background-music-394850.mp3`,
+  },
+  {
+    id: 'tatamusic-texas',
+    label: 'Texas Country · Tatamusic',
+    description: 'Variação mais quente do country Texas.',
+    url: `${MR_R2_AUDIO}/tatamusic-texas-country-western-background-music-409388.mp3`,
+  },
+  {
+    id: 'ikoliks-1',
+    label: 'Country Western · Ikoliks I',
+    description: 'Cordas acústicas, atmosfera serena.',
+    url: `${MR_R2_AUDIO}/ikoliks_aj-country-western-texas-music-468205.mp3`,
+  },
+  {
+    id: 'ikoliks-2',
+    label: 'Country Texas · Ikoliks II',
+    description: 'Variação da trilha Ikoliks, mais dinâmica.',
+    url: `${MR_R2_AUDIO}/ikoliks_aj-country-texas-western-music-527054.mp3`,
+  },
+  {
+    id: 'tunetank-american',
+    label: 'American Western · Tunetank',
+    description: 'Western contemporâneo, percussão presente.',
+    url: `${MR_R2_AUDIO}/tunetank-american-western-country-350098.mp3`,
+  },
+  {
+    id: 'hitslab-cowboy',
+    label: 'Cowboy Texas · Hitslab',
+    description: 'Vibe cowboy, instrumentação tradicional.',
+    url: `${MR_R2_AUDIO}/hitslab-country-texas-cowboy-background-music-325578.mp3`,
+  },
+  {
+    id: 'viacheslav-western',
+    label: 'Western Country · Viacheslav II',
+    description: 'Segunda variação do mesmo artista, mais grave.',
+    url: `${MR_R2_AUDIO}/viacheslavstarostin-western-country-texas-background-music-471922.mp3`,
+  },
+  {
+    id: 'alexgrohl-country',
+    label: 'Country · AlexGrohl',
+    description: 'Country direto, sem ornamentos.',
+    url: `${MR_R2_AUDIO}/alexgrohl-country-music-470589.mp3`,
+  },
+  {
+    id: 'backroads',
+    label: 'Backroads Country',
+    description: 'Estrada, viagem, country relaxado.',
+    url: `${MR_R2_AUDIO}/45451848-backroads-country-music-381194.mp3`,
+  },
+  {
+    id: 'juliush-bluegrass',
+    label: 'Bluegrass · Banjo & Harmonica',
+    description: 'Banjo + gaita, vibe rural alegre.',
+    url: `${MR_R2_AUDIO}/juliush-bluegrass-banjo-amp-harmonica-1938.mp3`,
+  },
+];
+window.MR_MUSIC_TRACKS = MR_MUSIC_TRACKS;
+
+function openMotionReelMusicDialog() {
+  const dialog = document.getElementById('mrMusicDialog');
+  const list = document.getElementById('mrMusicTrackList');
+  if (!dialog || !list) return;
+  const cfg = getActiveMotionReelConfig();
+  const currentUrl = (cfg && cfg.audio && (cfg.audio.music || cfg.audio.src)) || '';
+  list.innerHTML = MR_MUSIC_TRACKS.map(t => {
+    const active = t.url === currentUrl;
+    return `
+    <button type="button" class="ds-track-card${active ? ' ds-track-card--active' : ''}" onclick="selectMotionReelMusicTrack('${t.id}')">
+      <i class="ph ph-music-note ds-track-card__icon"></i>
+      <div class="ds-track-card__body">
+        <div class="ds-track-card__title">${t.label}</div>
+        <div class="ds-track-card__desc">${t.description || ''}</div>
+      </div>
+      ${active ? '<i class="ph ph-check-circle-fill ds-track-card__check"></i>' : ''}
+    </button>`;
+  }).join('');
+  dialog.classList.add('open');
+}
+
+function closeMotionReelMusicDialog() {
+  const dialog = document.getElementById('mrMusicDialog');
+  if (dialog) dialog.classList.remove('open');
+}
+
+function selectMotionReelMusicTrack(trackId) {
+  const track = MR_MUSIC_TRACKS.find(t => t.id === trackId);
+  if (!track) return;
+  const reel = motionReels[currentMotionReel];
+  const cfg = getActiveMotionReelConfig();
+  if (!cfg) return;
+  cfg.audio = { ...(cfg.audio || {}), music: track.url };
+  if (reel && reel.config) reel.config = cfg;
+  saveMotionReelsToLocal();
+  if (typeof window.updateMotionReelStoryboard === 'function') {
+    window.updateMotionReelStoryboard(cfg);
+  }
+  // Reinicia a playback do frame 0 — assim a música nova começa junto com o
+  // reel ao invés de cair no meio (Player mantinha o tempo atual ao trocar).
+  if (typeof window.restartMotionReelPlayback === 'function') {
+    window.restartMotionReelPlayback();
+  }
+  closeMotionReelMusicDialog();
+}
+
 // Exposto globalmente pra console + handlers do app.
 window.MOTION_REEL_CONFIG = MOTION_REEL_CONFIG;
 window.generateMotionReel = generateMotionReel;
@@ -24126,6 +25241,9 @@ window.closeMotionReelSceneEditor = closeMotionReelSceneEditor;
 window.submitMotionReelSceneEdit = submitMotionReelSceneEdit;
 window.openMotionReelScenePreview = openMotionReelScenePreview;
 window.closeMotionReelScenePreview = closeMotionReelScenePreview;
+window.openMotionReelMusicDialog = openMotionReelMusicDialog;
+window.closeMotionReelMusicDialog = closeMotionReelMusicDialog;
+window.selectMotionReelMusicTrack = selectMotionReelMusicTrack;
 
 </script>
 
@@ -24194,6 +25312,19 @@ window.closeMotionReelScenePreview = closeMotionReelScenePreview;
   </div>
 </div>
 
+<!-- Modal de seleção de trilha sonora (R24 — só motion-reel) -->
+<div class="gen-modal" id="mrMusicDialog">
+  <div class="gen-modal-box" style="width:560px;max-width:90vw">
+    <div class="gen-modal-header">
+      <span>Trilha sonora</span>
+      <button class="gen-close" onclick="closeMotionReelMusicDialog()"><i class="ph ph-x"></i></button>
+    </div>
+    <div class="gen-body">
+      <div id="mrMusicTrackList" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+  </div>
+</div>
+
 <!-- Modal de edição de cena: tema visual + edição IA + undo (R16) -->
 <div class="gen-modal" id="mrSceneEditModal">
   <div class="gen-modal-box mr-scene-edit-box">
@@ -24203,114 +25334,139 @@ window.closeMotionReelScenePreview = closeMotionReelScenePreview;
     </div>
     <div class="gen-body">
       <div class="mr-edit-controls">
-      <div class="gen-group">
-        <label>Tema visual</label>
-        <div class="mr-theme-cards" id="mrThemeCards">
-          <button class="mr-theme-card" data-theme="editorial" onclick="applyMrSceneTheme('editorial')" type="button" aria-label="Tema editorial" title="Editorial">
-            <div class="mr-theme-preview mr-theme-preview--editorial"></div>
-            <span class="mr-theme-label">Editorial</span>
-            <span class="mr-theme-check" aria-hidden="true"></span>
-          </button>
-          <button class="mr-theme-card" data-theme="vibrante" onclick="applyMrSceneTheme('vibrante')" type="button" aria-label="Tema vibrante" title="Vibrante">
-            <div class="mr-theme-preview mr-theme-preview--vibrante"></div>
-            <span class="mr-theme-label">Vibrante</span>
-            <span class="mr-theme-check" aria-hidden="true"></span>
-          </button>
-          <button class="mr-theme-card" data-theme="floresta" onclick="applyMrSceneTheme('floresta')" type="button" aria-label="Tema floresta" title="Floresta">
-            <div class="mr-theme-preview mr-theme-preview--floresta"></div>
-            <span class="mr-theme-label">Floresta</span>
-            <span class="mr-theme-check" aria-hidden="true"></span>
-          </button>
-          <button class="mr-theme-card" data-theme="granito" onclick="applyMrSceneTheme('granito')" type="button" aria-label="Tema granito" title="Granito">
-            <div class="mr-theme-preview mr-theme-preview--granito"></div>
-            <span class="mr-theme-label">Granito</span>
-            <span class="mr-theme-check" aria-hidden="true"></span>
-          </button>
-          <button class="mr-theme-card" data-theme="mineral" onclick="applyMrSceneTheme('mineral')" type="button" aria-label="Tema mineral" title="Mineral">
-            <div class="mr-theme-preview mr-theme-preview--mineral"></div>
-            <span class="mr-theme-label">Mineral</span>
-            <span class="mr-theme-check" aria-hidden="true"></span>
-          </button>
-          <button class="mr-theme-card" data-theme="carbono" onclick="applyMrSceneTheme('carbono')" type="button" aria-label="Tema carbono" title="Carbono">
-            <div class="mr-theme-preview mr-theme-preview--carbono"></div>
-            <span class="mr-theme-label">Carbono</span>
-            <span class="mr-theme-check" aria-hidden="true"></span>
-          </button>
-          <button class="mr-theme-card" data-theme="flatClaro" onclick="applyMrSceneTheme('flatClaro')" type="button" aria-label="Tema flat claro" title="Flat Claro">
-            <div class="mr-theme-preview mr-theme-preview--flatClaro"></div>
-            <span class="mr-theme-label">Flat Claro</span>
-            <span class="mr-theme-check" aria-hidden="true"></span>
-          </button>
-          <button class="mr-theme-card" data-theme="flatEscuro" onclick="applyMrSceneTheme('flatEscuro')" type="button" aria-label="Tema flat escuro" title="Flat Escuro">
-            <div class="mr-theme-preview mr-theme-preview--flatEscuro"></div>
-            <span class="mr-theme-label">Flat Escuro</span>
-            <span class="mr-theme-check" aria-hidden="true"></span>
-          </button>
+      <!-- R26: Tema + Textura na mesma linha (50% cada) -->
+      <div class="gen-group" style="display:flex;flex-direction:row;gap:12px">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+          <label>Tema Visual</label>
+          <div class="ds-dropdown" id="mrThemeDropdown">
+            <button type="button" class="ds-dropdown__trigger" onclick="toggleDsDropdown('mrThemeDropdown', event)" aria-haspopup="listbox">
+              <span class="ds-dropdown__swatch mr-theme-preview--escuro" id="mrThemeDropdownSwatch"></span>
+              <span class="ds-dropdown__value" id="mrThemeDropdownValue">Texto Claro</span>
+              <i class="ph ph-caret-down ds-dropdown__chevron"></i>
+            </button>
+            <div class="ds-dropdown__menu" id="mrThemeCards" role="listbox">
+              <button class="ds-dropdown__option mr-theme-card" data-theme="claro" data-label="Texto Escuro" onclick="applyMrSceneTheme('claro');closeDsDropdown('mrThemeDropdown')" type="button" role="option">
+                <span class="ds-dropdown__swatch mr-theme-preview--claro"></span>
+                <span class="ds-dropdown__option-label">Texto Escuro</span>
+                <i class="ph ph-check ds-dropdown__check"></i>
+              </button>
+              <button class="ds-dropdown__option mr-theme-card" data-theme="escuro" data-label="Texto Claro" onclick="applyMrSceneTheme('escuro');closeDsDropdown('mrThemeDropdown')" type="button" role="option">
+                <span class="ds-dropdown__swatch mr-theme-preview--escuro"></span>
+                <span class="ds-dropdown__option-label">Texto Claro</span>
+                <i class="ph ph-check ds-dropdown__check"></i>
+              </button>
+              <button class="ds-dropdown__option mr-theme-card" data-theme="flatClaro" data-label="Flat Claro" onclick="applyMrSceneTheme('flatClaro');closeDsDropdown('mrThemeDropdown')" type="button" role="option">
+                <span class="ds-dropdown__swatch mr-theme-preview--flatClaro"></span>
+                <span class="ds-dropdown__option-label">Flat Claro</span>
+                <i class="ph ph-check ds-dropdown__check"></i>
+              </button>
+              <button class="ds-dropdown__option mr-theme-card" data-theme="flatEscuro" data-label="Flat Escuro" onclick="applyMrSceneTheme('flatEscuro');closeDsDropdown('mrThemeDropdown')" type="button" role="option">
+                <span class="ds-dropdown__swatch mr-theme-preview--flatEscuro"></span>
+                <span class="ds-dropdown__option-label">Flat Escuro</span>
+                <i class="ph ph-check ds-dropdown__check"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="mrSceneTextureGroup" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+          <label>Textura</label>
+          <div class="ds-dropdown" id="mrTextureDropdown">
+            <button type="button" class="ds-dropdown__trigger" onclick="toggleDsDropdown('mrTextureDropdown', event)" aria-haspopup="listbox">
+              <span class="ds-dropdown__swatch ds-dropdown__swatch--texture" id="mrTextureDropdownSwatch"></span>
+              <span class="ds-dropdown__value" id="mrTextureDropdownValue">Textura 01</span>
+              <i class="ph ph-caret-down ds-dropdown__chevron"></i>
+            </button>
+            <div class="ds-dropdown__menu" id="mrSceneTextureGrid" role="listbox">
+              <!-- options injetadas via _buildMrSceneTextureGrid -->
+            </div>
+          </div>
         </div>
       </div>
-      <div class="gen-group" id="mrSceneTextureGroup" style="display:none">
-        <label>Textura overlay</label>
-        <div class="pc-news-texture-grid" id="mrSceneTextureGrid"></div>
-        <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
-          <span style="font-size:12px;color:#64748b;font-family:'Inter Tight',sans-serif;flex:0 0 76px">Intensidade</span>
-          <input type="range" id="mrSceneTextureIntensity" min="0" max="100" step="2" value="22"
-                 style="flex:1;cursor:pointer;accent-color:#3D3F3D" oninput="onMotionReelSceneTextureIntensity(this.value)">
-          <span id="mrSceneTextureIntensityValue" style="height:24px;min-width:44px;padding:0 8px;font-size:12px;color:#475569;font-family:'Inter Tight',sans-serif;background:#f8fafc;border:1px solid #e2e8f0;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box">22%</span>
-          <button type="button" onclick="resetMotionReelSceneTextureIntensity()" title="Redefinir intensidade ao padrão"
-                  style="width:24px;height:24px;padding:0;border:1px solid #e2e8f0;border-radius:5px;background:#f8fafc;color:#64748b;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:11px">
-            <i class="ph ph-arrow-counter-clockwise"></i>
-          </button>
+      <!-- R26: ajustes de textura (intensidade + inverter) em group próprio -->
+      <div class="gen-group" id="mrSceneTextureAdjustGroup" style="display:none">
+        <label>Ajustes da Textura</label>
+        <div class="ds-fineadjust">
+          <div class="ds-fineadjust__label">
+            <span class="ds-fineadjust__label-text">Intensidade</span>
+            <span class="ds-fineadjust__label-sep">|</span>
+            <input type="text" inputmode="numeric" class="ds-fineadjust__label-value" id="mrSceneTextureIntensityValue" value="22"
+                   oninput="onMotionReelSceneTextureIntensityInput(this.value)">
+            <span class="ds-fineadjust__label-sep">|</span>
+            <button type="button" class="ds-btn-mini ds-fineadjust__reset" onclick="resetMotionReelSceneTextureIntensity()" title="Redefinir ao padrão">
+              <i class="ph ph-arrow-counter-clockwise"></i>Redefinir
+            </button>
+          </div>
+          <div class="ds-fineadjust__slider-zone">
+            <input type="range" class="ds-fineadjust__slider" id="mrSceneTextureIntensity" min="0" max="100" step="1" value="50"
+                   oninput="onMotionReelSceneTextureIntensity(this.value)">
+          </div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
-          <button type="button" id="mrSceneTextureInvertBtn" onclick="toggleMotionReelSceneTextureInvert()"
-                  style="padding:7px 12px;border:1px solid #e2e8f0;border-radius:7px;background:#f8fafc;color:#0f172a;cursor:pointer;font-size:13px;font-family:'Inter Tight',sans-serif;display:flex;align-items:center;gap:6px;transition:background 120ms ease, border-color 120ms ease">
+          <button type="button" id="mrSceneTextureInvertBtn" class="ds-btn ds-btn--secondary" onclick="toggleMotionReelSceneTextureInvert()">
             <i class="ph ph-swap"></i><span id="mrSceneTextureInvertLabel">Inverter cores</span>
           </button>
         </div>
       </div>
+      <!-- R26: Overlay (cor + intensidade) em group próprio, ANTES do imagem -->
+      <div class="gen-group" id="mrSceneOverlayGroup" style="display:none">
+        <label>Overlay</label>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button type="button" class="pc-color-btn" onclick="openColorDropdown('mrSceneOverlay', this)" style="height:36px">
+            <span class="pc-color-btn-swatch" id="mrOverlayColorSwatch" style="background:#1A1B1A"></span>
+            <span class="pc-color-btn-label" id="mrOverlayColorLabel">Padrão do tema</span>
+            <i class="ph ph-caret-down pc-color-btn-chevron"></i>
+          </button>
+        </div>
+        <div class="ds-fineadjust" style="margin-top:10px">
+          <div class="ds-fineadjust__label">
+            <span class="ds-fineadjust__label-text">Intensidade</span>
+            <span class="ds-fineadjust__label-sep">|</span>
+            <input type="text" inputmode="numeric" class="ds-fineadjust__label-value" id="mrSceneBgOverlayValue" value="60"
+                   oninput="onMotionReelSceneBgOverlayInput(this.value)">
+            <span class="ds-fineadjust__label-sep">|</span>
+            <button type="button" class="ds-btn-mini ds-fineadjust__reset" onclick="resetMotionReelSceneBgOverlay()" title="Redefinir ao padrão da cena">
+              <i class="ph ph-arrow-counter-clockwise"></i>Redefinir
+            </button>
+          </div>
+          <div class="ds-fineadjust__slider-zone">
+            <input type="range" class="ds-fineadjust__slider" id="mrSceneBgOverlay" min="0" max="100" step="1" value="50"
+                   oninput="onMotionReelSceneBgOverlay(this.value)">
+          </div>
+        </div>
+      </div>
+      <!-- R26: Imagem de fundo (blur + aleatório) DEPOIS do overlay -->
       <div class="gen-group" id="mrSceneBgGroup" style="display:none">
-        <label>Imagem de fundo</label>
-        <div style="display:flex;align-items:center;gap:10px;margin-top:0">
-          <span style="font-size:12px;color:#64748b;font-family:'Inter Tight',sans-serif;flex:0 0 76px">Desfoque</span>
-          <input type="range" id="mrSceneBgBlur" min="0" max="30" step="1" value="8"
-                 style="flex:1;cursor:pointer;accent-color:#3D3F3D" oninput="onMotionReelSceneBgBlur(this.value)">
-          <span id="mrSceneBgBlurValue" style="height:24px;min-width:44px;padding:0 8px;font-size:12px;color:#475569;font-family:'Inter Tight',sans-serif;background:#f8fafc;border:1px solid #e2e8f0;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box">8px</span>
-          <button type="button" onclick="resetMotionReelSceneBgBlur()" title="Redefinir desfoque ao padrão da cena"
-                  style="width:24px;height:24px;padding:0;border:1px solid #e2e8f0;border-radius:5px;background:#f8fafc;color:#64748b;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:11px">
-            <i class="ph ph-arrow-counter-clockwise"></i>
-          </button>
+        <label>Imagem de Fundo</label>
+        <div class="ds-fineadjust">
+          <div class="ds-fineadjust__label">
+            <span class="ds-fineadjust__label-text">Desfoque</span>
+            <span class="ds-fineadjust__label-sep">|</span>
+            <input type="text" inputmode="numeric" class="ds-fineadjust__label-value" id="mrSceneBgBlurValue" value="8"
+                   oninput="onMotionReelSceneBgBlurInput(this.value)">
+            <span class="ds-fineadjust__label-sep">|</span>
+            <button type="button" class="ds-btn-mini ds-fineadjust__reset" onclick="resetMotionReelSceneBgBlur()" title="Redefinir ao padrão da cena">
+              <i class="ph ph-arrow-counter-clockwise"></i>Redefinir
+            </button>
+          </div>
+          <div class="ds-fineadjust__slider-zone">
+            <input type="range" class="ds-fineadjust__slider" id="mrSceneBgBlur" min="0" max="100" step="1" value="50"
+                   oninput="onMotionReelSceneBgBlur(this.value)">
+          </div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
-          <span style="font-size:12px;color:#64748b;font-family:'Inter Tight',sans-serif;flex:0 0 76px">Overlay</span>
-          <input type="range" id="mrSceneBgOverlay" min="0" max="100" step="2" value="60"
-                 style="flex:1;cursor:pointer;accent-color:#3D3F3D" oninput="onMotionReelSceneBgOverlay(this.value)">
-          <span id="mrSceneBgOverlayValue" style="height:24px;min-width:44px;padding:0 8px;font-size:12px;color:#475569;font-family:'Inter Tight',sans-serif;background:#f8fafc;border:1px solid #e2e8f0;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box">60%</span>
-          <button type="button" onclick="resetMotionReelSceneBgOverlay()" title="Redefinir overlay ao padrão da cena"
-                  style="width:24px;height:24px;padding:0;border:1px solid #e2e8f0;border-radius:5px;background:#f8fafc;color:#64748b;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:11px">
-            <i class="ph ph-arrow-counter-clockwise"></i>
-          </button>
-        </div>
-        <button type="button" id="mrSceneSwapBg" onclick="swapMotionReelSceneBg()" title="Sortear nova imagem do pool"
-                style="padding:7px 12px;border:1px solid #e2e8f0;border-radius:7px;background:#f8fafc;color:#0f172a;cursor:pointer;font-size:13px;font-family:'Inter Tight',sans-serif;display:inline-flex;align-self:flex-start;align-items:center;gap:6px;transition:background 120ms ease;margin-top:10px">
+        <button type="button" id="mrSceneSwapBg" class="ds-btn ds-btn--secondary" onclick="swapMotionReelSceneBg()" title="Sortear nova imagem do pool" style="align-self:flex-start;margin-top:10px">
           <i class="ph ph-shuffle"></i>Aleatório
         </button>
       </div>
       <div class="gen-group">
         <label>Editar conteúdo com IA</label>
         <div style="display:flex;gap:8px;align-items:stretch">
-          <input type="text" id="mrSceneEditPrompt" placeholder="ex: Muda o headline pra falar de NDVI. Troca o ícone do keyword. (opcional)"
+          <input type="text" id="mrSceneEditPrompt" placeholder="Ex: Muda o Headline para falar de NDVI. Troca o ícone do Keyword. (Opcional)"
             onkeydown="if(event.key==='Enter'){event.preventDefault();regenerateMotionReelSceneContent();}"
-            style="flex:1;padding:11px 14px;border:1px solid #e2e8f0;border-radius:9px;font-size:14px;font-family:'Inter Tight',sans-serif;background:#f8fafc;color:#0f172a;" />
-          <button type="button" id="mrSceneRegenRevertBtn" onclick="revertMotionReelSceneRegen()" title="Reverter última regeração"
-            style="display:none;padding:0 14px;border:1px solid #e2e8f0;border-radius:5px;background:#f8fafc;color:#0f172a;cursor:pointer;font-size:13px;font-family:'Inter Tight',sans-serif;align-items:center;gap:6px;transition:background 120ms ease,border-color 120ms ease;flex:0 0 auto"
-            onmouseenter="this.style.background='#e2e8f0';this.style.borderColor='#94a3b8'"
-            onmouseleave="this.style.background='#f8fafc';this.style.borderColor='#e2e8f0'">
+            style="flex:1" />
+          <button type="button" id="mrSceneRegenRevertBtn" class="ds-btn ds-btn--secondary" onclick="revertMotionReelSceneRegen()" title="Reverter última regeração" style="display:none">
             <i class="ph ph-arrow-counter-clockwise"></i>Reverter
           </button>
-          <button type="button" id="mrSceneRegenBtn" onclick="regenerateMotionReelSceneContent()" title="Regerar conteúdo da cena (com ou sem instrução)"
-            style="padding:0 16px;border:1px solid #3D3F3D;border-radius:5px;background:#3D3F3D;color:#fff;cursor:pointer;font-size:13px;font-family:'Inter Tight',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:background 120ms ease,border-color 120ms ease;flex:0 0 auto"
-            onmouseenter="if(!this.disabled){this.style.background='#5C605D';this.style.borderColor='#5C605D'}"
-            onmouseleave="if(!this.disabled){this.style.background='#3D3F3D';this.style.borderColor='#3D3F3D'}">
+          <button type="button" id="mrSceneRegenBtn" class="ds-btn ds-btn--primary" onclick="regenerateMotionReelSceneContent()" title="Regerar conteúdo da cena (com ou sem instrução)">
             <i class="ph ph-arrows-clockwise"></i>Regerar
           </button>
         </div>
@@ -24320,11 +25476,11 @@ window.closeMotionReelScenePreview = closeMotionReelScenePreview;
       <div class="mr-edit-preview">
         <div id="mrSceneEditPreviewMount" class="mr-edit-preview-mount"></div>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
-          <button class="btn btn-primary" id="mrSceneEditSubmit" type="button" onclick="submitMotionReelSceneEdit()" style="width:100%;background:#3D3F3D;border-color:#3D3F3D;color:#fff" onmouseenter="this.style.background='#5C605D';this.style.borderColor='#5C605D'" onmouseleave="this.style.background='#3D3F3D';this.style.borderColor='#3D3F3D'">
+          <button class="ds-btn ds-btn--primary" id="mrSceneEditSubmit" type="button" onclick="submitMotionReelSceneEdit()" style="width:100%">
             Aplicar Edição
           </button>
-          <button class="btn btn-secondary" type="button" onclick="restoreMotionReelSceneDefaults()" title="Volta a cena ao padrão (remove tema, imagem e textura customizados)" style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:6px">
-            <i class="ph ph-arrow-counter-clockwise"></i> Restaurar padrão
+          <button class="ds-btn ds-btn--secondary" type="button" onclick="restoreMotionReelSceneDefaults()" title="Volta a cena ao padrão (remove tema, imagem e textura customizados)" style="width:100%">
+            <i class="ph ph-arrow-counter-clockwise"></i>Restaurar Padrão
           </button>
         </div>
       </div>

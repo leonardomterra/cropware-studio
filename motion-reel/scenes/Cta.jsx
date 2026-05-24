@@ -51,7 +51,7 @@ export const Cta = ({ bg, fg, logoUrl = 'logo-cropware-pb-final.svg', headline, 
             dur={0.4}
             fromEm={0.15}
             toEm={0.3}
-            style={{ fontFamily: MR_FONTS.mono, fontSize: 32, fontWeight: 400, textTransform: 'uppercase' }}
+            style={{ fontFamily: MR_FONTS.alumni, fontSize: 38, fontWeight: 500, textTransform: 'uppercase' }}
           />
         ) : null}
       </div>

@@ -9,7 +9,7 @@ import { MR_THEMES } from '../themes.js';
 import { CharReveal, StaticMotionIcon, EASE } from '../helpers.jsx';
 import { resolveKeywordAnimatedIcon } from '../keyword-icons.js';
 
-const FALLBACK = MR_THEMES.editorial.perSlide.keyword;
+const FALLBACK = MR_THEMES.escuro.perSlide.keyword;
 
 const alphaHex = (v) => Math.round(Math.max(0, Math.min(1, v)) * 255).toString(16).padStart(2, '0');
 
@@ -21,6 +21,7 @@ export const Keyword = ({
   bgImage,
   bgImageBlur,
   bgOverlayOpacity,
+  overlayColor,
   bgTexture,
   bgTextureOpacity,
   bgTextureInvert,
@@ -78,7 +79,7 @@ export const Keyword = ({
       justifyContent: 'center',
       padding: '0 80px',
       gap: 56,
-      fontFamily: MR_FONTS.mono,
+      fontFamily: MR_FONTS.alumni,
       overflow: 'hidden',
     }}>
       {!T.flat ? <>
@@ -91,17 +92,16 @@ export const Keyword = ({
           backgroundPosition: 'center',
           transform: `scale(${kbScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
           transformOrigin: 'center',
-          filter: `blur(${bgImageBlur != null ? bgImageBlur : 0}px) brightness(0.62) saturate(0.85)`,
+          filter: `blur(${bgImageBlur != null ? bgImageBlur : 6}px) brightness(0.62) saturate(0.85)`,
           opacity: bgIn,
         }} />
       ) : null}
 
-      {/* Camada 0.5: tonalização da foto com a cor do tema. Pinta a foto na
-          paleta do tema (greenAbyss, slateAbyss, greenForest, etc) e cria
-          variação visível entre temas mesmo com a mesma foto/textura. */}
+      {/* Camada 0.5: tonalização da foto — usa scene.overlayColor quando setado
+          (R26: padronização cross-scene), senão T.bg (cor do tema). */}
       {resolvedBgImage ? (
         <AbsoluteFill style={{
-          background: `${T.bg}${alphaHex(bgOverlayOpacity != null ? bgOverlayOpacity : 0.70)}`,
+          background: `${overlayColor || T.bg}${alphaHex(bgOverlayOpacity != null ? bgOverlayOpacity : 0.55)}`,
           opacity: bgIn,
           pointerEvents: 'none',
         }} />
@@ -118,7 +118,7 @@ export const Keyword = ({
         transform: `scale(${interpolate(frame, [0, durFrames], [1.08, 1.22], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }).toFixed(4)}) translate(${interpolate(frame, [0, durFrames], [-12, 14], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }).toFixed(2)}px, ${interpolate(frame, [0, durFrames], [10, -18], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }).toFixed(2)}px) rotate(${interpolate(frame, [0, durFrames], [-1.2, 1.2], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }).toFixed(3)}deg)`,
         transformOrigin: 'center',
         mixBlendMode: T.textureMode || 'multiply',
-        filter: (bgTextureInvert != null ? bgTextureInvert : false)
+        filter: (bgTextureInvert !== false)
           ? `invert(1) contrast(1.1) ${T.textureFilter || ''}`
           : (T.textureFilter || 'none'),
         // keyword é a camada principal — escala 0.22 (slider default) → ~0.7
@@ -170,11 +170,11 @@ export const Keyword = ({
         gap: 56,
       }}>
         <div style={{
-          fontFamily: MR_FONTS.mono,
-          fontSize: 110,
-          fontWeight: 500,
-          lineHeight: 0.95,
-          letterSpacing: '0.02em',
+          fontFamily: MR_FONTS.alumni,
+          fontSize: 160,
+          fontWeight: 600,
+          lineHeight: 0.92,
+          letterSpacing: '0.01em',
           textTransform: 'uppercase',
           textAlign: 'center',
           maxWidth: 920,

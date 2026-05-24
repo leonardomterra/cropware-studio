@@ -6,9 +6,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, staticFile, spring } from 'remotion';
 import { MR_FONTS } from '../theme.js';
 import { MR_THEMES } from '../themes.js';
-import { CharReveal, KickerReveal, EASE } from '../helpers.jsx';
+import { CharReveal, KickerReveal, EASE, LottieAsset } from '../helpers.jsx';
 
-const FALLBACK = MR_THEMES.editorial.perSlide.headline;
+const FALLBACK = MR_THEMES.escuro.perSlide.headline;
 
 export const Headline = ({
   kicker,
@@ -39,7 +39,7 @@ export const Headline = ({
   const kbTy = interpolate(frame, [0, durFrames], [0, -34], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  const imgBlur = (bgImageBlur != null ? bgImageBlur : 8) + (1 - enterP) * 14;
+  const imgBlur = (bgImageBlur != null ? bgImageBlur : 6) + (1 - enterP) * 14;
   const imgOpacity = enterP;
   const overlayP = interpolate(frame, [0, 0.5 * fps], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart,
@@ -102,7 +102,7 @@ export const Headline = ({
       }} />
       </> : null}
 
-      {/* Camada 6: conteúdo — kicker mono + headline editorial gigante + accent bar */}
+      {/* Camada 6: conteúdo — wifi Lottie no topo + kicker + headline + dots */}
       <div style={{
         position: 'relative',
         zIndex: 2,
@@ -118,6 +118,20 @@ export const Headline = ({
         fontFamily: MR_FONTS.display,
         textAlign: 'center',
       }}>
+        {/* R27: bar-chart-growth Lottie acima do kicker — eco visual de
+            "crescimento / dado / mercado" coerente com o headline editorial. */}
+        <LottieAsset
+          src="lottie/bar-chart-growth.json"
+          size={220}
+          delay={0.1}
+          playbackRate={1.0}
+          loop={false}
+          tint={T.accent || 'var(--mr-greenBright)'}
+          style={{
+            filter: T.flat ? 'none' : 'drop-shadow(0 10px 28px rgba(0,0,0,0.45))',
+            marginBottom: -8,
+          }}
+        />
         {kicker ? (
           <KickerReveal
             text={String(kicker).toUpperCase()}
@@ -126,9 +140,9 @@ export const Headline = ({
             fromEm={0.06}
             toEm={0.12}
             style={{
-              fontFamily: MR_FONTS.mono,
-              fontSize: 48,
-              fontWeight: 400,
+              fontFamily: MR_FONTS.alumni,
+              fontSize: 56,
+              fontWeight: 500,
               color: T.kickerColor || T.accent,
               textTransform: 'uppercase',
               textShadow: T.flat ? 'none' : '0 2px 14px rgba(0,0,0,0.45)',
@@ -208,7 +222,7 @@ const DotsOrnament = ({ delayStart = 0, color = '#FFF', size = 10, gap = 22, fla
 // Overlay de textura topográfica verde em movimento (slide 02). Imagem já vem
 // na paleta verde Cropware (fundo greenAbyss + linhas greenAccent suaves), então
 // não precisa de invert. Blend 'screen' destaca as linhas claras como luz.
-const HEADLINE_TEXTURE_DEFAULT = 'motion-reel/texture-pool/13-texture.webp';
+const HEADLINE_TEXTURE_DEFAULT = 'motion-reel/texture-pool/texture-pool-001.webp';
 
 const AbstractCurvesOverlay = ({ src, frame, fps, durFrames, invert, opacity = 1 }) => {
   const textureSrc = src || HEADLINE_TEXTURE_DEFAULT;

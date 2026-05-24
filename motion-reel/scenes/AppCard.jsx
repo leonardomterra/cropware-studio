@@ -9,7 +9,7 @@ import { MR_COLORS, MR_FONTS, resolveColor } from '../theme.js';
 import { MR_THEMES } from '../themes.js';
 import { EASE, SceneBackdrop, FadeSlide, SceneTextureBackdrop, IconifyIcon, AccentBar } from '../helpers.jsx';
 
-const FALLBACK = MR_THEMES.editorial.perSlide['app-card'];
+const FALLBACK = MR_THEMES.escuro.perSlide['app-card'];
 
 const alphaHex = (v) => Math.round(Math.max(0, Math.min(1, v)) * 255).toString(16).padStart(2, '0');
 
@@ -23,6 +23,7 @@ export const AppCard = ({
   bgImage,
   bgImageBlur,
   bgOverlayOpacity,
+  overlayColor,
   bgTexture,
   bgTextureOpacity,
   bgTextureInvert,
@@ -81,11 +82,13 @@ export const AppCard = ({
             backgroundPosition: 'center',
             transform: `scale(${kbScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
             transformOrigin: 'center',
-            filter: `blur(${bgImageBlur != null ? bgImageBlur : 0}px) saturate(0.78) brightness(0.72)`,
+            filter: `blur(${bgImageBlur != null ? bgImageBlur : 6}px) saturate(0.78) brightness(0.72)`,
             opacity: bgIn,
           }} />
           <AbsoluteFill style={{
-            background: T.bgImageOverlay || `${T.bg}${alphaHex(bgOverlayOpacity != null ? bgOverlayOpacity : 0.50)}`,
+            background: overlayColor
+              ? `${overlayColor}${alphaHex(bgOverlayOpacity != null ? bgOverlayOpacity : 0.55)}`
+              : (T.bgImageOverlay || `${T.bg}${alphaHex(bgOverlayOpacity != null ? bgOverlayOpacity : 0.55)}`),
             opacity: bgIn,
             pointerEvents: 'none',
           }} />
@@ -111,7 +114,7 @@ export const AppCard = ({
           text={kicker}
           delay={0}
           dur={0.5}
-          style={{ fontFamily: MR_FONTS.mono, fontSize: 48, fontWeight: 400, color: T.kickerColor || T.accent, textTransform: 'uppercase', lineHeight: 1.15, textAlign: 'center', maxWidth: 880, ...(T.flat ? { textShadow: 'none' } : {}) }}
+          style={{ fontFamily: MR_FONTS.alumni, fontSize: 56, fontWeight: 500, color: T.kickerColor || T.accent, textTransform: 'uppercase', lineHeight: 1.15, textAlign: 'center', maxWidth: 880, ...(T.flat ? { textShadow: 'none' } : {}) }}
           allowWrap
         />
       ) : null}

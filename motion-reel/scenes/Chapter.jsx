@@ -21,17 +21,18 @@ const CHAPTER_CONFIGS = {
   },
   3: {
     image: 'conheca-whatsapp-bg.webp',
-    // Icons row em vez de Lottie — line-md (Iconify) com entrada staggered.
-    // 5 ícones que ilustram funções core do app, neutros pra qualquer tema.
-    icons: [
-      'ph:cloud-sun',
-      'ph:gauge',
-      'ph:bell-ringing',
-      'ph:chart-bar',
-      'ph:device-mobile-camera',
-    ],
+    // R27: wifi signal Lottie no topo (eco de "em tempo real" — sinal/conexão).
+    // Substituiu a icons-row antiga (5 phosphor) — sinal único mais focado.
+    // Tamanho menor que cap-2 (460→320) — o wifi tem composição mais densa
+    // e fica visualmente "pesado" em 460.
+    lottie: 'lottie/wifi-signal.json',
+    lottiePosition: 'top',
+    lottieTint: 'var(--mr-greenBright)',
+    lottieSize: 260,
+    lottieMarginBottom: -20,
     title: 'Em tempo real,',
     subtitle: 'toda informação\nque o agro precisa.',
+    combinedPhrase: true,
   },
 };
 
@@ -66,7 +67,7 @@ export const Chapter = ({ chapterNumber = 2, start, end, theme = {}, bgImage, bg
   const kbTy = interpolate(frame, [0, durFrames], [0, -28], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  const imgBlur = (bgImageBlur != null ? bgImageBlur : 0) + (1 - enterP) * 22;
+  const imgBlur = (bgImageBlur != null ? bgImageBlur : 6) + (1 - enterP) * 22;
   const imgOpacity = enterP;
   const overlayP = interpolate(frame, [0, 0.5 * fps], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart,
@@ -149,14 +150,14 @@ export const Chapter = ({ chapterNumber = 2, start, end, theme = {}, bgImage, bg
         {cfg.lottiePosition === 'top' && cfg.lottie ? (
           <LottieAsset
             src={cfg.lottie}
-            size={460}
+            size={cfg.lottieSize || 460}
             delay={0.1}
             playbackRate={1.0}
             loop={false}
             tint={T.iconColor || cfg.lottieTint}
             style={{
               filter: lottieShadow === 'none' ? 'none' : lottieShadow,
-              marginBottom: -80,
+              marginBottom: cfg.lottieMarginBottom != null ? cfg.lottieMarginBottom : -80,
             }}
           />
         ) : null}

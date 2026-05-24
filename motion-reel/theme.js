@@ -55,6 +55,10 @@ export const MR_FONTS = {
   display: '"Inter Tight", system-ui, sans-serif',
   grotesk: '"Familjen Grotesk", "Inter Tight", system-ui, sans-serif',
   mono:    '"Space Mono", ui-monospace, monospace',
+  // R27: condensed editorial sans pra kickers uppercase, taglines e palavras
+  // gigantes (Keyword, Quote verbs, BrandIntro). Space Mono ainda é usada em
+  // labels/data dentro dos mockups do AppCard (representam UI técnica real).
+  alumni:  '"Alumni Sans", "Inter Tight", system-ui, sans-serif',
 };
 
 // Dimensões fixas do palco — Reels Instagram 9:16.

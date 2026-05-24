@@ -184,7 +184,7 @@ export const Quote = ({ start, end, words, items, features, theme, bgImage: bgIm
   const kbTy = interpolate(frame, [0, durFrames], [0, -55], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  const imgBlur = (bgImageBlur != null ? bgImageBlur : 0) + (1 - enterP) * 18;
+  const imgBlur = (bgImageBlur != null ? bgImageBlur : 6) + (1 - enterP) * 18;
   const imgOpacity = enterP;
   const overlayP = interpolate(frame, [0, 0.5 * fps], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart,
@@ -259,7 +259,7 @@ export const Quote = ({ start, end, words, items, features, theme, bgImage: bgIm
         padding: '0 100px',
         gap: 34,
         color: textColor,
-        fontFamily: MR_FONTS.mono,
+        fontFamily: MR_FONTS.alumni,
         textAlign: 'left',
         transform: `translateY(${listParallaxY.toFixed(2)}px)`,
       }}>
@@ -301,10 +301,10 @@ export const Quote = ({ start, end, words, items, features, theme, bgImage: bgIm
                 <span style={{
                   position: 'relative',
                   display: 'inline-block',
-                  fontFamily: MR_FONTS.mono,
-                  fontSize: 68,
-                  fontWeight: 400,
-                  letterSpacing: '0.12em',
+                  fontFamily: MR_FONTS.alumni,
+                  fontSize: 84,
+                  fontWeight: 500,
+                  letterSpacing: '0.08em',
                   lineHeight: 1.0,
                   color: textColor,
                   textShadow: textShadow === 'none' ? 'none' : `${textShadow}, 0 0 ${Math.round(18 + highlightP * 18)}px ${highlightColor}${Math.round(glowOpacity * 255).toString(16).padStart(2, '0')}`,
@@ -323,7 +323,7 @@ export const Quote = ({ start, end, words, items, features, theme, bgImage: bgIm
 // Imagem original é dark bg + linhas brancas. Por default usamos blend 'screen'
 // pra extrair só as linhas claras sobre o fundo. Para temas claros, `invert`
 // inverte a imagem (linhas escuras) e usamos blend 'multiply'.
-const TOPO_LINES_DEFAULT = 'motion-reel/texture-pool/texture-pool-008.webp';
+const TOPO_LINES_DEFAULT = 'motion-reel/texture-pool/texture-pool-007.webp';
 
 const TopographicLines = ({ src, frame, fps, durFrames, invert, opacity = 1 }) => {
   const textureSrc = src || TOPO_LINES_DEFAULT;

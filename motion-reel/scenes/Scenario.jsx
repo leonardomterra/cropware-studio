@@ -8,7 +8,7 @@ import { MR_FONTS } from '../theme.js';
 import { MR_THEMES } from '../themes.js';
 import { FadeSlide, KickerReveal, SceneTextureBackdrop, EASE } from '../helpers.jsx';
 
-const FALLBACK = MR_THEMES.editorial.perSlide.scenario;
+const FALLBACK = MR_THEMES.escuro.perSlide.scenario;
 
 export const Scenario = ({ kicker, scenario, theme, bgImage, bgImageBlur, bgOverlayOpacity, bgTexture, bgTextureOpacity, bgTextureInvert, start, end }) => {
   const T = theme || FALLBACK;
@@ -28,7 +28,7 @@ export const Scenario = ({ kicker, scenario, theme, bgImage, bgImageBlur, bgOver
   const kbTy = interpolate(frame, [0, durFrames], [0, -32], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  const imgBlur = (bgImageBlur != null ? bgImageBlur : 8) + (1 - enterP) * 14;
+  const imgBlur = (bgImageBlur != null ? bgImageBlur : 6) + (1 - enterP) * 14;
   const imgOpacity = enterP;
   const overlayP = interpolate(frame, [0, 0.5 * fps], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart,
@@ -112,9 +112,9 @@ export const Scenario = ({ kicker, scenario, theme, bgImage, bgImageBlur, bgOver
             fromEm={T.kickerLetterSpacingFrom ?? 0.06}
             toEm={T.kickerLetterSpacingTo ?? 0.12}
             style={{
-              fontFamily: MR_FONTS.mono,
-              fontSize: T.kickerFontSize || 48,
-              fontWeight: 400,
+              fontFamily: MR_FONTS.alumni,
+              fontSize: T.kickerFontSize || 56,
+              fontWeight: 500,
               lineHeight: 1.18,
               maxWidth: T.kickerMaxWidth || 920,
               color: T.kickerColor || T.accent,

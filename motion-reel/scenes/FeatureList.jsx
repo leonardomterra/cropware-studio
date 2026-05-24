@@ -7,7 +7,7 @@ import { MR_COLORS, MR_FONTS } from '../theme.js';
 import { MR_THEMES } from '../themes.js';
 import { CharReveal, KickerReveal, EASE, IconifyIcon, SceneTextureBackdrop } from '../helpers.jsx';
 
-const FALLBACK = MR_THEMES.editorial.perSlide['feature-list'];
+const FALLBACK = MR_THEMES.escuro.perSlide['feature-list'];
 
 const resolveFeatureCardIcon = (icon = '', text = '') => {
   const haystack = `${icon} ${text}`.toLowerCase();
@@ -28,7 +28,7 @@ const resolveFeatureCardIcon = (icon = '', text = '') => {
 // Converte 0-1 em hex alpha de 2 caracteres (00-ff).
 const alphaHex = (v) => Math.round(Math.max(0, Math.min(1, v)) * 255).toString(16).padStart(2, '0');
 
-export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImageBlur, bgOverlayOpacity, bgTexture, bgTextureOpacity, bgTextureInvert, start, end }) => {
+export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImageBlur, bgOverlayOpacity, overlayColor, bgTexture, bgTextureOpacity, bgTextureInvert, start, end }) => {
   const T = theme || FALLBACK;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -72,13 +72,15 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
             backgroundPosition: 'center',
             transform: `scale(${kbScale.toFixed(4)}) translateY(${kbTy.toFixed(2)}px)`,
             transformOrigin: 'center',
-            filter: `blur(${bgImageBlur != null ? bgImageBlur : 8}px) saturate(0.78) brightness(0.85)`,
+            filter: `blur(${bgImageBlur != null ? bgImageBlur : 6}px) saturate(0.78) brightness(0.85)`,
             opacity: bgIn,
           }} />
-          {/* Overlay de tonalização — cobre a foto com a cor do tema pra preservar
-              legibilidade. Light themes ficam quase opacos; dark themes mais translúcidos. */}
+          {/* Overlay de tonalização — usa scene.overlayColor quando setado
+              (R26: padronização cross-scene), senão T.bgImageOverlay ou T.bg. */}
           <AbsoluteFill style={{
-            background: T.bgImageOverlay || `${T.bg}${alphaHex(bgOverlayOpacity != null ? bgOverlayOpacity : 0.60)}`,
+            background: overlayColor
+              ? `${overlayColor}${alphaHex(bgOverlayOpacity != null ? bgOverlayOpacity : 0.55)}`
+              : (T.bgImageOverlay || `${T.bg}${alphaHex(bgOverlayOpacity != null ? bgOverlayOpacity : 0.55)}`),
             opacity: bgIn,
             pointerEvents: 'none',
           }} />
@@ -102,7 +104,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
       <SceneTextureBackdrop
         src={bgTexture || T.bgTexture}
         durSec={durSec}
-        opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.14}
+        opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.22}
         invert={bgTextureInvert !== false}
       />
       </> : null}
@@ -129,9 +131,9 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
             fromEm={T.kickerLetterSpacingFrom ?? 0.06}
             toEm={T.kickerLetterSpacingTo ?? 0.12}
             style={{
-              fontFamily: MR_FONTS.mono,
-              fontSize: T.kickerFontSize || 48,
-              fontWeight: 400,
+              fontFamily: MR_FONTS.alumni,
+              fontSize: T.kickerFontSize || 56,
+              fontWeight: 500,
               lineHeight: 1.18,
               maxWidth: T.kickerMaxWidth || 760,
               color: T.accentDeep || T.accent,
