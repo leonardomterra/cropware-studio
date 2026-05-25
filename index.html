@@ -6,7 +6,7 @@
 <title>Cropware — Studio de Posts</title>
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Alumni+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Familjen+Grotesk:wght@400..700&family=Sora:wght@400;500;600;700;800&family=Roboto+Flex:wdth,wght@25..151,100..900&family=Pathway+Extreme:wdth,wght@75..125,400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Alumni+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Familjen+Grotesk:wght@400..700&family=Sora:wght@400;500;600;700;800&family=Geist:wght@100..900&family=Pathway+Extreme:wdth,wght@75..125,400..700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.11/dist/html2canvas-pro.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -219,9 +219,11 @@
   body {
     background: var(--bg);
     color: var(--text);
-    /* R25 — fonte UI padrão do Studio: Roboto Flex com axis wdth 90. As
-       fontes especiais (Inter Tight / Familjen Grotesk / Space Mono) ficam
-       só nos posts/reels via classes específicas dentro do canvas. */
+    /* R28 — fonte UI padrão do Studio: Geist (Vercel). Substituiu Roboto Flex.
+       Geist não tem axis wdth (só weight), então font-stretch: 90% é no-op
+       — ela já é naturalmente um pouco compacta. As fontes especiais
+       (Inter Tight / Familjen Grotesk / Space Mono / Alumni Sans) ficam só
+       nos posts/reels via classes específicas dentro do canvas. */
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     -webkit-font-smoothing: antialiased;
@@ -5238,13 +5240,13 @@
   /* ────────────────────────────────────────────────────────────────
      DESIGN SYSTEM v1 (R25) — tokens globais + classes utilitárias.
      Aplicado por opt-in via .ds-btn nas refatorações graduais.
-     Fonte UI: Roboto Flex (wdth 90, weight 300).
+     Fonte UI: Geist (R28 — substituiu Roboto Flex).
      ──────────────────────────────────────────────────────────────── */
   :root {
-    --ds-font: 'Roboto Flex', system-ui, sans-serif;
+    --ds-font: 'Geist', system-ui, sans-serif;
     --ds-font-stretch: 90%;
     --ds-font-size: 14px;
-    --ds-font-weight: 300;
+    --ds-font-weight: 400;
     --ds-text: #0f172a;
     --ds-text-muted: #64748b;
 
