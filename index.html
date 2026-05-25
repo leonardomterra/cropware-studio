@@ -6,7 +6,7 @@
 <title>Cropware — Studio de Posts</title>
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Alumni+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Familjen+Grotesk:wght@400..700&family=Sora:wght@400;500;600;700;800&family=Geist:wght@100..900&family=Pathway+Extreme:wdth,wght@75..125,400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Alumni+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Familjen+Grotesk:wght@400..700&family=Sora:wght@400;500;600;700;800&family=Geist:wght@100..900&family=Pathway+Extreme:wdth,wght@75..125,400..700&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.11/dist/html2canvas-pro.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -2523,6 +2523,237 @@
   .moldura-glass.text-dark .moldura-complement b { color: #1e293b; }
   .moldura-glass.text-dark .moldura-bullet .post-bullet-text { color: rgba(30,41,59,0.75); }
   .moldura-glass.text-dark ~ .moldura-logo { filter: brightness(0) invert(0.3); opacity: 1; }
+
+  /* ─────────── Boletim do Agro — sub-templates dentro do moldura ───────────
+     Slide 1 (cotações): data-badge + macro-row (dólar/CDI) + cotacoes (grid 7×4)
+     Slide 2 (manchetes): data-badge + manchetes-list (5 items com fonte) */
+  .moldura-data-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.18);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: var(--post-accent);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-weight: 400;
+    font-size: 28px;
+    letter-spacing: 0;
+    text-transform: none;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .moldura-data-badge .ph {
+    font-size: 20px;
+    color: var(--post-accent);
+  }
+  .moldura-macro-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+  .moldura-macro-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255,255,255,0.88);
+    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+  }
+  .moldura-macro-item .ph {
+    font-size: 18px;
+    color: var(--post-accent);
+    opacity: 0.9;
+  }
+  .moldura-macro-item-label {
+    color: rgba(255,255,255,0.70);
+    font-weight: 500;
+  }
+  .moldura-cotacoes {
+    display: grid;
+    /* 5 colunas: commodity / valor (right) / unit (left) / varSem / varMes */
+    grid-template-columns: 1.5fr 0.8fr 0.5fr 0.9fr 0.9fr;
+    gap: 0;
+    margin-top: 12px;
+    padding: 18px 0 4px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+  }
+  .moldura-cotacoes-header {
+    display: contents;
+  }
+  .moldura-cotacoes-header > div {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 0;
+    text-transform: none;
+    padding: 6px 4px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    text-align: right;
+  }
+  .moldura-cotacoes-header > div:first-child {
+    color: transparent;
+    text-align: left;
+  }
+  .moldura-cotacoes-row {
+    display: contents;
+  }
+  .moldura-cotacoes-row > div {
+    padding: 9px 4px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.15;
+  }
+  .moldura-cotacoes-row:last-child > div {
+    border-bottom: none;
+  }
+  .moldura-cotacoes-commodity {
+    align-items: flex-start;
+  }
+  .moldura-cotacoes-commodity-name {
+    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-size: 40px;
+    color: #FFFFFF;
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .moldura-cotacoes-commodity-unit {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0;
+    margin-top: 6px;
+    line-height: 1.2;
+  }
+  .moldura-cotacoes-value {
+    font-family: 'JetBrains Mono', 'Space Mono', ui-monospace, monospace;
+    font-weight: 400;
+    font-size: 38px;
+    color: rgba(255,255,255,0.96);
+    letter-spacing: -0.02em;
+    align-items: flex-end;
+    justify-content: flex-end;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .moldura-cotacoes-unit {
+    font-family: 'JetBrains Mono', 'Space Mono', ui-monospace, monospace;
+    font-size: 22px;
+    font-weight: 200;
+    color: rgba(255,255,255,0.60);
+    letter-spacing: 0;
+    text-transform: uppercase;
+    align-items: flex-start;
+    justify-content: flex-end;
+    text-align: left;
+    padding-left: 8px !important;
+    padding-bottom: 4px !important;
+  }
+  .moldura-cotacoes-var {
+    font-family: 'JetBrains Mono', 'Space Mono', ui-monospace, monospace;
+    font-weight: 400;
+    font-size: 38px;
+    align-items: flex-end;
+    text-align: right;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .moldura-cotacoes-var[data-trend="up"] { color: #7ED788; }
+  .moldura-cotacoes-var[data-trend="down"] { color: #F38C8C; }
+  .moldura-cotacoes-var[data-trend="flat"] { color: rgba(255,255,255,0.65); }
+  .moldura-cotacoes-source {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0;
+    margin-top: 14px;
+    align-self: flex-start;
+    font-style: normal;
+  }
+
+  .moldura-manchetes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 10px;
+  }
+  .moldura-manchete {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .moldura-manchete:last-child {
+    border-bottom: none;
+  }
+  .moldura-manchete-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--post-accent);
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .moldura-manchete-kicker::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--post-accent);
+    box-shadow: 0 0 8px var(--post-accent);
+    flex-shrink: 0;
+  }
+  .moldura-manchete-titulo {
+    font-family: 'Familjen Grotesk', 'Inter Tight', sans-serif;
+    font-weight: 600;
+    font-size: 28px;
+    color: rgba(255,255,255,0.94);
+    line-height: 1.22;
+    letter-spacing: -0.3px;
+  }
+  .moldura-manchete-fonte {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.45);
+    font-style: italic;
+    letter-spacing: 0;
+    margin-top: 2px;
+  }
+  /* Boletim slides: alinhamento top + sem text-shadow no hook */
+  .post[data-type="boletim-agro-slide"] .moldura-glass {
+    justify-content: flex-start;
+  }
+  .post[data-type="boletim-agro-slide"] .moldura-hook {
+    font-size: calc(46px * var(--hook-scale, 1));
+    line-height: 1.05;
+  }
+  .post[data-type="boletim-agro-slide"] .moldura-divider {
+    width: 100%;
+    background: rgba(255,255,255,0.10);
+    margin: 16px 0 4px;
+  }
+
   .premium-glass-blur {
     position: absolute !important;
     inset: -48px !important;
@@ -8662,6 +8893,9 @@
       <optgroup label="Clima">
         <option value="previsao-carrossel">Previsão — Carrossel</option>
       </optgroup>
+      <optgroup label="Boletim">
+        <option value="boletim-agro-carrossel">Boletim do Agro — Diário</option>
+      </optgroup>
       <optgroup label="Apresentação">
         <option value="presentation">Apresentação</option>
       </optgroup>
@@ -9715,6 +9949,11 @@ const weatherCarousels = [];
 const weatherCarouselLegends = [];
 let currentWeatherCarousel = 0;
 let weatherCarouselCurrentSlide = 0;
+// Boletim Agro — carrossel diário (cotações + manchetes) — reusa pipeline news/opinion
+const boletimAgroCarousels = [];
+const boletimAgroCarouselLegends = [];
+let currentBoletimAgroCarousel = 0;
+let boletimAgroCarouselCurrentSlide = 0;
 
 // LinkedIn state
 const linkedinPosts = [];
@@ -9747,6 +9986,7 @@ function getPlatform() {
   if (activeMode === 'logo-cropware-post') return 'logo-cropware';
   if (activeMode === 'previsao-carrossel') return 'weather';
   if (activeMode === 'news-post' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel') return 'news';
+  if (activeMode === 'boletim-agro-carrossel') return 'boletim-agro';
   if (activeMode === 'instagram-ads-post' || activeMode === 'instagram-ads-carousel') return 'instagram-ads';
   if (activeMode.startsWith('linkedin-pessoal')) return 'linkedin-pessoal';
   return activeMode.startsWith('linkedin') ? 'linkedin' : 'instagram';
@@ -9769,8 +10009,11 @@ function isLogoCropwareMode(mode) {
 function isWeatherMode(mode) {
   return (mode || activeMode) === 'previsao-carrossel';
 }
+function isBoletimAgroMode(mode) {
+  return (mode || activeMode) === 'boletim-agro-carrossel';
+}
 function isCarouselMode() {
-  return activeMode === 'carousel' || activeMode === 'funcionalidades-carousel' || activeMode === 'previsao-carrossel' || activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel' || activeMode === 'presentation' || activeMode === 'instagram-ads-carousel' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel';
+  return activeMode === 'carousel' || activeMode === 'funcionalidades-carousel' || activeMode === 'previsao-carrossel' || activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel' || activeMode === 'presentation' || activeMode === 'instagram-ads-carousel' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel' || activeMode === 'boletim-agro-carrossel';
 }
 function isOpinionCarouselMode(mode) {
   return (mode || activeMode) === 'opiniao-carrossel';
@@ -9791,6 +10034,7 @@ function getSidebarCollectionLabel() {
   if (isFeatureMode()) return 'Funcionalidades';
   if (isLogoCropwareMode()) return 'Logos';
   if (isWeatherMode()) return 'Previsoes';
+  if (isBoletimAgroMode()) return 'Boletins';
   if (isOpinionCarouselMode()) return 'Opinioes';
   if (isNewsMode()) return 'Pautas';
   if (isInstagramAdsMode()) return 'Anuncios';
@@ -9803,6 +10047,7 @@ function getGenerateButtonLabel() {
   if (activeMode === 'funcionalidades-carousel') return 'Gerar Carrossel de Funcionalidade';
   if (isLogoCropwareMode()) return 'Gerar Logo Cropware';
   if (isWeatherMode()) return 'Gerar Previsão';
+  if (isBoletimAgroMode()) return 'Gerar Boletim do Agro';
   if (isOpinionCarouselMode()) return 'Gerar Carrossel de Opinião';
   if (activeMode === 'tendencia-carrossel') return 'Gerar Carrossel de Tendência';
   if (isNewsMode()) return 'Post Noticia';
@@ -10000,6 +10245,7 @@ function getModeItems() {
     case 'news-post':                 return newsPosts;
     case 'tendencia-carrossel':       return newsCarousels;
     case 'opiniao-carrossel':         return opinionCarousels;
+    case 'boletim-agro-carrossel':    return boletimAgroCarousels;
     case 'instagram-ads-post':        return instagramAdsPosts;
     case 'instagram-ads-carousel':    return instagramAdsCarousels;
     case 'linkedin-post':             return linkedinPosts;
@@ -10021,6 +10267,7 @@ function getModeLegends() {
     case 'news-post':                 return newsLegends;
     case 'tendencia-carrossel':       return newsCarouselLegends;
     case 'opiniao-carrossel':         return opinionCarouselLegends;
+    case 'boletim-agro-carrossel':    return boletimAgroCarouselLegends;
     case 'instagram-ads-post':        return instagramAdsLegends;
     case 'instagram-ads-carousel':    return instagramAdsCarouselLegends;
     case 'linkedin-post':             return linkedinLegends;
@@ -10042,6 +10289,7 @@ function getModeCurrentIdx() {
     case 'news-post':                 return newsCurrentPost;
     case 'tendencia-carrossel':       return currentNewsCarousel;
     case 'opiniao-carrossel':         return currentOpinionCarousel;
+    case 'boletim-agro-carrossel':    return currentBoletimAgroCarousel;
     case 'instagram-ads-post':        return instagramAdsCurrentPost;
     case 'instagram-ads-carousel':    return instagramAdsCurrentCarousel;
     case 'linkedin-post':             return linkedinCurrentPost;
@@ -10063,6 +10311,7 @@ function setModeCurrentIdx(idx) {
     case 'news-post':                 newsCurrentPost = idx; break;
     case 'tendencia-carrossel':       currentNewsCarousel = idx; break;
     case 'opiniao-carrossel':         currentOpinionCarousel = idx; break;
+    case 'boletim-agro-carrossel':    currentBoletimAgroCarousel = idx; break;
     case 'instagram-ads-post':        instagramAdsCurrentPost = idx; break;
     case 'instagram-ads-carousel':    instagramAdsCurrentCarousel = idx; break;
     case 'linkedin-post':             linkedinCurrentPost = idx; break;
@@ -10083,6 +10332,7 @@ function getCurrentSlide() {
   if (activeMode === 'instagram-ads-carousel') return instagramAdsCurrentSlide;
   if (activeMode === 'tendencia-carrossel') return newsCarouselCurrentSlide;
   if (activeMode === 'opiniao-carrossel') return opinionCarouselCurrentSlide;
+  if (activeMode === 'boletim-agro-carrossel') return boletimAgroCarouselCurrentSlide;
   return currentSlide;
 }
 function setCurrentSlide(idx) {
@@ -10094,6 +10344,7 @@ function setCurrentSlide(idx) {
   else if (activeMode === 'instagram-ads-carousel') instagramAdsCurrentSlide = idx;
   else if (activeMode === 'tendencia-carrossel') newsCarouselCurrentSlide = idx;
   else if (activeMode === 'opiniao-carrossel') opinionCarouselCurrentSlide = idx;
+  else if (activeMode === 'boletim-agro-carrossel') boletimAgroCarouselCurrentSlide = idx;
   else currentSlide = idx;
 }
 
@@ -11351,6 +11602,10 @@ const _saveSessionCore = async function() {
     .map((c, i) => ({ post: c, legend: weatherCarouselLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
+  const generatedBoletimAgroCarousels = boletimAgroCarousels
+    .map((c, i) => ({ post: c, legend: boletimAgroCarouselLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
   const generatedLinkedinPosts = linkedinPosts
     .map((p, i) => ({ post: p, legend: linkedinLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
@@ -11371,7 +11626,7 @@ const _saveSessionCore = async function() {
     .map((p, i) => ({ post: p, legend: presentationLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
-  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedFeaturePosts, ...generatedFeatureCarousels, ...generatedLogoCropwarePosts, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedOpinionCarousels, ...generatedWeatherCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
+  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedFeaturePosts, ...generatedFeatureCarousels, ...generatedLogoCropwarePosts, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedOpinionCarousels, ...generatedWeatherCarousels, ...generatedBoletimAgroCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
   if (!allRows.length) return;
   const sid = getSessionId();
   const now = new Date().toISOString();
@@ -11428,7 +11683,7 @@ async function loadSession() {
         const type = postData.type;
         if (type === 'presentation') {
           renderGeneratedPresentation(postData, row.legend || '');
-        } else if (type === 'carousel' || type === 'feature-carousel' || type === 'weather-carousel' || type === 'linkedin-carousel' || type === 'linkedin-pessoal-carousel' || type === 'instagram-ads-carousel' || type === 'news-carousel-post' || type === 'opinion-carousel-post') {
+        } else if (type === 'carousel' || type === 'feature-carousel' || type === 'weather-carousel' || type === 'linkedin-carousel' || type === 'linkedin-pessoal-carousel' || type === 'instagram-ads-carousel' || type === 'news-carousel-post' || type === 'opinion-carousel-post' || type === 'boletim-agro-post') {
           renderGeneratedCarousel(postData, row.legend || '');
         } else {
           renderGeneratedPost(postData, row.legend || '');
@@ -12093,8 +12348,9 @@ function renderGeneratedCarousel(carouselData, legendText) {
   const isLinkedin = carouselData.type === 'linkedin-carousel';
   const isNewsCarousel = carouselData.type === 'news-carousel-post';
   const isOpinionCarousel = carouselData.type === 'opinion-carousel-post' || carouselData.editorialFlavor === 'opinion';
-  const targetArr = isOpinionCarousel ? opinionCarousels : isNewsCarousel ? newsCarousels : isInstagramAdsCarousel ? instagramAdsCarousels : isFeatureCarousel ? featureCarousels : isWeatherCarousel ? weatherCarousels : isLinkedinPessoal ? linkedinPessoalCarousels : isLinkedin ? linkedinCarousels : carousels;
-  const targetLeg = isOpinionCarousel ? opinionCarouselLegends : isNewsCarousel ? newsCarouselLegends : isInstagramAdsCarousel ? instagramAdsCarouselLegends : isFeatureCarousel ? featureCarouselLegends : isWeatherCarousel ? weatherCarouselLegends : isLinkedinPessoal ? linkedinPessoalCarouselLegends : isLinkedin ? linkedinCarouselLegends : carouselLegends;
+  const isBoletimAgro = carouselData.type === 'boletim-agro-post';
+  const targetArr = isBoletimAgro ? boletimAgroCarousels : isOpinionCarousel ? opinionCarousels : isNewsCarousel ? newsCarousels : isInstagramAdsCarousel ? instagramAdsCarousels : isFeatureCarousel ? featureCarousels : isWeatherCarousel ? weatherCarousels : isLinkedinPessoal ? linkedinPessoalCarousels : isLinkedin ? linkedinCarousels : carousels;
+  const targetLeg = isBoletimAgro ? boletimAgroCarouselLegends : isOpinionCarousel ? opinionCarouselLegends : isNewsCarousel ? newsCarouselLegends : isInstagramAdsCarousel ? instagramAdsCarouselLegends : isFeatureCarousel ? featureCarouselLegends : isWeatherCarousel ? weatherCarouselLegends : isLinkedinPessoal ? linkedinPessoalCarouselLegends : isLinkedin ? linkedinCarouselLegends : carouselLegends;
 
   targetArr.push(carouselData);
   targetLeg.push(isInstagramAdsCarousel ? (legendText || '').trim() : sanitizeLegend(legendText || ''));
@@ -12823,12 +13079,351 @@ function buildWeatherConclusionHTMLFromPost(postData) {
   return escapeHTML(parts.join(' '));
 }
 
+// R28: normalizadores aplicados no RENDER (não no build/save). Garantem que
+// qualquer mudança de formato se reflete automaticamente em boletins antigos
+// no próximo F5 — sem precisar de migration scripts.
+const UNIT_SHORT_BY_COMMODITY = {
+  'Soja': 'SC60', 'Milho': 'SC60', 'Arroz': 'SC50',
+  'Trigo': 'TON', 'Boi': '@', 'Café': 'SC60', 'Sorgo': 'SC60',
+  'Feijão': 'SC60',
+};
+
+function _normalizeBoletimValor(v) {
+  if (v == null || v === '' || v === '—') return '—';
+  const n = typeof v === 'number' ? v : parseFloat(String(v).replace(/\./g, '').replace(',', '.'));
+  if (!isFinite(n)) return '—';
+  return Math.round(n).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function _normalizeBoletimVar(v) {
+  // Render-time fallback: campos sem dado mostram "0,00%" (decisão UX —
+  // continuidade visual com células preenchidas). O data model mantém '—'
+  // pra o enrich histórico saber que precisa calcular.
+  if (v == null || v === '' || v === '—' || v === '-') return '0,00%';
+  const s = String(v).trim();
+  // Remove % se já tem e parseia o número
+  const noPct = s.replace(/%$/, '').replace(',', '.');
+  const n = parseFloat(noPct);
+  if (!isFinite(n)) return '0,00%';
+  const sign = n > 0 ? '+' : '';
+  return sign + n.toFixed(2).replace('.', ',') + '%';
+}
+
+function _normalizeBoletimUnit(unit, commodity) {
+  let u = String(unit || '');
+  // Strip prefixos de medida ao início.
+  u = u.replace(/^TON\s*[·\-]?\s*/i, '');
+  u = u.replace(/^Tonelada\s*[·\-]?\s*/i, '');
+  u = u.replace(/^\(?\s*SACA\s*\d+\s*KG\s*\)?\s*[·\-]?\s*/i, '');
+  u = u.replace(/^Saca\s*[·\-]?\s*/i, '');
+  u = u.replace(/^@\s*\d*\s*K?G?\s*[·\-]?\s*/i, '');
+  // Strip "(SACA NN KG)" em qualquer posição.
+  u = u.replace(/\(\s*SACA\s*\d+\s*KG\s*\)/gi, '');
+  // Normaliza "TIPO N" → "Tipo N".
+  u = u.replace(/TIPO\s*(\d+)/gi, (_, n) => `Tipo ${n}`);
+  // Café: ordem desejada é "Praca/UF · Tipo N" (praça primeiro, tipo no fim).
+  if (commodity === 'Café') {
+    // Inverte boletins antigos: "Tipo N · Praca/UF" → "Praca/UF · Tipo N".
+    u = u.replace(/^(Tipo\s+\d+)\s*·\s*(.+)$/i, '$2 · $1');
+    // Adiciona "Tipo 6" no final quando faltar.
+    if (!/Tipo \d/i.test(u)) {
+      u = `${u.trim()} · Tipo 6`;
+    }
+  }
+  // Feijão: ordem desejada é "Praca/UF · Car. X,X/Y,Y" (praça primeiro, tipo no fim).
+  if (commodity === 'Feijão') {
+    // Abrevia "Carioca Nota X,X/Y,Y" → "Car. X,X/Y,Y" (boletins novos).
+    u = u.replace(/Carioca\s+Nota\s+([\d,./]+)/i, 'Car. $1');
+    // Boletins muito antigos com só "Carioca" sozinho → adiciona "Car. 8,0/8,5".
+    if (/^Carioca\b/i.test(u) && !/^Car\./i.test(u) && !/Car\.\s+[\d,./]+/.test(u)) {
+      u = u.replace(/^Carioca\b/i, 'Car. 8,0/8,5');
+    }
+    // Inverte: "Car. X,X/Y,Y · Praca/UF" → "Praca/UF · Car. X,X/Y,Y".
+    u = u.replace(/^(Car\.\s+[\d,./]+)\s*·\s*(.+)$/i, '$2 · $1');
+  }
+  // Sorgo: remove sufixo "(Comigo)" (era visual ruim; cooperativa fica implícita).
+  if (commodity === 'Sorgo') {
+    u = u.replace(/\s*\(Comigo\)\s*/i, ' ').trim();
+  }
+  // Colapsa espaços e separadores duplicados.
+  u = u.replace(/\s+·\s*·\s+/g, ' · ').replace(/\s{2,}/g, ' ').replace(/\s+·\s*$/, '').trim();
+  // R28: separador · → - (visual mais limpo / técnico).
+  u = u.replace(/\s*·\s*/g, ' - ');
+  // R28: title case PT-BR — "Norte Do Parana/PR" → "Norte do Parana/PR".
+  // Aplica só nos segmentos do local (antes do "/UF"), preservando siglas e UF.
+  const PT_MINOR = new Set(['de','da','do','das','dos','e','em','na','no','nas','nos','a','o','as','os','para','por','com','sem']);
+  u = u.split(' - ').map(seg => {
+    return seg.split('/').map((part, partIdx) => {
+      // Última parte que tem 2 letras maiúsculas é UF — preserva.
+      if (/^[A-Z]{2}$/.test(part)) return part;
+      return part.split(/\s+/).map((w, i) => {
+        if (!w) return w;
+        // Preserva siglas em CAPS (RS, MG, GO, SP, USDA, etc).
+        if (w === w.toUpperCase() && w.length >= 2 && /[A-Z]/.test(w)) return w;
+        const lw = w.toLowerCase();
+        if (i > 0 && PT_MINOR.has(lw)) return lw;
+        return lw.charAt(0).toUpperCase() + lw.slice(1);
+      }).join(' ');
+    }).join('/');
+  }).join(' - ');
+  return u;
+}
+
+function _normalizeBoletimUnitShort(unitShort, commodity, unit) {
+  if (unitShort) return unitShort;
+  if (UNIT_SHORT_BY_COMMODITY[commodity]) return UNIT_SHORT_BY_COMMODITY[commodity];
+  const u = String(unit || '').toUpperCase();
+  const m = u.match(/SACA\s*(\d+)\s*KG/);
+  if (m) return `SC${m[1]}`;
+  if (/\bTON/.test(u)) return 'TON';
+  if (/@/.test(u)) return '@';
+  return '';
+}
+
+// R28: "25 DE MAIO" / "25/05/2026" / "25.mai" / "25 mai 2026" → "25/05/26".
+// Roda no render — boletins antigos auto-formatam no F5.
+const _PT_MONTH_TO_NUM = {
+  'jan': 1, 'janeiro': 1,
+  'fev': 2, 'fevereiro': 2,
+  'mar': 3, 'março': 3, 'marco': 3,
+  'abr': 4, 'abril': 4,
+  'mai': 5, 'maio': 5,
+  'jun': 6, 'junho': 6,
+  'jul': 7, 'julho': 7,
+  'ago': 8, 'agosto': 8,
+  'set': 9, 'setembro': 9,
+  'out': 10, 'outubro': 10,
+  'nov': 11, 'novembro': 11,
+  'dez': 12, 'dezembro': 12,
+};
+function _normalizeBoletimDataLinha(s) {
+  const raw = String(s || '').trim();
+  if (!raw) return '';
+  // Já está em DD/MM/YY ou DD/MM/YYYY? Reduz YYYY → YY se necessário.
+  let m = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if (m) {
+    const dd = m[1].padStart(2, '0');
+    const mm = m[2].padStart(2, '0');
+    const yy = m[3].length === 4 ? m[3].slice(2) : m[3].padStart(2, '0');
+    return `${dd}/${mm}/${yy}`;
+  }
+  // "DD DE MES" ou "DD DE MES DE YYYY"
+  m = raw.match(/^(\d{1,2})\s+de\s+([a-zçãéá]+)(?:\s+de\s+(\d{2,4}))?$/i);
+  if (m) {
+    const dd = m[1].padStart(2, '0');
+    const mes = _PT_MONTH_TO_NUM[m[2].toLowerCase()];
+    if (mes) {
+      const mm = String(mes).padStart(2, '0');
+      const yy = m[3] ? (m[3].length === 4 ? m[3].slice(2) : m[3].padStart(2, '0')) : String(new Date().getFullYear()).slice(2);
+      return `${dd}/${mm}/${yy}`;
+    }
+  }
+  // "DD.mes" (formato curto news, ex: "25.mai")
+  m = raw.match(/^(\d{1,2})\.([a-zçãéá]+)$/i);
+  if (m) {
+    const dd = m[1].padStart(2, '0');
+    const mes = _PT_MONTH_TO_NUM[m[2].toLowerCase()];
+    if (mes) {
+      const mm = String(mes).padStart(2, '0');
+      const yy = String(new Date().getFullYear()).slice(2);
+      return `${dd}/${mm}/${yy}`;
+    }
+  }
+  // "DD mes YYYY" (espaço sem "de")
+  m = raw.match(/^(\d{1,2})\s+([a-zçãéá]+)\s+(\d{2,4})$/i);
+  if (m) {
+    const dd = m[1].padStart(2, '0');
+    const mes = _PT_MONTH_TO_NUM[m[2].toLowerCase()];
+    if (mes) {
+      const mm = String(mes).padStart(2, '0');
+      const yy = m[3].length === 4 ? m[3].slice(2) : m[3].padStart(2, '0');
+      return `${dd}/${mm}/${yy}`;
+    }
+  }
+  return raw;
+}
+
+// R28: Dólar com 3 decimais no slide (mais legível). Boletins novos vêm com
+// 4 decimais da AwesomeAPI → arredonda; boletins antigos com 3 decimais ficam OK.
+function _normalizeBoletimDolarValor(s) {
+  if (!s) return s;
+  const m = String(s).match(/^(R?\$?\s*)?(-?\d{1,3}(?:\.\d{3})*),(\d{1,4})(\s*.*)$/);
+  if (!m) return s;
+  const prefix = m[1] || '';
+  const intRaw = m[2].replace(/\./g, '');
+  const dec    = m[3];
+  const suffix = m[4] || '';
+  const n = parseFloat(`${intRaw}.${dec}`);
+  if (!isFinite(n)) return s;
+  return `${prefix}${n.toFixed(3).replace('.', ',')}${suffix}`;
+}
+
+function _normalizeBoletimSource(source) {
+  if (!source) return '';
+  // Quando algum dado veio do Gemini Search (fallback), simplifica pra "via Gemini Search".
+  if (/via Gemini Search/i.test(source)) return 'via Gemini Search';
+  // R28: separador · → - (mesma decisão visual do unit cell).
+  return source.replace(/\s*·\s*/g, ' - ');
+}
+
+// R28: render block do boletim do agro — tabela 7×4 de cotações + macro indicators.
+// Substitui hook/complement/bullets do moldura quando postData.role === 'cotacoes'.
+function renderBoletimCotacoesHTML(postData) {
+  const dataLinha = _normalizeBoletimDataLinha(postData.dataLinha);
+  const cotacoes  = Array.isArray(postData.cotacoes) ? postData.cotacoes : [];
+
+  const dataBadge = dataLinha
+    ? `<div class="moldura-data-badge" contenteditable="true" spellcheck="false" data-boletim-field="dataLinha"><i class="ph-fill ph-calendar"></i>${escapeHTML(dataLinha)}</div>`
+    : '';
+
+  const trendOf = (v) => {
+    const s = String(v || '').trim();
+    if (!s || s === '—' || s === '-' || s === '0%' || /^[+\-]?0[,.]00?%?$/.test(s)) return 'flat';
+    if (s.startsWith('-')) return 'down';
+    return 'up';
+  };
+  const cotacoesRows = cotacoes.slice(0, 8).map((c, i) => {
+    // Render-time normalization — formato sempre derivado dos valores brutos,
+    // então uma mudança na regra propaga pra todos os boletins (novos e antigos).
+    const valor      = _normalizeBoletimValor(c.valor);
+    // Compat: aceita tanto varSemana (R28+) quanto varDia (boletins antigos).
+    const varSem     = _normalizeBoletimVar(c.varSemana || c.varDia);
+    const varMes     = _normalizeBoletimVar(c.varMes);
+    const unitClean  = _normalizeBoletimUnit(c.unit, c.commodity);
+    const unitShort  = _normalizeBoletimUnitShort(c.unitShort, c.commodity, c.unit);
+    const trendSem   = trendOf(varSem);
+    const trendMes   = trendOf(varMes);
+    return `<div class="moldura-cotacoes-row" data-cotacao-idx="${i}">
+      <div class="moldura-cotacoes-commodity">
+        <span class="moldura-cotacoes-commodity-name" contenteditable="true" spellcheck="false" data-cotacao-field="commodity">${escapeHTML(c.commodity || '')}</span>
+        <span class="moldura-cotacoes-commodity-unit" contenteditable="true" spellcheck="false" data-cotacao-field="unit">${escapeHTML(unitClean)}</span>
+      </div>
+      <div class="moldura-cotacoes-value" contenteditable="true" spellcheck="false" data-cotacao-field="valor">${escapeHTML(valor)}</div>
+      <div class="moldura-cotacoes-unit" contenteditable="true" spellcheck="false" data-cotacao-field="unitShort">${unitShort ? 'R$/' + escapeHTML(unitShort) : ''}</div>
+      <div class="moldura-cotacoes-var" data-trend="${trendSem}" contenteditable="true" spellcheck="false" data-cotacao-field="varSemana">${escapeHTML(varSem)}</div>
+      <div class="moldura-cotacoes-var" data-trend="${trendMes}" contenteditable="true" spellcheck="false" data-cotacao-field="varMes">${escapeHTML(varMes)}</div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:24px;width:100%;flex-wrap:wrap;">
+      <div class="moldura-hook hook" contenteditable="true" spellcheck="false" style="font-size:calc(60px * var(--hook-scale, 1));margin:0;">${escapeHTML(postData.hookHTML || 'Cotações')}</div>
+      ${dataBadge}
+    </div>
+    <div class="moldura-cotacoes">
+      <div class="moldura-cotacoes-header">
+        <div></div>
+        <div>Valor R$</div>
+        <div></div>
+        <div>Var./Semana</div>
+        <div>Var./Mês</div>
+      </div>
+      ${cotacoesRows}
+    </div>
+  `;
+}
+
+// R28: render block do boletim — slide MACRO & MERCADO EXTERNO.
+// 7 linhas: Dólar / CDI / Soja CBOT / Prêmio Soja / Milho CBOT / Ureia CFR / MAP CFR.
+// Reusa a grid de cotações (5 colunas) mas com semântica diferente: 4ª coluna é "Var. Hoje".
+function renderBoletimMacroHTML(postData) {
+  const dataLinha = _normalizeBoletimDataLinha(postData.dataLinha);
+  const linhas    = Array.isArray(postData.macroLinhas) ? postData.macroLinhas : [];
+
+  const dataBadge = dataLinha
+    ? `<div class="moldura-data-badge" contenteditable="true" spellcheck="false" data-boletim-field="dataLinha"><i class="ph-fill ph-calendar"></i>${escapeHTML(dataLinha)}</div>`
+    : '';
+
+  const trendOf = (v) => {
+    const s = String(v || '').trim();
+    if (!s || s === '—' || s === '-' || s === '0%' || /^[+\-]?0[,.]00?%?$/.test(s)) return 'flat';
+    if (s.startsWith('-')) return 'down';
+    return 'up';
+  };
+
+  const linhasRows = linhas.slice(0, 7).map((l, i) => {
+    const label     = l.label     || '';
+    const sub       = l.ticker || l.shortName || '';
+    // Dólar: extrai "R$" do valor pra coluna de unidade; arredonda pra 3 decimais.
+    // CDI: extrai "%" do valor pra coluna de unidade.
+    let valor     = l.valor || '—';
+    let unitShort = l.unitShort || '';
+    if (/Dólar/i.test(label)) {
+      valor = _normalizeBoletimDolarValor(valor).replace(/^R\$\s*/, '');
+      unitShort = unitShort || 'R$/US$';
+    } else if (/^CDI\b/i.test(label)) {
+      valor = String(valor).replace(/\s*%\s*$/, '');
+      unitShort = unitShort || '% a.m.';
+    }
+    // CDI (estruturalmente mensal — sem semana) e Prêmio Soja (sem fonte de
+    // variação) mostram "-" em vez de "0,00%" pra sinalizar ausência de dado.
+    const semVariacao = /^CDI\b/i.test(label) || /Prêmio/i.test(label);
+    const varSem    = semVariacao ? '-' : _normalizeBoletimVar(l.varSemana);
+    const varMes    = semVariacao ? '-' : _normalizeBoletimVar(l.varMes);
+    const trendSem  = trendOf(varSem);
+    const trendMes  = trendOf(varMes);
+    return `<div class="moldura-cotacoes-row" data-macro-idx="${i}">
+      <div class="moldura-cotacoes-commodity">
+        <span class="moldura-cotacoes-commodity-name" contenteditable="true" spellcheck="false" data-macro-field="label">${escapeHTML(label)}</span>
+        ${sub ? `<span class="moldura-cotacoes-commodity-unit" contenteditable="true" spellcheck="false" data-macro-field="ticker">${escapeHTML(sub)}</span>` : ''}
+      </div>
+      <div class="moldura-cotacoes-value" contenteditable="true" spellcheck="false" data-macro-field="valor">${escapeHTML(valor)}</div>
+      <div class="moldura-cotacoes-unit" contenteditable="true" spellcheck="false" data-macro-field="unitShort">${escapeHTML(unitShort)}</div>
+      <div class="moldura-cotacoes-var" data-trend="${trendSem}" contenteditable="true" spellcheck="false" data-macro-field="varSemana">${escapeHTML(varSem)}</div>
+      <div class="moldura-cotacoes-var" data-trend="${trendMes}" contenteditable="true" spellcheck="false" data-macro-field="varMes">${escapeHTML(varMes)}</div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:24px;width:100%;flex-wrap:wrap;">
+      <div class="moldura-hook hook" contenteditable="true" spellcheck="false" style="font-size:calc(60px * var(--hook-scale, 1));margin:0;">${escapeHTML(postData.hookHTML || 'Mercado Externo')}</div>
+      ${dataBadge}
+    </div>
+    <div class="moldura-cotacoes">
+      <div class="moldura-cotacoes-header">
+        <div></div>
+        <div>Valor</div>
+        <div></div>
+        <div>Var./Semana</div>
+        <div>Var./Mês</div>
+      </div>
+      ${linhasRows}
+    </div>
+  `;
+}
+
+// R28: render block do boletim — lista de manchetes do dia (5 items).
+function renderBoletimManchetesHTML(postData) {
+  const dataLinha = _normalizeBoletimDataLinha(postData.dataLinha);
+  const manchetes = Array.isArray(postData.manchetes) ? postData.manchetes : [];
+
+  const dataBadge = dataLinha
+    ? `<div class="moldura-data-badge" contenteditable="true" spellcheck="false" data-boletim-field="dataLinha"><i class="ph-fill ph-calendar"></i>${escapeHTML(dataLinha)}</div>`
+    : '';
+  const items = manchetes.slice(0, 5).map((m, i) => `
+    <div class="moldura-manchete" data-manchete-idx="${i}">
+      <span class="moldura-manchete-kicker" contenteditable="true" spellcheck="false" data-manchete-field="kicker">${escapeHTML(m.kicker || '')}</span>
+      <span class="moldura-manchete-titulo" contenteditable="true" spellcheck="false" data-manchete-field="titulo">${escapeHTML(m.titulo || '')}</span>
+      ${m.fonte ? `<span class="moldura-manchete-fonte" contenteditable="true" spellcheck="false" data-manchete-field="fonte">Fonte: ${escapeHTML(m.fonte)}</span>` : ''}
+    </div>
+  `).join('');
+
+  return `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:24px;width:100%;flex-wrap:wrap;">
+      <div class="moldura-hook hook" contenteditable="true" spellcheck="false" style="font-size:calc(44px * var(--hook-scale, 1));margin:0;">${escapeHTML(postData.hookHTML || 'NOTÍCIAS DO DIA')}</div>
+      ${dataBadge}
+    </div>
+    <div class="moldura-manchetes-list">${items}</div>
+  `;
+}
+
 function renderMolduraStyle(postData) {
   const hookHTML       = postData.hookHTML       || '';
   const complementHTML = postData.complementHTML || '';
   const imgSrc         = postData.bgImage        || '';
   const textMode       = postData.frameTextMode  || 'light';
   const align          = postData.signalAlign === 'right' ? 'right' : 'left';
+  const boletimRole    = (postData.role === 'cotacoes' || postData.role === 'macro' || postData.role === 'manchetes') ? postData.role : null;
 
   const showHook        = postData.hookVisible        !== false;
   const showComplement  = postData.complementVisible  !== false;
@@ -12836,24 +13431,33 @@ function renderMolduraStyle(postData) {
   const showBulletIcons = postData.bulletIconsVisible !== false;
   const isConclusion    = isWeatherConclusionSlide(postData);
 
-  const hookBlock = (!isConclusion && showHook)
+  // R28: boletim do agro — bloco completo customizado, substitui hook/complement/bullets.
+  const boletimBlock = boletimRole === 'cotacoes'
+    ? renderBoletimCotacoesHTML(postData)
+    : boletimRole === 'macro'
+      ? renderBoletimMacroHTML(postData)
+      : boletimRole === 'manchetes'
+        ? renderBoletimManchetesHTML(postData)
+        : '';
+
+  const hookBlock = (!isConclusion && !boletimRole && showHook)
     ? `<div class="moldura-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>`
     : '';
-  const complementBlock = (!isConclusion && showComplement)
+  const complementBlock = (!isConclusion && !boletimRole && showComplement)
     ? `<div class="moldura-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>`
     : '';
   const conclusionBlock = isConclusion
     ? `<div class="moldura-conclusion-text weather-conclusion-text" contenteditable="true" spellcheck="false">${buildWeatherConclusionHTMLFromPost(postData)}</div>`
     : '';
-  const renderWeatherChart = shouldRenderWeatherChart(postData);
+  const renderWeatherChart = !boletimRole && shouldRenderWeatherChart(postData);
   const chartBlock = renderWeatherChart
     ? `<div class="moldura-weather-chart">${normalizeWeatherChartSvg(postData.weatherChartSvg)}</div>`
     : '';
   const chartLegendBlock = '';
-  const weatherSlideIconBlock = renderWeatherSlideIcon(postData);
+  const weatherSlideIconBlock = !boletimRole ? renderWeatherSlideIcon(postData) : '';
 
   const bullets = Array.isArray(postData.bullets) ? postData.bullets.slice(0, 3) : [];
-  const bulletsHTML = (!isConclusion && showBullets && bullets.length) ? `
+  const bulletsHTML = (!isConclusion && !boletimRole && showBullets && bullets.length) ? `
       <div class="moldura-bullets">
         ${bullets.map((b, i) => `
           <div class="moldura-bullet" data-bullet-idx="${i}">
@@ -12884,13 +13488,15 @@ function renderMolduraStyle(postData) {
       <div class="moldura-glass-sidebar"></div>
       ${weatherSlideIconBlock}
       ${conclusionBlock}
+      ${boletimBlock}
       ${hookBlock}
-      ${(!isConclusion && showHook && showComplement) ? '<div class="moldura-divider"></div>' : ''}
+      ${(!isConclusion && !boletimRole && showHook && showComplement) ? '<div class="moldura-divider"></div>' : ''}
       ${complementBlock}
       ${chartBlock}
-      ${(showBullets && bullets.length && (showHook || showComplement || chartBlock)) ? '<div class="moldura-divider"></div>' : ''}
+      ${(!boletimRole && showBullets && bullets.length && (showHook || showComplement || chartBlock)) ? '<div class="moldura-divider"></div>' : ''}
       ${bulletsHTML}
       ${chartLegendBlock}
+      ${(!boletimRole && postData.cotacoesSource) ? `<div class="moldura-cotacoes-source" contenteditable="true" spellcheck="false" data-boletim-field="cotacoesSource">${escapeHTML(_normalizeBoletimSource(postData.cotacoesSource))}</div>` : ''}
       <div class="moldura-glass-line"></div>
     </div>
     ${postData.logoEnabled !== false ? '<img class="moldura-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
@@ -17183,7 +17789,7 @@ async function bootStudio() {
   // Restaura último modo selecionado (persistido no localStorage)
   try {
     const savedMode = localStorage.getItem('cropware-active-mode');
-    const validModes = ['post','carousel','funcionalidades-post','funcionalidades-carousel','logo-cropware-post','previsao-carrossel','news-post','tendencia-carrossel','opiniao-carrossel','instagram-ads-post','instagram-ads-carousel',
+    const validModes = ['post','carousel','funcionalidades-post','funcionalidades-carousel','logo-cropware-post','previsao-carrossel','news-post','tendencia-carrossel','opiniao-carrossel','boletim-agro-carrossel','instagram-ads-post','instagram-ads-carousel',
                         'linkedin-post','linkedin-carousel','linkedin-pessoal-post','linkedin-pessoal-carousel',
                         'presentation','motion-reel'];
     if (savedMode && validModes.includes(savedMode) && savedMode !== activeMode) {
@@ -19498,6 +20104,7 @@ async function callGeminiImage(imagePrompt, extraDirection, aspectRatio) {
 function handleGenerate() {
   if (isMotionReelMode()) generateMotionReel();
   else if (isWeatherMode()) generateWeatherCarousel();
+  else if (isBoletimAgroMode()) generateBoletimAgroCarousel();
   else if (isCarouselMode() && getPlatform() === 'news') generateNewsCarousel();
   else if (isCarouselMode()) generateCarousel();
   else generatePost();
@@ -20530,6 +21137,109 @@ async function callGeminiNewsCarouselText(theme, tone, slideCount, newsContext, 
   const match = raw.match(/\{[\s\S]*\}/);
   if (!match) throw new Error('Carrossel notícia: resposta não contém JSON válido.');
   return JSON.parse(match[0]);
+}
+
+// ─────────── Boletim do Agro (R28) ───────────
+// System prompt do boletim — pede JSON com cotacoes[] + manchetes[] em vez do
+// schema padrão de slides. Preservação literal de valores idêntica ao news.
+function buildBoletimAgroSystemPrompt() {
+  const today = new Date();
+  const meses = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+  const dataExemplo = `${today.getDate()} DE ${meses[today.getMonth()]}`;
+  return `
+Você é o editor de mercado da Cropware Análise. Sua função é montar um BOLETIM DIÁRIO DO AGRO consolidando cotações de commodities + manchetes do dia.
+
+REGRAS CRÍTICAS DE PRESERVAÇÃO (não negociáveis):
+- Use SOMENTE valores e fatos das pautas consolidadas fornecidas. NÃO invente nada.
+- Preserve EXATAMENTE: datas, valores monetários (ex: "R$ 130,57"), volumes, percentuais (ex: "+0,66%", "-2,44%"), nomes de fontes.
+- NÃO arredonde valores específicos. NÃO converta moedas. Use formato brasileiro (vírgula decimal, R$, %).
+- IMPORTANTE — EXTRAIA VALORES DA PAUTA: a pauta vem com fatos prefixados [GRÃOS]/[PROTEÍNAS]/[MACRO]. Procure CADA commodity dentro desses blocos e extraia o valor numérico mais recente que aparecer. Aceita fechamentos do dia anterior, "última cotação", "preço de referência" — desde que tenha número explícito.
+- Use "—" SÓ quando NENHUM valor numérico aparece pra essa commodity em TODA a pauta. Não seja excessivamente conservador — se a pauta mencionou "soja a R$ 129,62", use 129,62.
+- Para varDia/varMes: se a pauta tem o valor mas não a variação, use "—" só na variação ausente (mantém o valor).
+- Fontes primárias preferenciais: CEPEA, B3, CONAB, IMEA, USDA, MAPA. Outras fontes (Notícias Agrícolas, Globo Rural, Canal Rural, Agrolink) também são aceitas se citarem o número.
+
+OUTPUT (JSON ESTRITO — sem prosa, sem markdown):
+{
+  "dataLinha":        "string MAIÚSCULA tipo '${dataExemplo}' (use a data ATUAL)",
+  "dolar":            "valor do dólar PTAX/comercial fechamento ontem ou abertura hoje, ex: 'R$ 5,045'",
+  "cdi":              "taxa CDI diária do dia, ex: '1,13%'. Se não houver, use '—'",
+  "cotacoes": [
+    { "commodity": "Soja",   "unit": "Scs 60Kg · Rio Verde/GO",         "valor": "108,75",   "varSemana": "+2,22%", "varMes": "+1,84%" },
+    { "commodity": "Milho",  "unit": "Scs 60Kg · Rio Verde/GO",         "valor": "65,28",    "varSemana": "-0,06%", "varMes": "-2,44%" },
+    { "commodity": "Arroz",  "unit": "Scs 50Kg · Campanha/RS",          "valor": "60,66",    "varSemana": "-0,70%", "varMes": "-2,63%" },
+    { "commodity": "Trigo",  "unit": "Tonelada · Norte do Paraná/PR",   "valor": "1.360,52", "varSemana": "-0,07%", "varMes": "+1,33%" },
+    { "commodity": "Boi",    "unit": "@ · Araçatuba/SP",                "valor": "345,00",   "varSemana": "0,00%",  "varMes": "-6,00%" },
+    { "commodity": "Café",   "unit": "Tipo 6 Scs 60Kg · Cerrado de Minas/MG", "valor": "1.639,38", "varSemana": "-1,54%", "varMes": "-7,18%" }
+  ],
+  "manchetes": [
+    { "kicker": "TRIGO/CEPEA", "titulo": "Manchete de até 14 palavras, com ponto final.", "fonte": "Cepea" },
+    { "kicker": "SOJA/IMEA",   "titulo": "Manchete factual preservando datas e valores.", "fonte": "IMEA" }
+  ],
+  "closingHook":       "Tagline final em 6-10 palavras, ex: 'Análise diária do agro brasileiro.'",
+  "closingComplement": "CTA convidando a seguir, ex: 'Siga @cropware.app pra acompanhar o boletim todo dia.'",
+  "legend":            "Texto da legenda do post Instagram (130-180 palavras), tom analítico, sem inventar dados.",
+  "hashtags":          "5-7 hashtags minúsculas separadas por espaço, ex: '#agro #cotacoes #soja #milho #cropware'"
+}
+
+REGRAS POR CAMPO:
+- "dataLinha": SEMPRE a data de HOJE no formato "DD DE MÊS" maiúsculo (use a data ATUAL do sistema, não inventada).
+- "cotacoes": ORDEM FIXA — soja, milho, arroz, trigo, boi, café (6 itens, exatamente). Use o nome curto na chave "commodity" (Soja, Milho, Arroz, Trigo, Boi, Café).
+- "cotacoes[].unit": label curto identificando o tipo/região, MÁX 30 chars (ex: "Scs 60Kg (Paranaguá)", "@15Kg (Gordo)").
+- "cotacoes[].valor": número em formato BR sem o prefixo R$ (o frontend adiciona). Ex: "130,57", "1.360,52".
+- "cotacoes[].varSemana": variação semanal com sinal e %. Ex: "+2,22%", "-3,84%", "0,00%". Use "—" se ausente.
+- "cotacoes[].varMes": variação mensal acumulada. Mesmo formato.
+- "manchetes": 5 itens. Cada um com:
+   - "kicker": categoria MAIÚSCULA seguindo padrão real do agro ("TRIGO/CEPEA", "SOJA/IMEA", "MILHO", "EXPORTAÇÃO", "CLIMA", "CARURU"). 1-3 palavras.
+   - "titulo": manchete factual ≤14 palavras, com ponto final. Preserve datas/valores das fontes.
+   - "fonte": nome curto da fonte (Cepea, Conab, IMEA, Mais Soja, Reuters, etc).
+- "legend": 130-180 palavras, abre com leitura analítica do dia, cita 2-3 movimentos relevantes das cotações, fecha com CTA leve.
+- "hashtags": SEMPRE incluir #cropware no final. Outras: específicas das commodities movimentadas hoje (#soja, #milho) + temáticas (#mercado, #cotacoes, #agro).
+
+PROIBIDO:
+- Inventar valores ou variações.
+- Usar "ontem", "hoje", "amanhã" — sempre datas absolutas (formato dd/MM).
+- Frases motivacionais ("o agro vai bem", "boas notícias").
+- Arredondar valores ou converter moedas.
+- Mais de 5 manchetes ou menos de 4.
+
+OUTPUT: APENAS JSON. Comece em { e termine em }.`.trim();
+}
+
+async function callGeminiBoletimText(pautaCotacoes, pautaNoticias) {
+  const systemPrompt = buildBoletimAgroSystemPrompt();
+  const blocoCotacoes = pautaCotacoes
+    ? `\n\nPAUTA DE COTAÇÕES (use APENAS estes fatos preservados):\nManchete consolidada: ${pautaCotacoes.manchete || ''}\nLead: ${pautaCotacoes.lead || ''}\nFatos preservados (1 por linha):\n${(pautaCotacoes.fatos || []).map((f, i) => `  ${i + 1}. ${f}`).join('\n') || '  (sem fatos)'}\nContexto: ${pautaCotacoes.contexto || ''}\nFontes: ${(pautaCotacoes.fontes || []).join(', ')}`
+    : '';
+  const blocoNoticias = pautaNoticias
+    ? `\n\nPAUTA DE NOTÍCIAS DO DIA (use APENAS estas manchetes preservadas):\nManchete consolidada: ${pautaNoticias.manchete || ''}\nLead: ${pautaNoticias.lead || ''}\nFatos preservados (cada um vira UMA manchete distinta):\n${(pautaNoticias.fatos || []).map((f, i) => `  ${i + 1}. ${f}`).join('\n') || '  (sem fatos)'}\nContexto: ${pautaNoticias.contexto || ''}\nFontes: ${(pautaNoticias.fontes || []).join(', ')}`
+    : '';
+  const userText = `Monte um boletim do agro com a data de hoje. Use APENAS os dados das pautas abaixo. Preserve valores LITERALMENTE.${blocoCotacoes}${blocoNoticias}`;
+
+  const resp = await fetchGeminiWithRetry(
+    `${SUPABASE_URL}/functions/v1/gemini`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+      },
+      body: JSON.stringify({
+        model: 'gemini-2.5-flash',
+        body: {
+          contents: [{ parts: [{ text: userText }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          generationConfig: { responseMimeType: 'application/json', temperature: 0.3 }
+        }
+      })
+    },
+    'Gemini texto (boletim do agro)'
+  );
+
+  const data = await resp.json();
+  const raw  = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const m = raw.match(/\{[\s\S]*\}/);
+  if (!m) throw new Error('Boletim: resposta não contém JSON válido.');
+  return JSON.parse(m[0]);
 }
 
 async function callGeminiCarouselText(theme, tone, slideCount, userImageBase64, userImageMime, platform, adContext) {
@@ -22167,6 +22877,943 @@ async function generateNewsCarousel() {
     btn.disabled = false;
     btn.textContent = isOpinion ? 'Gerar Carrossel de Opinião' : 'Gerar Carrossel de Tendência';
   }
+}
+
+// ─────────── Boletim do Agro — fontes diretas pra dados macro (R28) ───────────
+// Dólar via AwesomeAPI (CORS aberto, sem auth, atualizado em tempo real).
+// CDI via Banco Central SGS série 4391 (CDI mensal acumulado).
+// Substitui a tentativa do Gemini de adivinhar esses dados via Google Search.
+async function fetchDolarPTAX() {
+  try {
+    const r = await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL');
+    if (!r.ok) return null;
+    const data = await r.json();
+    const bid = parseFloat(data?.USDBRL?.bid);
+    if (!isFinite(bid)) return null;
+    return 'R$ ' + bid.toFixed(4).replace('.', ',');
+  } catch (e) {
+    console.warn('Boletim — fetchDolarPTAX:', e);
+    return null;
+  }
+}
+
+// R28: Dólar com variação 7d/30d. Fetch DIRETO da AwesomeAPI (CORS aberto;
+// passar pela Edge Function dá rate-limit 429 porque IP do Supabase é compartilhado).
+async function fetchDolarMacroDirect() {
+  console.info('[Macro:Dólar] iniciando fetch AwesomeAPI (direto, sem proxy)...');
+  try {
+    const [rLast, rSeries] = await Promise.all([
+      fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL'),
+      fetch('https://economia.awesomeapi.com.br/json/daily/USD-BRL/30'),
+    ]);
+    if (!rLast.ok) {
+      console.warn('[Macro:Dólar] last status', rLast.status);
+      return null;
+    }
+    const dataLast = await rLast.json();
+    const bid = parseFloat(dataLast?.USDBRL?.bid);
+    if (!isFinite(bid)) {
+      console.warn('[Macro:Dólar] bid inválido:', dataLast?.USDBRL?.bid);
+      return null;
+    }
+    let varDia = null, varSemana = null, varMes = null;
+    if (rSeries.ok) {
+      const series = await rSeries.json();
+      const bid1  = series?.[1]  ? parseFloat(series[1].bid)  : null;
+      const bid7  = series?.[7]  ? parseFloat(series[7].bid)  : null;
+      const bid30 = series?.[29] ? parseFloat(series[29].bid) : null;
+      if (bid1  && bid1  > 0) varDia    = ((bid - bid1)  / bid1)  * 100;
+      if (bid7  && bid7  > 0) varSemana = ((bid - bid7)  / bid7)  * 100;
+      if (bid30 && bid30 > 0) varMes    = ((bid - bid30) / bid30) * 100;
+    }
+    const fmt = (v) => (v == null || !isFinite(v)) ? '—'
+      : (v > 0 ? '+' : '') + v.toFixed(2).replace('.', ',') + '%';
+    const linha = {
+      label:     'Dólar PTAX',
+      ticker:    'AwesomeAPI',
+      valor:     'R$ ' + bid.toFixed(4).replace('.', ','),
+      unitShort: '',
+      varDia:    fmt(varDia),
+      varSemana: fmt(varSemana),
+      varMes:    fmt(varMes),
+      _source:   'awesomeapi',
+    };
+    console.info('[Macro:Dólar] sucesso:', linha);
+    return linha;
+  } catch (e) {
+    console.warn('[Macro:Dólar] direct exception:', e);
+    return null;
+  }
+}
+
+async function fetchCDIMensal() {
+  try {
+    // SGS série 4391 = CDI mensal acumulado (% a.m.). Atualiza ~uma vez por mês.
+    const r = await fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados/ultimos/1?formato=json');
+    if (!r.ok) return null;
+    const data = await r.json();
+    const last = Array.isArray(data) && data[0];
+    if (!last || last.valor == null) return null;
+    const v = parseFloat(String(last.valor).replace(',', '.'));
+    if (!isFinite(v)) return null;
+    return v.toFixed(2).replace('.', ',') + '%';
+  } catch (e) {
+    console.warn('Boletim — fetchCDIMensal:', e);
+    return null;
+  }
+}
+
+// ─────────── CNA Brasil — cotações de commodities (R28) ───────────
+// Endpoint público da CNA Brasil retorna JSON com TODAS as commodities ×
+// estados em uma chamada. Atualização diária. CORS aberto, sem auth.
+// Estrutura: array de { NOME_PRODUTO, TITULO, UF, PRACA, DATA, VALOR,
+// VARIACAO_SEMANAL, VARIACAO_QUINZENAL, VARIACAO_MENSAL, VARIACAO_ANUAL }
+async function fetchCnaCotacoes() {
+  try {
+    const r = await fetch('https://cnabrasil.org.br/apicna/precos', {
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!r.ok) return null;
+    const data = await r.json();
+    if (!Array.isArray(data)) return null;
+    return data;
+  } catch (e) {
+    console.warn('Boletim — fetchCnaCotacoes:', e);
+    return null;
+  }
+}
+
+// Seleciona UMA praça pra uma commodity, priorizando GO, com fallbacks.
+// `commodityKey` é o NOME_PRODUTO exato da API (ex: "SOJA", "BOI GORDO").
+// `praças preferidas` é uma lista ordenada de [UF, PRACA] tentadas em sequência.
+function pickCnaPraca(cnaData, commodityKey, prefList) {
+  if (!Array.isArray(cnaData)) return null;
+  const matches = cnaData.filter(r => r && r.NOME_PRODUTO === commodityKey);
+  if (!matches.length) return null;
+  for (const [uf, praca] of prefList) {
+    const found = matches.find(r => {
+      if (uf && r.UF !== uf) return false;
+      if (praca && String(r.PRACA || '').toUpperCase() !== praca.toUpperCase()) return false;
+      return true;
+    });
+    if (found) return found;
+  }
+  // Fallback final: primeira praça disponível.
+  return matches[0];
+}
+
+// Formata valor numérico (string "97.78" da CNA) pro formato brasileiro
+// arredondado sem centavos. Ex: "97.78" → "98", "1639.38" → "1.639".
+function _formatCnaValor(v) {
+  if (v == null || v === '') return '—';
+  const n = parseFloat(String(v).replace(',', '.'));
+  if (!isFinite(n)) return '—';
+  // Arredonda inteiro + separador de milhar BR.
+  return Math.round(n).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+// Extrai abreviação da unidade do TITULO da CNA. Ex:
+//   "R$ /SACA 60 KG"             → "SC60"
+//   "R$ /SACA 50 KG"             → "SC50"
+//   "R$ /TON"                    → "TON"
+//   "R$ /@"                      → "@"
+//   "TIPO 6 (R$ / SACA 60 KG)"   → "SC60"
+function _parseUnitShort(titulo) {
+  if (!titulo) return '';
+  const t = String(titulo).toUpperCase();
+  const m = t.match(/SACA\s*(\d+)\s*KG/);
+  if (m) return `SC${m[1]}`;
+  if (/\bTON(?:ELADA)?\b/.test(t)) return 'TON';
+  if (/@/.test(t)) return '@';
+  return '';
+}
+
+// Formata variação ("0.76" da CNA) como "+0,76%" / "-3,84%".
+function _formatCnaVar(v) {
+  if (v == null || v === '') return '—';
+  const n = parseFloat(String(v).replace(',', '.'));
+  if (!isFinite(n)) return '—';
+  const sign = n > 0 ? '+' : '';
+  return sign + n.toFixed(2).replace('.', ',') + '%';
+}
+
+// Notícias Agrícolas — sorgo Rio Verde/GO via Comigo (cooperativa).
+// CORS aberto confirmado. HTML SSR — parseamos via regex a linha da tabela.
+// Comigo é a fonte primária preferida pra sorgo em GO (mais aderente que GD
+// segundo feedback de produtores).
+// R28: fetch via Edge Function cotacoes-proxy (server-side, sem CORS).
+// Aceita commodity 'sorgo' ou 'feijao'. Proxy devolve { valor, varDia } cru;
+// aqui formatamos pro padrão BR usado no boletim.
+async function fetchCotacaoViaProxy(commoditySlug, label) {
+  console.info(`[${label}] iniciando fetch via Edge Function cotacoes-proxy...`);
+  try {
+    const r = await fetch(`${SUPABASE_URL}/functions/v1/cotacoes-proxy?fonte=na&commodity=${encodeURIComponent(commoditySlug)}`, {
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+        'apikey':        SUPABASE_ANON,
+      },
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.error) {
+      console.warn(`[${label}] proxy falhou:`, r.status, data.error || data);
+      return null;
+    }
+    // varDia pode vir com sinal `+` (ex: "+0,42") — strip antes do parseFloat.
+    const varRaw = String(data.varDia || '').replace(/^\+/, '');
+    const valorNum = parseFloat(String(data.valor || '').replace(/\./g, '').replace(',', '.'));
+    const varNum   = parseFloat(varRaw.replace(',', '.'));
+    if (!isFinite(valorNum)) {
+      console.warn(`[${label}] valor inválido do proxy:`, data.valor);
+      return null;
+    }
+    const result = {
+      commodity: data.commodity,
+      unit:      data.unit,
+      unitShort: data.unitShort,
+      valor:     _formatCnaValor(String(valorNum)),
+      varSemana: isFinite(varNum) ? _formatCnaVar(String(varNum)) : '—',
+      varMes:    '—', // NA só publica var diária — preenche pelo histórico Supabase.
+      _source:   data._source || 'noticiasagricolas',
+    };
+    console.info(`[${label}] sucesso via proxy:`, result);
+    return result;
+  } catch (e) {
+    console.warn(`[${label}] proxy exception:`, e);
+    return null;
+  }
+}
+
+// Wrappers nomeados (mantém call sites legíveis no Promise.all).
+const fetchNoticiasAgricolasSorgoComigo  = () => fetchCotacaoViaProxy('sorgo',  'Sorgo');
+const fetchNoticiasAgricolasFeijaoCarioca = () => fetchCotacaoViaProxy('feijao', 'Feijao');
+
+// R28: fetch genérico Yahoo Finance via Edge Function. Retorna linha de indicador
+// pronta pro slide macro (label, valor formatado, ticker, var. do dia em %).
+async function fetchYahooViaProxy(symbol, label, unitShort) {
+  console.info(`[Macro:${label}] iniciando fetch Yahoo ${symbol}...`);
+  try {
+    const r = await fetch(`${SUPABASE_URL}/functions/v1/cotacoes-proxy?fonte=yahoo&symbol=${encodeURIComponent(symbol)}`, {
+      headers: { 'Authorization': `Bearer ${SUPABASE_ANON}`, 'apikey': SUPABASE_ANON },
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.error) {
+      console.warn(`[Macro:${label}] proxy falhou:`, r.status, data.error || data);
+      return null;
+    }
+    const price = Number(data.price);
+    if (!isFinite(price)) {
+      console.warn(`[Macro:${label}] price inválido:`, data.price);
+      return null;
+    }
+    // Edge Function v9 já retorna varDia/varSemana/varMes como strings BR-format ("+0,42" / "—").
+    // Adiciona "%" pra render consistente com outras fontes.
+    const fmtVar = (v) => (!v || v === '—') ? '—' : (v.endsWith('%') ? v : v + '%');
+    const valor = price.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const linha = {
+      label,
+      valor,
+      unitShort,
+      varDia:    fmtVar(data.varDia),
+      varSemana: fmtVar(data.varSemana),
+      varMes:    fmtVar(data.varMes),
+      ticker: symbol,
+      shortName: data.shortName || '',
+      _source: 'yahoo',
+    };
+    console.info(`[Macro:${label}] sucesso:`, linha);
+    return linha;
+  } catch (e) {
+    console.warn(`[Macro:${label}] proxy exception:`, e);
+    return null;
+  }
+}
+
+// R28: Ureia / MAP CFR Brasil via Investing.com (Yahoo retorna dados de 2021
+// pra esses contratos OTC). Investing publica D-1 ou D-0 dependendo do horário
+// do pregão. Variação diária vem direto do site.
+async function fetchInvestingCFRViaProxy(slug, label, unitShort) {
+  console.info(`[Macro:${label}] iniciando fetch Investing ${slug}...`);
+  try {
+    const r = await fetch(`${SUPABASE_URL}/functions/v1/cotacoes-proxy?fonte=investing&commodity=${encodeURIComponent(slug)}`, {
+      headers: { 'Authorization': `Bearer ${SUPABASE_ANON}`, 'apikey': SUPABASE_ANON },
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.error) {
+      console.warn(`[Macro:${label}] proxy falhou:`, r.status, data.error || data);
+      return null;
+    }
+    // Edge Function v9 já retorna varDia/varSemana/varMes (sem `%`). Adiciona `%`.
+    const fmtVar = (v) => (!v || v === '—') ? '—' : (v.endsWith('%') ? v : v + '%');
+    const linha = {
+      label,
+      valor:     data.valor,
+      unitShort,
+      varDia:    fmtVar(data.varDia),
+      varSemana: fmtVar(data.varSemana),
+      varMes:    fmtVar(data.varMes),
+      ticker:    'CFR Brasil',
+      shortName: data.unit || 'CFR Brasil',
+      _source:   'investing',
+    };
+    console.info(`[Macro:${label}] sucesso:`, linha);
+    return linha;
+  } catch (e) {
+    console.warn(`[Macro:${label}] proxy exception:`, e);
+    return null;
+  }
+}
+
+// Prêmio Soja Paranaguá via Sistema FAEP — front-month em ¢US$/bu.
+// FAEP não publica variação — o varDia inicial vem "0,00" e o enrich do
+// histórico Supabase preenche varSemana/varMes quando há dados acumulados.
+async function fetchPremioSojaParanaguaViaProxy() {
+  console.info('[Macro:PremioSoja] iniciando fetch FAEP premio-soja-paranagua...');
+  try {
+    const r = await fetch(`${SUPABASE_URL}/functions/v1/cotacoes-proxy?fonte=faep&commodity=premio-soja-paranagua`, {
+      headers: { 'Authorization': `Bearer ${SUPABASE_ANON}`, 'apikey': SUPABASE_ANON },
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.error) {
+      console.warn('[Macro:PremioSoja] proxy falhou:', r.status, data.error || data);
+      return null;
+    }
+    const valorRaw = String(data.valor || '').replace(/^\+/, '');
+    const valorNum = parseFloat(valorRaw.replace(',', '.'));
+    if (!isFinite(valorNum)) {
+      console.warn('[Macro:PremioSoja] valor inválido:', data.valor);
+      return null;
+    }
+    // FAEP retorna sem sinal explícito (ex: "-5,00" ou "15,00"). Para display,
+    // sinal `+` em valores positivos pra consistência visual com prêmio.
+    const valorFmt = (valorNum > 0 ? '+' : '') + valorNum.toFixed(2).replace('.', ',');
+    // Ticker mostra só o contrato (ex: "MAI/26") — sem "Paranaguá/PR" pra não duplicar.
+    const ticker = String(data.unit || '').replace(/^Paranaguá\/PR\s*·\s*/i, '');
+    const linha = {
+      label:     'Prêmio Soja',
+      valor:     valorFmt,
+      unitShort: data.unitShort || '¢US$/bu',
+      varDia:    '—', // FAEP não publica variação.
+      ticker,
+      shortName: `Paranaguá/PR · ${ticker}`,
+      _source:   'sistemafaep',
+      _valorNum: valorNum, // pra histórico Supabase enrich.
+    };
+    console.info('[Macro:PremioSoja] sucesso:', linha);
+    return linha;
+  } catch (e) {
+    console.warn('[Macro:PremioSoja] proxy exception:', e);
+    return null;
+  }
+}
+
+// ─────────── Histórico de cotações pra cálculo de variação (R28) ───────────
+// Notícias Agrícolas só publica valor + var diária — pra ter var semanal/mensal
+// próprias, salvamos um snapshot por dia e calculamos quando há histórico
+// suficiente. Genérico: aceita qualquer commodity (sorgo, feijão, etc).
+
+// Helper: parseia "46,00" (BR) ou "46.00" pra Number.
+function _parseBrNumber(v) {
+  if (v == null) return NaN;
+  const s = String(v).replace(/\./g, '').replace(',', '.').replace(/[^\d.\-]/g, '');
+  const n = parseFloat(s);
+  return isFinite(n) ? n : NaN;
+}
+
+// Salva snapshot da cotação no Supabase. Upsert idempotente por
+// (commodity, praca, data_cotacao) — gerar 5x no mesmo dia salva 1 linha só.
+async function saveBoletimSnapshot(commodity, row) {
+  if (!row || !row.valor) return false;
+  const valorNum = _parseBrNumber(row.valor);
+  if (!isFinite(valorNum)) return false;
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  try {
+    const { error } = await sb
+      .from('cropware_boletim_history')
+      .upsert({
+        commodity,
+        praca:        row.unit || null,
+        valor:        valorNum,
+        data_cotacao: today,
+        source:       row._source || null,
+        raw:          row,
+      }, { onConflict: 'commodity,praca,data_cotacao' });
+    if (error) {
+      console.warn(`[${commodity}] Supabase save error:`, error.message);
+      return false;
+    }
+    console.info(`[${commodity}] snapshot salvo no histórico:`, today, valorNum);
+    return true;
+  } catch (e) {
+    console.warn(`[${commodity}] Supabase save exception:`, e);
+    return false;
+  }
+}
+
+// Busca valor mais próximo de N dias atrás (com tolerância de ±3 dias pra
+// cobrir gaps de geração). Retorna { valor, data_cotacao } ou null.
+async function fetchBoletimHistorical(commodity, daysAgo, toleranceDays = 3) {
+  const target = new Date();
+  target.setDate(target.getDate() - daysAgo);
+
+  const minDate = new Date(target);
+  minDate.setDate(minDate.getDate() - toleranceDays);
+  const maxDate = new Date(target);
+  maxDate.setDate(maxDate.getDate() + toleranceDays);
+
+  try {
+    const { data, error } = await sb
+      .from('cropware_boletim_history')
+      .select('valor, data_cotacao')
+      .eq('commodity', commodity)
+      .gte('data_cotacao', minDate.toISOString().slice(0, 10))
+      .lte('data_cotacao', maxDate.toISOString().slice(0, 10))
+      .order('data_cotacao', { ascending: true });
+    if (error) {
+      console.warn(`[${commodity}] fetchHistorical error:`, error.message);
+      return null;
+    }
+    if (!data || !data.length) return null;
+    // Pega o mais próximo do target.
+    let best = null;
+    let bestDiff = Infinity;
+    for (const r of data) {
+      const d = Math.abs(new Date(r.data_cotacao) - target);
+      if (d < bestDiff) { bestDiff = d; best = r; }
+    }
+    return best;
+  } catch (e) {
+    console.warn(`[${commodity}] fetchHistorical exception:`, e);
+    return null;
+  }
+}
+
+// Enriquece o objeto cotação com varSemana e varMes calculadas a partir do
+// histórico (se houver dados). Não sobrescreve var existente válida.
+async function enrichBoletimVariations(commodity, row, opts = {}) {
+  if (!row) return row;
+  const valorAtual = _parseBrNumber(row.valor);
+  if (!isFinite(valorAtual)) return row;
+
+  // Modo `prefer`: sempre que houver dado no histórico, usa o nosso cálculo —
+  // mesmo que a fonte tenha trazido var. Usado pra Ureia/MAP onde o Investing
+  // só tem 20 dias de OHLC e o nosso histórico (depois de 7-30 dias) fica mais
+  // aderente à série que mostramos.
+  const prefer = !!opts.prefer;
+  const needsSemana = prefer || !row.varSemana || row.varSemana === '—' || row.varSemana === '0,00%';
+  const needsMes    = prefer || !row.varMes    || row.varMes === '—';
+
+  if (needsSemana) {
+    const past = await fetchBoletimHistorical(commodity, 7);
+    if (past && isFinite(past.valor) && past.valor > 0) {
+      const variation = ((valorAtual - past.valor) / past.valor) * 100;
+      row.varSemana = _formatCnaVar(String(variation));
+      console.info(`[${commodity}] varSemana do histórico: ${row.varSemana} (atual ${valorAtual} vs ${past.data_cotacao} ${past.valor})`);
+    }
+  }
+
+  if (needsMes) {
+    const past = await fetchBoletimHistorical(commodity, 30, 5);
+    if (past && isFinite(past.valor) && past.valor > 0) {
+      const variation = ((valorAtual - past.valor) / past.valor) * 100;
+      row.varMes = _formatCnaVar(String(variation));
+      console.info(`[${commodity}] varMes do histórico: ${row.varMes} (atual ${valorAtual} vs ${past.data_cotacao} ${past.valor})`);
+    }
+  }
+
+  return row;
+}
+
+// Grão Direto — sorgo Sul Goiano/GO via endpoint Next.js _next/data (JSON).
+// FALLBACK quando Notícias Agrícolas falhar. CORS aberto, mas preço de marketplace
+// pode estar fora do que cooperativas praticam.
+const GRAODIRETO_BUILD_ID_DEFAULT = '4BdnL0oWP0_2-24lxlZDg';
+
+async function _discoverGraoDiretoBuildId() {
+  try {
+    const r = await fetch('https://www.graodireto.com.br/precos/sorgo/');
+    if (!r.ok) return null;
+    const html = await r.text();
+    const m = html.match(/"buildId":\s*"([^"]+)"/);
+    return m ? m[1] : null;
+  } catch (e) {
+    console.warn('Boletim — discoverGraoDiretoBuildId:', e);
+    return null;
+  }
+}
+
+async function _fetchGraoDiretoSorgoJSON(buildId) {
+  const url = `https://www.graodireto.com.br/_next/data/${buildId}/pt-BR/offers/sorgo/go.json`;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch (e) {
+    return null;
+  }
+}
+
+async function fetchGraoDiretoSorgo() {
+  console.info('[Sorgo] iniciando fetch Grão Direto...');
+  // Tenta o buildId atual; se 404 (deploy novo), descobre e tenta de novo.
+  let data = await _fetchGraoDiretoSorgoJSON(GRAODIRETO_BUILD_ID_DEFAULT);
+  if (!data) {
+    console.warn('[Sorgo] buildId default falhou, tentando descobrir novo...');
+    const newBuildId = await _discoverGraoDiretoBuildId();
+    if (newBuildId && newBuildId !== GRAODIRETO_BUILD_ID_DEFAULT) {
+      console.info('[Sorgo] buildId atualizado:', newBuildId);
+      data = await _fetchGraoDiretoSorgoJSON(newBuildId);
+    } else {
+      console.warn('[Sorgo] não conseguiu descobrir buildId. Pulando sorgo.');
+    }
+  }
+  if (!data) {
+    console.warn('[Sorgo] sem dados retornados pelo Grão Direto.');
+    return null;
+  }
+
+  const prices = data?.pageProps?.averagePrices?.regions?.prices || [];
+  console.info('[Sorgo] preços retornados:', prices.length, 'região(ões)', prices);
+
+  // Prioriza Sul Goiano (mesorregião que inclui Rio Verde). Fallback: primeira disponível.
+  const row = prices.find(p => p && p.locationName === 'Sul Goiano') || prices[0];
+  if (!row || row.price == null) {
+    console.warn('[Sorgo] estrutura inesperada, row vazia:', row);
+    return null;
+  }
+
+  const result = {
+    commodity: 'Sorgo',
+    unit:      `${row.locationName || 'GO'}/GO`,
+    unitShort: 'SC60',
+    valor:     _formatCnaValor(String(row.price)),
+    varSemana: row.variation != null ? _formatCnaVar(String(row.variation)) : '—',
+    varMes:    '—', // endpoint não publica variação mensal
+    _source:   'graodireto',
+    _date:     row.date || null,
+  };
+  console.info('[Sorgo] sucesso:', result);
+  return result;
+}
+
+// Monta o array de cotações pro slide 1 a partir da resposta da CNA.
+// Ordem fixa: Soja, Milho, Arroz, Trigo, Boi, Café. Cada uma com sua preferência
+// de praça (Goiás quando disponível, senão a praça histórica de referência).
+function buildBoletimCotacoesFromCna(cnaData) {
+  if (!Array.isArray(cnaData) || !cnaData.length) return null;
+
+  const preferencias = [
+    { key: 'SOJA',      commodity: 'Soja',   pref: [['GO', 'RIO VERDE'], ['GO', null], ['MT', 'SORRISO'], ['MT', null], ['PR', null]] },
+    { key: 'MILHO',     commodity: 'Milho',  pref: [['GO', null], ['MT', null], ['PR', null]] },
+    { key: 'ARROZ',     commodity: 'Arroz',  pref: [['RS', 'CAMPANHA'], ['RS', null]] },
+    { key: 'TRIGO - TIPO PÃO', commodity: 'Trigo', pref: [['PR', 'NORTE DO PARANA'], ['PR', null], ['RS', null]] },
+    { key: 'BOI GORDO', commodity: 'Boi',    pref: [['GO', null], ['SP', 'ARACATUBA'], ['SP', null], ['MS', null]] },
+    { key: 'CAFÉ ARÁBICA', commodity: 'Café', pref: [['MG', 'CERRADO DE MINAS'], ['MG', 'SUL DE MINAS'], ['MG', null], ['SP', 'MOGIANA'], ['SP', null]] },
+  ];
+
+  const cotacoes = preferencias.map(({ key, commodity, pref }) => {
+    const row = pickCnaPraca(cnaData, key, pref);
+    if (!row) {
+      return { commodity, unit: '—', unitShort: '', valor: '—', varSemana: '—', varMes: '—' };
+    }
+    // Unit mostra localização (unidade de medida vai no valor agora). Café
+    // ganha prefixo "Tipo 6" (classificação CEPEA pra arábica).
+    const praca = String(row.PRACA || '').toLowerCase()
+      .replace(/(^|\s)\w/g, c => c.toUpperCase()); // Title Case rough
+    const baseUnit = `${praca}/${row.UF}`;
+    // Café: "Praca/UF · Tipo 6" (ordem desejada — praça primeiro, tipo no fim).
+    const unit = commodity === 'Café' ? `${baseUnit} · Tipo 6` : baseUnit;
+    return {
+      commodity,
+      unit,
+      unitShort: _parseUnitShort(row.TITULO),
+      valor:     _formatCnaValor(row.VALOR),
+      varSemana: _formatCnaVar(row.VARIACAO_SEMANAL),
+      varMes:    _formatCnaVar(row.VARIACAO_MENSAL),
+    };
+  });
+
+  return cotacoes;
+}
+
+// ─────────── Boletim do Agro — gerador (R28) ───────────
+// Carrossel diário: cotações + manchetes do agro. Não usa input do usuário —
+// faz buscas via Gemini+Google Search pras cotações de commodities, mais
+// fetches diretos (AwesomeAPI/BCB) pra dólar/CDI. Renderiza em 3 slides moldura.
+async function generateBoletimAgroCarousel() {
+  const btn = document.getElementById('genBtn');
+  const needImage = !genImageBase64;
+  btn.disabled = true;
+  btn.textContent = 'Gerando...';
+
+  try {
+    // Passo 1: 4 buscas em paralelo — grãos, proteínas, macro, manchetes.
+    // Splitar aumenta cobertura: cada busca foca num subconjunto e o Gemini
+    // retorna mais fatos relevantes do que numa busca generalista.
+    setGenStatus(`<i class="ph ph-radar sz-18" style="margin-right:6px"></i>Passo 1/3 — Buscando cotações e manchetes do dia...`, '');
+
+    // Cada query força o Google Search a ler o indicador CEPEA específico,
+    // que tem valor + var dia + var mês + var ano. Fallback pra noticiasagricolas
+    // e canalrural se Cepea não retornar tudo. Uma busca por commodity.
+    const querySoja  = 'site:cepea.esalq.usp.br soja OR "site:noticiasagricolas.com.br soja CEPEA hoje" indicador valor variação mês ano';
+    const queryMilho = 'site:cepea.esalq.usp.br milho OR "site:noticiasagricolas.com.br milho CEPEA hoje" indicador valor variação mês ano';
+    const queryArroz = 'site:cepea.esalq.usp.br arroz OR "site:noticiasagricolas.com.br arroz CEPEA" indicador valor variação mês ano';
+    const queryTrigo = 'site:cepea.esalq.usp.br trigo OR "site:noticiasagricolas.com.br trigo CEPEA" indicador valor variação mês ano';
+    const queryBoi   = 'site:cepea.esalq.usp.br boi gordo OR "site:noticiasagricolas.com.br boi CEPEA SP" indicador valor variação mês ano arroba';
+    const queryMacro = 'dólar PTAX comercial hoje fechamento Banco Central site:bcb.gov.br OR site:investing.com OR site:valor.globo.com taxa CDI Selic';
+    const queryNoticias = 'notícias agro Brasil últimas 24h soja milho arroz café boi gado clima safra exportação';
+
+    // R28: CNA Brasil é fonte primária pras 6 cotações principais. Sorgo vem
+    // de Notícias Agrícolas (Comigo Rio Verde/GO). Feijão Carioca 8-8,5 vem
+    // de NA (Leste Goiano — alinha com pref. GO). Slide 2 (Macro) puxa Yahoo
+    // Finance pra CBOT + Ureia + MAP, e NA pro Prêmio Soja Paranaguá.
+    // Dólar e CDI de APIs oficiais.
+    let [
+      cnaData, sorgoFromNA, feijaoFromNA, pautaNoticias, dolarLive, cdiLive,
+      dolarMacro, sojaCbot, milhoCbot, ureiaCfr, mapCfr, premioSoja,
+    ] = await Promise.all([
+      fetchCnaCotacoes(),
+      fetchNoticiasAgricolasSorgoComigo(),
+      fetchNoticiasAgricolasFeijaoCarioca(),
+      searchAndConsolidateNews(queryNoticias, 8, [], 'news').catch(err => { console.error('Boletim — notícias:', err); return null; }),
+      fetchDolarPTAX(),
+      fetchCDIMensal(),
+      fetchDolarMacroDirect(), // direto AwesomeAPI (Edge dá rate-limit 429)
+      fetchYahooViaProxy('ZS=F',  'Soja CBOT',  '¢US$/bu'),
+      fetchYahooViaProxy('ZC=F',  'Milho CBOT', '¢US$/bu'),
+      // Ureia e MAP: Yahoo retorna dados de 2021 (contrato OTC sem liquidez).
+      // Investing.com publica D-0 ou D-1 com variação real.
+      fetchInvestingCFRViaProxy('urea-cfr-brazil', 'Ureia CFR Brasil', 'US$/t'),
+      fetchInvestingCFRViaProxy('map-cfr-brazil',  'MAP CFR Brasil',   'US$/t'),
+      fetchPremioSojaParanaguaViaProxy(),
+    ]);
+
+    // Se NA falhou, tenta Gemini Search como fallback (menos preciso, mas resiliente).
+    let sorgoRow = sorgoFromNA;
+    if (!sorgoRow) {
+      console.info('[Sorgo] NA falhou, caindo no Gemini Search como fallback...');
+      try {
+        const pautaSorgo = await searchAndConsolidateNews(
+          'cotação sorgo Rio Verde GO Comigo cooperativa preço saca hoje site:noticiasagricolas.com.br OR site:agrolink.com.br',
+          8, [], 'opinion'
+        );
+        if (pautaSorgo && Array.isArray(pautaSorgo.fatos) && pautaSorgo.fatos.length) {
+          // Procura o primeiro fato com valor em R$ — preserva literalmente.
+          const fact = pautaSorgo.fatos.find(f => /R\$\s*\d+[,.]\d+/.test(f));
+          if (fact) {
+            const valMatch = fact.match(/R\$\s*(\d+[,.]\d+)/);
+            const varMatch = fact.match(/([+-]?\d+[,.]\d+)\s*%/);
+            sorgoRow = {
+              commodity: 'Sorgo',
+              unit:      'Rio Verde/GO',
+              unitShort: 'SC60',
+              valor:     valMatch ? _formatCnaValor(valMatch[1]) : '—',
+              varSemana: varMatch ? varMatch[0].replace(/\s+/g, '') : '—',
+              varMes:    '—',
+              _source:   'gemini',
+            };
+            console.info('[Sorgo] Gemini fallback extraiu:', sorgoRow);
+          }
+        }
+      } catch (e) {
+        console.warn('[Sorgo] Gemini fallback também falhou:', e);
+      }
+    }
+
+    // R28: enriquece sorgo com varSemana/varMes calculadas do histórico do
+    // Supabase + salva snapshot do dia (idempotente). Cold start: nas primeiras
+    // semanas o histórico é ralo e as variações ficam "—" — depois fica preciso.
+    if (sorgoRow) {
+      sorgoRow = await enrichBoletimVariations('Sorgo', sorgoRow);
+      // Salva snapshot pra histórico futuro (não bloqueia o fluxo se falhar).
+      saveBoletimSnapshot('Sorgo', sorgoRow).catch(e => console.warn('[Sorgo] save falhou:', e));
+    }
+
+    // Feijão: NA não publica varMes — enrich do histórico Supabase preenche
+    // quando há ≥30 dias. Cold start: varSemana/varMes começam "—".
+    let feijaoRow = feijaoFromNA;
+    if (feijaoRow) {
+      feijaoRow = await enrichBoletimVariations('Feijão', feijaoRow);
+      saveBoletimSnapshot('Feijão', feijaoRow).catch(e => console.warn('[Feijao] save falhou:', e));
+    }
+
+    // Ureia e MAP CFR Brasil: Investing só tem 20 dias OHLC, dando aproximações.
+    // Nosso histórico Supabase é mais aderente à série que mostramos. Usamos modo
+    // `prefer: true` — enrich sobrescreve var.semana/mês do Investing quando
+    // temos snapshot fresh no histórico. Cold start hoje: histórico vazio →
+    // mantém valores do Investing. D+7: começa a usar nossos números.
+    if (ureiaCfr) {
+      ureiaCfr = await enrichBoletimVariations('Ureia CFR Brasil', ureiaCfr, { prefer: true });
+      saveBoletimSnapshot('Ureia CFR Brasil', ureiaCfr).catch(e => console.warn('[Ureia] save falhou:', e));
+    }
+    if (mapCfr) {
+      mapCfr = await enrichBoletimVariations('MAP CFR Brasil', mapCfr, { prefer: true });
+      saveBoletimSnapshot('MAP CFR Brasil', mapCfr).catch(e => console.warn('[MAP] save falhou:', e));
+    }
+
+    // Cotações da CNA (6 commodities, priorizando GO) + sorgo (NA) + feijão (NA).
+    // Se CNA falhar, cai no Gemini search como fallback.
+    let cotacoesFromCna = buildBoletimCotacoesFromCna(cnaData);
+    if (cotacoesFromCna && sorgoRow)  cotacoesFromCna.push(sorgoRow);
+    if (cotacoesFromCna && feijaoRow) cotacoesFromCna.push(feijaoRow);
+    let pSoja = null, pMilho = null, pArroz = null, pTrigo = null, pBoi = null, pautaMacro = null;
+    if (!cotacoesFromCna) {
+      console.warn('Boletim — CNA indisponível, caindo no Gemini fallback');
+      const [_pSoja, _pMilho, _pArroz, _pTrigo, _pBoi, _pautaMacro] = await Promise.all([
+        searchAndConsolidateNews(querySoja,  10, [], 'opinion').catch(err => { console.error('Boletim — soja:', err); return null; }),
+        searchAndConsolidateNews(queryMilho, 10, [], 'opinion').catch(err => { console.error('Boletim — milho:', err); return null; }),
+        searchAndConsolidateNews(queryArroz, 10, [], 'opinion').catch(err => { console.error('Boletim — arroz:', err); return null; }),
+        searchAndConsolidateNews(queryTrigo, 10, [], 'opinion').catch(err => { console.error('Boletim — trigo:', err); return null; }),
+        searchAndConsolidateNews(queryBoi,   10, [], 'opinion').catch(err => { console.error('Boletim — boi:', err); return null; }),
+        searchAndConsolidateNews(queryMacro, 8,  [], 'opinion').catch(err => { console.error('Boletim — macro:', err); return null; }),
+      ]);
+      pSoja = _pSoja; pMilho = _pMilho; pArroz = _pArroz; pTrigo = _pTrigo; pBoi = _pBoi; pautaMacro = _pautaMacro;
+    }
+
+    // Consolida as buscas por commodity numa pauta única, prefixando cada fato
+    // com a commodity correspondente — o Gemini fica obrigado a usar o bloco
+    // certo pra cada commodity em vez de procurar valores espalhados.
+    const taggedFatos = (pauta, tag) => (pauta?.fatos || []).map(f => `[${tag}] ${f}`);
+    const allPautas = [pSoja, pMilho, pArroz, pTrigo, pBoi, pautaMacro].filter(Boolean);
+    const pautaCotacoes = {
+      kicker: 'COTAÇÕES',
+      manchete: allPautas.map(p => p.manchete).filter(Boolean).slice(0, 3).join(' · '),
+      lead: allPautas.map(p => p.lead).filter(Boolean).slice(0, 3).join(' '),
+      fatos: [
+        ...taggedFatos(pSoja,      'SOJA'),
+        ...taggedFatos(pMilho,     'MILHO'),
+        ...taggedFatos(pArroz,     'ARROZ'),
+        ...taggedFatos(pTrigo,     'TRIGO'),
+        ...taggedFatos(pBoi,       'BOI'),
+        ...taggedFatos(pautaMacro, 'MACRO'),
+      ],
+      contexto: allPautas.map(p => p.contexto).filter(Boolean).slice(0, 3).join(' '),
+      fontes: allPautas
+        .flatMap(p => p.fontes || [])
+        .filter((v, i, a) => a.indexOf(v) === i)
+        .slice(0, 10),
+    };
+
+    if (!pautaCotacoes.fatos.length && !pautaNoticias) {
+      setGenStatus('Não consegui buscar dados do dia. Tente novamente em alguns minutos.', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Gerar Boletim do Agro';
+      return;
+    }
+
+    // Passo 2: estruturar via Gemini com schema rígido (cotacoes[7] + manchetes[5])
+    setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 2/3 — Consolidando boletim com dados preservados...`, '');
+    const parsed = await callGeminiBoletimText(pautaCotacoes, pautaNoticias);
+
+    // CNA é fonte primária; Gemini só preenche se CNA falhou.
+    const cotacoes = cotacoesFromCna && cotacoesFromCna.length
+      ? cotacoesFromCna
+      : (Array.isArray(parsed.cotacoes) ? parsed.cotacoes.slice(0, 8) : []);
+    const manchetes = Array.isArray(parsed.manchetes) ? parsed.manchetes.slice(0, 5) : [];
+    if (cotacoes.length === 0 && manchetes.length === 0) {
+      throw new Error('Sem dados de cotação nem manchetes.');
+    }
+
+    // Passo 3: imagem de fundo. R28 — usa imagem padrão fixa durante testes
+    // (zero custo, geração instantânea). Trocar pro fluxo Gemini quando
+    // estiver em produção. Se usuário fez upload, usa o upload.
+    setGenStatus(`<i class="ph ph-image sz-18" style="margin-right:6px"></i>Passo 3/3 — Montando imagem de fundo...`, '');
+    const timestamp = Date.now();
+    let sharedBgImage = '';
+    if (genImageBase64) {
+      // Usuário fez upload de imagem própria — usa essa.
+      sharedBgImage = `data:${genImageMime};base64,${genImageBase64}`;
+    } else {
+      // Imagem padrão fixa pra testes (sem custo de geração via Gemini).
+      sharedBgImage = '/conheca-hero-bg.webp';
+    }
+
+    // Montagem dos 3 slides
+    const baseSlide = {
+      isGenerated: true,
+      style: 'moldura',
+      bgImage: sharedBgImage,
+      frameTextMode: 'light',
+      glassOpacity: 18,
+      glassBlur: 26,
+      overlayColor: '#0a1f12',
+      overlayOpacity: 55,
+      overlayDirection: 'full',
+      accent: '#7ED788',
+      logoEnabled: true,
+      logoPos: 'br',
+      brandMode: 'light',
+      bullets: [],
+    };
+
+    const dataLinha = parsed.dataLinha || formatBoletimDataLinha();
+    // Dólar/CDI: prioriza fetches diretos (AwesomeAPI + BCB) sobre o que o
+    // Gemini extraiu via Google Search. APIs públicas oficiais → confiabilidade 100%.
+    const finalDolar = dolarLive || parsed.dolar || '—';
+    const finalCdi   = cdiLive   || parsed.cdi   || '—';
+    const slides = [];
+
+    // Slide 1 — cotações Brasil
+    slides.push({
+      ...baseSlide,
+      id:       `boletim-agro-slide-${timestamp}-0`,
+      bg:       `bg-boletim-agro-${timestamp}-0`,
+      slideId:  `slide-boletim-agro-${timestamp}-0`,
+      type:     'boletim-agro-slide',
+      title:    'Slide 1 — Cotações',
+      sub:      'Boletim do Agro',
+      filename: `cropware_boletim_${timestamp}_1.jpg`,
+      role:     'cotacoes',
+      hookHTML: 'Cotações',
+      dataLinha,
+      dolar:    finalDolar,
+      cdi:      finalCdi,
+      cotacoes,
+      slideIndex: 0,
+    });
+
+    // R28: monta o array de indicadores do slide 2 (Macro & Mercado Externo).
+    // Dólar e CDI já são strings BR-format do front (ex: "R$ 5,42", "1,15%").
+    // Yahoo/Prêmio vêm do proxy já formatados.
+    // Dólar via fetchDolarMacroViaProxy (já vem com varSemana/varMes). Fallback:
+    // se proxy falhar, usa finalDolar puro sem variações.
+    const dolarLinha = dolarMacro || {
+      label: 'Dólar PTAX', ticker: 'AwesomeAPI', valor: finalDolar,
+      unitShort: '', varDia: '—', varSemana: '—', varMes: '—', _source: 'awesomeapi',
+    };
+    const macroLinhas = [
+      dolarLinha,
+      { label: 'CDI', ticker: 'BCB SGS 4391', valor: finalCdi,
+        unitShort: '', varDia: '—', varSemana: '—', varMes: '—', _source: 'bcb' },
+      sojaCbot, premioSoja, milhoCbot, ureiaCfr, mapCfr,
+    ].filter(Boolean);
+
+    // Slide 2 — Macro & Mercado Externo (novo)
+    slides.push({
+      ...baseSlide,
+      id:       `boletim-agro-slide-${timestamp}-1`,
+      bg:       `bg-boletim-agro-${timestamp}-1`,
+      slideId:  `slide-boletim-agro-${timestamp}-1`,
+      type:     'boletim-agro-slide',
+      title:    'Slide 2 — Macro & Mercado Externo',
+      sub:      'Boletim do Agro',
+      filename: `cropware_boletim_${timestamp}_2.jpg`,
+      role:     'macro',
+      hookHTML: 'Mercado Externo',
+      dataLinha,
+      macroLinhas,
+      slideIndex: 1,
+    });
+
+    // Computa source label uma vez — usado no slide 4 (closing).
+    const cotacoesSourceLabel = cotacoesFromCna
+      ? (() => {
+          // Quando sorgo cai no Gemini fallback (sinaliza incerteza), source
+          // vira só "via Gemini Search" — leitor sabe que tem dado estimado.
+          if (cotacoes.some(c => c && c._source === 'gemini')) return 'via Gemini Search';
+          const sources = ['CNA Brasil'];
+          if (cotacoes.some(c => c && c._source === 'noticiasagricolas')) sources.push('Notícias Agrícolas');
+          else if (cotacoes.some(c => c && c._source === 'graodireto')) sources.push('Grão Direto');
+          if (macroLinhas.some(l => l && l._source === 'sistemafaep')) sources.push('Sistema FAEP');
+          if (macroLinhas.some(l => l && l._source === 'yahoo'))       sources.push('Yahoo Finance / CME');
+          if (macroLinhas.some(l => l && l._source === 'investing'))   sources.push('Investing.com');
+          sources.push('BCB', 'AwesomeAPI');
+          return 'Fonte: ' + sources.join(' · ');
+        })()
+      : 'Fonte: CEPEA-Esalq/USP · B3 · CONAB · BCB';
+
+    // Slide 3 — manchetes
+    slides.push({
+      ...baseSlide,
+      id:       `boletim-agro-slide-${timestamp}-2`,
+      bg:       `bg-boletim-agro-${timestamp}-2`,
+      slideId:  `slide-boletim-agro-${timestamp}-2`,
+      type:     'boletim-agro-slide',
+      title:    'Slide 3 — Manchetes',
+      sub:      'Boletim do Agro',
+      filename: `cropware_boletim_${timestamp}_3.jpg`,
+      role:     'manchetes',
+      hookHTML: 'NOTÍCIAS DO DIA',
+      dataLinha,
+      manchetes,
+      slideIndex: 2,
+    });
+
+    // Slide 4 — closing
+    slides.push({
+      ...baseSlide,
+      id:       `boletim-agro-slide-${timestamp}-3`,
+      bg:       `bg-boletim-agro-${timestamp}-3`,
+      slideId:  `slide-boletim-agro-${timestamp}-3`,
+      type:     'boletim-agro-slide',
+      title:    'Slide 4 — Fechamento',
+      sub:      'Boletim do Agro',
+      filename: `cropware_boletim_${timestamp}_4.jpg`,
+      role:     'closing',
+      hookHTML:       parsed.closingHook       || 'Análise diária do agro brasileiro.',
+      complementHTML: parsed.closingComplement || 'Siga @cropware.app pra acompanhar o boletim todo dia.',
+      cotacoesSource: cotacoesSourceLabel,
+      slideIndex: 3,
+    });
+
+    // Limita histórico de boletins
+    const items = getModeItems();
+    const legendsArr = getModeLegends();
+    const oldestIdx = items.findIndex(c => c.isGenerated);
+    if (oldestIdx >= 0 && items.filter(c => c.isGenerated).length >= MAX_POSTS) {
+      const old = items[oldestIdx];
+      deletePostFromSupabase(old.id);
+      (old.slides || []).forEach(s => {
+        const el = document.getElementById(s.slideId);
+        if (el) el.remove();
+      });
+      items.splice(oldestIdx, 1);
+      legendsArr.splice(oldestIdx, 1);
+    }
+
+    const carouselData = {
+      id:          `boletim-agro-gen-${timestamp}`,
+      type:        'boletim-agro-post',
+      style:       'moldura',
+      title:       `Boletim do Agro · ${dataLinha}`,
+      isGenerated: true,
+      slides,
+      currentSlide: 0,
+      slideCount: 3,
+      cotacoesPauta: pautaCotacoes,
+      noticiasPauta: pautaNoticias,
+      createdAt:   timestamp,
+    };
+
+    const hashtagsLower = (parsed.hashtags || '').toLowerCase();
+    const legendText = (parsed.legend || '') + (hashtagsLower ? '\n\n' + hashtagsLower : '');
+    const newIdx = renderGeneratedCarousel(carouselData, legendText);
+    saveSession();
+
+    setTimeout(() => {
+      closeGenerator();
+      setCurrentSlide(0);
+      buildSidebar();
+      buildDots();
+      goTo(newIdx);
+      genImageBase64 = null;
+      btn.disabled = false;
+      btn.textContent = 'Gerar Boletim do Agro';
+      setGenStatus('', '');
+    }, 600);
+
+  } catch (e) {
+    console.error('Boletim do Agro — erro:', e);
+    setGenStatus('<i class="ph ph-warning-octagon sz-18" style="margin-right:6px"></i>Erro: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.textContent = 'Gerar Boletim do Agro';
+  }
+}
+
+// Helper — formata data de hoje no padrão "19 DE MAIO" (uppercase).
+function formatBoletimDataLinha() {
+  const d = new Date();
+  const meses = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+  return `${d.getDate()} DE ${meses[d.getMonth()]}`;
 }
 
 // ── REGENERAÇÃO PARCIAL (texto / imagem / legenda) ──────────
