@@ -9,20 +9,23 @@ import { CharReveal, KickerReveal, EASE, IconifyIcon, SceneTextureBackdrop } fro
 
 const FALLBACK = MR_THEMES.escuro.perSlide['feature-list'];
 
+// R28: Phosphor (ph:) — ícones monocromáticos SVG que herdam a cor do
+// container (color: T.accent → verde do tema). Substituiu Twemoji que
+// renderizava colorido fixo e ignorava o accent.
 const resolveFeatureCardIcon = (icon = '', text = '') => {
   const haystack = `${icon} ${text}`.toLowerCase();
-  if (/satellite|map|gps|ndvi|monitor|talh/.test(haystack)) return 'twemoji:satellite';
-  if (/bar-chart|chart|report|document|dados|hist[oó]r|registro|provar/.test(haystack)) return 'twemoji:bar-chart';
-  if (/seed|plant|sustain|crop|leaf|corn|soja|lavoura|campo|safra|colheita|diagn/.test(haystack)) return 'twemoji:seedling';
-  if (/phone|mobile|app|whatsapp|celular/.test(haystack)) return 'twemoji:mobile-phone';
-  if (/cloud|weather|clima|previs/.test(haystack)) return 'twemoji:cloud';
-  if (/sun|thermometer|calor|temperatura/.test(haystack)) return 'twemoji:sun';
-  if (/rain|drop|water|chuva|agua|umidade|irrig/.test(haystack)) return 'twemoji:droplet';
-  if (/alert|warning|risco|praga|doen/.test(haystack)) return 'twemoji:warning';
-  if (/speed|tempo|rapido|agil/.test(haystack)) return 'twemoji:high-voltage';
-  if (/gear|cog|config|automat/.test(haystack)) return 'twemoji:gear';
-  if (/rocket|upload|prosper|resultado|ganho/.test(haystack)) return 'twemoji:rocket';
-  return 'twemoji:check-mark-button';
+  if (/satellite|map|gps|ndvi|monitor|talh/.test(haystack)) return 'ph:map-trifold';
+  if (/bar-chart|chart|report|document|dados|hist[oó]r|registro|provar/.test(haystack)) return 'ph:chart-bar';
+  if (/seed|plant|sustain|crop|leaf|corn|soja|lavoura|campo|safra|colheita|diagn/.test(haystack)) return 'ph:plant';
+  if (/phone|mobile|app|whatsapp|celular/.test(haystack)) return 'ph:device-mobile-camera';
+  if (/cloud|weather|clima|previs/.test(haystack)) return 'ph:cloud-sun';
+  if (/sun|thermometer|calor|temperatura/.test(haystack)) return 'ph:sun';
+  if (/rain|drop|water|chuva|agua|umidade|irrig/.test(haystack)) return 'ph:drop';
+  if (/alert|warning|risco|praga|doen/.test(haystack)) return 'ph:warning';
+  if (/speed|tempo|rapido|agil/.test(haystack)) return 'ph:lightning';
+  if (/gear|cog|config|automat/.test(haystack)) return 'ph:gear';
+  if (/rocket|upload|prosper|resultado|ganho/.test(haystack)) return 'ph:rocket-launch';
+  return 'ph:check-circle';
 };
 
 // Converte 0-1 em hex alpha de 2 caracteres (00-ff).
@@ -128,12 +131,12 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
             text={String(kicker).toUpperCase()}
             delay={0}
             dur={0.4}
-            fromEm={T.kickerLetterSpacingFrom ?? 0.06}
-            toEm={T.kickerLetterSpacingTo ?? 0.12}
+            fromEm={T.kickerLetterSpacingFrom ?? 0.02}
+            toEm={T.kickerLetterSpacingTo ?? 0.06}
             style={{
-              fontFamily: MR_FONTS.alumni,
+              fontFamily: MR_FONTS.caps,
               fontSize: T.kickerFontSize || 56,
-              fontWeight: 500,
+              fontWeight: 400,
               lineHeight: 1.18,
               maxWidth: T.kickerMaxWidth || 760,
               color: T.accentDeep || T.accent,
@@ -142,6 +145,21 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
               overflowWrap: 'break-word',
             }}
           />
+        ) : null}
+
+        {/* R28: linha abaixo do kicker, verde levemente mais escuro */}
+        {kicker ? (
+          <div style={{
+            width: 160,
+            height: 4,
+            background: MR_COLORS.greenAccent,
+            borderRadius: 2,
+            transformOrigin: 'left center',
+            transform: `scaleX(${interpolate(frame, [0.35 * fps, 0.7 * fps], [0, 1], {
+              extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart,
+            }).toFixed(3)})`,
+            marginTop: -32,
+          }} />
         ) : null}
 
         {title ? (
@@ -188,10 +206,14 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
                 gap: 36,
                 padding: '28px 36px',
                 minHeight: 172,
-                background: MR_COLORS.white,
+                background: T.flat
+                  ? MR_COLORS.white
+                  : 'linear-gradient(160deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%)',
+                backdropFilter: T.flat ? 'none' : 'blur(20px) saturate(160%)',
+                WebkitBackdropFilter: T.flat ? 'none' : 'blur(20px) saturate(160%)',
                 borderRadius: 18,
-                boxShadow: T.flat ? 'none' : '0 12px 32px rgba(0,0,0,0.14), 0 2px 4px rgba(0,0,0,0.06)',
-                border: T.flat ? '1px solid rgba(15,23,42,0.10)' : 'none',
+                boxShadow: T.flat ? 'none' : 'inset 0 1px 0 rgba(255,255,255,0.20), inset 0 -1px 0 rgba(0,0,0,0.12)',
+                border: T.flat ? '1px solid rgba(15,23,42,0.10)' : '1px solid rgba(255,255,255,0.20)',
                 opacity: p,
                 transform: `translateX(${((1 - p) * -28).toFixed(2)}px)`,
                 boxSizing: 'border-box',
@@ -202,13 +224,13 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
                   width: 72,
                   height: 72,
                   borderRadius: 18,
-                  background: `${T.accent}26`,
+                  background: `${T.accent}33`,
                   color: T.accent,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                  <IconifyIcon icon={resolveFeatureCardIcon(icon, text)} size={50} />
+                  <IconifyIcon icon={resolveFeatureCardIcon(icon, text)} size={50} color={T.accent} />
                 </span>
                 <span style={{
                   fontFamily: MR_FONTS.grotesk,
@@ -216,7 +238,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
                   fontWeight: 500,
                   lineHeight: 1.15,
                   letterSpacing: '-0.015em',
-                  color: MR_COLORS.slateAbyss,
+                  color: T.flat ? MR_COLORS.slateAbyss : MR_COLORS.white,
                 }}>{text}</span>
               </div>
             );

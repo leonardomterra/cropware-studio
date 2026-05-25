@@ -11,7 +11,7 @@ import { TypewriterText, EASE } from '../helpers.jsx';
 const BG_IMAGE = 'conheca-hero-bg.webp';
 const KICKER = 'CONHEÇA';
 const LOGO = 'logo-cropware-pb-final.svg';
-const TAGLINE_LINES = ['Gestão de', 'Desenvolvimento', 'de Mercado'];
+const TAGLINE_LINES = ['Ecossistema', 'de Gestão de', 'Desenvolvimento', 'de Mercado'];
 
 export const BrandIntro = ({ start, end, theme = {}, bgImage, bgImageBlur, bgOverlayOpacity, bgTexture, bgTextureOpacity, bgTextureInvert }) => {
   const frame = useCurrentFrame();
@@ -134,7 +134,7 @@ export const BrandIntro = ({ start, end, theme = {}, bgImage, bgImageBlur, bgOve
         color: fg,
         fontFamily: MR_FONTS.display,
       }}>
-        <KickerBlock kicker={KICKER} delay={0.25} color={fg} accent={accent} textShadow={textShadow} />
+        <KickerBlock kicker={KICKER} delay={0.25} color={accent} accent={accent} textShadow={textShadow} />
         <LogoReveal src={LOGO} delay={1.3} color={T.logoColor || fg} flat={!!T.flat} />
         <TaglineBlock lines={TAGLINE_LINES} delay={2.6} color={fg} accent={accent} textShadow={textShadow} />
       </div>
@@ -180,7 +180,7 @@ const KickerBlock = ({ kicker, delay = 0.25, color = MR_COLORS.white, accent = M
   });
   const breathPhase = Math.max(0, frame / fps - (underlineStart + 0.6));
   const breathSin = Math.sin(breathPhase * Math.PI / 1.4);
-  const letterSpacing = 0.12 + breathSin * 0.02;
+  const letterSpacing = 0.06 + breathSin * 0.01;
 
   return (
     <div style={{
@@ -194,9 +194,9 @@ const KickerBlock = ({ kicker, delay = 0.25, color = MR_COLORS.white, accent = M
       transform: 'translateZ(0)',
     }}>
       <div style={{
-        fontFamily: MR_FONTS.alumni,
+        fontFamily: MR_FONTS.caps,
         fontSize: 76,
-        fontWeight: 500,
+        fontWeight: 400,
         color,
         letterSpacing: `${letterSpacing.toFixed(3)}em`,
         textTransform: 'uppercase',
@@ -264,7 +264,7 @@ const TaglineBlock = ({ lines, delay = 2.6, color = MR_COLORS.white, accent = MR
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      gap: 18,
+      gap: 0,
       marginTop: 14,
       transform: 'translateZ(0)',
     }}>
@@ -290,23 +290,20 @@ const TaglineBlock = ({ lines, delay = 2.6, color = MR_COLORS.white, accent = MR
 const TaglineLine = ({ text, delay, emphasized, color = MR_COLORS.white, accent = MR_COLORS.greenBright, textShadow = '0 2px 16px rgba(0,0,0,0.45)' }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const chars = [...(text || '').toUpperCase()];
+  const chars = [...(text || '')];
   const stagger = 0.022;
   const charDur = 0.32;
   return (
     <div style={{
-      fontFamily: MR_FONTS.alumni,
-      fontSize: 68,
+      fontFamily: MR_FONTS.grotesk,
+      fontSize: 76,
       fontWeight: 500,
-      color: emphasized ? accent : color,
-      letterSpacing: '0.10em',
-      textTransform: 'uppercase',
-      lineHeight: 1,
+      color: color,
+      letterSpacing: '-0.025em',
+      lineHeight: 1.05,
       whiteSpace: 'nowrap',
-      opacity: emphasized ? 1 : 0.92,
-      textShadow: textShadow === 'none'
-        ? 'none'
-        : (emphasized ? `${textShadow}, 0 0 28px ${accent}55` : textShadow),
+      opacity: 1,
+      textShadow,
     }}>
       {chars.map((ch, i) => {
         const start = delay + i * stagger;

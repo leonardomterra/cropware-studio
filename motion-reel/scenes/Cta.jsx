@@ -49,9 +49,9 @@ export const Cta = ({ bg, fg, logoUrl = 'logo-cropware-pb-final.svg', headline, 
             text={handle}
             delay={1.5}
             dur={0.4}
-            fromEm={0.15}
-            toEm={0.3}
-            style={{ fontFamily: MR_FONTS.alumni, fontSize: 38, fontWeight: 500, textTransform: 'uppercase' }}
+            fromEm={0.04}
+            toEm={0.10}
+            style={{ fontFamily: MR_FONTS.caps, fontSize: 38, fontWeight: 400, textTransform: 'uppercase' }}
           />
         ) : null}
       </div>

@@ -137,12 +137,12 @@ export const Headline = ({
             text={String(kicker).toUpperCase()}
             delay={0.4}
             dur={0.5}
-            fromEm={0.06}
-            toEm={0.12}
+            fromEm={0.02}
+            toEm={0.06}
             style={{
-              fontFamily: MR_FONTS.alumni,
+              fontFamily: MR_FONTS.caps,
               fontSize: 56,
-              fontWeight: 500,
+              fontWeight: 400,
               color: T.kickerColor || T.accent,
               textTransform: 'uppercase',
               textShadow: T.flat ? 'none' : '0 2px 14px rgba(0,0,0,0.45)',
@@ -171,7 +171,6 @@ export const Headline = ({
           />
         </div>
 
-        <DotsOrnament delayStart={1.25} color={T.accent} flat={!!T.flat} />
       </div>
     </AbsoluteFill>
   );

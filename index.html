@@ -172,21 +172,21 @@
     --field-focus-border: rgba(203, 213, 225, 0.96);
     --text: #0f172a;
     --muted: rgba(15,23,42,0.62);
-    /* R25: legacy `--btn-*` reapontados pros tokens novos do design system.
+    /* R25/R28: legacy `--btn-*` reapontados pros tokens novos do design system.
        Permite que TODOS os botões existentes que herdam essas variáveis pulem
-       direto pro padrão slate dark sem precisar refatorar cada CSS rule. */
-    --btn-height: 36px;
-    --btn-radius: 8px;
-    --btn-font-size: 14px;
-    --btn-font-weight: 300;
+       direto pro padrão neutral + font 15/500 sem precisar refatorar cada rule. */
+    --btn-height: var(--ds-btn-h);
+    --btn-radius: var(--ds-btn-radius);
+    --btn-font-size: var(--ds-font-size);
+    --btn-font-weight: var(--ds-font-weight);
     --btn-pad-x: 14px;
     --btn-gap: 8px;
-    --btn-dark-bg: #3D3F3D;
-    --btn-dark-bg-hover: #5C605D;
+    --btn-dark-bg: var(--ds-neutral-900);
+    --btn-dark-bg-hover: var(--ds-neutral-800);
     --btn-dark-text: #fff;
-    --btn-mid-bg: #e5e7eb;
-    --btn-mid-bg-hover: #d1d5db;
-    --btn-mid-text: #374151;
+    --btn-mid-bg: var(--ds-neutral-200);
+    --btn-mid-bg-hover: var(--ds-neutral-300);
+    --btn-mid-text: var(--ds-neutral-700);
     --btn-light-bg: #fff;
     --btn-light-bg-hover: #f1f5f9;
     --btn-light-text: #0f172a;
@@ -219,13 +219,14 @@
   body {
     background: var(--bg);
     color: var(--text);
-    /* R28 — fonte UI padrão do Studio: Geist (Vercel). Substituiu Roboto Flex.
-       Geist não tem axis wdth (só weight), então font-stretch: 90% é no-op
-       — ela já é naturalmente um pouco compacta. As fontes especiais
-       (Inter Tight / Familjen Grotesk / Space Mono / Alumni Sans) ficam só
-       nos posts/reels via classes específicas dentro do canvas. */
+    /* R28 — fonte UI padrão do Studio: Inter Tight. Geist e Roboto Flex foram
+       testadas e descartadas. "Tight" significa métricas naturalmente apertadas
+       (não tem axis wdth — usamos letter-spacing -0.01em pra dar mais aperto).
+       As fontes especiais (Familjen Grotesk / Space Mono / Alumni Sans) ficam
+       só nos posts/reels via classes específicas dentro do canvas. */
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
+    letter-spacing: var(--ds-letter-spacing);
     -webkit-font-smoothing: antialiased;
     text-rendering: geometricPrecision;
     height: 100vh;
@@ -236,6 +237,7 @@
   }
   body :where(:not(#postScaler):not(#postScaler *)) {
     font-stretch: 90%;
+    letter-spacing: var(--ds-letter-spacing);
   }
 
   /* ── MAIN LAYOUT ── */
@@ -271,8 +273,8 @@
   .app-header {
     height: 58px;
     flex-shrink: 0;
-    background: #1e293b;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: #ffffff;
+    border-bottom: 1px solid var(--ds-neutral-200);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -299,7 +301,7 @@
     display: block;
     width: 142px;
     height: 20px;
-    background: #fff;
+    background: var(--ds-neutral-800);
     -webkit-mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
     mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
     flex-shrink: 0;
@@ -310,7 +312,7 @@
     font-weight: 500;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.78);
+    color: var(--ds-neutral-800);
     line-height: 1;
     flex-shrink: 0;
     transform: scaleX(0.86);
@@ -319,20 +321,19 @@
   .app-header-divider {
     width: 1px;
     height: 24px;
-    background: rgba(255,255,255,0.18);
+    background: var(--ds-neutral-300);
     flex-shrink: 0;
   }
   .app-user-email {
-    min-height: var(--btn-height);
-    padding: 8px 13px;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: var(--btn-radius);
-    background: rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.64);
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    font-weight: 400;
-    letter-spacing: 0.02em;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--ds-neutral-400);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0;
     line-height: 1;
     white-space: nowrap;
     overflow: hidden;
@@ -341,8 +342,7 @@
     max-width: 280px;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    text-transform: uppercase;
+    text-transform: lowercase;
     cursor: default;
     pointer-events: none;
   }
@@ -353,20 +353,21 @@
     gap: 8px;
     padding: 0 14px;
     height: var(--ds-btn-h);
-    background: rgba(255,255,255,0.08);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.18);
+    background: #ffffff;
+    color: var(--ds-neutral-700);
+    border: 1px solid var(--ds-neutral-200);
     border-radius: var(--ds-btn-radius);
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 13px;
-    font-weight: 400;
+    font-weight: 500;
     cursor: pointer;
     transition: var(--ds-btn-transition);
   }
   .app-logout-btn:hover {
-    background: rgba(255,255,255,0.14);
-    border-color: rgba(255,255,255,0.30);
+    background: var(--ds-neutral-50);
+    border-color: var(--ds-neutral-300);
+    color: var(--ds-neutral-900);
   }
 
   /* ── SIDEBAR ── */
@@ -465,14 +466,12 @@
     gap: 10px;
     padding: 8px 12px;
     cursor: pointer;
-    border-left: 3px solid transparent;
     transition: all 0.15s;
   }
 
-  .thumb-item:hover { background: rgba(0,0,0,0.04); }
+  .thumb-item:hover { background: var(--ds-neutral-100); }
   .thumb-item.active {
-    border-left-color: #1e293b;
-    background: rgba(30,41,59,0.10);
+    background: var(--ds-neutral-200);
   }
 
   .thumb-preview {
@@ -486,32 +485,37 @@
     border: 1px solid var(--border);
   }
 
-  .thumb-info { flex: 1; min-width: 0; }
+  .thumb-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
   .thumb-title {
     font-size: 14px;
-    font-weight: 400;
-    color: var(--text);
+    font-weight: 500;
+    color: var(--ds-neutral-900);
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    line-height: 1.4;
-    height: calc(14px * 1.4 * 3);
+    line-height: 1.35;
   }
   .thumb-sub {
     display: none;
   }
   .thumb-time {
-    font-size: 11px;
-    font-weight: 400;
-    color: rgba(71, 85, 105, 0.65);
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ds-neutral-600);
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
-    margin-top: 4px;
     line-height: 1;
-    letter-spacing: 0.02em;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: var(--ds-neutral-100);
+    border: 1px solid var(--ds-neutral-200);
+    letter-spacing: 0;
   }
   /* Overlay de loading durante export (PDF, ZIP). Bloqueia interação até concluir. */
   .download-loading {
@@ -5172,6 +5176,19 @@
     grid-template-columns: minmax(0, 1fr) 292px;
     column-gap: 0;
     align-items: start;
+    position: relative;
+  }
+  /* R28: divisor vertical absoluto entre controles e preview — ocupa a
+     altura total do body independente da altura natural de cada coluna. */
+  .gen-modal-box.mr-scene-edit-box .gen-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: calc(292px + 32px);
+    width: 1px;
+    background: var(--ds-neutral-200);
+    pointer-events: none;
   }
   /* Texture grid em UMA linha: 12 colunas, thumbs pequenos */
   .gen-modal-box.mr-scene-edit-box .pc-news-texture-grid {
@@ -5200,7 +5217,6 @@
     top: 16px;
     width: 292px;
     padding-left: 32px;
-    border-left: 1px solid #cbd5e1;
   }
   .mr-edit-preview-mount {
     width: 100%;
@@ -5240,29 +5256,19 @@
   /* ────────────────────────────────────────────────────────────────
      DESIGN SYSTEM v1 (R25) — tokens globais + classes utilitárias.
      Aplicado por opt-in via .ds-btn nas refatorações graduais.
-     Fonte UI: Geist (R28 — substituiu Roboto Flex).
+     Fonte UI: Inter Tight (R28 — testou Geist, voltou pra Inter Tight).
      ──────────────────────────────────────────────────────────────── */
   :root {
-    --ds-font: 'Geist', system-ui, sans-serif;
+    --ds-font: 'Inter Tight', system-ui, sans-serif;
     --ds-font-stretch: 90%;
     --ds-font-size: 14px;
-    --ds-font-weight: 400;
-    --ds-text: #0f172a;
-    --ds-text-muted: #64748b;
+    --ds-font-weight: 500;
+    /* R28: letter-spacing levemente negativo. Inter Tight já é "tight" nativo
+       (espaçamento apertado built-in), mas -0.01em adiciona aquele aperto extra
+       que dá feel "tech moderno". Ajustável via token único. */
+    --ds-letter-spacing: -0.01em;
 
-    --ds-color-primary: #3D3F3D;
-    --ds-color-primary-hover: #5C605D;
-    --ds-color-primary-disabled: #94a3b8;
-    --ds-color-on-primary: #ffffff;
-
-    --ds-color-secondary-bg: #ffffff;
-    --ds-color-secondary-bg-hover: #f1f5f9;
-    --ds-color-secondary-border: #e2e8f0;
-    --ds-color-secondary-border-hover: #cbd5e1;
-    --ds-color-secondary-text: #0f172a;
-
-    /* Paleta NEUTRAL (shadcn/tailwind). Em uso piloto no conjunto fine-adjust
-       + mini button. Propagar gradualmente pra sistema todo conforme valida. */
+    /* Paleta NEUTRAL (shadcn/tailwind) — R28: tema base oficial do Studio. */
     --ds-neutral-50:  #fafafa;
     --ds-neutral-100: #f5f5f5;
     --ds-neutral-200: #e5e5e5;
@@ -5275,9 +5281,23 @@
     --ds-neutral-900: #171717;
     --ds-neutral-950: #0a0a0a;
 
+    --ds-text: var(--ds-neutral-900);
+    --ds-text-muted: var(--ds-neutral-500);
+
+    --ds-color-primary: var(--ds-neutral-900);
+    --ds-color-primary-hover: var(--ds-neutral-800);
+    --ds-color-primary-disabled: var(--ds-neutral-400);
+    --ds-color-on-primary: #ffffff;
+
+    --ds-color-secondary-bg: #ffffff;
+    --ds-color-secondary-bg-hover: var(--ds-neutral-100);
+    --ds-color-secondary-border: var(--ds-neutral-200);
+    --ds-color-secondary-border-hover: var(--ds-neutral-300);
+    --ds-color-secondary-text: var(--ds-neutral-900);
+
     --ds-btn-h: 36px;
     --ds-btn-icon-size: 32px;
-    --ds-btn-radius: 8px;
+    --ds-btn-radius: 6px;
     --ds-btn-pad: 0 14px;
     --ds-btn-gap: 8px;
     --ds-btn-transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
@@ -5350,12 +5370,12 @@
     border-radius: 3px;
     color: var(--ds-neutral-500);
     cursor: pointer;
-    font-family: 'Pathway Extreme', var(--ds-font);
-    font-stretch: 90%;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
     line-height: 1;
     display: inline-flex;
     align-items: center;
@@ -6528,8 +6548,8 @@
     width: 100%;
     height: var(--ds-btn-h);
     padding: 0 14px;
-    background: #e2e8f0;
-    color: var(--ds-text-muted);
+    background: var(--ds-neutral-200);
+    color: var(--ds-neutral-700);
     border: none;
     border-radius: var(--ds-btn-radius);
     font-family: var(--ds-font);
@@ -6546,8 +6566,8 @@
   .btn-gen-ai:hover,
   .btn-actions-menu-trigger:hover,
   .btn-actions-menu-trigger[aria-expanded="true"] {
-    background: #cbd5e1;
-    color: var(--ds-text);
+    background: var(--ds-neutral-300);
+    color: var(--ds-neutral-900);
   }
   .btn-actions-menu-trigger {
     justify-content: space-between;
@@ -6566,9 +6586,9 @@
     top: auto;
     padding: 6px;
     background: #fff;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    box-shadow: 0 18px 50px rgba(15,23,42,0.18);
+    border: 1px solid var(--ds-neutral-200);
+    border-radius: 6px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.12);
     display: none;
     z-index: 80;
   }
@@ -6625,14 +6645,14 @@
     width: 100%;
     height: var(--ds-btn-h);
     padding: 0 14px;
-    background: #e2e8f0;
-    color: var(--ds-text-muted);
+    background: var(--ds-neutral-200);
+    color: var(--ds-neutral-700);
     border: none;
     border-radius: var(--ds-btn-radius);
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 13px;
-    font-weight: 400;
+    font-weight: 500;
     cursor: pointer;
     transition: var(--ds-btn-transition);
     display: inline-flex;
@@ -6710,7 +6730,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 24px 28px 18px;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--ds-neutral-200);
     position: sticky;
     top: 0;
     background: #fff;
@@ -7228,6 +7248,20 @@
     color: var(--text);
   }
 
+  /* R28: btn-actions-menu-trigger — branco com borda neutral leve.
+     Override das regras acima (.cw-btn--medium etc) que pintavam de cinza. */
+  .btn-actions-menu-trigger {
+    background: #ffffff;
+    border: 1px solid var(--ds-neutral-200);
+    color: var(--ds-neutral-700);
+  }
+  .btn-actions-menu-trigger:hover,
+  .btn-actions-menu-trigger[aria-expanded="true"] {
+    background: var(--ds-neutral-50);
+    border-color: var(--ds-neutral-300);
+    color: var(--ds-neutral-900);
+  }
+
   .cw-btn--light,
   .cw-btn--cancel,
   .login-manage-btn,
@@ -7335,14 +7369,14 @@
     width: 100%;
     min-height: var(--btn-height);
     padding: 0 14px;
-    border: 1px solid rgba(203, 213, 225, 0.82);
+    border: 1px solid var(--ds-neutral-200);
     border-radius: var(--btn-radius);
     background: #fff;
-    color: var(--ds-text);
+    color: var(--ds-neutral-900);
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
-    font-size: 14px;
-    font-weight: 300;
+    font-size: var(--ds-font-size);
+    font-weight: var(--ds-font-weight);
     line-height: 1.2;
     display: inline-flex;
     align-items: center;
@@ -7353,8 +7387,8 @@
   }
   .studio-mode-trigger:hover,
   .studio-mode-picker.open .studio-mode-trigger {
-    border-color: var(--field-focus-border);
-    background: #fdfefe;
+    border-color: var(--ds-neutral-300);
+    background: var(--ds-neutral-50);
   }
   .studio-mode-trigger-text {
     overflow: hidden;
@@ -7364,7 +7398,7 @@
   }
   .studio-mode-trigger .ph {
     font-size: 16px;
-    color: #64748b;
+    color: var(--ds-neutral-500);
     flex-shrink: 0;
   }
   .studio-mode-menu {
@@ -7376,9 +7410,9 @@
     overflow-y: auto;
     padding: 6px;
     background: #fff;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    box-shadow: 0 18px 50px rgba(15,23,42,0.18);
+    border: 1px solid var(--ds-neutral-200);
+    border-radius: 6px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.12);
     display: none;
     z-index: 160;
   }
@@ -7388,11 +7422,11 @@
   }
   .studio-mode-menu-group {
     padding: 7px 9px 4px;
-    color: #94a3b8;
+    color: var(--ds-neutral-500);
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 12px;
-    font-weight: 400;
+    font-weight: 500;
     letter-spacing: 0;
     line-height: 1.2;
     text-transform: none;
@@ -7404,11 +7438,11 @@
     border: none;
     border-radius: var(--ds-btn-radius);
     background: transparent;
-    color: var(--ds-text);
+    color: var(--ds-neutral-900);
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
-    font-size: 14px;
-    font-weight: 300;
+    font-size: var(--ds-font-size);
+    font-weight: var(--ds-font-weight);
     line-height: 1.2;
     cursor: pointer;
     display: inline-flex;
@@ -7419,16 +7453,16 @@
     transition: background 140ms, color 140ms;
   }
   .studio-mode-menu-btn:hover {
-    background: var(--btn-light-bg-hover);
-    color: #111827;
+    background: var(--ds-neutral-100);
+    color: var(--ds-neutral-900);
   }
   .studio-mode-menu-btn.active {
-    background: #e5e7eb;
-    color: #111827;
+    background: var(--ds-neutral-200);
+    color: var(--ds-neutral-900);
   }
   .studio-mode-menu-btn .ph {
     font-size: 15px;
-    color: #64748b;
+    color: var(--ds-neutral-500);
     flex-shrink: 0;
   }
   select.cw-native-select {
@@ -7949,8 +7983,8 @@
   .mr-view-toggle {
     position: relative;
     display: flex;
-    background: var(--ds-neutral-200);
-    border: 1px solid var(--ds-neutral-300);
+    background: var(--ds-neutral-100);
+    border: 1px solid var(--ds-neutral-200);
     border-radius: 8px;
     padding: 3px;
     flex-shrink: 0;
@@ -7978,12 +8012,12 @@
     border: none;
     padding: 6px 28px;
     border-radius: 6px;
-    font-size: 14px;
-    font-weight: 400;
-    font-family: 'Pathway Extreme', var(--ds-font);
-    font-stretch: 90%;
-    letter-spacing: 0.04em;
-    text-transform: capitalize;
+    font-size: var(--ds-font-size);
+    font-weight: var(--ds-font-weight);
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    letter-spacing: var(--ds-letter-spacing);
+    text-transform: none;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -10369,6 +10403,33 @@ function syncAllCustomSelectPickers() {
   document.querySelectorAll('select[data-cw-select-enhanced="true"]').forEach(refreshCustomSelect);
 }
 
+// R28: converte string em Title Case PT-BR (mantém preposições/artigos curtos
+// minúsculos: de, do, da, dos, das, e, ou, em, no, na, nos, nas, com, para, a,
+// o, as, os). Primeira palavra sempre capitalizada.
+const PT_BR_LOWERCASE_WORDS = new Set([
+  'de', 'do', 'da', 'dos', 'das', 'e', 'ou', 'em', 'no', 'na', 'nos', 'nas',
+  'com', 'para', 'pra', 'a', 'o', 'as', 'os', 'um', 'uma', 'uns', 'umas',
+  'pelo', 'pela', 'pelos', 'pelas', 'que', 'se', 'por',
+]);
+function toPtBrTitleCase(str) {
+  if (typeof str !== 'string') return str;
+  const words = str.split(/(\s+)/); // preserva espaços
+  let firstWordIdx = -1;
+  return words.map((w, i) => {
+    if (/^\s+$/.test(w) || !w) return w;
+    if (firstWordIdx < 0) firstWordIdx = i;
+    const lower = w.toLowerCase();
+    // Stop word (preposição/artigo) — lowercase exceto primeira palavra.
+    if (i !== firstWordIdx && PT_BR_LOWERCASE_WORDS.has(lower)) return lower;
+    // Acrônimo: tudo maiúsculo, até 4 letras (IA, ABC, MIT, RTV).
+    if (w.length <= 4 && /^[A-ZÀ-Ý]+$/.test(w)) return w;
+    // Mixed case proper noun (LinkedIn, iPhone, WhatsApp) — preserva original.
+    if (w !== w.toLowerCase() && w !== w.toUpperCase()) return w;
+    // Default: title case (primeira maiúscula, resto lowercase).
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+  }).join('');
+}
+
 function buildSidebar() {
   const aside = document.getElementById('sidebarAside');
   const isCarousel = isCarouselMode();
@@ -10410,10 +10471,13 @@ function buildSidebar() {
       info.style.minWidth = '0';
       const tsLabel = formatPostTimestamp(ts);
       const tsHtml = tsLabel ? `<div class="thumb-time">${tsLabel}</div>` : '';
+      // R28: títulos exibidos em Title Case (preposições PT-BR minúsculas).
+      const rawTitle = p.title || p.theme || 'Sem título';
+      const titleCased = toPtBrTitleCase(rawTitle);
       if (isCarousel || isPresentation) {
-        info.innerHTML = `<div class="thumb-title">${p.title || p.theme || 'Sem título'} <span class="thumb-badge">(${p.slides.length} slides)</span></div>${tsHtml}`;
+        info.innerHTML = `<div class="thumb-title">${titleCased} <span class="thumb-badge">(${p.slides.length} slides)</span></div>${tsHtml}`;
       } else {
-        info.innerHTML = `<div class="thumb-title">${p.title}</div><div class="thumb-sub">${p.sub}</div>${tsHtml}`;
+        info.innerHTML = `<div class="thumb-title">${titleCased}</div><div class="thumb-sub">${p.sub}</div>${tsHtml}`;
       }
       info.addEventListener('click', () => goTo(i));
       const del = document.createElement('button');
@@ -21424,7 +21488,7 @@ function insertSlide(position) {
   if (!items[getModeCurrentIdx()]) return;
   _insertSlidePosition = position;
   const label = position === 'before' ? 'antes' : 'depois';
-  document.querySelector('#insertSlideModal .gen-modal-header > span').textContent = `Inserir slide ${label}`;
+  document.querySelector('#insertSlideModal .gen-modal-header > span').textContent = `Inserir Slide ${label}`;
   document.getElementById('insertSlideDirection').value = '';
   document.getElementById('insertSlideStatus').textContent = '';
   document.getElementById('insertSlideBtn').disabled = false;
@@ -23093,7 +23157,7 @@ function _syncMrSceneTextureInvert(scene) {
   const inverted = scene.bgTextureInvert != null ? scene.bgTextureInvert : MR_TEXTURE_INVERT_DEFAULT;
   btn.classList.toggle('ds-btn--toggle-active', inverted);
   btn.classList.toggle('ds-btn--secondary', !inverted);
-  label.textContent = inverted ? 'Cores invertidas' : 'Inverter cores';
+  label.textContent = inverted ? 'Cores Invertidas' : 'Inverter Cores';
 }
 
 function toggleMotionReelSceneTextureInvert() {
@@ -25318,7 +25382,7 @@ window.selectMotionReelMusicTrack = selectMotionReelMusicTrack;
 <div class="gen-modal" id="mrMusicDialog">
   <div class="gen-modal-box" style="width:560px;max-width:90vw">
     <div class="gen-modal-header">
-      <span>Trilha sonora</span>
+      <span>Trilha Sonora</span>
       <button class="gen-close" onclick="closeMotionReelMusicDialog()"><i class="ph ph-x"></i></button>
     </div>
     <div class="gen-body">
@@ -25331,15 +25395,17 @@ window.selectMotionReelMusicTrack = selectMotionReelMusicTrack;
 <div class="gen-modal" id="mrSceneEditModal">
   <div class="gen-modal-box mr-scene-edit-box">
     <div class="gen-modal-header">
-      <span id="mrSceneEditTitle">Editar cena</span>
+      <span id="mrSceneEditTitle">Editar Cena</span>
       <button class="gen-close" onclick="closeMotionReelSceneEditor()"><i class="ph ph-x"></i></button>
     </div>
     <div class="gen-body">
       <div class="mr-edit-controls">
-      <!-- R26: Tema + Textura na mesma linha (50% cada) -->
-      <div class="gen-group" style="display:flex;flex-direction:row;gap:12px">
-        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
-          <label>Tema Visual</label>
+      <!-- R26/R28: Tema + Textura na mesma linha — grid 2 colunas × 2 linhas
+           (label e dropdown ficam em rows próprias = alinhamento garantido). -->
+      <div class="gen-group" style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;column-gap:12px;row-gap:6px;align-items:start">
+        <label style="margin:0;grid-column:1;grid-row:1">Tema Visual</label>
+        <label style="margin:0;grid-column:2;grid-row:1">Textura</label>
+        <div style="min-width:0;grid-column:1;grid-row:2">
           <div class="ds-dropdown" id="mrThemeDropdown">
             <button type="button" class="ds-dropdown__trigger" onclick="toggleDsDropdown('mrThemeDropdown', event)" aria-haspopup="listbox">
               <span class="ds-dropdown__swatch mr-theme-preview--escuro" id="mrThemeDropdownSwatch"></span>
@@ -25370,8 +25436,7 @@ window.selectMotionReelMusicTrack = selectMotionReelMusicTrack;
             </div>
           </div>
         </div>
-        <div id="mrSceneTextureGroup" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
-          <label>Textura</label>
+        <div id="mrSceneTextureGroup" style="min-width:0;grid-column:2;grid-row:2">
           <div class="ds-dropdown" id="mrTextureDropdown">
             <button type="button" class="ds-dropdown__trigger" onclick="toggleDsDropdown('mrTextureDropdown', event)" aria-haspopup="listbox">
               <span class="ds-dropdown__swatch ds-dropdown__swatch--texture" id="mrTextureDropdownSwatch"></span>
@@ -25405,60 +25470,61 @@ window.selectMotionReelMusicTrack = selectMotionReelMusicTrack;
         </div>
         <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
           <button type="button" id="mrSceneTextureInvertBtn" class="ds-btn ds-btn--secondary" onclick="toggleMotionReelSceneTextureInvert()">
-            <i class="ph ph-swap"></i><span id="mrSceneTextureInvertLabel">Inverter cores</span>
+            <i class="ph ph-circle-half"></i><span id="mrSceneTextureInvertLabel">Inverter Cores</span>
           </button>
         </div>
       </div>
-      <!-- R26: Overlay (cor + intensidade) em group próprio, ANTES do imagem -->
+      <!-- R28: Overlay e Imagem de Fundo combinados — cor do overlay + trocar
+           imagem lado a lado, Intensidade (overlay) + Desfoque (bg) lado a lado. -->
       <div class="gen-group" id="mrSceneOverlayGroup" style="display:none">
-        <label>Overlay</label>
-        <div style="display:flex;flex-direction:column;gap:6px">
+        <label>Overlay e Imagem de Fundo</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center">
           <button type="button" class="pc-color-btn" onclick="openColorDropdown('mrSceneOverlay', this)" style="height:36px">
             <span class="pc-color-btn-swatch" id="mrOverlayColorSwatch" style="background:#1A1B1A"></span>
             <span class="pc-color-btn-label" id="mrOverlayColorLabel">Padrão do tema</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
+          <button type="button" id="mrSceneSwapBg" class="ds-btn ds-btn--secondary" onclick="swapMotionReelSceneBg()" title="Sortear nova imagem do pool">
+            <i class="ph ph-image"></i>Trocar Imagem
+          </button>
         </div>
-        <div class="ds-fineadjust" style="margin-top:10px">
-          <div class="ds-fineadjust__label">
-            <span class="ds-fineadjust__label-text">Intensidade</span>
-            <span class="ds-fineadjust__label-sep">|</span>
-            <input type="text" inputmode="numeric" class="ds-fineadjust__label-value" id="mrSceneBgOverlayValue" value="60"
-                   oninput="onMotionReelSceneBgOverlayInput(this.value)">
-            <span class="ds-fineadjust__label-sep">|</span>
-            <button type="button" class="ds-btn-mini ds-fineadjust__reset" onclick="resetMotionReelSceneBgOverlay()" title="Redefinir ao padrão da cena">
-              <i class="ph ph-arrow-counter-clockwise"></i>Redefinir
-            </button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;margin-top:10px">
+          <div class="ds-fineadjust">
+            <div class="ds-fineadjust__label">
+              <span class="ds-fineadjust__label-text">Intensidade</span>
+              <span class="ds-fineadjust__label-sep">|</span>
+              <input type="text" inputmode="numeric" class="ds-fineadjust__label-value" id="mrSceneBgOverlayValue" value="60"
+                     oninput="onMotionReelSceneBgOverlayInput(this.value)">
+              <span class="ds-fineadjust__label-sep">|</span>
+              <button type="button" class="ds-btn-mini ds-fineadjust__reset" onclick="resetMotionReelSceneBgOverlay()" title="Redefinir ao padrão da cena">
+                <i class="ph ph-arrow-counter-clockwise"></i>Redefinir
+              </button>
+            </div>
+            <div class="ds-fineadjust__slider-zone">
+              <input type="range" class="ds-fineadjust__slider" id="mrSceneBgOverlay" min="0" max="100" step="1" value="50"
+                     oninput="onMotionReelSceneBgOverlay(this.value)">
+            </div>
           </div>
-          <div class="ds-fineadjust__slider-zone">
-            <input type="range" class="ds-fineadjust__slider" id="mrSceneBgOverlay" min="0" max="100" step="1" value="50"
-                   oninput="onMotionReelSceneBgOverlay(this.value)">
+          <div class="ds-fineadjust" id="mrSceneBgBlurAdjust">
+            <div class="ds-fineadjust__label">
+              <span class="ds-fineadjust__label-text">Desfoque</span>
+              <span class="ds-fineadjust__label-sep">|</span>
+              <input type="text" inputmode="numeric" class="ds-fineadjust__label-value" id="mrSceneBgBlurValue" value="8"
+                     oninput="onMotionReelSceneBgBlurInput(this.value)">
+              <span class="ds-fineadjust__label-sep">|</span>
+              <button type="button" class="ds-btn-mini ds-fineadjust__reset" onclick="resetMotionReelSceneBgBlur()" title="Redefinir ao padrão da cena">
+                <i class="ph ph-arrow-counter-clockwise"></i>Redefinir
+              </button>
+            </div>
+            <div class="ds-fineadjust__slider-zone">
+              <input type="range" class="ds-fineadjust__slider" id="mrSceneBgBlur" min="0" max="100" step="1" value="50"
+                     oninput="onMotionReelSceneBgBlur(this.value)">
+            </div>
           </div>
         </div>
       </div>
-      <!-- R26: Imagem de fundo (blur + aleatório) DEPOIS do overlay -->
-      <div class="gen-group" id="mrSceneBgGroup" style="display:none">
-        <label>Imagem de Fundo</label>
-        <div class="ds-fineadjust">
-          <div class="ds-fineadjust__label">
-            <span class="ds-fineadjust__label-text">Desfoque</span>
-            <span class="ds-fineadjust__label-sep">|</span>
-            <input type="text" inputmode="numeric" class="ds-fineadjust__label-value" id="mrSceneBgBlurValue" value="8"
-                   oninput="onMotionReelSceneBgBlurInput(this.value)">
-            <span class="ds-fineadjust__label-sep">|</span>
-            <button type="button" class="ds-btn-mini ds-fineadjust__reset" onclick="resetMotionReelSceneBgBlur()" title="Redefinir ao padrão da cena">
-              <i class="ph ph-arrow-counter-clockwise"></i>Redefinir
-            </button>
-          </div>
-          <div class="ds-fineadjust__slider-zone">
-            <input type="range" class="ds-fineadjust__slider" id="mrSceneBgBlur" min="0" max="100" step="1" value="50"
-                   oninput="onMotionReelSceneBgBlur(this.value)">
-          </div>
-        </div>
-        <button type="button" id="mrSceneSwapBg" class="ds-btn ds-btn--secondary" onclick="swapMotionReelSceneBg()" title="Sortear nova imagem do pool" style="align-self:flex-start;margin-top:10px">
-          <i class="ph ph-shuffle"></i>Aleatório
-        </button>
-      </div>
+      <!-- R28: mrSceneBgGroup mantido como container vazio pra compat — controles foram migrados pro mrSceneOverlayGroup -->
+      <div class="gen-group" id="mrSceneBgGroup" style="display:none"></div>
       <div class="gen-group">
         <label>Editar conteúdo com IA</label>
         <div style="display:flex;gap:8px;align-items:stretch">
@@ -25468,7 +25534,7 @@ window.selectMotionReelMusicTrack = selectMotionReelMusicTrack;
           <button type="button" id="mrSceneRegenRevertBtn" class="ds-btn ds-btn--secondary" onclick="revertMotionReelSceneRegen()" title="Reverter última regeração" style="display:none">
             <i class="ph ph-arrow-counter-clockwise"></i>Reverter
           </button>
-          <button type="button" id="mrSceneRegenBtn" class="ds-btn ds-btn--primary" onclick="regenerateMotionReelSceneContent()" title="Regerar conteúdo da cena (com ou sem instrução)">
+          <button type="button" id="mrSceneRegenBtn" class="ds-btn ds-btn--secondary" onclick="regenerateMotionReelSceneContent()" title="Regerar conteúdo da cena (com ou sem instrução)">
             <i class="ph ph-arrows-clockwise"></i>Regerar
           </button>
         </div>
@@ -25482,7 +25548,7 @@ window.selectMotionReelMusicTrack = selectMotionReelMusicTrack;
             Aplicar Edição
           </button>
           <button class="ds-btn ds-btn--secondary" type="button" onclick="restoreMotionReelSceneDefaults()" title="Volta a cena ao padrão (remove tema, imagem e textura customizados)" style="width:100%">
-            <i class="ph ph-arrow-counter-clockwise"></i>Restaurar Padrão
+            Restaurar Padrão
           </button>
         </div>
       </div>

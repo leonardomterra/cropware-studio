@@ -4,7 +4,7 @@
 import { loadFont as loadInterTight } from '@remotion/google-fonts/InterTight';
 import { loadFont as loadFamiljenGrotesk } from '@remotion/google-fonts/FamiljenGrotesk';
 import { loadFont as loadSpaceMono } from '@remotion/google-fonts/SpaceMono';
-import { loadFont as loadAlumniSans } from '@remotion/google-fonts/AlumniSans';
+import { loadFont as loadUnicaOne } from '@remotion/google-fonts/UnicaOne';
 
 let _loaded = false;
 export function loadMotionReelFonts() {
@@ -12,6 +12,8 @@ export function loadMotionReelFonts() {
   loadInterTight('normal', { weights: ['400', '500', '600', '700'], subsets: ['latin'] });
   loadFamiljenGrotesk('normal', { weights: ['400', '500', '600', '700'], subsets: ['latin'] });
   loadSpaceMono('normal', { weights: ['400', '700'], subsets: ['latin'] });
-  loadAlumniSans('normal', { weights: ['400', '500', '600', '700'], subsets: ['latin'] });
+  // R28e: Unica One substituiu JetBrains Mono no token `caps`. Display
+  // geométrica all-caps oriented (peso único 400).
+  loadUnicaOne('normal', { weights: ['400'], subsets: ['latin'] });
   _loaded = true;
 }

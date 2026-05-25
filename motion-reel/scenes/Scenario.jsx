@@ -109,12 +109,12 @@ export const Scenario = ({ kicker, scenario, theme, bgImage, bgImageBlur, bgOver
             text={String(kicker).toUpperCase()}
             delay={0.3}
             dur={0.5}
-            fromEm={T.kickerLetterSpacingFrom ?? 0.06}
-            toEm={T.kickerLetterSpacingTo ?? 0.12}
+            fromEm={T.kickerLetterSpacingFrom ?? 0.02}
+            toEm={T.kickerLetterSpacingTo ?? 0.06}
             style={{
-              fontFamily: MR_FONTS.alumni,
+              fontFamily: MR_FONTS.caps,
               fontSize: T.kickerFontSize || 56,
-              fontWeight: 500,
+              fontWeight: 400,
               lineHeight: 1.18,
               maxWidth: T.kickerMaxWidth || 920,
               color: T.kickerColor || T.accent,

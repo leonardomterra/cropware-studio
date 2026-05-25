@@ -70,6 +70,23 @@ export const Keyword = ({
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuart }
   );
 
+  // R28: Card breathing glow — depois da entrada, oscila intensidade e tamanho
+  // do halo accent. Cria sensação de "card energético/respirando" sutilmente.
+  const tSec = frame / fps;
+  const breathPhase = (Math.sin((tSec - underlineDelay - 0.5) * Math.PI * 0.7) + 1) / 2; // 0→1 oscilando
+  const cardEntered = underlineP >= 0.99;
+  const glowAlpha = cardEntered ? 0.30 + 0.25 * breathPhase : 0.30;
+  const glowSize = cardEntered ? 40 + 28 * breathPhase : 40;
+  const glowHex = Math.round(glowAlpha * 255).toString(16).padStart(2, '0');
+  // Light streak — passa diagonalmente uma vez após a entrada (one-shot).
+  const streakP = interpolate(
+    frame,
+    [(underlineDelay + 0.6) * fps, (underlineDelay + 1.4) * fps],
+    [0, 1],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.inOutCubic }
+  );
+  const streakActive = streakP > 0 && streakP < 1;
+
   return (
     <AbsoluteFill style={{
       background: T.bg,
@@ -79,7 +96,7 @@ export const Keyword = ({
       justifyContent: 'center',
       padding: '0 80px',
       gap: 56,
-      fontFamily: MR_FONTS.alumni,
+      fontFamily: MR_FONTS.caps,
       overflow: 'hidden',
     }}>
       {!T.flat ? <>
@@ -160,42 +177,59 @@ export const Keyword = ({
         <StaticMotionIcon icon={resolvedIcon} size={180} color={iconColor} />
       </div>
 
-      {/* Camada 5: palavra Space Mono uppercase + underline (gap maior pra respiro) */}
+      {/* Camada 5: palavra envolta em card outlined accent (R28). */}
       <div style={{
         position: 'relative',
         zIndex: 2,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: 56,
       }}>
         <div style={{
-          fontFamily: MR_FONTS.alumni,
-          fontSize: 160,
-          fontWeight: 600,
-          lineHeight: 0.92,
-          letterSpacing: '0.01em',
-          textTransform: 'uppercase',
-          textAlign: 'center',
-          maxWidth: 920,
-          color: T.wordColor || T.fg,
-          textShadow: T.flat ? 'none' : (T.wordTextShadow || '0 6px 32px rgba(0,0,0,0.45)'),
+          position: 'relative',
+          padding: '36px 56px',
+          border: `3px solid ${T.accent}`,
+          borderRadius: 16,
+          background: T.flat ? 'transparent' : 'linear-gradient(160deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
+          backdropFilter: T.flat ? 'none' : 'blur(12px) saturate(140%)',
+          WebkitBackdropFilter: T.flat ? 'none' : 'blur(12px) saturate(140%)',
+          boxShadow: T.flat
+            ? 'none'
+            : `0 0 ${glowSize.toFixed(1)}px ${T.accent}${glowHex}, inset 0 1px 0 rgba(255,255,255,0.10)`,
+          opacity: underlineP,
+          transform: `scale(${(0.94 + 0.06 * underlineP).toFixed(4)})`,
+          transformOrigin: 'center',
+          overflow: 'hidden',
         }}>
-          <CharReveal text={word || ''} delay={0.55} dur={0.4} stagger={0.032} ty={28} />
-        </div>
-
-        {underline ? (
+          {/* R28: light streak — passa diagonalmente uma vez após entrada */}
+          {!T.flat && streakActive ? (
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: `${(-100 + streakP * 200).toFixed(2)}%`,
+              width: '60%',
+              height: '100%',
+              background: 'linear-gradient(105deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 38%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0.12) 62%, rgba(255,255,255,0) 100%)',
+              transform: 'skewX(-12deg)',
+              pointerEvents: 'none',
+              mixBlendMode: 'screen',
+            }} />
+          ) : null}
           <div style={{
-            width: 180,
-            height: 7,
-            background: T.accent,
-            opacity: 1,
-            borderRadius: 3,
-            transformOrigin: 'left center',
-            transform: `scaleX(${underlineP.toFixed(3)})`,
-            boxShadow: T.flat ? 'none' : `0 0 28px ${T.accent}aa`,
-          }} />
-        ) : null}
+            fontFamily: MR_FONTS.caps,
+            fontSize: 160,
+            fontWeight: 400,
+            lineHeight: 0.92,
+            letterSpacing: '-0.01em',
+            textTransform: 'uppercase',
+            textAlign: 'center',
+            maxWidth: 920,
+            color: T.wordColor || T.fg,
+            textShadow: T.flat ? 'none' : (T.wordTextShadow || '0 6px 32px rgba(0,0,0,0.45)'),
+          }}>
+            <CharReveal text={word || ''} delay={0.55} dur={0.4} stagger={0.032} ty={28} />
+          </div>
+        </div>
       </div>
     </AbsoluteFill>
   );

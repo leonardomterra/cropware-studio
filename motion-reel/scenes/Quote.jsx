@@ -259,7 +259,7 @@ export const Quote = ({ start, end, words, items, features, theme, bgImage: bgIm
         padding: '0 100px',
         gap: 34,
         color: textColor,
-        fontFamily: MR_FONTS.alumni,
+        fontFamily: MR_FONTS.display,
         textAlign: 'left',
         transform: `translateY(${listParallaxY.toFixed(2)}px)`,
       }}>
@@ -301,15 +301,15 @@ export const Quote = ({ start, end, words, items, features, theme, bgImage: bgIm
                 <span style={{
                   position: 'relative',
                   display: 'inline-block',
-                  fontFamily: MR_FONTS.alumni,
+                  fontFamily: '"Inter Tight", system-ui, sans-serif',
                   fontSize: 84,
-                  fontWeight: 500,
-                  letterSpacing: '0.08em',
+                  fontWeight: 400,
+                  letterSpacing: '-0.015em',
                   lineHeight: 1.0,
                   color: textColor,
                   textShadow: textShadow === 'none' ? 'none' : `${textShadow}, 0 0 ${Math.round(18 + highlightP * 18)}px ${highlightColor}${Math.round(glowOpacity * 255).toString(16).padStart(2, '0')}`,
                   transform: 'translateZ(0)',
-                }}>{feature.toUpperCase()}</span>
+                }}>{feature}</span>
               </div>
             </FadeSlide>
           );

@@ -114,7 +114,7 @@ export const AppCard = ({
           text={kicker}
           delay={0}
           dur={0.5}
-          style={{ fontFamily: MR_FONTS.alumni, fontSize: 56, fontWeight: 500, color: T.kickerColor || T.accent, textTransform: 'uppercase', lineHeight: 1.15, textAlign: 'center', maxWidth: 880, ...(T.flat ? { textShadow: 'none' } : {}) }}
+          style={{ fontFamily: MR_FONTS.caps, fontSize: 56, fontWeight: 400, color: T.kickerColor || T.accent, textTransform: 'uppercase', lineHeight: 1.15, textAlign: 'center', maxWidth: 880, letterSpacing: '0.04em', ...(T.flat ? { textShadow: 'none' } : {}) }}
           allowWrap
         />
       ) : null}
@@ -122,7 +122,8 @@ export const AppCard = ({
         <FadeSlide delay={0.2} dur={0.4} ty={20}>
           <div style={{
             fontFamily: MR_FONTS.grotesk, fontSize: 56, fontWeight: 500,
-            lineHeight: 1.15, letterSpacing: '-0.015em', textAlign: 'center', maxWidth: 880,
+            lineHeight: 1.15, letterSpacing: '-0.015em', textAlign: 'center', maxWidth: 720,
+            textWrap: 'balance',
             color: T.captionColor || fgColor,
             textShadow: T.captionShadow || 'none',
           }}>{caption}</div>

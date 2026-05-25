@@ -7,7 +7,7 @@ import { LottieAsset, EASE } from '../helpers.jsx';
 
 const LOGO_URL = 'logo-cropware-pb-final.svg';
 const APP_STORE_BADGE_URL = 'app-store-badge-motion.webp';
-const TAGLINE_LINES = ['Inteligência para', 'quem constrói mercado'];
+const TAGLINE_LINES = ['Inteligência para', 'quem constrói mercado.'];
 const HANDLE = '@cropware.app';
 
 export const EndCard = ({ start, end, theme = {} }) => {
@@ -99,7 +99,8 @@ export const EndCard = ({ start, end, theme = {} }) => {
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 24,
-        boxShadow: T.flat ? 'none' : (T.cardShadow || '0 32px 64px rgba(0,0,0,0.45)'),
+        boxShadow: 'none',
+        border: '1px solid rgba(15,23,42,0.20)',
         opacity: ctaSpring,
         transform: `translateY(${(1 - ctaSpring) * 80}px) scale(${0.94 + 0.06 * ctaSpring})`,
         marginTop: 12,
@@ -206,7 +207,6 @@ export const EndCard = ({ start, end, theme = {} }) => {
 const TaglineReveal = ({ lines, delay = 0, color }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const tSec = frame / fps;
   return (
     <div style={{
       display: 'flex',
@@ -222,26 +222,19 @@ const TaglineReveal = ({ lines, delay = 0, color }) => {
         const p = interpolate(frame, [lineDelay * fps, (lineDelay + dur) * fps], [0, 1], {
           extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outQuint,
         });
-        // Letter-spacing animado: começa solto (0.10em) e fecha pra 0.02em.
-        // Depois da entrada, oscila ±0.004em em respiro sutil.
-        const lsBase = interpolate(p, [0, 1], [0.10, 0.02]);
-        const breathPhase = Math.max(0, tSec - (lineDelay + dur));
-        const breath = Math.sin(breathPhase * 0.9 + i * 0.7) * 0.004;
-        const letterSpacing = lsBase + (p >= 1 ? breath : 0);
         const blur = (1 - p) * 8;
         const ty = (1 - p) * 18;
         return (
           <div
             key={i}
             style={{
-              fontFamily: MR_FONTS.alumni,
+              fontFamily: '"Inter Tight", system-ui, sans-serif',
               fontSize: 64,
               fontWeight: 500,
               lineHeight: 1.05,
-              letterSpacing: `${letterSpacing.toFixed(4)}em`,
+              letterSpacing: '-0.02em',
               textAlign: 'center',
               whiteSpace: 'nowrap',
-              textTransform: 'uppercase',
               color,
               opacity: p,
               filter: `blur(${blur.toFixed(2)}px)`,

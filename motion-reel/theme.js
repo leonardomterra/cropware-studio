@@ -52,13 +52,17 @@ export function resolveColor(s) {
 }
 
 export const MR_FONTS = {
-  display: '"Inter Tight", system-ui, sans-serif',
+  // R28d: Familjen Grotesk como display — mesma fonte usada nos hooks dos
+  // posts do Studio (.hook className). Coerência app↔reel. Histórico:
+  // Inter Tight (R7) → Clash Display (R28c, descartada) → Familjen Grotesk (R28d).
+  display: '"Familjen Grotesk", "Inter Tight", system-ui, sans-serif',
   grotesk: '"Familjen Grotesk", "Inter Tight", system-ui, sans-serif',
   mono:    '"Space Mono", ui-monospace, monospace',
-  // R27: condensed editorial sans pra kickers uppercase, taglines e palavras
-  // gigantes (Keyword, Quote verbs, BrandIntro). Space Mono ainda é usada em
-  // labels/data dentro dos mockups do AppCard (representam UI técnica real).
-  alumni:  '"Alumni Sans", "Inter Tight", system-ui, sans-serif',
+  // R28: fonte uppercase display pra kickers, palavras gigantes (Keyword,
+  // Quote verbs), tagline (EndCard, BrandIntro). Token semântico `caps` —
+  // futuro-proof pra próximas trocas. Atualmente: Unica One.
+  // Histórico: Alumni Sans (R27) → Staatliches → JetBrains Mono → Unica One (R28e).
+  caps:    '"Unica One", "Inter Tight", system-ui, sans-serif',
 };
 
 // Dimensões fixas do palco — Reels Instagram 9:16.
