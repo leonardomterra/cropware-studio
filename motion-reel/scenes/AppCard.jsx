@@ -104,7 +104,7 @@ export const AppCard = ({
         <SceneTextureBackdrop
           src={resolvedBgTexture}
           durSec={durSec}
-          opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.22}
+          opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.08}
           invert={bgTextureInvert !== false}
         />
       ) : null}
@@ -245,6 +245,16 @@ function normalizeAppWindows(appType, data = {}) {
     };
   });
   while (merged.length < 3) merged.push(fallback[merged.length] || fallback[0]);
+  const visualTypes = ['weather', 'satellite', 'alert', 'dashboard'];
+  const usedTypes = new Set();
+  merged.forEach((item) => {
+    const current = visualTypes.includes(item.type) ? item.type : 'dashboard';
+    const nextType = usedTypes.has(current)
+      ? (visualTypes.find(type => !usedTypes.has(type)) || current)
+      : current;
+    item.type = nextType;
+    usedTypes.add(nextType);
+  });
   return merged;
 }
 

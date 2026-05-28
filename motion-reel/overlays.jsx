@@ -20,7 +20,7 @@ export const Overlay = ({ overlay, durSec }) => {
     case 'particle-drift':  return <ParticleDrift {...overlay} durSec={durSec} />;
     case 'line-draw':       return <LineDraw {...overlay} durSec={durSec} />;
     case 'curve-trace':     return <CurveTrace {...overlay} durSec={durSec} />;
-    case 'light-streak':    return <LightStreak {...overlay} durSec={durSec} />;
+    case 'light-streak':    return null;
     case 'vignette-breath': return <VignetteBreath {...overlay} />;
     default:                return null;
   }

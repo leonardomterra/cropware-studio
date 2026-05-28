@@ -59,7 +59,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
       flexDirection: 'column',
       alignItems: 'flex-start',
       justifyContent: 'center',
-      padding: '0 80px',
+      padding: '0 40px',
       gap: 36,
       fontFamily: MR_FONTS.display,
       opacity: bgIn,
@@ -107,7 +107,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
       <SceneTextureBackdrop
         src={bgTexture || T.bgTexture}
         durSec={durSec}
-        opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.22}
+        opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.08}
         invert={bgTextureInvert !== false}
       />
       </> : null}
@@ -165,11 +165,11 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
         {title ? (
           <div style={{
             fontFamily: MR_FONTS.display,
-            fontSize: T.titleFontSize || 96,
+            fontSize: T.titleFontSize || 82,
             fontWeight: 700,
-            lineHeight: 0.95,
-            letterSpacing: '-0.04em',
-            maxWidth: T.titleMaxWidth || 880,
+            lineHeight: 1,
+            letterSpacing: '-0.03em',
+            maxWidth: T.titleMaxWidth || 1020,
             color: T.fg,
             overflowWrap: 'break-word',
             transform: 'translateZ(0)',
@@ -184,7 +184,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
           flexDirection: 'column',
           gap: 28,
           width: '100%',
-          maxWidth: 920,
+          maxWidth: 1020,
           marginTop: 16,
         }}>
           {items.map((rawItem, i) => {
@@ -204,7 +204,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
                 display: 'flex',
                 alignItems: 'center',
                 gap: 36,
-                padding: '28px 36px',
+                padding: '28px 28px',
                 minHeight: 172,
                 background: T.flat
                   ? MR_COLORS.white
@@ -234,7 +234,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
                 </span>
                 <span style={{
                   fontFamily: MR_FONTS.grotesk,
-                  fontSize: 48,
+                  fontSize: 42,
                   fontWeight: 500,
                   lineHeight: 1.15,
                   letterSpacing: '-0.015em',

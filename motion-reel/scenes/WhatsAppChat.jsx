@@ -100,7 +100,7 @@ export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, bgImage, bgIm
       <SceneTextureBackdrop
         src={bgTexture || T.bgTexture}
         durSec={durSec}
-        opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.22}
+        opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.08}
         invert={bgTextureInvert !== false}
       />
 

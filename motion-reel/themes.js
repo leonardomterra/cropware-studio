@@ -54,7 +54,7 @@ export const MR_THEMES = {
         accent: MR_COLORS.greenForest, logoColor: MR_COLORS.slateAbyss,
         bgImage: 'conheca-hero-bg.webp',
         bgTexture: 'motion-reel/texture-pool/texture-pool-001.webp',
-        bgTextureOpacity: 0.10,
+        bgTextureOpacity: 0.08,
         bgTextureBlend: 'multiply',
         glassTint: GLASS.cream,
         textShadow: '0 1px 4px rgba(255,255,255,0.4)',

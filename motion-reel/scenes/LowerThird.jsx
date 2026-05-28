@@ -8,7 +8,7 @@ import { EASE, LottieAsset, SceneTextureBackdrop } from '../helpers.jsx';
 
 const BG_IMAGE = 'sobre-equipe.webp';
 const TITLE = 'Fala com a gente.';
-const SUBTITLE = 'Tire suas dúvidas no WhatsApp.';
+const SUBTITLE = 'Tire suas dúvidas e conheça.';
 
 // Glass verde mais claro (greenAccent → greenForest → greenAbyss).
 const GREEN_TINT_LIGHT = 'linear-gradient(180deg, rgba(106,197,143,0.55) 0%, rgba(42,123,90,0.75) 55%, rgba(20,63,44,0.90) 100%)';
@@ -85,7 +85,7 @@ export const LowerThird = ({ start, end, theme = {}, bgImage, bgImageBlur, bgOve
       <SceneTextureBackdrop
         src={bgTexture || T.bgTexture}
         durSec={durSec}
-        opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.22}
+        opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.08}
         invert={bgTextureInvert !== false}
         zoomRange={[1.05, 1.45]}
       />

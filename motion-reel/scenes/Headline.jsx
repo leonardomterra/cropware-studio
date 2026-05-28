@@ -77,7 +77,7 @@ export const Headline = ({
         src={bgTexture || T.bgTexture}
         frame={frame} fps={fps} durFrames={durFrames}
         invert={bgTextureInvert !== false}
-        opacity={overlayP * (bgTextureOpacity != null ? bgTextureOpacity : 0.22)}
+        opacity={overlayP * (bgTextureOpacity != null ? bgTextureOpacity : 0.08)}
       />
 
       {/* Camada 3: top sheen */}
@@ -141,7 +141,7 @@ export const Headline = ({
             toEm={0.06}
             style={{
               fontFamily: MR_FONTS.caps,
-              fontSize: 56,
+              fontSize: 44,
               fontWeight: 400,
               color: T.kickerColor || T.accent,
               textTransform: 'uppercase',
@@ -153,11 +153,11 @@ export const Headline = ({
 
         <div style={{
           fontFamily: MR_FONTS.display,
-          fontSize: 124,
-          fontWeight: 700,
-          lineHeight: 0.96,
-          letterSpacing: '-0.04em',
-          maxWidth: 920,
+          fontSize: 92,
+          fontWeight: 600,
+          lineHeight: 1,
+          letterSpacing: '-0.03em',
+          maxWidth: 940,
           color: T.fg,
           textShadow: T.flat ? 'none' : (T.textShadow || '0 4px 28px rgba(0,0,0,0.55)'),
           transform: 'translateZ(0)',

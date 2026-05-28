@@ -52,11 +52,11 @@ export function resolveColor(s) {
 }
 
 export const MR_FONTS = {
-  // R28d: Familjen Grotesk como display — mesma fonte usada nos hooks dos
+  // R28d: Vend Sans como display — mesma fonte usada nos hooks dos
   // posts do Studio (.hook className). Coerência app↔reel. Histórico:
-  // Inter Tight (R7) → Clash Display (R28c, descartada) → Familjen Grotesk (R28d).
-  display: '"Familjen Grotesk", "Inter Tight", system-ui, sans-serif',
-  grotesk: '"Familjen Grotesk", "Inter Tight", system-ui, sans-serif',
+  // Inter Tight (R7) → Clash Display (R28c, descartada) → Vend Sans (R28d).
+  display: '"Vend Sans", "Inter Tight", system-ui, sans-serif',
+  grotesk: '"Vend Sans", "Inter Tight", system-ui, sans-serif',
   mono:    '"Space Mono", ui-monospace, monospace',
   // R28: fonte uppercase display pra kickers, palavras gigantes (Keyword,
   // Quote verbs), tagline (EndCard, BrandIntro). Token semântico `caps` —

@@ -9,7 +9,7 @@
 // O vanilla JS controla o modo via window.setMotionReelView(mode).
 import { createRoot } from 'react-dom/client';
 import { useRef, useState, useLayoutEffect, useEffect } from 'react';
-import { Player } from '@remotion/player';
+import { Player, Thumbnail } from '@remotion/player';
 
 import { MotionReel } from './MotionReel.jsx';
 import { MOTION_REEL_DEFAULT, computeReelDurationInFrames } from './default-storyboard.js';
@@ -58,8 +58,6 @@ function ReelPlayerView({ storyboard }) {
       compositionHeight={storyboard.height || 1920}
       fps={fps}
       controls
-      autoPlay
-      loop
       clickToPlay
       doubleClickToFullscreen
       spaceKeyToPlayOrPause
@@ -74,7 +72,7 @@ function restartMotionReelPlayback() {
   if (!_playerRef) return;
   try {
     _playerRef.seekTo(0);
-    _playerRef.play();
+    _playerRef.pause();
   } catch (err) {
     console.warn('[MotionReel] restartPlayback falhou', err);
   }
@@ -187,6 +185,10 @@ function ReelThumbCard({ scene, sceneNumber, isLocked, storyboard, durationInFra
       sfx: undefined,
     }],
   };
+  const thumbFrameToDisplay = Math.max(0, Math.min(
+    thumbDurationInFrames - 1,
+    Math.round(thumbDurationInFrames * 0.9)
+  ));
   const handleEditClick = (e) => {
     e.stopPropagation();
     if (typeof window.onMotionReelSceneClick === 'function') {
@@ -252,37 +254,25 @@ function ReelThumbCard({ scene, sceneNumber, isLocked, storyboard, durationInFra
           {false ? (
             // Locked scenes: usa PNG pré-renderizada via `npm run reel:thumbs`.
             // Renderiza limpo, sem o artifact do <Thumbnail> dinâmico.
-            <Player
+            <Thumbnail
               component={MotionReel}
               inputProps={{ storyboard: thumbStoryboard }}
               compositionWidth={storyboard.width || 1080}
               compositionHeight={storyboard.height || 1920}
               durationInFrames={thumbDurationInFrames}
               fps={fps}
-              controls={false}
-              autoPlay
-              loop
-              muted
-              clickToPlay={false}
-              doubleClickToFullscreen={false}
-              acknowledgeRemotionLicense
+              frameToDisplay={thumbFrameToDisplay}
               style={{ width: '100%', height: '100%' }}
             />
           ) : (
-            <Player
+            <Thumbnail
               component={MotionReel}
               inputProps={{ storyboard: thumbStoryboard }}
               compositionWidth={storyboard.width || 1080}
               compositionHeight={storyboard.height || 1920}
               durationInFrames={thumbDurationInFrames}
               fps={fps}
-              controls={false}
-              autoPlay
-              loop
-              muted
-              clickToPlay={false}
-              doubleClickToFullscreen={false}
-              acknowledgeRemotionLicense
+              frameToDisplay={thumbFrameToDisplay}
               style={{ width: '100%', height: '100%' }}
             />
           )}
@@ -446,6 +436,11 @@ function mountPreviewPlayer(targetEl, storyboard) {
   }
   const fps = storyboard.fps || 30;
   const durationInFrames = computeReelDurationInFrames(storyboard);
+  const isEditPreview = targetEl.id === 'mrSceneEditPreviewMount';
+  const initialFrame = Math.max(0, Math.min(
+    durationInFrames - 1,
+    Math.round(durationInFrames * 0.85)
+  ));
   _previewRoot.render(
     <Player
       component={MotionReel}
@@ -454,9 +449,8 @@ function mountPreviewPlayer(targetEl, storyboard) {
       compositionWidth={storyboard.width || 1080}
       compositionHeight={storyboard.height || 1920}
       fps={fps}
+      initialFrame={isEditPreview ? initialFrame : 0}
       controls
-      autoPlay
-      loop
       clickToPlay
       spaceKeyToPlayOrPause
       acknowledgeRemotionLicense

@@ -84,7 +84,7 @@ export const Scenario = ({ kicker, scenario, theme, bgImage, bgImageBlur, bgOver
       <SceneTextureBackdrop
         src={bgTexture || T.bgTexture}
         durSec={durSec}
-        opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.22}
+        opacity={bgTextureOpacity != null ? bgTextureOpacity : 0.08}
         invert={bgTextureInvert !== false}
       />
       </> : null}

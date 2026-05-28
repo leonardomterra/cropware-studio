@@ -90,7 +90,7 @@ export const BrandIntro = ({ start, end, theme = {}, bgImage, bgImageBlur, bgOve
           frame={frame}
           fps={fps}
           durFrames={durFrames}
-          opacity={overlayP * (bgTextureOpacity != null ? bgTextureOpacity : (T.bgTextureOpacity ?? 0.22))}
+          opacity={overlayP * (bgTextureOpacity != null ? bgTextureOpacity : (T.bgTextureOpacity ?? 0.08))}
           blendMode={T.bgTextureBlend || 'screen'}
           filter={(bgTextureInvert !== false) ? 'invert(1) contrast(1.1)' : 'contrast(1.1)'}
         />

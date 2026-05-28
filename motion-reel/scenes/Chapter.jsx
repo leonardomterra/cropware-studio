@@ -104,7 +104,7 @@ export const Chapter = ({ chapterNumber = 2, start, end, theme = {}, bgImage, bg
         src={bgTexture || T.bgTexture}
         frame={frame} fps={fps} durFrames={durFrames}
         invert={bgTextureInvert !== false}
-        opacity={overlayP * (bgTextureOpacity != null ? bgTextureOpacity : 0.22)}
+        opacity={overlayP * (bgTextureOpacity != null ? bgTextureOpacity : 0.08)}
       />
 
       {/* Camada 3: top sheen */}

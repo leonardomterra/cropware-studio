@@ -242,7 +242,7 @@ export const Quote = ({ start, end, words, items, features, theme, bgImage: bgIm
         src={bgTexture || T.bgTexture}
         frame={frame} fps={fps} durFrames={durFrames}
         invert={bgTextureInvert !== false}
-        opacity={overlayP * (bgTextureOpacity != null ? bgTextureOpacity : 0.22)}
+        opacity={overlayP * (bgTextureOpacity != null ? bgTextureOpacity : 0.08)}
       />
       </> : null}
 
@@ -357,7 +357,6 @@ const TopographicLines = ({ src, frame, fps, durFrames, invert, opacity = 1 }) =
     </AbsoluteFill>
   );
 };
-
 
 
 

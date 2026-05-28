@@ -197,7 +197,7 @@ export const MOTION_REEL_DEFAULT = {
     },
     // ─────────────── 11 LOWER-THIRD CTA (FIXA) ───────────────
     // Cena hardcoded em LowerThird.jsx: WhatsApp Lottie + "Fala com a gente" +
-    // "Tire suas dúvidas no WhatsApp" + botão verde "Iniciar conversa".
+    // "Tire suas dúvidas e conheça" + botão verde "Iniciar conversa".
     {
       id: 'lower-third-cta', start: 50.0, end: 55.0, type: 'lower-third',
       locked: true,

@@ -138,9 +138,9 @@ export const Keyword = ({
         filter: (bgTextureInvert !== false)
           ? `invert(1) contrast(1.1) ${T.textureFilter || ''}`
           : (T.textureFilter || 'none'),
-        // keyword é a camada principal — escala 0.22 (slider default) → ~0.7
+        // keyword é a camada principal — escala 0.08 (slider default) → textura sutil
         // pra manter a intensidade visual histórica. Multiplica o slider por ~3.
-        opacity: bgIn * (resolvedBgImage ? 0.45 : 0.7) * (bgTextureOpacity != null ? (bgTextureOpacity / 0.22) : 1),
+        opacity: bgIn * (resolvedBgImage ? 0.45 : 0.7) * (bgTextureOpacity != null ? (bgTextureOpacity / 0.22) : (0.08 / 0.22)),
       }} />
 
       {/* Camada 2: radial gradient theme-aware — luz do accent no centro,
