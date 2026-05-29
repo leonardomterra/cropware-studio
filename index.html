@@ -1278,6 +1278,151 @@
   .post[data-style="flat"] {
     background: #0d1b14 !important;
   }
+
+  /* ── Flat Split (Instagram Flat II) ─────────────────────────────────────────
+     Foto no topo + painel escuro reto na metade inferior.
+     Divisória: linha horizontal com gradiente CSS (espessa à esq, some à dir).
+  ── */
+  .post[data-style="flat-wave"] {
+    background: #0d1b14;
+    overflow: hidden;
+  }
+  .flat-wave-photo {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-color: #1a3020;
+    z-index: 1;
+  }
+  /* Painel escuro: cor via --fw-panel-bg (setada pelo render + applyDashCardInline),
+     blur via --dash-card-blur (setada por applyPostVariant, mesma var que o dashboard usa). */
+  .flat-wave-panel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: var(--fw-panel-bg, #0d1b14);
+    backdrop-filter: blur(var(--dash-card-blur, 0px));
+    -webkit-backdrop-filter: blur(var(--dash-card-blur, 0px));
+    z-index: 2;
+  }
+  /* Textura no bloco: mesmo padrão da foto, mas clipada ao painel */
+  .flat-wave-block-texture-wrap {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    z-index: 3;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .flat-wave-block-texture-wrap .signal-photo-texture {
+    position: absolute;
+    inset: 0;
+  }
+  /* Divisória: linha grossa com gradiente → some */
+  .flat-wave-divider {
+    position: absolute;
+    bottom: 50%;
+    left: 0;
+    right: 0;
+    height: 45px;
+    background: linear-gradient(
+      to right,
+      var(--post-accent) 0%,
+      color-mix(in srgb, var(--post-accent) 70%, transparent) 30%,
+      color-mix(in srgb, var(--post-accent) 25%, transparent) 60%,
+      transparent 82%
+    );
+    border-radius: 4px 0 0 0;
+    z-index: 3;
+  }
+  /* Hook sobre a foto — posicionado acima da divisória */
+  .flat-wave-hook-zone {
+    position: absolute;
+    bottom: calc(50% + 28px);
+    left: 0;
+    right: 0;
+    padding: 0 80px 40px;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .flat-wave-hook {
+    font-family: 'Inter Tight', sans-serif !important;
+    font-weight: 700 !important;
+    font-stretch: 100% !important;
+    font-size: calc(62px * var(--hook-scale, 1)) !important;
+    line-height: 1.08 !important;
+    letter-spacing: -1px !important;
+    color: #fff;
+    margin: 0;
+    text-shadow: 0 2px 24px rgba(0,0,0,0.65);
+  }
+  /* Painel escuro: só bullets + accent bar */
+  .flat-wave-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px 80px 36px;
+    box-sizing: border-box;
+  }
+  .post[data-style="flat-wave"] .separator-short {
+    margin: 0 0 18px;
+  }
+  .post[data-style="flat-wave"] .post-accent-bar {
+    margin-bottom: 28px;
+  }
+  /* Bullets flat-wave: card igual ao Flat I, sem o quadradinho do ícone */
+  .post[data-style="flat-wave"] .post-bullets {
+    gap: 14px;
+    margin-top: 0;
+    max-width: 900px;
+  }
+  .post[data-style="flat-wave"] .post-bullet--glass {
+    padding: calc(22px * var(--signal-card-height, 1)) 28px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: var(--signal-card-tint, rgba(255,255,255,0.07));
+    backdrop-filter: blur(var(--signal-card-blur, 0px));
+    -webkit-backdrop-filter: blur(var(--signal-card-blur, 0px));
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    box-shadow: none;
+  }
+  /* Remove o quadradinho de fundo do ícone */
+  .post[data-style="flat-wave"] .post-bullet-icon {
+    background: transparent !important;
+    border: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+  .post[data-style="flat-wave"] .post-bullet-icon .lg-layer {
+    display: none !important;
+  }
+  .post[data-style="flat-wave"] .post-bullet--glass .post-bullet-text {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: calc(38px * var(--bullets-scale, 1));
+    line-height: 1.18;
+    letter-spacing: -0.2px;
+    color: #ffffff;
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+  }
   .post[data-style="flat"] .bg {
     background:
       radial-gradient(circle at 18% 12%, rgba(106,197,143,0.22), transparent 34%),
@@ -1295,6 +1440,16 @@
     text-shadow: 0 2px 28px rgba(0,0,0,0.42);
     max-width: 860px;
   }
+  /* Flat II: Inter Tight no hook — tom técnico-comercial, sem a personalidade
+     display do Vend Sans. letter-spacing mais apertado compensa a largura maior
+     da Inter pra manter densidade visual semelhante. */
+  .post[data-type="instagram-flat-ii-post"][data-style="flat"] .hook {
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-stretch: 100%;
+    letter-spacing: -1px;
+  }
+
   .post[data-style="flat"] .complement {
     font-size: calc(72px * var(--complement-scale, 1));
     margin-bottom: 28px;
@@ -1422,12 +1577,14 @@
   .post-bullet-icon .lg-9,
   .post-bullet-icon .lg-11,
   .post-bullet-icon .lg-12 { display: none; }
-  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullets {
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullets,
+  .post[data-type="instagram-flat-ii-post"][data-style="flat"] .post-bullets {
     gap: 13px;
     margin-top: 30px;
     max-width: 820px;
   }
-  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass {
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass,
+  .post[data-type="instagram-flat-ii-post"][data-style="flat"] .post-bullet--glass {
     padding: calc(18px * var(--signal-card-height, 1)) 22px;
     border-radius: 22px;
     border: 1px solid rgba(255,255,255,0.18);
@@ -1445,14 +1602,17 @@
       0 2px 8px rgba(0,0,0,0.10);
     text-shadow: none;
   }
-  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass > * {
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass > *,
+  .post[data-type="instagram-flat-ii-post"][data-style="flat"] .post-bullet--glass > * {
     position: relative;
     z-index: 3;
   }
-  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass > .lg-layer {
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass > .lg-layer,
+  .post[data-type="instagram-flat-ii-post"][data-style="flat"] .post-bullet--glass > .lg-layer {
     display: none;
   }
-  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass .post-bullet-icon {
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass .post-bullet-icon,
+  .post[data-type="instagram-flat-ii-post"][data-style="flat"] .post-bullet--glass .post-bullet-icon {
     width: calc(50px * var(--bullet-icon-scale, 1));
     height: calc(50px * var(--bullet-icon-scale, 1));
     border-radius: calc(14px * var(--bullet-icon-scale, 1));
@@ -1461,14 +1621,17 @@
     backdrop-filter: blur(calc(var(--signal-card-blur, 12px) * 0.55));
     -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 12px) * 0.55));
   }
-  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass .post-bullet-icon .lg-layer {
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass .post-bullet-icon .lg-layer,
+  .post[data-type="instagram-flat-ii-post"][data-style="flat"] .post-bullet--glass .post-bullet-icon .lg-layer {
     display: none;
   }
-  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass .post-bullet-icon .ph {
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass .post-bullet-icon .ph,
+  .post[data-type="instagram-flat-ii-post"][data-style="flat"] .post-bullet--glass .post-bullet-icon .ph {
     font-size: calc(36px * var(--bullet-icon-scale, 1));
     text-shadow: 0 0 14px rgba(122,184,126,0.40);
   }
-  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass .post-bullet-text {
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass .post-bullet-text,
+  .post[data-type="instagram-flat-ii-post"][data-style="flat"] .post-bullet--glass .post-bullet-text {
     font-family: 'Inter Tight', sans-serif;
     font-size: calc(30px * var(--bullets-scale, 1));
     line-height: 1.18;
@@ -4978,6 +5141,9 @@
   #postControls.style-moldura #pcSubGlassOpacity,
   #postControls.style-moldura #pcSubGlassBlur,
   #postControls.style-moldura #pcSubBlockTextMode { display: flex !important; }
+  #postControls.style-flat-wave #pcSubDashCardColor,
+  #postControls.style-flat-wave #pcSubDashCardOpacity,
+  #postControls.style-flat-wave #pcSubDashCardBlur { display: flex !important; }
 
   /* Spotlight libera os 4 controles próprios */
   #postControls.style-spotlight #pcSubSpotlightPanelSize,
@@ -5091,6 +5257,42 @@
     padding: 10px 28px 6px 14px;
     border-top: 1px solid #e2e8f0;
     flex-shrink: 0;
+  }
+  .pc-style-clipboard {
+    display: flex;
+    gap: 8px;
+    padding: 10px 14px 6px;
+    margin: 0 -28px 0 -14px;
+    border-top: 1px solid #e2e8f0;
+    flex-shrink: 0;
+  }
+  .pc-style-clip-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .pc-style-clip-btn:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+  .pc-style-clip-btn.pc-style-clip-paste {
+    background: #f0fdf4;
+    border-color: #86efac;
+    color: #16a34a;
+  }
+  .pc-style-clip-btn.pc-style-clip-paste:hover {
+    background: #dcfce7;
   }
   #postControls.logo-cropware-mode .pc-body {
     padding-top: 6px;
@@ -9739,6 +9941,7 @@
       <optgroup label="Instagram">
         <option value="post" selected>Instagram — Post</option>
         <option value="instagram-flat-post">Instagram Flat — Post</option>
+        <option value="instagram-flat-ii-post">Instagram Flat II — Post</option>
         <option value="sinal-post">Sinal — Post</option>
         <option value="sinal-carousel">Sinal — Carrossel</option>
         <option value="carousel">Instagram — Carrossel</option>
@@ -9810,6 +10013,7 @@
           <option value="signal">Highlights</option>
           <option value="logo-cropware" hidden disabled>Logo Cropware</option>
           <option value="mockup">Mockup</option>
+          <option value="flat-wave" hidden disabled>Flat Wave</option>
           <option value="sinal" hidden disabled>Sinal</option>
           <option value="news-editorial" hidden disabled>Notícia</option>
         </select>
@@ -9832,6 +10036,16 @@
           <option value="pcGroupMockupHeader">Cabeçalho</option>
         </select>
       </div>
+    </div>
+
+    <!-- Copiar / Colar estilo -->
+    <div class="pc-style-clipboard" id="pcStyleClipboard">
+      <button type="button" class="pc-style-clip-btn" id="pcCopyStyleBtn" title="Copiar formatação visual deste post">
+        <i class="ph ph-copy"></i> Copiar estilo
+      </button>
+      <button type="button" class="pc-style-clip-btn pc-style-clip-paste" id="pcPasteStyleBtn" title="Colar formatação copiada" style="display:none">
+        <i class="ph ph-clipboard-text"></i> Colar estilo
+      </button>
     </div>
 
     <div class="pc-group" id="pcGroupText" data-group="text">
@@ -10838,6 +11052,9 @@ let instagramAdsCurrentSlide = 0;
 const instagramFlatPosts = [];
 const instagramFlatLegends = [];
 let instagramFlatCurrentPost = 0;
+const instagramFlatIIPosts = [];
+const instagramFlatIILegends = [];
+let instagramFlatIICurrentPost = 0;
 const sinalPosts = [];
 const sinalLegends = [];
 let sinalCurrentPost = 0;
@@ -10914,6 +11131,7 @@ function getPlatform() {
   if (activeMode === 'news-post' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel') return 'news';
   if (activeMode === 'boletim-agro-carrossel') return 'boletim-agro';
   if (activeMode === 'instagram-flat-post') return 'instagram-flat';
+  if (activeMode === 'instagram-flat-ii-post') return 'instagram-flat-ii';
   if (activeMode === 'sinal-post' || activeMode === 'sinal-carousel') return 'sinal';
   if (activeMode === 'instagram-ads-post' || activeMode === 'instagram-ads-carousel') return 'instagram-ads';
   if (activeMode.startsWith('linkedin-pessoal')) return 'linkedin-pessoal';
@@ -10929,6 +11147,13 @@ function isInstagramAdsMode(mode) {
 }
 function isInstagramFlatMode(mode) {
   return (mode || activeMode) === 'instagram-flat-post';
+}
+function isInstagramFlatIIMode(mode) {
+  return (mode || activeMode) === 'instagram-flat-ii-post';
+}
+// Aceita tanto Flat I quanto Flat II — usado em checks de layout/CSS partilhados.
+function isInstagramFlatTypeAny(t) {
+  return t === 'instagram-flat-post' || t === 'instagram-flat-ii-post';
 }
 function isSinalMode(mode) {
   const m = mode || activeMode;
@@ -10974,6 +11199,7 @@ function getSidebarCollectionLabel() {
   if (isNewsMode()) return 'Pautas';
   if (isInstagramAdsMode()) return 'Anuncios';
   if (isInstagramFlatMode()) return 'Posts Flat';
+  if (isInstagramFlatIIMode()) return 'Posts Flat II';
   if (isSinalMode()) return activeMode === 'sinal-carousel' ? 'Sinais' : 'Posts Sinal';
   if (isMotionReelMode()) return 'Reels';
   return isCarouselMode() ? 'Carrosseis' : 'Posts';
@@ -10988,6 +11214,7 @@ function getGenerateButtonLabel() {
   if (isOpinionCarouselMode()) return 'Gerar Carrossel de Opinião';
   if (activeMode === 'tendencia-carrossel') return 'Gerar Carrossel de Tendência';
   if (isInstagramFlatMode()) return 'Gerar Instagram Flat';
+  if (isInstagramFlatIIMode()) return 'Gerar Instagram Flat II';
   if (activeMode === 'sinal-post') return 'Gerar Sinal';
   if (activeMode === 'sinal-carousel') return 'Gerar Carrossel Sinal';
   if (isNewsMode()) return 'Post Noticia';
@@ -11015,6 +11242,7 @@ function getPlatformDisplayName(platform) {
   if (platform === 'news') return 'Post Notícia';
   if (platform === 'instagram-ads') return 'Instagram Ads';
   if (platform === 'instagram-flat') return 'Instagram Flat';
+  if (platform === 'instagram-flat-ii') return 'Instagram Flat II';
   if (platform === 'sinal') return 'Sinal';
   if (platform === 'logo-cropware') return 'Logo Cropware';
   if (platform === 'linkedin-pessoal') return 'LinkedIn Pessoal';
@@ -11183,6 +11411,7 @@ function getModeItems() {
     case 'funcionalidades-post':       return featurePosts;
     case 'funcionalidades-carousel':   return featureCarousels;
     case 'instagram-flat-post':        return instagramFlatPosts;
+    case 'instagram-flat-ii-post':     return instagramFlatIIPosts;
     case 'sinal-post':                 return sinalPosts;
     case 'sinal-carousel':             return sinalCarousels;
     case 'logo-cropware-post':         return logoCropwarePosts;
@@ -11208,6 +11437,7 @@ function getModeLegends() {
     case 'funcionalidades-post':       return featureLegends;
     case 'funcionalidades-carousel':   return featureCarouselLegends;
     case 'instagram-flat-post':        return instagramFlatLegends;
+    case 'instagram-flat-ii-post':     return instagramFlatIILegends;
     case 'sinal-post':                 return sinalLegends;
     case 'sinal-carousel':             return sinalCarouselLegends;
     case 'logo-cropware-post':         return logoCropwareLegends;
@@ -11233,6 +11463,7 @@ function getModeCurrentIdx() {
     case 'funcionalidades-post':       return featureCurrentPost;
     case 'funcionalidades-carousel':   return featureCurrentCarousel;
     case 'instagram-flat-post':        return instagramFlatCurrentPost;
+    case 'instagram-flat-ii-post':     return instagramFlatIICurrentPost;
     case 'sinal-post':                 return sinalCurrentPost;
     case 'sinal-carousel':             return sinalCurrentCarousel;
     case 'logo-cropware-post':         return logoCropwareCurrentPost;
@@ -11258,6 +11489,7 @@ function setModeCurrentIdx(idx) {
     case 'funcionalidades-post':       featureCurrentPost = idx; break;
     case 'funcionalidades-carousel':   featureCurrentCarousel = idx; break;
     case 'instagram-flat-post':        instagramFlatCurrentPost = idx; break;
+    case 'instagram-flat-ii-post':     instagramFlatIICurrentPost = idx; break;
     case 'sinal-post':                 sinalCurrentPost = idx; break;
     case 'sinal-carousel':             sinalCurrentCarousel = idx; break;
     case 'logo-cropware-post':         logoCropwareCurrentPost = idx; break;
@@ -11381,7 +11613,7 @@ const STUDIO_MODE_GROUPS = [
   {
     id: 'instagram',
     label: 'Instagram',
-    modes: ['post', 'instagram-flat-post', 'sinal-post', 'sinal-carousel', 'carousel', 'funcionalidades-post', 'funcionalidades-carousel', 'instagram-ads-post', 'instagram-ads-carousel']
+    modes: ['post', 'instagram-flat-post', 'instagram-flat-ii-post', 'sinal-post', 'sinal-carousel', 'carousel', 'funcionalidades-post', 'funcionalidades-carousel', 'instagram-ads-post', 'instagram-ads-carousel']
   },
   {
     id: 'linkedin',
@@ -12676,6 +12908,10 @@ const _saveSessionCore = async function() {
     .map((p, i) => ({ post: p, legend: instagramFlatLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
+  const generatedInstagramFlatIIPosts = instagramFlatIIPosts
+    .map((p, i) => ({ post: p, legend: instagramFlatIILegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
   const generatedSinalPosts = sinalPosts
     .map((p, i) => ({ post: p, legend: sinalLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
@@ -12736,7 +12972,7 @@ const _saveSessionCore = async function() {
     .map((p, i) => ({ post: p, legend: presentationLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
-  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedInstagramFlatPosts, ...generatedSinalPosts, ...generatedSinalCarousels, ...generatedFeaturePosts, ...generatedFeatureCarousels, ...generatedLogoCropwarePosts, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedOpinionCarousels, ...generatedWeatherCarousels, ...generatedBoletimAgroCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
+  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedInstagramFlatPosts, ...generatedInstagramFlatIIPosts, ...generatedSinalPosts, ...generatedSinalCarousels, ...generatedFeaturePosts, ...generatedFeatureCarousels, ...generatedLogoCropwarePosts, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedOpinionCarousels, ...generatedWeatherCarousels, ...generatedBoletimAgroCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
   if (!allRows.length) return;
   const sid = getSessionId();
   const now = new Date().toISOString();
@@ -13110,7 +13346,7 @@ function ensureSignalVisualDefaults(postData) {
 }
 
 function ensureFlatBulletCardDefaults(postData) {
-  if (!postData || postData.type !== 'instagram-flat-post' || normalizePostStyle(postData.style) !== 'flat') return false;
+  if (!postData || !isInstagramFlatTypeAny(postData.type) || normalizePostStyle(postData.style) !== 'flat') return false;
   if (postData._flatBulletCardDefaultsMigrated) return false;
 
   const cardColor = String(postData.signalCardColor || '').toLowerCase();
@@ -13252,8 +13488,8 @@ function renderGeneratedPost(postData, legendText) {
   if (!postData.frameTextMode)     postData.frameTextMode     = 'light';
   if (!postData.format)            postData.format            = 'feed';
   postData.style = normalizePostStyle(postData.style);
-  if (postData.type === 'instagram-flat-post') {
-    postData.style = 'flat';
+  if (isInstagramFlatTypeAny(postData.type)) {
+    postData.style = postData.type === 'instagram-flat-ii-post' ? 'flat-wave' : 'flat';
     postData.format = 'feed';
     postData.bgImage = postData.bgImage || '';
     if (!postData.overlayColor || postData.overlayColor === '#000000') postData.overlayColor = 'transparent';
@@ -13384,14 +13620,15 @@ function renderGeneratedPost(postData, legendText) {
 
   const isInstagramAds = postData.type === 'instagram-ads-post';
   const isInstagramFlat = postData.type === 'instagram-flat-post';
+  const isInstagramFlatII = postData.type === 'instagram-flat-ii-post';
   const isFeaturePost = postData.type === 'feature-post';
   const isLogoCropware = postData.type === 'logo-cropware-post';
   const isNews = postData.type === 'news-post';
   const isSinal = postData.type === 'sinal-post';
   const isLinkedinPessoal = postData.type === 'linkedin-pessoal-post';
   const isLinkedin = postData.type === 'linkedin-post';
-  const targetPosts = isInstagramAds ? instagramAdsPosts : isInstagramFlat ? instagramFlatPosts : isFeaturePost ? featurePosts : isLogoCropware ? logoCropwarePosts : isNews ? newsPosts : isSinal ? sinalPosts : isLinkedinPessoal ? linkedinPessoalPosts : isLinkedin ? linkedinPosts : posts;
-  const targetLegends = isInstagramAds ? instagramAdsLegends : isInstagramFlat ? instagramFlatLegends : isFeaturePost ? featureLegends : isLogoCropware ? logoCropwareLegends : isNews ? newsLegends : isSinal ? sinalLegends : isLinkedinPessoal ? linkedinPessoalLegends : isLinkedin ? linkedinLegends : legends;
+  const targetPosts = isInstagramAds ? instagramAdsPosts : isInstagramFlat ? instagramFlatPosts : isInstagramFlatII ? instagramFlatIIPosts : isFeaturePost ? featurePosts : isLogoCropware ? logoCropwarePosts : isNews ? newsPosts : isSinal ? sinalPosts : isLinkedinPessoal ? linkedinPessoalPosts : isLinkedin ? linkedinPosts : posts;
+  const targetLegends = isInstagramAds ? instagramAdsLegends : isInstagramFlat ? instagramFlatLegends : isInstagramFlatII ? instagramFlatIILegends : isFeaturePost ? featureLegends : isLogoCropware ? logoCropwareLegends : isNews ? newsLegends : isSinal ? sinalLegends : isLinkedinPessoal ? linkedinPessoalLegends : isLinkedin ? linkedinLegends : legends;
 
   targetPosts.push(postData);
   targetLegends.push(normalizePanelText(legendText || '', postData.type));
@@ -13918,15 +14155,17 @@ function renderClassicStyle(postData) {
   };
 
   const sep  = `<div class="separator-short"></div>`;
+  // Flat II: texto único sem complement — hookHTML já contém a chamada completa.
+  const isFlatII = postData.type === 'instagram-flat-ii-post';
   const hookEl = showHook
     ? `<div class="hook" contenteditable="true" spellcheck="false">${hookHTML}</div>`
     : '';
-  const complementEl = showComplement
+  const complementEl = (showComplement && !isFlatII)
     ? `<div class="complement" contenteditable="true" spellcheck="false">${complementHTML}</div>`
     : '';
 
   const bullets = Array.isArray(postData.bullets) ? postData.bullets.slice(0, 3) : [];
-  const useFlatGlassBullets = postData.type === 'instagram-flat-post' && postData.style === 'flat';
+  const useFlatGlassBullets = isInstagramFlatTypeAny(postData.type) && postData.style === 'flat';
   const bulletsEl = (showBullets && bulletMode === 'bullets' && bullets.length) ? `
       <div class="post-bullets">
         ${bullets.map((b, i) => `
@@ -14021,14 +14260,17 @@ function buildDashCardBackground(postData) {
 }
 
 function applyDashCardInline(postEl, post) {
-  const cards = postEl.querySelectorAll('.dash-card, .classic2-card');
-  if (!cards.length) return;
   const bg = buildDashCardBackground(post);
+  // Dashboard / Classic-2: atualiza os cards
+  const cards = postEl.querySelectorAll('.dash-card, .classic2-card');
   cards.forEach(card => {
     card.style.background = bg;
     const tint = card.querySelector('.dash-card-tint, .classic2-card-tint');
     if (tint) tint.style.background = bg;
   });
+  // Flat Wave: atualiza cor do painel. Blur via --dash-card-blur (já setado por applyPostVariant).
+  const fwPanel = postEl.querySelector('.flat-wave-panel');
+  if (fwPanel) fwPanel.style.setProperty('--fw-panel-bg', bg);
 }
 
 function buildSplitBlockBackground(color) {
@@ -14736,6 +14978,73 @@ function renderBoletimManchetesHTML(postData) {
   `;
 }
 
+// ─── Flat Wave (Instagram Flat II) ──────────────────────────────────────────
+// Layout: foto no topo (~42%) + wave SVG orgânico + fundo escuro com conteúdo.
+// Inspirado nas referências da Origem Bio: divisória curva fluida entre foto
+// e área de texto flat. A curva usa a cor do fundo (#0d1b14) + uma linha accent
+// verde (~3px) sobreposta pra criar o highlight da transição.
+function renderFlatWaveStyle(postData) {
+  const logoPos    = postData.logoPos || 'br';
+  const logoClass  = getLogoClass(logoPos);
+  const hookHTML   = postData.hookHTML || '';
+  const imgSrc     = getEffectiveBgImage(postData);
+
+  // Overlay sobre a foto (respeita Cor/Opacidade/Direção do painel)
+  const overlayStyle = buildPostOverlayStyle(
+    postData.overlayColor || '#000000',
+    postData.overlayOpacity == null ? 0 : postData.overlayOpacity,
+    postData.overlayDirection || 'full'
+  );
+
+  // Cor do painel (dashCardColor + dashCardOpacity) como CSS variable
+  const panelBg = postData.dashCardColor
+    ? buildDashCardBackground(postData)
+    : '#0d1b14';
+
+  // Textura sobre o painel (mesmos dados da textura da foto, mas clipada ao bloco)
+  const blockTextureHtml = renderPhotoTextureOverlay(postData)
+    ? `<div class="flat-wave-block-texture-wrap">${renderPhotoTextureOverlay(postData)}</div>`
+    : '';
+
+  const showHook        = postData.hookVisible        !== false;
+  const showBullets     = postData.bulletsVisible     !== false;
+  const showBulletIcons = postData.bulletIconsVisible !== false;
+  const bulletMode      = normalizeBulletDisplayMode(postData.bulletDisplayMode);
+  const bullets         = Array.isArray(postData.bullets) ? postData.bullets.slice(0, 3) : [];
+
+  const hookEl = showHook && hookHTML
+    ? `<div class="flat-wave-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>`
+    : '';
+
+  const bulletsEl = (showBullets && bulletMode === 'bullets' && bullets.length)
+    ? `<div class="post-bullets post-bullets--flat-wave">
+        ${bullets.map((b, i) => `
+          <div class="post-bullet post-bullet--glass" data-bullet-idx="${i}">
+            ${showBulletIcons ? `<button type="button" class="post-bullet-icon" data-bullet-icon="${i}" title="Trocar ícone">${LIQUID_GLASS_HTML}${renderIconMarkup(b.icon)}</button>` : ''}
+            <span class="post-bullet-text" contenteditable="true" spellcheck="false" data-bullet-text="${i}">${escapeHTML(b.text || '')}</span>
+          </div>`).join('')}
+      </div>`
+    : '';
+
+  return `
+    <div class="flat-wave-photo" style="${imgSrc ? `background-image:url('${imgSrc}');` : ''}"></div>
+    <div class="post-overlay" style="${overlayStyle}"></div>
+    ${renderPhotoTextureOverlay(postData)}
+    <div class="flat-wave-panel" style="--fw-panel-bg:${panelBg};"></div>
+    ${blockTextureHtml}
+    <div class="flat-wave-divider"></div>
+    ${hookEl ? `<div class="flat-wave-hook-zone">${hookEl}</div>` : ''}
+    <div class="flat-wave-content">
+      <div class="post-accent-bar"></div>
+      ${bulletsEl}
+    </div>
+    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
+    ${renderSiteText(postData)}
+    ${renderAppStoreBadge(postData)}
+    <div class="brand-strip"></div>
+  `;
+}
+
 function renderMolduraStyle(postData) {
   const hookHTML       = postData.hookHTML       || '';
   const complementHTML = postData.complementHTML || '';
@@ -15124,7 +15433,9 @@ function applyPostVariant(postEl, postData) {
   postEl.style.setProperty('--logo-cropware-glass-inner-border-opacity', Math.min(0.18, 0.06 + logoGlassOpacity * 0.22).toFixed(3));
   postEl.style.setProperty('--logo-cropware-glass-highlight-opacity', Math.min(0.22, logoGlassOpacity * 0.42).toFixed(3));
   postEl.style.setProperty('--logo-cropware-glass-depth-opacity', Math.min(0.045, logoGlassOpacity * 0.12).toFixed(3));
-  postEl.style.setProperty('--dash-card-blur',    (postData.dashCardBlur    == null ? 24 : postData.dashCardBlur)    + 'px');
+  // Flat Wave usa --dash-card-blur pra blur do painel; default 0 (sem blur) em vez de 24 do dashboard.
+  const dashBlurDefault = (postData.type === 'instagram-flat-ii-post') ? 0 : 24;
+  postEl.style.setProperty('--dash-card-blur',    (postData.dashCardBlur    == null ? dashBlurDefault : postData.dashCardBlur)    + 'px');
   const glassBlurValue = postData.glassBlur == null
     ? (postData.style === 'logo-cropware' ? 22 : 24)
     : postData.glassBlur;
@@ -15213,6 +15524,7 @@ function applyPostVariant(postEl, postData) {
     case 'logo-cropware':   html = renderLogoCropwareStyle(postData); break;
     case 'mockup':          html = renderMockupStyle(postData);      break;
     case 'sinal':           html = renderSinalStyle(postData);       break;
+    case 'flat-wave':       html = renderFlatWaveStyle(postData);    break;
     case 'flat':
     case 'classic':
     default:                html = renderClassicStyle(postData);
@@ -15350,9 +15662,10 @@ function updatePostControls(idx) {
   // Sinaliza estilo atual e formato no panel pra CSS condicional (visibilidade declarativa do Fundo)
   post.style = normalizePostStyle(post.style);
   if (isAnyNewsKind(post)) post.style = 'news-editorial';
-  if (post.type === 'instagram-flat-post' || isInstagramFlatMode()) post.style = 'flat';
+  if (isInstagramFlatIIMode() || post.type === 'instagram-flat-ii-post') post.style = 'flat-wave';
+  else if (isInstagramFlatMode() || post.type === 'instagram-flat-post') post.style = 'flat';
   ensureFlatBulletCardDefaults(post);
-  const STYLES_LIST = ['classic','flat','classic-2','dashboard','revista','news-editorial','moldura','signal','logo-cropware','mockup','sinal'];
+  const STYLES_LIST = ['classic','flat','flat-wave','classic-2','dashboard','revista','news-editorial','moldura','signal','logo-cropware','mockup','sinal'];
   STYLES_LIST.forEach(s => panel.classList.toggle(`style-${s}`, post.style === s));
   const FORMATS_LIST = ['feed','story','square','presentation'];
   FORMATS_LIST.forEach(f => panel.classList.toggle(`format-${f}`, post.format === f));
@@ -15395,14 +15708,15 @@ function updatePostControls(idx) {
   const newsMode = isAnyNewsKind(post);
   const weatherMode = post.type === 'weather-carousel-slide';
   const logoCropwareMode = post.type === 'logo-cropware-post' || isLogoCropwareMode();
-  const instagramFlatMode = post.type === 'instagram-flat-post' || isInstagramFlatMode();
+  const instagramFlatMode = isInstagramFlatTypeAny(post.type) || isInstagramFlatMode() || isInstagramFlatIIMode();
   const classic2Allowed = isClassic2AllowedMode();
   if (logoCropwareMode) post.format = 'square';
   panel.classList.toggle('logo-cropware-mode', logoCropwareMode);
   const directControls = document.getElementById('pcGroupStyle');
-  if (directControls) directControls.style.display = logoCropwareMode ? 'none' : '';
+  const hideFlatWaveModel = post.type === 'instagram-flat-ii-post';
+  if (directControls) directControls.style.display = (logoCropwareMode || hideFlatWaveModel) ? 'none' : '';
   const styleSub = document.getElementById('pcSubStyle');
-  if (styleSub) styleSub.style.display = logoCropwareMode ? 'none' : '';
+  if (styleSub) styleSub.style.display = (logoCropwareMode || hideFlatWaveModel) ? 'none' : '';
   const styleSelect = document.getElementById('pcStyleSelect');
   if (styleSelect) {
     if (weatherMode && post.style !== 'moldura') {
@@ -15463,7 +15777,8 @@ function updatePostControls(idx) {
     });
     if (weatherMode) styleSelect.value = 'moldura';
     if (sinalMode) styleSelect.value = 'sinal';
-    if (instagramFlatMode) styleSelect.value = 'flat';
+    if (isInstagramFlatIIMode() || post.type === 'instagram-flat-ii-post') styleSelect.value = 'flat-wave';
+    else if (instagramFlatMode) styleSelect.value = 'flat';
     if (newsMode) styleSelect.value = 'news-editorial';
     if (!classic2Allowed && post.style === 'classic-2') {
       post.style = 'classic';
@@ -15560,7 +15875,7 @@ function updatePostControls(idx) {
   setSubVisible('pcSubAppStorePosition',   appStoreOn);
   setSubVisible('pcSubAppStoreScale',      appStoreOn);
   setSubVisible('pcSubAppStoreOffsets',    appStoreOn);
-  const bulletsStyles = isClassicStyle(currentStyle) || currentStyle === 'moldura' || currentStyle === 'signal' || currentStyle === 'sidelight';
+  const bulletsStyles = isClassicStyle(currentStyle) || currentStyle === 'flat-wave' || currentStyle === 'moldura' || currentStyle === 'signal' || currentStyle === 'sidelight';
   setSubVisible('pcSubVisibility',         !isPresMode && !isNewsEditorial);
   setSubVisible('pcSubVisibilityDivider',  !isPresMode && !isNewsEditorial);
   setGroupVisible('pcGroupBullets',        !isPresMode && bulletsStyles && !isNewsEditorial);
@@ -15594,10 +15909,11 @@ function updatePostControls(idx) {
   const isColuna = currentStyle === 'coluna';
   const isSpotlight = currentStyle === 'spotlight';
   const isSignal = currentStyle === 'signal' || currentStyle === 'sidelight';
-  const isFlatBulletCards = currentStyle === 'flat' && instagramFlatMode;
+  const isFlatWave = currentStyle === 'flat-wave';
+  const isFlatBulletCards = (currentStyle === 'flat' || isFlatWave) && instagramFlatMode;
   const showSignalCardControls = (isSignal || isFlatBulletCards) && bulletMode === 'bullets';
   const isMockup = currentStyle === 'mockup';
-  const usesOverlay = isClassicStyle(currentStyle) || currentStyle === 'moldura' || isDash || isRevista || isSplit || isColuna || isSpotlight || isSignal || isMockup;
+  const usesOverlay = isClassicStyle(currentStyle) || isFlatWave || currentStyle === 'moldura' || isDash || isRevista || isSplit || isColuna || isSpotlight || isSignal || isMockup;
   const usesBackgroundImage = !isLogoCropware;
   setSubVisible('pcSubOverlayEnabled',     usesOverlay);
   setSubVisible('pcSubOverlayColor',       usesOverlay);
@@ -15605,9 +15921,9 @@ function updatePostControls(idx) {
   setSubVisible('pcSubOverlayDirection',   usesOverlay);
   setSubVisible('pcSubImageEnabled',       usesBackgroundImage);
   setSubVisible('pcSubBgImage',            usesBackgroundImage);
-  setSubVisible('pcSubDashCardColor',      isDash || isClassic2);
-  setSubVisible('pcSubDashCardOpacity',    isDash || isClassic2);
-  setSubVisible('pcSubDashCardBlur',       isDash || isClassic2);
+  setSubVisible('pcSubDashCardColor',      isDash || isClassic2 || isFlatWave);
+  setSubVisible('pcSubDashCardOpacity',    isDash || isClassic2 || isFlatWave);
+  setSubVisible('pcSubDashCardBlur',       isDash || isClassic2 || isFlatWave);
   const revistaLikeStyle = currentStyle === 'revista' || currentStyle === 'news-editorial';
   setSubVisible('pcSubRevistaBlockColor',  revistaLikeStyle);
   setSubVisible('pcSubRevistaPair',        revistaLikeStyle);
@@ -15649,8 +15965,8 @@ function updatePostControls(idx) {
   setSubVisible('pcSubSignalCardColor',    showSignalCardControls);
   setSubVisible('pcSubSignalCardOpacity',  showSignalCardControls);
   setSubVisible('pcSubSignalCardBlur',     showSignalCardControls);
-  setSubVisible('pcSubSignalIconColor',    showSignalCardControls);
-  setSubVisible('pcSubSignalIconOpacity',  showSignalCardControls);
+  setSubVisible('pcSubSignalIconColor',    showSignalCardControls && !isFlatWave);
+  setSubVisible('pcSubSignalIconOpacity',  showSignalCardControls && !isFlatWave);
   setSubVisible('pcSubBlockTextMode',      currentStyle === 'revista' || currentStyle === 'news-editorial' || (!isPresMode && (currentStyle === 'split' || currentStyle === 'coluna' || currentStyle === 'moldura')));
   // Limpa qualquer inline style residual nos subs do Fundo (CSS declarativo via .style-X cuida da visibilidade)
   ['pcSubDashCardColor','pcSubDashCardOpacity','pcSubDashCardBlur','pcSubDashPresScale','pcSubDashPresPosition',
@@ -15980,6 +16296,7 @@ function updatePostControls(idx) {
   syncRegenActionsState();
   updateStyleSectionPicker();
   syncAllCustomSelectPickers();
+  updateStyleClipboardUI(post);
   paintAllPostRangeFills(panel);
 }
 
@@ -16017,7 +16334,7 @@ const IMAGE_SECTION_SHOW = [
 ];
 
 const BLOCK_SECTION_SHOW = [
-  'pcSubDashCardColor', 'pcSubDashCardPosition', 'pcSubDashCardOpacity', 'pcSubDashCardBlur',
+  'pcSubDashCardColor', 'pcSubDashCardPosition', 'pcSubDashCardOpacity', 'pcSubDashCardBlur', 'pcSubDashPresScale', 'pcSubDashPresPosition',
   'pcSubDashPresScale', 'pcSubDashPresPosition',
   'pcSubRevistaBlockColor', 'pcSubRevistaPair', 'pcSubRevistaPhotoPct', 'pcSubRevistaLayout', 'pcSubRevistaPhotoPos', 'pcSubRevistaShadow',
   'pcSubSplitBlockColor', 'pcSubSplitPair', 'pcSubSplitPhotoPct', 'pcSubSplitLayout', 'pcSubSplitPhotoPos', 'pcSubSplitShadow',
@@ -16026,6 +16343,10 @@ const BLOCK_SECTION_SHOW = [
   'pcSubSpotlightPanelSize', 'pcSubSpotlightAnchor', 'pcSubSpotlightBlur', 'pcSubSpotlightContrast',
   'pcSubBlockTextMode',
   'pcSubNewsTexture',
+  // Flat Wave (Instagram Flat II): colorização + textura do painel + card controls
+  'pcSubSignalTexture', 'pcSubSignalTextureIntensity', 'pcSubSignalTextureBlend', 'pcSubSignalTextureInvert',
+  'pcSubSignalCardHeight', 'pcSubSignalCardColor', 'pcSubSignalCardOpacity', 'pcSubSignalCardBlur',
+  'pcSubSignalIconColor',
 ];
 
 const STYLE_SECTION_FILTERS = {
@@ -16094,10 +16415,18 @@ function applyStyleSectionFilter(selected) {
   if (!filter) return;
   const group = document.getElementById(filter.group);
   if (!group) return;
-  const allowed = new Set(filter.show);
+  const panel = document.getElementById('postControls');
+  const isFlatWaveBlock = selected === 'pcSectionBlock' && panel && panel.classList.contains('style-flat-wave');
+
+  // Flat Wave + Bloco: painel principal mostra só cor/opacidade/blur do painel.
+  const effectiveAllowed = isFlatWaveBlock
+    ? new Set(['pcSubDashCardColor', 'pcSubDashCardOpacity', 'pcSubDashCardBlur'])
+    : new Set(filter.show);
+
   group.querySelectorAll(filter.selector).forEach(el => {
-    el.classList.toggle('pc-section-filtered', !allowed.has(el.id));
+    el.classList.toggle('pc-section-filtered', !effectiveAllowed.has(el.id));
   });
+
 }
 
 function updateStyleSectionPicker() {
@@ -16134,6 +16463,95 @@ function selectStyleSection(id) {
   if (select && id) select.value = id;
   updateStyleSectionPicker();
   syncAllCustomSelectPickers();
+}
+
+// ─── Copiar / Colar estilo ────────────────────────────────────────────────────
+// Copia apenas campos visuais — exclui conteúdo (hookHTML, bullets, etc.)
+const STYLE_COPY_FIELDS = [
+  'style','accent',
+  'overlayColor','overlayOpacity','overlayDirection',
+  'dashCardColor','dashCardOpacity','dashCardBlur',
+  'signalCardColor','signalCardOpacity','signalCardBlur','signalCardHeight',
+  'signalPhotoTexture','signalPhotoTextureIntensity','signalPhotoTextureBlend','signalPhotoTextureInvert',
+  'hookScale','complementScale','bulletsScale','bulletIconScale',
+  'logoPos','logoEnabled','logoScale','siteScale','brandMode',
+  'frameTextMode','bulletDisplayMode','hookVisible','complementVisible','bulletsVisible','bulletIconsVisible',
+  'signalAlign','layout',
+  'glassOpacity','glassBlur','overlayColor2',
+  'flatWavePanelHeight',
+];
+
+let _clipboardStyle = null;
+
+function copyPostStyle() {
+  const post = getActivePost();
+  if (!post) return;
+  _clipboardStyle = {};
+  STYLE_COPY_FIELDS.forEach(k => {
+    if (post[k] !== undefined) _clipboardStyle[k] = post[k];
+  });
+  _clipboardStyle._sourceType = post.type; // pra referência visual
+  const pasteBtn = document.getElementById('pcPasteStyleBtn');
+  if (pasteBtn) pasteBtn.style.display = '';
+  // Feedback: pisca o botão Copiar
+  const copyBtn = document.getElementById('pcCopyStyleBtn');
+  if (copyBtn) {
+    const orig = copyBtn.innerHTML;
+    copyBtn.innerHTML = '<i class="ph ph-check"></i> Copiado!';
+    copyBtn.style.color = '#16a34a';
+    setTimeout(() => { copyBtn.innerHTML = orig; copyBtn.style.color = ''; }, 1500);
+  }
+}
+
+function pastePostStyle() {
+  if (!_clipboardStyle) return;
+  const post = getActivePost();
+  if (!post || !post.isGenerated) return;
+  STYLE_COPY_FIELDS.forEach(k => {
+    const v = _clipboardStyle[k];
+    if (v === undefined) return;
+    // Nunca copia campos com data URI — o saveSession tenta fazer atob() neles
+    // e falha se estiverem malformados ou se não forem pra esse post.
+    if (typeof v === 'string' && v.startsWith('data:')) return;
+    post[k] = v;
+  });
+  const postEl = document.getElementById(post.id);
+  if (postEl) {
+    // Re-renderiza o innerHTML com o novo estilo (mesmo bloco do switch em updatePanel)
+    const style = post.style || 'classic';
+    let html = '';
+    switch (style) {
+      case 'dashboard':      html = renderDashboardStyle(post);   break;
+      case 'revista':        html = renderRevistaStyle(post);     break;
+      case 'news-editorial': html = renderNewsEditorialStyle(post); break;
+      case 'moldura':        html = renderMolduraStyle(post);     break;
+      case 'spotlight':      html = renderSpotlightStyle(post);   break;
+      case 'signal':
+      case 'sidelight':      html = renderSignalStyle(post);      break;
+      case 'logo-cropware':  html = renderLogoCropwareStyle(post); break;
+      case 'mockup':         html = renderMockupStyle(post);      break;
+      case 'sinal':          html = renderSinalStyle(post);       break;
+      case 'flat-wave':      html = renderFlatWaveStyle(post);    break;
+      default:               html = renderClassicStyle(post);
+    }
+    postEl.innerHTML = html;
+    applyPostVariant(postEl, post);
+  }
+  // Atualiza painel de controles
+  const panel = document.getElementById('postControls');
+  if (panel && panel._showPanelFn) panel._showPanelFn(post);
+  else updateStyleSectionPicker();
+  saveSession();
+  // Feedback visual
+  if (postEl) {
+    postEl.style.outline = '3px solid #6ac58f';
+    setTimeout(() => { postEl.style.outline = ''; }, 1000);
+  }
+}
+
+function updateStyleClipboardUI(post) {
+  const pasteBtn = document.getElementById('pcPasteStyleBtn');
+  if (pasteBtn) pasteBtn.style.display = _clipboardStyle ? '' : 'none';
 }
 
 // Aplica mudança de overlay no DOM sem destruir o innerHTML (evita perder edição inline)
@@ -16939,6 +17357,8 @@ function initPostControls() {
       // Salva ajustes do modelo atual no bucket dele, depois troca + restaura do bucket do novo modelo.
       saveCurrentStyleFields(post);
       const newStyle = styleSelectEl.value;
+      // flat-wave é estilo fixo do Flat II — não pode ser trocado pelo select.
+      if (newStyle === 'flat-wave' || post.type === 'instagram-flat-ii-post') return;
       restoreStyleFields(post, newStyle);
       post.style = newStyle;
       if (post.style === 'signal' || post.style === 'sidelight') {
@@ -17547,6 +17967,12 @@ function initPostControls() {
   wirePctField('pcGlassBlur',         'glassBlur',         0, 60);
   wirePctField('pcSpotlightBlur',     'spotlightBlur',     0, 60);
   wirePctField('pcSignalIconOpacity', 'signalIconOpacity', 0, 100);
+
+  // Copiar / Colar estilo
+  const copyStyleBtn  = document.getElementById('pcCopyStyleBtn');
+  const pasteStyleBtn = document.getElementById('pcPasteStyleBtn');
+  if (copyStyleBtn)  copyStyleBtn.addEventListener('click',  copyPostStyle);
+  if (pasteStyleBtn) pasteStyleBtn.addEventListener('click', pastePostStyle);
   // Botão do color picker (revista block) — abre dropdown
   const revistaBlockBtn = document.getElementById('pcRevistaBlockColorBtn');
   if (revistaBlockBtn) {
@@ -19470,7 +19896,7 @@ function bakeLogoCropwareForCapture(cloneEl, postData) {
 // Necessário pra que o backdrop-filter dos bullets sample a textura também (não só a foto).
 function bakeSignalPhotoTextureForCapture(cloneEl, postData) {
   if (!postData.signalPhotoTexture) return;
-  if (postData.type === 'instagram-flat-post' || normalizePostStyle(postData.style) === 'flat') {
+  if (isInstagramFlatTypeAny(postData.type) || normalizePostStyle(postData.style) === 'flat') {
     return;
   }
   if (postData.style === 'logo-cropware') {
@@ -19492,7 +19918,9 @@ function bakeSignalPhotoTextureForCapture(cloneEl, postData) {
 }
 
 function bakeFlatBackgroundForCapture(cloneEl, postData, w, h) {
-  if (!postData || postData.type !== 'instagram-flat-post') return;
+  if (!postData || !isInstagramFlatTypeAny(postData.type)) return;
+  // Flat Wave usa .flat-wave-photo, não .bg — nada a fazer aqui.
+  if (postData.style === 'flat-wave') return;
   const cloneBg = cloneEl.querySelector('.bg');
   if (!cloneBg) return;
   const dataUrl = composeFlatBackgroundTexture(postData, w * 2, h * 2);
@@ -19667,7 +20095,7 @@ async function bootStudio() {
   // Restaura último modo selecionado (persistido no localStorage)
   try {
     const savedMode = localStorage.getItem('cropware-active-mode');
-    const validModes = ['post','instagram-flat-post','sinal-post','sinal-carousel','carousel','funcionalidades-post','funcionalidades-carousel','logo-cropware-post','previsao-carrossel','news-post','tendencia-carrossel','opiniao-carrossel','boletim-agro-carrossel','instagram-ads-post','instagram-ads-carousel',
+    const validModes = ['post','instagram-flat-post','instagram-flat-ii-post','sinal-post','sinal-carousel','carousel','funcionalidades-post','funcionalidades-carousel','logo-cropware-post','previsao-carrossel','news-post','tendencia-carrossel','opiniao-carrossel','boletim-agro-carrossel','instagram-ads-post','instagram-ads-carousel',
                         'linkedin-post','linkedin-carousel','linkedin-pessoal-post','linkedin-pessoal-carousel',
                         'presentation','motion-reel'];
     if (savedMode && validModes.includes(savedMode) && savedMode !== activeMode) {
@@ -19834,7 +20262,7 @@ function shouldUseHtmlToImageExport(postData) {
   if (!postData) return false;
   const rawStyle = postData.style || '';
   const style = normalizePostStyle(rawStyle);
-  if (postData.type === 'instagram-flat-post') return true;
+  if (isInstagramFlatTypeAny(postData.type)) return true;
   if (postData.type === 'sinal-post' || postData.type === 'sinal-carousel-slide') return true;
   if (['dashboard', 'moldura', 'signal'].includes(style)) return true;
   if (['classic-2', 'spotlight', 'sidelight'].includes(rawStyle)) return true;
@@ -19857,7 +20285,7 @@ function stabilizeHtmlToImageClone(rootEl, postData, blurredUrl, postW, postH) {
     layer.style.setProperty('-webkit-backdrop-filter', 'none', 'important');
   });
   bakeSignalPhotoTextureForCapture(rootEl, postData || {});
-  if (postData && postData.type === 'instagram-flat-post') {
+  if (postData && isInstagramFlatTypeAny(postData.type)) {
     stabilizeFlatCardsForHtmlToImage(rootEl);
   }
 }
@@ -19964,7 +20392,7 @@ async function downloadCurrent() {
     const effectiveBgImage = getEffectiveBgImage(post);
 
     // Preload pra signal/sidelight/logo ANTES do capture — assim textura/blurs ficam consistentes no export.
-    if (post.signalPhotoTexture && (effectiveBgImage || post.style === 'logo-cropware' || post.type === 'instagram-flat-post')) {
+    if (post.signalPhotoTexture && (effectiveBgImage || post.style === 'logo-cropware' || isInstagramFlatTypeAny(post.type))) {
       try {
         const preloadJobs = [preloadSignalPhotoTexture(post.signalPhotoTexture)];
         if (effectiveBgImage) preloadJobs.push(preloadSignalPhotoBg(effectiveBgImage));
@@ -20001,7 +20429,7 @@ async function downloadCurrent() {
     if (shouldUseHtmlToImageExport(post)) {
       const htmlToImageBgSwap = await swapBgsToBlobUrl(postEl, effectiveBgImage);
       try {
-        const exportName = buildPngExportName(post, post.type === 'instagram-flat-post' ? 'cropware_flat.png' : 'cropware.png');
+        const exportName = buildPngExportName(post, isInstagramFlatTypeAny(post.type) ? 'cropware_flat.png' : 'cropware.png');
         const blob = await capturePostWithHtmlToImage(postEl, post, postW, postH, exportScale, logoDims, blurredUrl);
         downloadBlob(blob, exportName);
         return;
@@ -20122,7 +20550,7 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
 
     // Preload pra signal/sidelight/logo ANTES do capture — assim textura/blurs ficam consistentes no export.
     const effectiveBgImage = getEffectiveBgImage(slideData);
-    if (slideData.signalPhotoTexture && (effectiveBgImage || slideData.style === 'logo-cropware' || slideData.type === 'instagram-flat-post')) {
+    if (slideData.signalPhotoTexture && (effectiveBgImage || slideData.style === 'logo-cropware' || isInstagramFlatTypeAny(slideData.type))) {
       try {
         const preloadJobs = [preloadSignalPhotoTexture(slideData.signalPhotoTexture)];
         if (effectiveBgImage) preloadJobs.push(preloadSignalPhotoBg(effectiveBgImage));
@@ -20674,7 +21102,7 @@ function openGenerator() {
   const isCarousel = isCarouselMode();
   const platform = getPlatform();
   const isAds = isInstagramAdsMode();
-  const isFlat = isInstagramFlatMode();
+  const isFlat = isInstagramFlatMode() || isInstagramFlatIIMode();
   const isSinal = isSinalMode();
   const isNews = isNewsMode();
   const isFeature = isFeatureMode();
@@ -22237,6 +22665,77 @@ Responda APENAS em JSON valido:
 }`;
 }
 
+function buildInstagramFlatIISystemPrompt(tone) {
+  const toneDirectives = {
+    casual:      'TOM: direto e moderno, sem jargao excessivo. Soa como um profissional de campo falando pra outro.',
+    tecnico:     'TOM: tecnico-comercial. Termos reais de agronomia, linguagem de decisao, sem rodeios.',
+    inspirador:  'TOM: estrategico e assertivo. Soa como quem ja tomou a decisao certa.',
+    provocativo: 'TOM: provoca a dor do problema antes de sugerir a solucao.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
+
+  return `Voce e copywriter da Cropware criando um post INSTAGRAM FLAT II.
+
+Este formato tem UMA UNICA CHAMADA — sem divisao hook/complement. O texto substitui os dois e deve funcionar como headline editorial tecnico-comercial, apresentando o conteudo que os bullets vao detalhar.
+
+REGRA ABSOLUTA:
+- Nunca invente numeros, percentuais, estatisticas, prazos ou promessas quantitativas.
+- Use o contexto real do app Cropware e do agrônomo de campo.
+
+${buildCropwarePositioningContext('instagram')}
+
+CHAMADA (campo "hook"):
+- Entre 70 e 85 caracteres (CONTANDO espacos e pontuacao).
+- Uma frase unica, sem separacao de linha, sem ponto e virgula.
+- Tom tecnico-comercial: soa como uma decisao profissional, nao como slogan.
+- Deve fazer referencia direta ao problema ou atividade do agrônomo de campo.
+- Pode usar dois-pontos para estruturar "contexto: acao" se ajudar a manter o ritmo.
+- Sem <em>, sem <strong>. Sem pergunta.
+
+COMPLEMENT: deixe vazio ("").
+
+CORPO / BULLETS:
+- Exatamente 3 bullets.
+- Cada bullet com 3 a 5 palavras.
+- Os 3 bullets devem ter tamanho visual parecido.
+- Frases nominais ou acoes curtas.
+- Cada bullet deve terminar com ponto.
+- Cada "icon" deve ser um Material Symbol desta lista:
+check_circle, task_alt, trending_up, schedule, bolt, insights, analytics,
+agriculture, visibility, shield, speed, hub, timeline, query_stats,
+monitoring, map, radar, leaderboard
+
+LEGENDA:
+- 1 a 2 frases curtas, maximo 35 palavras no total.
+- 3 hashtags em linha separada.
+- Sem pergunta final, sem CTA, sem emoji.
+
+${toneBlock}
+${buildDesignContext('instagram')}
+
+IMAGE PROMPT:
+- Descreva uma fotografia real de campo agricola brasileiro relacionada ao conteudo.
+- Estilo: foto profissional, luz natural, foco em lavoura ou solo ou equipamento.
+- Sem texto, sem logos, sem pessoas em destaque.
+- Exemplo: "aerial view of soybean field in Brazilian Cerrado, golden hour, green rows"
+- Maximo 20 palavras em ingles.
+
+Responda APENAS em JSON valido:
+{
+  "hook": "Chamada unica entre 70 e 85 caracteres aqui.",
+  "complement": "",
+  "bullets": [
+    {"icon": "analytics", "text": "Dados de campo."},
+    {"icon": "timeline", "text": "Historico tecnico."},
+    {"icon": "visibility", "text": "Decisao clara."}
+  ],
+  "title": "titulo curto",
+  "legend": "legenda curta",
+  "hashtags": "#tag1 #tag2 #tag3",
+  "imagePrompt": "professional photo of soybean field at golden hour, Brazilian Cerrado, green rows aerial view"
+}`;
+}
+
 // Chama o Gemini texto (2.5 Flash) e retorna o objeto JSON parseado.
 // Fetch com retry e backoff exponencial pra erros transitórios do Gemini
 // (overloaded/503, rate limit/429, 500). Delays: 1.5s, 3s, 6s.
@@ -22281,10 +22780,12 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
     ? buildFeaturePostSystemPrompt(tone)
     : platform === 'instagram-flat'
     ? buildInstagramFlatSystemPrompt(tone)
+    : platform === 'instagram-flat-ii'
+    ? buildInstagramFlatIISystemPrompt(tone)
     : platform === 'sinal'
     ? buildSinalPostSystemPrompt()
     : buildSystemPrompt(tone);
-  const platformLabel = platform === 'linkedin-pessoal' ? 'LinkedIn' : platform === 'linkedin' ? 'LinkedIn' : platform === 'news' ? 'Post Notícia' : platform === 'instagram-flat' ? 'Instagram Flat' : platform === 'sinal' ? 'Sinal' : platform === 'features' ? 'Instagram' : 'Instagram';
+  const platformLabel = platform === 'linkedin-pessoal' ? 'LinkedIn' : platform === 'linkedin' ? 'LinkedIn' : platform === 'news' ? 'Post Notícia' : platform === 'instagram-flat' ? 'Instagram Flat' : platform === 'instagram-flat-ii' ? 'Instagram Flat II' : platform === 'sinal' ? 'Sinal' : platform === 'features' ? 'Instagram' : 'Instagram';
   const brandLabel = platform === 'linkedin-pessoal' ? '' : ' da Cropware';
   const directionSuffix = extraDirection && extraDirection.trim()
     ? `\n\nDireção adicional do usuário: ${extraDirection.trim()}`
@@ -22440,7 +22941,7 @@ async function generatePost() {
   let theme       = document.getElementById('genTheme').value.trim();
   const platform  = getPlatform();
   const isAds     = platform === 'instagram-ads';
-  const isFlat    = platform === 'instagram-flat';
+  const isFlat    = platform === 'instagram-flat' || platform === 'instagram-flat-ii';
   const isSinal   = platform === 'sinal';
   const isLogoCropware = platform === 'logo-cropware';
   const isNews    = platform === 'news';
@@ -22634,18 +23135,39 @@ async function generatePost() {
       supportTextLong:       parsed.supportTextLong || '',
     };
     if (platform === 'instagram-ads') postData.type = 'instagram-ads-post';
-    else if (platform === 'instagram-flat') {
-      postData.type = 'instagram-flat-post';
-      postData.style = 'flat';
+    else if (platform === 'instagram-flat' || platform === 'instagram-flat-ii') {
+      const isII = platform === 'instagram-flat-ii';
+      postData.type = isII ? 'instagram-flat-ii-post' : 'instagram-flat-post';
+      postData.style = isII ? 'flat-wave' : 'flat';
       postData.format = 'feed';
-      postData.bgImage = '';
-      postData.sub = 'Instagram Flat';
-      postData.title = parsed.title || 'Instagram Flat gerado';
-      postData.filename = `cropware_flat_${timestamp}.jpg`;
+      postData.sub = isII ? 'Instagram Flat II' : 'Instagram Flat';
+      postData.title = parsed.title || (isII ? 'Instagram Flat II gerado' : 'Instagram Flat gerado');
+      postData.filename = isII ? `cropware_flat_ii_${timestamp}.jpg` : `cropware_flat_${timestamp}.jpg`;
       postData.overlayColor = 'transparent';
       postData.overlayOpacity = 0;
       postData.overlayDirection = 'full';
       postData.bulletDisplayMode = 'bullets';
+
+      // Flat II (flat-wave): gera imagem de campo pra preencher a zona de foto.
+      // Flat I continua sem imagem (design intencional).
+      if (isII) {
+        const imgPrompt = parsed.imagePrompt || `professional aerial photo of soybean field in Brazilian Cerrado, golden hour, lush green rows`;
+        // Usa imagem do usuário se já fez upload, senão gera via Gemini.
+        if (genImageBase64) {
+          postData.bgImage = `data:${genImageMime};base64,${genImageBase64}`;
+        } else {
+          try {
+            setGenStatus(`<i class="ph ph-image sz-18" style="margin-right:6px"></i>Gerando imagem de fundo...`, '');
+            const imgData = await callGeminiImage(imgPrompt);
+            postData.bgImage = imgData ? `data:image/png;base64,${imgData}` : '';
+          } catch(e) {
+            console.warn('[FlatII] geração de imagem falhou:', e);
+            postData.bgImage = '';
+          }
+        }
+      } else {
+        postData.bgImage = '';
+      }
     }
     else if (platform === 'sinal') {
       postData.type = 'sinal-post';
