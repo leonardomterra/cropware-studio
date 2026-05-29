@@ -44,6 +44,7 @@
     "@remotion/sfx": "^4.0.462",
     "@remotion/transitions": "^4.0.462",
     "@supabase/supabase-js": "^2.106.0",
+    "html-to-image": "^1.11.13",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "remotion": "^4.0.462"

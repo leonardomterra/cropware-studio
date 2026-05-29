@@ -165,11 +165,10 @@ export const MotionReel = ({ storyboard }) => {
   const fadeOutF = Math.max(0, (musicCfg.fadeOut == null ? 2.0 : musicCfg.fadeOut) * fps);
   const baseVol  = musicCfg.volume == null ? 0.4 : musicCfg.volume;
   // Ducking: durante voz, multiplica baseVol por este fator (0-1).
-  // 0.18 = -82% — música quase silenciosa durante narração pra voz vir
-  // pra frente sem competir. Antes era 0.35 (-65%) e a voz ficava encoberta.
-  const duckLevel = musicCfg.duck == null ? 0.18 : musicCfg.duck;
-  // Ramp suave entre full e duck (anti-pop). Default 150ms.
-  const duckRampF = Math.max(1, Math.round(((musicCfg.duckRamp == null ? 0.15 : musicCfg.duckRamp)) * fps));
+  // 0.24 mantém a trilha um pouco mais presente sem competir com a narração.
+  const duckLevel = musicCfg.duck == null ? 0.24 : musicCfg.duck;
+  // Ramp suave entre full e duck (anti-pop). Default 300ms para evitar degrau.
+  const duckRampF = Math.max(1, Math.round(((musicCfg.duckRamp == null ? 0.3 : musicCfg.duckRamp)) * fps));
   const musicUrl = music ? resolveMediaUrl(music) : null;
 
   return (

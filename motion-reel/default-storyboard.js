@@ -38,6 +38,8 @@ export const MOTION_REEL_DEFAULT = {
     volume: 0.14,
     fadeIn: 1.5,
     fadeOut: 2.5,
+    duck: 0.24,
+    duckRamp: 0.3,
   },
   scenes: [
     // ─────────────── 01 INTRO (FIXA — identidade Cropware) ───────────────

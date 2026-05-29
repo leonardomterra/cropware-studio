@@ -10,6 +10,10 @@
 <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.11/dist/html2canvas-pro.min.js"></script>
+<script type="module">
+  import * as htmlToImage from 'html-to-image';
+  window.htmlToImage = htmlToImage;
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -705,6 +709,188 @@
     height: 1080px;
   }
 
+  /* Categoria Sinal — escopo isolado, não interfere nos modelos existentes */
+  .cw-post--sinal {
+    --sinal-brand:        #10b981;
+    --sinal-brand-bright: #34d399;
+    --sinal-ink:          #f8fafc;
+    --sinal-ink-dim:      #94a3b8;
+    --sinal-surface:      #1f2937;
+    --sinal-bg:           #111827;
+    --sinal-base:         #0a0f0d;
+    --sinal-display:      'Vend Sans', 'Inter Tight', sans-serif;
+    --sinal-body:         'Inter Tight', 'Inter', sans-serif;
+    --sinal-label:        'JetBrains Mono', 'Space Mono', monospace;
+    --sinal-radius:       16px;
+    --sinal-pad:          72px;
+    --sinal-shadow:       none;
+    --sinal-scrim:        linear-gradient(180deg, rgba(10,15,13,0) 35%, rgba(10,15,13,.72) 100%);
+    background: var(--sinal-base);
+    color: var(--sinal-ink);
+    font-family: var(--sinal-body);
+    letter-spacing: 0;
+  }
+  .cw-post--sinal[data-format="story"] { --sinal-pad: 76px; }
+  .cw-post--sinal .sinal-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-color: var(--sinal-bg);
+    background-image:
+      radial-gradient(circle at 18% 10%, rgba(52,211,153,0.14), transparent 32%),
+      radial-gradient(circle at 82% 30%, rgba(16,185,129,0.12), transparent 34%),
+      linear-gradient(135deg, #111827 0%, #07110d 52%, #0b1f16 100%);
+    background-size: cover;
+    background-position: center;
+  }
+  .cw-post--sinal .sinal-bg.has-photo {
+    background-image: var(--sinal-bg-image);
+  }
+  .cw-post--sinal .sinal-scrim {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 56%;
+    z-index: 1;
+    background: var(--sinal-scrim);
+    pointer-events: none;
+  }
+  .cw-post--sinal .sinal-topbar {
+    position: absolute;
+    left: var(--sinal-pad);
+    right: var(--sinal-pad);
+    top: var(--sinal-pad);
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    font-family: var(--sinal-label);
+    color: var(--sinal-brand-bright);
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .cw-post--sinal .sinal-label,
+  .cw-post--sinal .sinal-page {
+    white-space: nowrap;
+  }
+  .cw-post--sinal .sinal-page {
+    color: rgba(248,250,252,0.72);
+    letter-spacing: 0.14em;
+  }
+  .cw-post--sinal .sinal-content {
+    position: absolute;
+    left: var(--sinal-pad);
+    right: var(--sinal-pad);
+    bottom: 162px;
+    z-index: 3;
+    max-width: 840px;
+  }
+  .cw-post--sinal .sinal-rule {
+    width: 100%;
+    max-width: 360px;
+    height: 1px;
+    margin-bottom: 34px;
+    background: linear-gradient(90deg, rgba(52,211,153,0.58), rgba(248,250,252,0.08), transparent);
+  }
+  .cw-post--sinal .sinal-title {
+    font-family: var(--sinal-display);
+    color: var(--sinal-ink);
+    font-size: 82px;
+    line-height: 0.95;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-shadow: none;
+  }
+  .cw-post--sinal .sinal-support {
+    max-width: 690px;
+    margin-top: 28px;
+    font-family: var(--sinal-body);
+    color: var(--sinal-ink-dim);
+    font-size: 34px;
+    line-height: 1.2;
+    font-weight: 350;
+    letter-spacing: 0;
+    text-shadow: none;
+  }
+  .cw-post--sinal .sinal-signature {
+    position: absolute;
+    left: var(--sinal-pad);
+    right: var(--sinal-pad);
+    bottom: 68px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+  }
+  .cw-post--sinal .sinal-site {
+    font-family: var(--sinal-label);
+    color: rgba(248,250,252,0.72);
+    font-size: 27px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .cw-post--sinal .sinal-wordmark {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: 'Alumni Sans', var(--sinal-display);
+    color: #fff;
+    font-size: 42px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .cw-post--sinal .sinal-leaf-mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px 11px 11px 3px;
+    background: var(--sinal-brand);
+    position: relative;
+    flex: 0 0 auto;
+  }
+  .cw-post--sinal .sinal-leaf-mark::after {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 8px;
+    width: 15px;
+    height: 20px;
+    border: 3px solid #fff;
+    border-left: 0;
+    border-top: 0;
+    transform: rotate(43deg);
+    border-radius: 0 0 8px 0;
+  }
+  .cw-post--sinal .sinal-brand-curve {
+    position: absolute;
+    right: -120px;
+    bottom: -120px;
+    width: 520px;
+    height: 300px;
+    z-index: 2;
+    border: 2px solid rgba(52,211,153,0.22);
+    border-left: 0;
+    border-bottom: 0;
+    border-radius: 100% 0 0 0;
+    pointer-events: none;
+  }
+  .cw-post--sinal[data-format="story"] .sinal-content {
+    bottom: 258px;
+    max-width: 820px;
+  }
+  .cw-post--sinal[data-format="story"] .sinal-title {
+    font-size: 92px;
+  }
+  .cw-post--sinal[data-format="story"] .sinal-support {
+    font-size: 36px;
+  }
+
   /* Safe zones Instagram Stories — só no preview, removidos no download */
   .safe-zone-guide {
     position: absolute;
@@ -1236,6 +1422,62 @@
   .post-bullet-icon .lg-9,
   .post-bullet-icon .lg-11,
   .post-bullet-icon .lg-12 { display: none; }
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullets {
+    gap: 13px;
+    margin-top: 30px;
+    max-width: 820px;
+  }
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass {
+    padding: calc(18px * var(--signal-card-height, 1)) 22px;
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: var(--signal-card-tint, rgba(255,255,255,0.12));
+    backdrop-filter: blur(var(--signal-card-blur, 12px)) saturate(135%);
+    -webkit-backdrop-filter: blur(var(--signal-card-blur, 12px)) saturate(135%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 8px 32px rgba(0,0,0,0.20),
+      0 2px 8px rgba(0,0,0,0.10);
+    text-shadow: none;
+  }
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass > * {
+    position: relative;
+    z-index: 3;
+  }
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass > .lg-layer {
+    display: none;
+  }
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass .post-bullet-icon {
+    width: calc(50px * var(--bullet-icon-scale, 1));
+    height: calc(50px * var(--bullet-icon-scale, 1));
+    border-radius: calc(14px * var(--bullet-icon-scale, 1));
+    background: var(--signal-icon-tint, rgba(255,255,255,0.10));
+    border-color: rgba(255,255,255,0.20);
+    backdrop-filter: blur(calc(var(--signal-card-blur, 12px) * 0.55));
+    -webkit-backdrop-filter: blur(calc(var(--signal-card-blur, 12px) * 0.55));
+  }
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass .post-bullet-icon .lg-layer {
+    display: none;
+  }
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass .post-bullet-icon .ph {
+    font-size: calc(36px * var(--bullet-icon-scale, 1));
+    text-shadow: 0 0 14px rgba(122,184,126,0.40);
+  }
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullet--glass .post-bullet-text {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: calc(30px * var(--bullets-scale, 1));
+    line-height: 1.18;
+    letter-spacing: -0.2px;
+    color: #ffffff;
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+  }
   .post-bullets-text {
     margin-top: 34px;
     max-width: 820px;
@@ -5504,6 +5746,7 @@
     left: 16px;
   }
 
+  #pcGroupBackground #pcSubImageEnabled { order: 5; }
   #pcGroupBackground #pcSubBgImage { order: 10; }
   #pcGroupBackground #pcSubOverlayEnabled { order: 20; }
   #pcGroupBackground #pcSubOverlayColor { order: 30; }
@@ -6456,7 +6699,7 @@
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 14px;
     transition: var(--ds-btn-transition);
   }
@@ -6489,6 +6732,72 @@
   .ds-track-card__desc {
     font-size: 12px;
     color: var(--ds-text-muted);
+  }
+  .ds-track-card__preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .ds-track-card__play {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    border: 1px solid var(--ds-color-secondary-border);
+    background: #fff;
+    color: var(--ds-text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex: 0 0 auto;
+    transition: var(--ds-btn-transition);
+  }
+  .ds-track-card__play:hover {
+    background: var(--ds-neutral-100);
+    border-color: var(--ds-color-secondary-border-hover);
+  }
+  .ds-track-card--playing .ds-track-card__play {
+    background: var(--ds-color-primary);
+    border-color: var(--ds-color-primary);
+    color: #fff;
+  }
+  .ds-track-card__progress {
+    appearance: none;
+    border: 0;
+    padding: 0;
+    height: 18px;
+    background: transparent;
+    cursor: pointer;
+    flex: 1 1 auto;
+    min-width: 80px;
+  }
+  .ds-track-card__progress-track {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--ds-neutral-200);
+    overflow: hidden;
+  }
+  .ds-track-card__progress-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    border-radius: inherit;
+    background: var(--ds-text);
+  }
+  .ds-track-card--playing .ds-track-card__progress-fill {
+    background: var(--ds-color-primary);
+  }
+  .ds-track-card__time {
+    min-width: 70px;
+    text-align: right;
+    font-size: 11px;
+    color: var(--ds-text-muted);
+    font-variant-numeric: tabular-nums;
+    flex: 0 0 auto;
   }
   .ds-track-card__check {
     font-size: 22px;
@@ -9430,6 +9739,8 @@
       <optgroup label="Instagram">
         <option value="post" selected>Instagram — Post</option>
         <option value="instagram-flat-post">Instagram Flat — Post</option>
+        <option value="sinal-post">Sinal — Post</option>
+        <option value="sinal-carousel">Sinal — Carrossel</option>
         <option value="carousel">Instagram — Carrossel</option>
         <option value="funcionalidades-post">Funcionalidades — Post</option>
         <option value="funcionalidades-carousel">Funcionalidades — Carrossel</option>
@@ -9499,6 +9810,7 @@
           <option value="signal">Highlights</option>
           <option value="logo-cropware" hidden disabled>Logo Cropware</option>
           <option value="mockup">Mockup</option>
+          <option value="sinal" hidden disabled>Sinal</option>
           <option value="news-editorial" hidden disabled>Notícia</option>
         </select>
       </div>
@@ -10316,6 +10628,14 @@
             <button type="button" data-mode="light">Claro</button>
           </div>
         </div>
+        <div class="pc-sub" id="pcSubImageEnabled">
+          <div class="pc-vis-row">
+            <button type="button" class="pc-vis-btn active" data-vis="image">
+              <i class="ph ph-image"></i><span>Imagem</span>
+              <span class="pc-vis-switch"></span>
+            </button>
+          </div>
+        </div>
         <div class="pc-sub" id="pcSubBgImage">
           <div class="pc-label">Imagem</div>
           <label class="pc-upload-btn" for="pcBgUpload" title="Usar uma foto sua como fundo">Usar Minha Foto</label>
@@ -10518,6 +10838,13 @@ let instagramAdsCurrentSlide = 0;
 const instagramFlatPosts = [];
 const instagramFlatLegends = [];
 let instagramFlatCurrentPost = 0;
+const sinalPosts = [];
+const sinalLegends = [];
+let sinalCurrentPost = 0;
+const sinalCarousels = [];
+const sinalCarouselLegends = [];
+let sinalCurrentCarousel = 0;
+let sinalCurrentSlide = 0;
 const featurePosts = [];
 const featureLegends = [];
 let featureCurrentPost = 0;
@@ -10587,6 +10914,7 @@ function getPlatform() {
   if (activeMode === 'news-post' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel') return 'news';
   if (activeMode === 'boletim-agro-carrossel') return 'boletim-agro';
   if (activeMode === 'instagram-flat-post') return 'instagram-flat';
+  if (activeMode === 'sinal-post' || activeMode === 'sinal-carousel') return 'sinal';
   if (activeMode === 'instagram-ads-post' || activeMode === 'instagram-ads-carousel') return 'instagram-ads';
   if (activeMode.startsWith('linkedin-pessoal')) return 'linkedin-pessoal';
   return activeMode.startsWith('linkedin') ? 'linkedin' : 'instagram';
@@ -10602,6 +10930,10 @@ function isInstagramAdsMode(mode) {
 function isInstagramFlatMode(mode) {
   return (mode || activeMode) === 'instagram-flat-post';
 }
+function isSinalMode(mode) {
+  const m = mode || activeMode;
+  return m === 'sinal-post' || m === 'sinal-carousel';
+}
 function isFeatureMode(mode) {
   const m = mode || activeMode;
   return m === 'funcionalidades-post' || m === 'funcionalidades-carousel';
@@ -10616,7 +10948,7 @@ function isBoletimAgroMode(mode) {
   return (mode || activeMode) === 'boletim-agro-carrossel';
 }
 function isCarouselMode() {
-  return activeMode === 'carousel' || activeMode === 'funcionalidades-carousel' || activeMode === 'previsao-carrossel' || activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel' || activeMode === 'presentation' || activeMode === 'instagram-ads-carousel' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel' || activeMode === 'boletim-agro-carrossel';
+  return activeMode === 'carousel' || activeMode === 'sinal-carousel' || activeMode === 'funcionalidades-carousel' || activeMode === 'previsao-carrossel' || activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel' || activeMode === 'presentation' || activeMode === 'instagram-ads-carousel' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel' || activeMode === 'boletim-agro-carrossel';
 }
 function isOpinionCarouselMode(mode) {
   return (mode || activeMode) === 'opiniao-carrossel';
@@ -10642,6 +10974,7 @@ function getSidebarCollectionLabel() {
   if (isNewsMode()) return 'Pautas';
   if (isInstagramAdsMode()) return 'Anuncios';
   if (isInstagramFlatMode()) return 'Posts Flat';
+  if (isSinalMode()) return activeMode === 'sinal-carousel' ? 'Sinais' : 'Posts Sinal';
   if (isMotionReelMode()) return 'Reels';
   return isCarouselMode() ? 'Carrosseis' : 'Posts';
 }
@@ -10655,6 +10988,8 @@ function getGenerateButtonLabel() {
   if (isOpinionCarouselMode()) return 'Gerar Carrossel de Opinião';
   if (activeMode === 'tendencia-carrossel') return 'Gerar Carrossel de Tendência';
   if (isInstagramFlatMode()) return 'Gerar Instagram Flat';
+  if (activeMode === 'sinal-post') return 'Gerar Sinal';
+  if (activeMode === 'sinal-carousel') return 'Gerar Carrossel Sinal';
   if (isNewsMode()) return 'Post Noticia';
   if (isInstagramAdsMode()) return 'Gerar Anuncio';
   if (isMotionReelMode()) return 'Gerar Reel';
@@ -10680,6 +11015,7 @@ function getPlatformDisplayName(platform) {
   if (platform === 'news') return 'Post Notícia';
   if (platform === 'instagram-ads') return 'Instagram Ads';
   if (platform === 'instagram-flat') return 'Instagram Flat';
+  if (platform === 'sinal') return 'Sinal';
   if (platform === 'logo-cropware') return 'Logo Cropware';
   if (platform === 'linkedin-pessoal') return 'LinkedIn Pessoal';
   if (platform === 'linkedin') return 'LinkedIn';
@@ -10847,6 +11183,8 @@ function getModeItems() {
     case 'funcionalidades-post':       return featurePosts;
     case 'funcionalidades-carousel':   return featureCarousels;
     case 'instagram-flat-post':        return instagramFlatPosts;
+    case 'sinal-post':                 return sinalPosts;
+    case 'sinal-carousel':             return sinalCarousels;
     case 'logo-cropware-post':         return logoCropwarePosts;
     case 'previsao-carrossel':         return weatherCarousels;
     case 'news-post':                 return newsPosts;
@@ -10870,6 +11208,8 @@ function getModeLegends() {
     case 'funcionalidades-post':       return featureLegends;
     case 'funcionalidades-carousel':   return featureCarouselLegends;
     case 'instagram-flat-post':        return instagramFlatLegends;
+    case 'sinal-post':                 return sinalLegends;
+    case 'sinal-carousel':             return sinalCarouselLegends;
     case 'logo-cropware-post':         return logoCropwareLegends;
     case 'previsao-carrossel':         return weatherCarouselLegends;
     case 'news-post':                 return newsLegends;
@@ -10893,6 +11233,8 @@ function getModeCurrentIdx() {
     case 'funcionalidades-post':       return featureCurrentPost;
     case 'funcionalidades-carousel':   return featureCurrentCarousel;
     case 'instagram-flat-post':        return instagramFlatCurrentPost;
+    case 'sinal-post':                 return sinalCurrentPost;
+    case 'sinal-carousel':             return sinalCurrentCarousel;
     case 'logo-cropware-post':         return logoCropwareCurrentPost;
     case 'previsao-carrossel':         return currentWeatherCarousel;
     case 'news-post':                 return newsCurrentPost;
@@ -10916,6 +11258,8 @@ function setModeCurrentIdx(idx) {
     case 'funcionalidades-post':       featureCurrentPost = idx; break;
     case 'funcionalidades-carousel':   featureCurrentCarousel = idx; break;
     case 'instagram-flat-post':        instagramFlatCurrentPost = idx; break;
+    case 'sinal-post':                 sinalCurrentPost = idx; break;
+    case 'sinal-carousel':             sinalCurrentCarousel = idx; break;
     case 'logo-cropware-post':         logoCropwareCurrentPost = idx; break;
     case 'previsao-carrossel':         currentWeatherCarousel = idx; break;
     case 'news-post':                 newsCurrentPost = idx; break;
@@ -10938,6 +11282,7 @@ function getCurrentSlide() {
   if (activeMode === 'linkedin-pessoal-carousel') return linkedinPessoalCurrentSlide;
   if (activeMode === 'presentation') return presentationCurrentSlide;
   if (activeMode === 'funcionalidades-carousel') return featureCurrentSlide;
+  if (activeMode === 'sinal-carousel') return sinalCurrentSlide;
   if (activeMode === 'previsao-carrossel') return weatherCarouselCurrentSlide;
   if (activeMode === 'instagram-ads-carousel') return instagramAdsCurrentSlide;
   if (activeMode === 'tendencia-carrossel') return newsCarouselCurrentSlide;
@@ -10950,6 +11295,7 @@ function setCurrentSlide(idx) {
   else if (activeMode === 'linkedin-pessoal-carousel') linkedinPessoalCurrentSlide = idx;
   else if (activeMode === 'presentation') presentationCurrentSlide = idx;
   else if (activeMode === 'funcionalidades-carousel') featureCurrentSlide = idx;
+  else if (activeMode === 'sinal-carousel') sinalCurrentSlide = idx;
   else if (activeMode === 'previsao-carrossel') weatherCarouselCurrentSlide = idx;
   else if (activeMode === 'instagram-ads-carousel') instagramAdsCurrentSlide = idx;
   else if (activeMode === 'tendencia-carrossel') newsCarouselCurrentSlide = idx;
@@ -10992,6 +11338,7 @@ function switchMode(mode) {
       setModeCurrentIdx(newestIdx);
       currentSlide = 0;
       featureCurrentSlide = 0;
+      sinalCurrentSlide = 0;
       weatherCarouselCurrentSlide = 0;
       linkedinCurrentSlide = 0;
       linkedinPessoalCurrentSlide = 0;
@@ -11034,7 +11381,7 @@ const STUDIO_MODE_GROUPS = [
   {
     id: 'instagram',
     label: 'Instagram',
-    modes: ['post', 'instagram-flat-post', 'carousel', 'funcionalidades-post', 'funcionalidades-carousel', 'instagram-ads-post', 'instagram-ads-carousel']
+    modes: ['post', 'instagram-flat-post', 'sinal-post', 'sinal-carousel', 'carousel', 'funcionalidades-post', 'funcionalidades-carousel', 'instagram-ads-post', 'instagram-ads-carousel']
   },
   {
     id: 'linkedin',
@@ -12329,6 +12676,14 @@ const _saveSessionCore = async function() {
     .map((p, i) => ({ post: p, legend: instagramFlatLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
+  const generatedSinalPosts = sinalPosts
+    .map((p, i) => ({ post: p, legend: sinalLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
+  const generatedSinalCarousels = sinalCarousels
+    .map((c, i) => ({ post: c, legend: sinalCarouselLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
   const generatedFeaturePosts = featurePosts
     .map((p, i) => ({ post: p, legend: featureLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
@@ -12381,7 +12736,7 @@ const _saveSessionCore = async function() {
     .map((p, i) => ({ post: p, legend: presentationLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
-  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedInstagramFlatPosts, ...generatedFeaturePosts, ...generatedFeatureCarousels, ...generatedLogoCropwarePosts, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedOpinionCarousels, ...generatedWeatherCarousels, ...generatedBoletimAgroCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
+  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedInstagramFlatPosts, ...generatedSinalPosts, ...generatedSinalCarousels, ...generatedFeaturePosts, ...generatedFeatureCarousels, ...generatedLogoCropwarePosts, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedOpinionCarousels, ...generatedWeatherCarousels, ...generatedBoletimAgroCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
   if (!allRows.length) return;
   const sid = getSessionId();
   const now = new Date().toISOString();
@@ -12461,7 +12816,7 @@ async function loadSession() {
         const type = postData.type;
         if (type === 'presentation') {
           renderGeneratedPresentation(postData, row.legend || '');
-        } else if (type === 'carousel' || type === 'feature-carousel' || type === 'weather-carousel' || type === 'linkedin-carousel' || type === 'linkedin-pessoal-carousel' || type === 'instagram-ads-carousel' || type === 'news-carousel-post' || type === 'opinion-carousel-post' || type === 'boletim-agro-post') {
+        } else if (type === 'carousel' || type === 'sinal-carousel' || type === 'feature-carousel' || type === 'weather-carousel' || type === 'linkedin-carousel' || type === 'linkedin-pessoal-carousel' || type === 'instagram-ads-carousel' || type === 'news-carousel-post' || type === 'opinion-carousel-post' || type === 'boletim-agro-post') {
           renderGeneratedCarousel(postData, row.legend || '');
         } else {
           renderGeneratedPost(postData, row.legend || '');
@@ -12574,6 +12929,7 @@ const SIGNAL_CARD_BLUR_DEFAULT = 12;
 // slider de outro modelo, esse valor não vaza ao trocar de modelo.
 const PER_STYLE_FIELDS = [
   'accent',
+  'imageEnabled',
   'overlayColor', 'overlayOpacity', 'overlayDirection',
   'layout', 'textAlign',
   'logoEnabled', 'logoPos', 'logoScale', 'logoOffsetX', 'logoOffsetY',
@@ -12753,6 +13109,30 @@ function ensureSignalVisualDefaults(postData) {
   return migrated;
 }
 
+function ensureFlatBulletCardDefaults(postData) {
+  if (!postData || postData.type !== 'instagram-flat-post' || normalizePostStyle(postData.style) !== 'flat') return false;
+  if (postData._flatBulletCardDefaultsMigrated) return false;
+
+  const cardColor = String(postData.signalCardColor || '').toLowerCase();
+  if (!cardColor || cardColor === 'transparent' || cardColor === 'none') {
+    postData.signalCardColor = '#ffffff';
+    postData.signalCardOpacity = 12;
+  } else if (postData.signalCardOpacity == null || Number(postData.signalCardOpacity) === SIGNAL_CARD_OPACITY_DEFAULT) {
+    postData.signalCardOpacity = 12;
+  }
+  if (postData.signalCardBlur == null || Number(postData.signalCardBlur) === SIGNAL_CARD_BLUR_DEFAULT) {
+    postData.signalCardBlur = 14;
+  }
+  if (!postData.signalIconColor || postData.signalIconColor === SIGNAL_ICON_DEFAULT) {
+    postData.signalIconColor = '#ffffff';
+  }
+  if (postData.signalIconOpacity == null || Number(postData.signalIconOpacity) === SIGNAL_ICON_OPACITY_DEFAULT) {
+    postData.signalIconOpacity = 14;
+  }
+  postData._flatBulletCardDefaultsMigrated = true;
+  return true;
+}
+
 const WEATHER_FORECAST_VISUAL_DEFAULTS = {
   accent: '#8bf592',
   overlayColor: 'transparent',
@@ -12906,6 +13286,7 @@ function renderGeneratedPost(postData, legendText) {
     if (postData.manchetteScale == null) postData.manchetteScale    = 1;
   }
   ensureSignalVisualDefaults(postData);
+  ensureFlatBulletCardDefaults(postData);
   if (postData.hookScale == null)       postData.hookScale       = 1;
   if (postData.complementScale == null) postData.complementScale = 1;
   if (postData.bulletsScale == null)    postData.bulletsScale    = 1;
@@ -12963,6 +13344,20 @@ function renderGeneratedPost(postData, legendText) {
     postData._logoCropwareInitialized = true;
   }
   // Dashboard — overlay sem cor full, card sem cor 65%/24px, posição superior.
+  if ((postData.type === 'sinal-post' || postData.type === 'sinal-carousel-slide') && !postData._sinalInitialized) {
+    postData.style = 'sinal';
+    if (!postData.format) postData.format = 'feed';
+    if (!postData.accent || postData.accent.toLowerCase() === '#6ac58f') postData.accent = '#10b981';
+    postData.logoEnabled = false;
+    postData.siteEnabled = false;
+    postData.accentBarEnabled = false;
+    postData.stripEnabled = false;
+    postData.overlayColor = 'transparent';
+    postData.overlayOpacity = 0;
+    postData.overlayDirection = 'full';
+    postData.bulletDisplayMode = 'bullets';
+    postData._sinalInitialized = true;
+  }
   if (postData.style === 'dashboard' && !postData._dashboardInitialized) {
     if (!postData.accent || postData.accent.toLowerCase() === '#7ab87e') postData.accent = '#6ac58f';
     if (postData.overlayColor === '#000000' || !postData.overlayColor) postData.overlayColor = 'transparent';
@@ -12992,10 +13387,11 @@ function renderGeneratedPost(postData, legendText) {
   const isFeaturePost = postData.type === 'feature-post';
   const isLogoCropware = postData.type === 'logo-cropware-post';
   const isNews = postData.type === 'news-post';
+  const isSinal = postData.type === 'sinal-post';
   const isLinkedinPessoal = postData.type === 'linkedin-pessoal-post';
   const isLinkedin = postData.type === 'linkedin-post';
-  const targetPosts = isInstagramAds ? instagramAdsPosts : isInstagramFlat ? instagramFlatPosts : isFeaturePost ? featurePosts : isLogoCropware ? logoCropwarePosts : isNews ? newsPosts : isLinkedinPessoal ? linkedinPessoalPosts : isLinkedin ? linkedinPosts : posts;
-  const targetLegends = isInstagramAds ? instagramAdsLegends : isInstagramFlat ? instagramFlatLegends : isFeaturePost ? featureLegends : isLogoCropware ? logoCropwareLegends : isNews ? newsLegends : isLinkedinPessoal ? linkedinPessoalLegends : isLinkedin ? linkedinLegends : legends;
+  const targetPosts = isInstagramAds ? instagramAdsPosts : isInstagramFlat ? instagramFlatPosts : isFeaturePost ? featurePosts : isLogoCropware ? logoCropwarePosts : isNews ? newsPosts : isSinal ? sinalPosts : isLinkedinPessoal ? linkedinPessoalPosts : isLinkedin ? linkedinPosts : posts;
+  const targetLegends = isInstagramAds ? instagramAdsLegends : isInstagramFlat ? instagramFlatLegends : isFeaturePost ? featureLegends : isLogoCropware ? logoCropwareLegends : isNews ? newsLegends : isSinal ? sinalLegends : isLinkedinPessoal ? linkedinPessoalLegends : isLinkedin ? linkedinLegends : legends;
 
   targetPosts.push(postData);
   targetLegends.push(normalizePanelText(legendText || '', postData.type));
@@ -13088,6 +13484,18 @@ function renderGeneratedCarousel(carouselData, legendText) {
     if (!slideData.frameTextMode)     slideData.frameTextMode     = 'light';
     if (!slideData.format)            slideData.format            = 'feed';
     slideData.style = normalizePostStyle(slideData.style);
+    if (slideData.type === 'sinal-carousel-slide' && !slideData._sinalInitialized) {
+      slideData.style = 'sinal';
+      if (!slideData.accent || slideData.accent.toLowerCase() === '#6ac58f') slideData.accent = '#10b981';
+      slideData.logoEnabled = false;
+      slideData.siteEnabled = false;
+      slideData.accentBarEnabled = false;
+      slideData.stripEnabled = false;
+      slideData.overlayColor = 'transparent';
+      slideData.overlayOpacity = 0;
+      slideData.overlayDirection = 'full';
+      slideData._sinalInitialized = true;
+    }
     if (slideData.style === 'classic-2' && !slideData._classic2Initialized) {
       if (!slideData.dashCardColor || slideData.dashCardColor === 'transparent') slideData.dashCardColor = '#0F1E14';
       if (slideData.dashCardOpacity == null || slideData.dashCardOpacity === 65) slideData.dashCardOpacity = 45;
@@ -13152,6 +13560,7 @@ function renderGeneratedCarousel(carouselData, legendText) {
   });
 
   const isInstagramAdsCarousel = carouselData.type === 'instagram-ads-carousel';
+  const isSinalCarousel = carouselData.type === 'sinal-carousel';
   const isFeatureCarousel = carouselData.type === 'feature-carousel';
   const isWeatherCarousel = carouselData.type === 'weather-carousel';
   const isLinkedinPessoal = carouselData.type === 'linkedin-pessoal-carousel';
@@ -13159,8 +13568,8 @@ function renderGeneratedCarousel(carouselData, legendText) {
   const isNewsCarousel = carouselData.type === 'news-carousel-post';
   const isOpinionCarousel = carouselData.type === 'opinion-carousel-post' || carouselData.editorialFlavor === 'opinion';
   const isBoletimAgro = carouselData.type === 'boletim-agro-post';
-  const targetArr = isBoletimAgro ? boletimAgroCarousels : isOpinionCarousel ? opinionCarousels : isNewsCarousel ? newsCarousels : isInstagramAdsCarousel ? instagramAdsCarousels : isFeatureCarousel ? featureCarousels : isWeatherCarousel ? weatherCarousels : isLinkedinPessoal ? linkedinPessoalCarousels : isLinkedin ? linkedinCarousels : carousels;
-  const targetLeg = isBoletimAgro ? boletimAgroCarouselLegends : isOpinionCarousel ? opinionCarouselLegends : isNewsCarousel ? newsCarouselLegends : isInstagramAdsCarousel ? instagramAdsCarouselLegends : isFeatureCarousel ? featureCarouselLegends : isWeatherCarousel ? weatherCarouselLegends : isLinkedinPessoal ? linkedinPessoalCarouselLegends : isLinkedin ? linkedinCarouselLegends : carouselLegends;
+  const targetArr = isBoletimAgro ? boletimAgroCarousels : isOpinionCarousel ? opinionCarousels : isNewsCarousel ? newsCarousels : isInstagramAdsCarousel ? instagramAdsCarousels : isSinalCarousel ? sinalCarousels : isFeatureCarousel ? featureCarousels : isWeatherCarousel ? weatherCarousels : isLinkedinPessoal ? linkedinPessoalCarousels : isLinkedin ? linkedinCarousels : carousels;
+  const targetLeg = isBoletimAgro ? boletimAgroCarouselLegends : isOpinionCarousel ? opinionCarouselLegends : isNewsCarousel ? newsCarouselLegends : isInstagramAdsCarousel ? instagramAdsCarouselLegends : isSinalCarousel ? sinalCarouselLegends : isFeatureCarousel ? featureCarouselLegends : isWeatherCarousel ? weatherCarouselLegends : isLinkedinPessoal ? linkedinPessoalCarouselLegends : isLinkedin ? linkedinCarouselLegends : carouselLegends;
 
   targetArr.push(carouselData);
   targetLeg.push(isInstagramAdsCarousel ? (legendText || '').trim() : sanitizeLegend(legendText || ''));
@@ -13445,6 +13854,14 @@ function renderAppStoreBadge(postData) {
   return `<div class="post-app-store" data-pos="${pos}"><img src="app-store-badge.svg" alt="Baixar na App Store"></div>`;
 }
 
+function isImageActive(postData) {
+  return !(postData && postData.imageEnabled === false);
+}
+
+function getEffectiveBgImage(postData) {
+  return isImageActive(postData) ? ((postData && postData.bgImage) || '') : '';
+}
+
 function renderClassicBottomWave() {
   return `
     <div class="post-classic-wave" aria-hidden="true">
@@ -13476,7 +13893,7 @@ function renderClassicStyle(postData) {
   const logoPos = postData.logoPos || 'br';
   const hookHTML       = postData.hookHTML       || '';
   const complementHTML = postData.complementHTML || '';
-  const imgSrc         = postData.bgImage        || '';
+  const imgSrc         = getEffectiveBgImage(postData);
   const logoClass      = getLogoClass(logoPos);
   const overlayDir     = postData.overlayDirection || (layout.startsWith('bottom') ? 'bottom' : 'top');
   const overlayStyle   = buildPostOverlayStyle(postData.overlayColor || '#000000', postData.overlayOpacity == null ? 55 : postData.overlayOpacity, overlayDir);
@@ -13509,10 +13926,11 @@ function renderClassicStyle(postData) {
     : '';
 
   const bullets = Array.isArray(postData.bullets) ? postData.bullets.slice(0, 3) : [];
+  const useFlatGlassBullets = postData.type === 'instagram-flat-post' && postData.style === 'flat';
   const bulletsEl = (showBullets && bulletMode === 'bullets' && bullets.length) ? `
       <div class="post-bullets">
         ${bullets.map((b, i) => `
-          <div class="post-bullet" data-bullet-idx="${i}">
+          <div class="post-bullet${useFlatGlassBullets ? ' post-bullet--glass' : ''}" data-bullet-idx="${i}">
             ${showBulletIcons ? `<button type="button" class="post-bullet-icon" data-bullet-icon="${i}" title="Trocar ícone">${LIQUID_GLASS_HTML}${renderIconMarkup(b.icon)}</button>` : ''}
             <span class="post-bullet-text" contenteditable="true" spellcheck="false" data-bullet-text="${i}">${escapeHTML(b.text || '')}</span>
           </div>
@@ -13571,7 +13989,7 @@ function renderDashboardStyle(postData) {
   const textAlign      = postData.textAlign || 'left';
   const hookHTML       = postData.hookHTML       || '';
   const complementHTML = postData.complementHTML || '';
-  const imgSrc         = postData.bgImage        || '';
+  const imgSrc         = getEffectiveBgImage(postData);
   const logoClass      = getLogoClass(logoPos);
   const overlayBg      = buildOverlayBackground(postData.overlayColor || '#0a140e', postData.overlayOpacity == null ? 40 : postData.overlayOpacity, postData.overlayDirection || 'full');
   const overlayStyle   = buildPostOverlayStyle(postData.overlayColor || '#0a140e', postData.overlayOpacity == null ? 40 : postData.overlayOpacity, postData.overlayDirection || 'full');
@@ -13693,7 +14111,7 @@ function applyMolduraBlockInline(postEl, post) {
 function renderRevistaStyle(postData) {
   const hookHTML       = postData.hookHTML       || '';
   const complementHTML = postData.complementHTML || '';
-  const imgSrc         = postData.bgImage        || '';
+  const imgSrc         = getEffectiveBgImage(postData);
   const sitePos        = postData.sitePos || 'bl';
   const textMode       = postData.revistaTextMode || 'light';
   const siteDark       = sitePos[0] === 'b' && textMode === 'dark';
@@ -13727,7 +14145,7 @@ function renderNewsEditorialStyle(postData) {
   // Aceita apenas formato "DD.mmm"; qualquer outra coisa é regenerada com a data de hoje.
   const rawDate   = (postData.dataLinha || '').trim();
   const dataLinha = /^\d{1,2}\.[a-záéíóúâêôãõç]{3}$/i.test(rawDate) ? rawDate : formatBrazilDateShort();
-  const imgSrc    = postData.bgImage   || '';
+  const imgSrc    = getEffectiveBgImage(postData);
   const textMode  = postData.revistaTextMode || 'light';
   const blockBg   = postData.revistaBlockColor || '#152F17';
   const photoPos  = postData.revistaPhotoPos == null ? 50 : postData.revistaPhotoPos;
@@ -13800,7 +14218,7 @@ function renderNewsEditorialStyle(postData) {
 function renderSplitStyle(postData) {
   const hookHTML       = postData.hookHTML       || '';
   const complementHTML = postData.complementHTML || '';
-  const imgSrc         = postData.bgImage        || '';
+  const imgSrc         = getEffectiveBgImage(postData);
   const textMode       = postData.splitTextMode || 'light';
   const blockBg        = buildSplitBlockBackground(postData.splitBlockColor || '#152F17');
   const overlayBg      = buildOverlayBackground(postData.overlayColor || '#000000', postData.overlayOpacity == null ? 55 : postData.overlayOpacity, postData.overlayDirection || 'top');
@@ -13828,7 +14246,7 @@ function renderSplitStyle(postData) {
 function renderColunaStyle(postData) {
   const hookHTML       = postData.hookHTML       || '';
   const complementHTML = postData.complementHTML || '';
-  const imgSrc         = postData.bgImage        || '';
+  const imgSrc         = getEffectiveBgImage(postData);
   const textMode       = postData.columnTextMode  || 'dark';
   const blockBg        = postData.columnBlockColor || '#f8fafc';
   const overlayBg      = buildOverlayBackground(postData.overlayColor || '#000000', postData.overlayOpacity == null ? 55 : postData.overlayOpacity, postData.overlayDirection || 'top');
@@ -14321,7 +14739,7 @@ function renderBoletimManchetesHTML(postData) {
 function renderMolduraStyle(postData) {
   const hookHTML       = postData.hookHTML       || '';
   const complementHTML = postData.complementHTML || '';
-  const imgSrc         = postData.bgImage        || '';
+  const imgSrc         = getEffectiveBgImage(postData);
   const textMode       = postData.frameTextMode  || 'light';
   const align          = postData.signalAlign === 'right' ? 'right' : 'left';
   const boletimRole    = (postData.role === 'cotacoes' || postData.role === 'macro' || postData.role === 'manchetes') ? postData.role : null;
@@ -14417,7 +14835,7 @@ function renderSpotlightStyle(postData) {
   const logoClass = getLogoClass(logoPos);
   const hookHTML = postData.hookHTML || '';
   const complementHTML = postData.complementHTML || '';
-  const imgSrc = postData.bgImage || '';
+  const imgSrc = getEffectiveBgImage(postData);
   const contrast = postData.spotlightContrast || 'forte';
   const panelBg = buildSpotlightPanelBackground(postData);
   const overlayColor_ = postData.overlayColor || '#000000';
@@ -14456,7 +14874,7 @@ function renderSignalStyle(postData) {
   const logoClass = getLogoClass(logoPos);
   const hookHTML = postData.hookHTML || '';
   const complementHTML = postData.complementHTML || '';
-  const imgSrc = postData.bgImage || '';
+  const imgSrc = getEffectiveBgImage(postData);
   const overlayColor_ = postData.overlayColor || '#000000';
   const overlayOp_ = postData.overlayOpacity == null ? 42 : postData.overlayOpacity;
   const overlayDir_ = postData.overlayDirection || 'full';
@@ -14529,7 +14947,7 @@ function renderMockupStyle(postData) {
   const logoClass = getLogoClass(logoPos);
   const hookHTML = postData.hookHTML || '';
   const complementHTML = postData.complementHTML || '';
-  const imgSrc = postData.bgImage || '';
+  const imgSrc = getEffectiveBgImage(postData);
   const device = postData.mockupDevice || 'phone';
   const layout = postData.layout || 'center';
   const overlayColor_ = postData.overlayColor || '#000000';
@@ -14589,6 +15007,37 @@ function renderMockupStyle(postData) {
   `;
 }
 
+function renderSinalStyle(postData) {
+  const imgSrc = getEffectiveBgImage(postData);
+  const hasPhoto = !!imgSrc;
+  const label = (postData.sinalLabel || postData.kicker || 'SINAL').toString().toUpperCase().slice(0, 22);
+  const page = postData.sinalPage || (postData.slideTotal ? `${String((postData.slideIndex || 0) + 1).padStart(2, '0')}/${String(postData.slideTotal).padStart(2, '0')}` : '');
+  const title = postData.sinalTitle || stripHTML(postData.hookHTML || postData.title || '');
+  const support = postData.sinalSupport || stripHTML(postData.complementHTML || '');
+  const bgStyle = hasPhoto
+    ? `style="--sinal-bg-image:url('${imgSrc.replace(/'/g, "\\'")}')"`
+    : '';
+
+  return `
+    <div class="sinal-bg${hasPhoto ? ' has-photo' : ''}" ${bgStyle}></div>
+    ${hasPhoto ? '<div class="sinal-scrim"></div>' : ''}
+    <div class="sinal-topbar">
+      <div class="sinal-label" contenteditable="true" spellcheck="false">${escapeHTML(label)}</div>
+      ${page ? `<div class="sinal-page">${escapeHTML(page)}</div>` : ''}
+    </div>
+    <div class="sinal-content">
+      <div class="sinal-rule"></div>
+      <div class="sinal-title hook" contenteditable="true" spellcheck="false">${escapeHTML(title)}</div>
+      ${support ? `<div class="sinal-support complement" contenteditable="true" spellcheck="false">${escapeHTML(support)}</div>` : ''}
+    </div>
+    <div class="sinal-brand-curve"></div>
+    <div class="sinal-signature">
+      <div class="sinal-site">CROPWARE.APP</div>
+      <div class="sinal-wordmark"><span class="sinal-leaf-mark"></span><span>CROPWARE</span></div>
+    </div>
+  `;
+}
+
 // Aplica estilo, accent, layout e logo no DOM do post. Dispatch por post.style.
 function applyPostVariant(postEl, postData) {
   postData.style = normalizePostStyle(postData.style);
@@ -14637,6 +15086,7 @@ function applyPostVariant(postEl, postData) {
   postEl.style.setProperty('--app-store-offset-x', (postData.appStoreOffsetX == null ? 0 : postData.appStoreOffsetX) + 'px');
   postEl.style.setProperty('--app-store-offset-y', (postData.appStoreOffsetY == null ? 0 : postData.appStoreOffsetY) + 'px');
   postEl.dataset.appStoreEnabled = postData.appStoreEnabled === true ? 'true' : 'false';
+  postEl.classList.toggle('cw-post--sinal', postData.type === 'sinal-post' || postData.type === 'sinal-carousel-slide');
   postEl.dataset.style   = style;
   postEl.dataset.type    = postData.type || '';
   postEl.dataset.naturalHook = useNaturalText ? 'true' : 'false';
@@ -14762,6 +15212,7 @@ function applyPostVariant(postEl, postData) {
     case 'sidelight':       html = renderSignalStyle(postData);      break;
     case 'logo-cropware':   html = renderLogoCropwareStyle(postData); break;
     case 'mockup':          html = renderMockupStyle(postData);      break;
+    case 'sinal':           html = renderSinalStyle(postData);       break;
     case 'flat':
     case 'classic':
     default:                html = renderClassicStyle(postData);
@@ -14900,7 +15351,8 @@ function updatePostControls(idx) {
   post.style = normalizePostStyle(post.style);
   if (isAnyNewsKind(post)) post.style = 'news-editorial';
   if (post.type === 'instagram-flat-post' || isInstagramFlatMode()) post.style = 'flat';
-  const STYLES_LIST = ['classic','flat','classic-2','dashboard','revista','news-editorial','moldura','signal','logo-cropware','mockup'];
+  ensureFlatBulletCardDefaults(post);
+  const STYLES_LIST = ['classic','flat','classic-2','dashboard','revista','news-editorial','moldura','signal','logo-cropware','mockup','sinal'];
   STYLES_LIST.forEach(s => panel.classList.toggle(`style-${s}`, post.style === s));
   const FORMATS_LIST = ['feed','story','square','presentation'];
   FORMATS_LIST.forEach(f => panel.classList.toggle(`format-${f}`, post.format === f));
@@ -14935,7 +15387,9 @@ function updatePostControls(idx) {
 
   // Select de estilo — esconde opções que não são compatíveis com presentation mode
   // No modo news-post, trava no único modelo "Cropware News"
-  const currentStyle = post.style || 'classic';
+  const sinalMode = post.type === 'sinal-post' || post.type === 'sinal-carousel-slide' || isSinalMode();
+  if (sinalMode) post.style = 'sinal';
+  let currentStyle = post.style || 'classic';
   const isLogoCropware = currentStyle === 'logo-cropware';
   const presMode = isPresentationMode();
   const newsMode = isAnyNewsKind(post);
@@ -14969,6 +15423,10 @@ function updatePostControls(idx) {
         const isWeatherOpt = opt.value === 'moldura';
         opt.hidden = !isWeatherOpt;
         opt.disabled = !isWeatherOpt;
+      } else if (sinalMode) {
+        const isSinalOpt = opt.value === 'sinal';
+        opt.hidden = !isSinalOpt;
+        opt.disabled = !isSinalOpt;
       } else if (instagramFlatMode) {
         const isFlatOpt = opt.value === 'flat';
         opt.hidden = !isFlatOpt;
@@ -14990,6 +15448,10 @@ function updatePostControls(idx) {
           // Logo Cropware is its own post type, not a manually selectable model.
           opt.hidden = true;
           opt.disabled = true;
+        } else if (opt.value === 'sinal') {
+          // Sinal is its own additive post type, not a manually selectable model.
+          opt.hidden = true;
+          opt.disabled = true;
         } else if (['signal'].includes(opt.value)) {
           opt.hidden = presMode;
           opt.disabled = presMode;
@@ -15000,6 +15462,7 @@ function updatePostControls(idx) {
       }
     });
     if (weatherMode) styleSelect.value = 'moldura';
+    if (sinalMode) styleSelect.value = 'sinal';
     if (instagramFlatMode) styleSelect.value = 'flat';
     if (newsMode) styleSelect.value = 'news-editorial';
     if (!classic2Allowed && post.style === 'classic-2') {
@@ -15131,13 +15594,17 @@ function updatePostControls(idx) {
   const isColuna = currentStyle === 'coluna';
   const isSpotlight = currentStyle === 'spotlight';
   const isSignal = currentStyle === 'signal' || currentStyle === 'sidelight';
+  const isFlatBulletCards = currentStyle === 'flat' && instagramFlatMode;
+  const showSignalCardControls = (isSignal || isFlatBulletCards) && bulletMode === 'bullets';
   const isMockup = currentStyle === 'mockup';
   const usesOverlay = isClassicStyle(currentStyle) || currentStyle === 'moldura' || isDash || isRevista || isSplit || isColuna || isSpotlight || isSignal || isMockup;
+  const usesBackgroundImage = !isLogoCropware;
   setSubVisible('pcSubOverlayEnabled',     usesOverlay);
   setSubVisible('pcSubOverlayColor',       usesOverlay);
   setSubVisible('pcSubOverlayOpacity',     usesOverlay);
   setSubVisible('pcSubOverlayDirection',   usesOverlay);
-  setSubVisible('pcSubBgImage',            !isLogoCropware);
+  setSubVisible('pcSubImageEnabled',       usesBackgroundImage);
+  setSubVisible('pcSubBgImage',            usesBackgroundImage);
   setSubVisible('pcSubDashCardColor',      isDash || isClassic2);
   setSubVisible('pcSubDashCardOpacity',    isDash || isClassic2);
   setSubVisible('pcSubDashCardBlur',       isDash || isClassic2);
@@ -15178,12 +15645,12 @@ function updatePostControls(idx) {
   setSubVisible('pcSubSpotlightBlur',      isSpotlight);
   setSubVisible('pcSubSpotlightContrast',  isSpotlight);
   setSubVisible('pcSubSignalAlign',        isSignal || isClassicStyle(currentStyle) || isDash || currentStyle === 'moldura');
-  setSubVisible('pcSubSignalCardHeight',   isSignal && bulletMode === 'bullets');
-  setSubVisible('pcSubSignalCardColor',    isSignal && bulletMode === 'bullets');
-  setSubVisible('pcSubSignalCardOpacity',  isSignal && bulletMode === 'bullets');
-  setSubVisible('pcSubSignalCardBlur',     isSignal && bulletMode === 'bullets');
-  setSubVisible('pcSubSignalIconColor',    isSignal && bulletMode === 'bullets');
-  setSubVisible('pcSubSignalIconOpacity',  isSignal && bulletMode === 'bullets');
+  setSubVisible('pcSubSignalCardHeight',   showSignalCardControls);
+  setSubVisible('pcSubSignalCardColor',    showSignalCardControls);
+  setSubVisible('pcSubSignalCardOpacity',  showSignalCardControls);
+  setSubVisible('pcSubSignalCardBlur',     showSignalCardControls);
+  setSubVisible('pcSubSignalIconColor',    showSignalCardControls);
+  setSubVisible('pcSubSignalIconOpacity',  showSignalCardControls);
   setSubVisible('pcSubBlockTextMode',      currentStyle === 'revista' || currentStyle === 'news-editorial' || (!isPresMode && (currentStyle === 'split' || currentStyle === 'coluna' || currentStyle === 'moldura')));
   // Limpa qualquer inline style residual nos subs do Fundo (CSS declarativo via .style-X cuida da visibilidade)
   ['pcSubDashCardColor','pcSubDashCardOpacity','pcSubDashCardBlur','pcSubDashPresScale','pcSubDashPresPosition',
@@ -15192,7 +15659,7 @@ function updatePostControls(idx) {
    'pcSubColunaBlockColor','pcSubColunaSide','pcSubColunaPair','pcSubColunaPhotoPct','pcSubColunaPhotoPos','pcSubColunaShadow',
    'pcSubFrameColor','pcSubGlassOpacity','pcSubGlassBlur',
    'pcSubSpotlightPanelSize','pcSubSpotlightAnchor','pcSubSpotlightBlur','pcSubSpotlightContrast',
-   'pcSubBlockTextMode','pcSubBgImage','pcSubOverlayEnabled','pcSubSignalTexture','pcSubSignalTextureIntensity','pcSubSignalTextureInvert','pcSubSignalTextureBlend','pcSubApplyPhotoTextureToAll'].forEach(id => {
+   'pcSubBlockTextMode','pcSubImageEnabled','pcSubBgImage','pcSubOverlayEnabled','pcSubSignalTexture','pcSubSignalTextureIntensity','pcSubSignalTextureInvert','pcSubSignalTextureBlend','pcSubApplyPhotoTextureToAll'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.removeProperty('display');
   });
@@ -15233,6 +15700,7 @@ function updatePostControls(idx) {
     accentBar:   post.accentBarEnabled   !== false,
     strip:       post.stripEnabled       !== false,
     appStore:    post.appStoreEnabled    === true,
+    image:       isImageActive(post),
     overlay:     isOverlayActive(post),
     signalTexture: !!(post.signalPhotoTexture && post.signalPhotoTexture !== 'none'),
     signalTextureInvert: !!post.signalPhotoTextureInvert,
@@ -15540,6 +16008,7 @@ const STYLE_SECTION_TARGETS = {
 };
 
 const IMAGE_SECTION_SHOW = [
+  'pcSubImageEnabled',
   'pcSubBgImage',
   'pcSubOverlayEnabled', 'pcSubOverlayColor', 'pcSubOverlayOpacity', 'pcSubOverlayDirection',
   'pcSubSignalTexture', 'pcSubSignalTextureIntensity', 'pcSubSignalTextureBlend', 'pcSubSignalTextureInvert',
@@ -16398,6 +16867,7 @@ function initPostControls() {
                   : key === 'accentBar' ? 'accentBarEnabled'
                   : key === 'strip' ? 'stripEnabled'
                   : key === 'appStore' ? 'appStoreEnabled'
+                  : key === 'image' ? 'imageEnabled'
                   : key === 'overlay' ? 'overlayColor'
                   : key === 'splitShadow' ? 'splitShadow'
                   : key === 'colunaShadow' ? 'colunaShadow'
@@ -16476,6 +16946,7 @@ function initPostControls() {
         if (post.complementScale == null) post.complementScale = 1;
       }
       ensureSignalVisualDefaults(post);
+      ensureFlatBulletCardDefaults(post);
       // Classic (modelo padrão / feed) — accent verde brand.
       if (isClassicStyle(post.style) && !(post.style === 'flat' ? post._flatInitialized : post._classicInitialized)) {
         if (!post.accent || post.accent.toLowerCase() === '#7ab87e') post.accent = '#6ac58f';
@@ -16576,11 +17047,11 @@ function initPostControls() {
       // Marca o panel com a classe do estilo atual (sistema declarativo CSS pro painel Fundo)
       const _panel = document.getElementById('postControls');
       if (_panel) {
-        const _STYLES = ['classic','flat','classic-2','dashboard','revista','news-editorial','moldura','signal','logo-cropware','mockup'];
+        const _STYLES = ['classic','flat','classic-2','dashboard','revista','news-editorial','moldura','signal','logo-cropware','mockup','sinal'];
         _STYLES.forEach(s => _panel.classList.toggle(`style-${s}`, post.style === s));
       }
       // Limpa qualquer inline display que possa ter ficado de ajustes anteriores nos subs do Fundo
-      const _legacyBgSubs = ['pcSubDashCardColor','pcSubDashCardOpacity','pcSubDashCardBlur','pcSubDashPresScale','pcSubDashPresPosition','pcSubRevistaBlockColor','pcSubRevistaPair','pcSubRevistaPhotoPct','pcSubRevistaLayout','pcSubRevistaPhotoPos','pcSubRevistaShadow','pcSubSplitBlockColor','pcSubSplitPair','pcSubSplitPhotoPct','pcSubSplitLayout','pcSubSplitPhotoPos','pcSubSplitShadow','pcSubColunaBlockColor','pcSubColunaSide','pcSubColunaPair','pcSubColunaPhotoPct','pcSubColunaPhotoPos','pcSubColunaShadow','pcSubFrameColor','pcSubGlassOpacity','pcSubGlassBlur','pcSubSpotlightPanelSize','pcSubSpotlightAnchor','pcSubSpotlightBlur','pcSubSpotlightContrast','pcSubBlockTextMode','pcSubSignalCardColor','pcSubSignalCardOpacity','pcSubSignalCardBlur','pcSubSignalIconColor','pcSubSignalIconOpacity','pcSubSignalCardHeight','pcSubBgImage','pcSubOverlayEnabled','pcSubSignalTexture','pcSubSignalTextureIntensity','pcSubSignalTextureInvert','pcSubSignalTextureBlend','pcSubApplyPhotoTextureToAll'];
+      const _legacyBgSubs = ['pcSubDashCardColor','pcSubDashCardOpacity','pcSubDashCardBlur','pcSubDashPresScale','pcSubDashPresPosition','pcSubRevistaBlockColor','pcSubRevistaPair','pcSubRevistaPhotoPct','pcSubRevistaLayout','pcSubRevistaPhotoPos','pcSubRevistaShadow','pcSubSplitBlockColor','pcSubSplitPair','pcSubSplitPhotoPct','pcSubSplitLayout','pcSubSplitPhotoPos','pcSubSplitShadow','pcSubColunaBlockColor','pcSubColunaSide','pcSubColunaPair','pcSubColunaPhotoPct','pcSubColunaPhotoPos','pcSubColunaShadow','pcSubFrameColor','pcSubGlassOpacity','pcSubGlassBlur','pcSubSpotlightPanelSize','pcSubSpotlightAnchor','pcSubSpotlightBlur','pcSubSpotlightContrast','pcSubBlockTextMode','pcSubSignalCardColor','pcSubSignalCardOpacity','pcSubSignalCardBlur','pcSubSignalIconColor','pcSubSignalIconOpacity','pcSubSignalCardHeight','pcSubImageEnabled','pcSubBgImage','pcSubOverlayEnabled','pcSubSignalTexture','pcSubSignalTextureIntensity','pcSubSignalTextureInvert','pcSubSignalTextureBlend','pcSubApplyPhotoTextureToAll'];
       _legacyBgSubs.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.removeProperty('display');
@@ -17628,8 +18099,9 @@ function initPostControls() {
       if (!file) return;
       const reader = new FileReader();
       reader.onload = (e) => {
-        pushUndoSnapshot(post, { kind: 'image', bgImage: post.bgImage });
+        pushUndoSnapshot(post, { kind: 'image', bgImage: post.bgImage, imageEnabled: post.imageEnabled });
         post.bgImage = e.target.result;
+        post.imageEnabled = true;
         const postEl = document.getElementById(post.id);
         if (postEl) applyPostVariant(postEl, post);
         updatePostControls(current);
@@ -17985,6 +18457,12 @@ function findPostDataById(elementId) {
   if (fp) return fp;
   const logoPost = logoCropwarePosts.find(p => p.id === elementId);
   if (logoPost) return logoPost;
+  const sp = sinalPosts.find(p => p.id === elementId);
+  if (sp) return sp;
+  for (const c of sinalCarousels) {
+    const s = c.slides.find(s => s.id === elementId);
+    if (s) return s;
+  }
   for (const c of carousels) {
     const s = c.slides.find(s => s.id === elementId);
     if (s) return s;
@@ -18058,9 +18536,21 @@ document.addEventListener('blur', function(e) {
 
     if (target.classList.contains('hook')) {
       postData.hookHTML = clean;
+      if (postData.type === 'sinal-post' || postData.type === 'sinal-carousel-slide') postData.sinalTitle = target.innerText.trim();
     } else {
       postData.complementHTML = clean;
+      if (postData.type === 'sinal-post' || postData.type === 'sinal-carousel-slide') postData.sinalSupport = target.innerText.trim();
     }
+    saveSession();
+    return;
+  }
+
+  if (target.classList.contains('sinal-label') && target.isContentEditable) {
+    const postEl = target.closest('.post');
+    if (!postEl) return;
+    const postData = findPostDataById(postEl.id);
+    if (!postData || !postData.isGenerated) return;
+    postData.sinalLabel = target.innerText.trim().toUpperCase().slice(0, 22);
     saveSession();
     return;
   }
@@ -18222,7 +18712,7 @@ function preBlurImage(src, blurPx) {
       // Desenha maior que o canvas para evitar bordas transparentes do blur
       const pad = scaledBlur * 2;
       ctx.drawImage(img, -pad, -pad, w + pad * 2, h + pad * 2);
-      resolve(c.toDataURL('image/jpeg', 0.85));
+      resolve(c.toDataURL('image/png'));
     };
     img.onerror = () => resolve(null);  // fallback: mantém original
     img.src = src;
@@ -18325,7 +18815,7 @@ function activateGlassLayers(cloneEl, blurredUrl, postW, postH) {
     d.style.setProperty('display', 'block', 'important');
     d.style.setProperty('z-index', '2', 'important');
   });
-  cloneEl.querySelectorAll('.dash-card, .classic2-card, .moldura-glass, .spotlight-panel, .signal-card').forEach(glass => {
+  cloneEl.querySelectorAll('.dash-card, .classic2-card, .moldura-glass, .spotlight-panel, .signal-card, .post-bullet--glass').forEach(glass => {
     Array.from(glass.children).forEach(child => {
       const cls = child.className || '';
       if (cls.includes('-blur') || cls.includes('-inner-overlay') || cls.includes('-tint') || cls.includes('lg-layer')) return;
@@ -18655,9 +19145,10 @@ function _paintPostOverlay(ctx, w, h, postData) {
 // Reusado pelo bake do html2canvas (vai no .bg) e pra base do blur dos cards (signal-card-blur).
 // Se includeOverlay=true, pinta também o post-overlay em cima (matches backdrop-filter do browser).
 function composeSignalPhotoTexture(postData, w, h, includeOverlay = false) {
-  if (!postData.signalPhotoTexture || !postData.bgImage) return null;
+  const bgImage = getEffectiveBgImage(postData);
+  if (!postData.signalPhotoTexture || !bgImage) return null;
   const textureImg = signalPhotoTextureImgCache.get(postData.signalPhotoTexture);
-  const photoImg = signalPhotoBgImgCache.get(postData.bgImage);
+  const photoImg = signalPhotoBgImgCache.get(bgImage);
   if (!(textureImg instanceof HTMLImageElement) || !textureImg.complete) return null;
   if (!(photoImg instanceof HTMLImageElement) || !photoImg.complete) return null;
   const baseOpacity = postData.signalPhotoTextureIntensity != null ? postData.signalPhotoTextureIntensity / 100 : 0.55;
@@ -18691,6 +19182,74 @@ function composeSignalPhotoTexture(postData, w, h, includeOverlay = false) {
   ctx.globalAlpha = 1;
   ctx.globalCompositeOperation = 'source-over';
   // PNG (lossless) preserva detalhe fino da textura — JPEG suaviza grain demais.
+  return canvas.toDataURL('image/png');
+}
+
+function _paintFlatBackgroundBase(ctx, w, h) {
+  const grad = ctx.createLinearGradient(0, 0, w, h);
+  grad.addColorStop(0, '#102118');
+  grad.addColorStop(0.58, '#07110d');
+  grad.addColorStop(1, '#0d2417');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  const r = Math.max(w, h) * 0.34;
+  const radial = ctx.createRadialGradient(w * 0.18, h * 0.12, 0, w * 0.18, h * 0.12, r);
+  radial.addColorStop(0, 'rgba(106,197,143,0.22)');
+  radial.addColorStop(1, 'rgba(106,197,143,0)');
+  ctx.fillStyle = radial;
+  ctx.fillRect(0, 0, w, h);
+}
+
+function composeFlatBackgroundTexture(postData, w, h) {
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  _paintFlatBackgroundBase(ctx, w, h);
+
+  const textureUrl = (postData.signalPhotoTexture || '').trim();
+  if (textureUrl && textureUrl !== 'none') {
+    const textureImg = signalPhotoTextureImgCache.get(textureUrl);
+    if (textureImg instanceof HTMLImageElement && textureImg.complete) {
+      const ov = (typeof SIGNAL_CARD_TEXTURE_OVERRIDES !== 'undefined' && SIGNAL_CARD_TEXTURE_OVERRIDES[textureUrl]) || {};
+      const baseOpacity = postData.signalPhotoTextureIntensity != null
+        ? (postData.signalPhotoTextureIntensity / 100)
+        : (ov.opacity != null ? ov.opacity : 0.55);
+      const opacity = Math.min(1, baseOpacity * 1.15);
+      const rawBlendMode = postData.signalPhotoTextureBlendMode || ov.blendMode || 'overlay';
+      const blendMode = rawBlendMode === 'normal' ? 'source-over' : rawBlendMode;
+      const invert = !!postData.signalPhotoTextureInvert;
+      const tCanvas = document.createElement('canvas');
+      tCanvas.width = w;
+      tCanvas.height = h;
+      const tctx = tCanvas.getContext('2d');
+      _drawCover(tctx, textureImg, 0, 0, w, h);
+      const imgData = tctx.getImageData(0, 0, w, h);
+      const d = imgData.data;
+      for (let i = 0; i < d.length; i += 4) {
+        if (ov.noGrayscale) {
+          if (invert) {
+            d[i] = 255 - d[i];
+            d[i + 1] = 255 - d[i + 1];
+            d[i + 2] = 255 - d[i + 2];
+          }
+        } else {
+          const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+          const v = invert ? (255 - gray) : gray;
+          d[i] = v; d[i + 1] = v; d[i + 2] = v;
+        }
+      }
+      tctx.putImageData(imgData, 0, 0);
+      ctx.globalAlpha = opacity;
+      ctx.globalCompositeOperation = blendMode;
+      ctx.drawImage(tCanvas, 0, 0);
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
+    }
+  }
+
+  _paintPostOverlay(ctx, w, h, postData);
   return canvas.toDataURL('image/png');
 }
 
@@ -18911,6 +19470,9 @@ function bakeLogoCropwareForCapture(cloneEl, postData) {
 // Necessário pra que o backdrop-filter dos bullets sample a textura também (não só a foto).
 function bakeSignalPhotoTextureForCapture(cloneEl, postData) {
   if (!postData.signalPhotoTexture) return;
+  if (postData.type === 'instagram-flat-post' || normalizePostStyle(postData.style) === 'flat') {
+    return;
+  }
   if (postData.style === 'logo-cropware') {
     bakeLogoCropwareForCapture(cloneEl, postData);
     return;
@@ -18926,6 +19488,21 @@ function bakeSignalPhotoTextureForCapture(cloneEl, postData) {
   cloneBg.style.backgroundImage = `url(${dataUrl})`;
   cloneTexture.style.display = 'none';
   const cloneOverlay = cloneEl.querySelector('.post-overlay, .moldura-overlay, .revista-overlay, .split-overlay, .coluna-overlay');
+  if (cloneOverlay) cloneOverlay.style.display = 'none';
+}
+
+function bakeFlatBackgroundForCapture(cloneEl, postData, w, h) {
+  if (!postData || postData.type !== 'instagram-flat-post') return;
+  const cloneBg = cloneEl.querySelector('.bg');
+  if (!cloneBg) return;
+  const dataUrl = composeFlatBackgroundTexture(postData, w * 2, h * 2);
+  cloneBg.style.setProperty('background', `url(${dataUrl}) center / cover no-repeat`, 'important');
+  cloneBg.style.setProperty('background-image', `url(${dataUrl})`, 'important');
+  cloneBg.style.setProperty('background-size', 'cover', 'important');
+  cloneBg.style.setProperty('background-position', 'center center', 'important');
+  const cloneTexture = cloneEl.querySelector('.signal-photo-texture');
+  if (cloneTexture) cloneTexture.style.display = 'none';
+  const cloneOverlay = cloneEl.querySelector('.post-overlay');
   if (cloneOverlay) cloneOverlay.style.display = 'none';
 }
 
@@ -19090,7 +19667,7 @@ async function bootStudio() {
   // Restaura último modo selecionado (persistido no localStorage)
   try {
     const savedMode = localStorage.getItem('cropware-active-mode');
-    const validModes = ['post','instagram-flat-post','carousel','funcionalidades-post','funcionalidades-carousel','logo-cropware-post','previsao-carrossel','news-post','tendencia-carrossel','opiniao-carrossel','boletim-agro-carrossel','instagram-ads-post','instagram-ads-carousel',
+    const validModes = ['post','instagram-flat-post','sinal-post','sinal-carousel','carousel','funcionalidades-post','funcionalidades-carousel','logo-cropware-post','previsao-carrossel','news-post','tendencia-carrossel','opiniao-carrossel','boletim-agro-carrossel','instagram-ads-post','instagram-ads-carousel',
                         'linkedin-post','linkedin-carousel','linkedin-pessoal-post','linkedin-pessoal-carousel',
                         'presentation','motion-reel'];
     if (savedMode && validModes.includes(savedMode) && savedMode !== activeMode) {
@@ -19218,6 +19795,123 @@ async function swapBgsToBlobUrl(postEl, bgImage) {
   };
 }
 
+function waitForHtmlToImage(timeoutMs = 3000) {
+  if (window.htmlToImage) return Promise.resolve(window.htmlToImage);
+  return new Promise((resolve, reject) => {
+    const started = Date.now();
+    const tick = () => {
+      if (window.htmlToImage) {
+        resolve(window.htmlToImage);
+        return;
+      }
+      if (Date.now() - started > timeoutMs) {
+        reject(new Error('html-to-image não carregou a tempo.'));
+        return;
+      }
+      setTimeout(tick, 40);
+    };
+    tick();
+  });
+}
+
+function stabilizeFlatCardsForHtmlToImage(rootEl) {
+  rootEl.querySelectorAll('.post-bullet--glass').forEach(card => {
+    const bg = getComputedStyle(card).backgroundColor || 'rgba(255,255,255,0.12)';
+    card.style.setProperty('background', bg, 'important');
+    card.style.setProperty('backdrop-filter', 'none', 'important');
+    card.style.setProperty('-webkit-backdrop-filter', 'none', 'important');
+    card.style.setProperty('box-shadow', '0 10px 24px rgba(0,0,0,0.16)', 'important');
+  });
+  rootEl.querySelectorAll('.post-bullet--glass .post-bullet-icon').forEach(icon => {
+    const bg = getComputedStyle(icon).backgroundColor || 'rgba(255,255,255,0.10)';
+    icon.style.setProperty('background', bg, 'important');
+    icon.style.setProperty('backdrop-filter', 'none', 'important');
+    icon.style.setProperty('-webkit-backdrop-filter', 'none', 'important');
+  });
+}
+
+function shouldUseHtmlToImageExport(postData) {
+  if (!postData) return false;
+  const rawStyle = postData.style || '';
+  const style = normalizePostStyle(rawStyle);
+  if (postData.type === 'instagram-flat-post') return true;
+  if (postData.type === 'sinal-post' || postData.type === 'sinal-carousel-slide') return true;
+  if (['dashboard', 'moldura', 'signal'].includes(style)) return true;
+  if (['classic-2', 'spotlight', 'sidelight'].includes(rawStyle)) return true;
+  if (postData.signalPhotoTexture && postData.signalPhotoTexture !== 'none') return true;
+  return false;
+}
+
+function buildPngExportName(postData, fallback = 'cropware.png') {
+  const baseFilename = postData.filename || fallback;
+  const filename = postData.format === 'story'
+    ? baseFilename.replace(/\.(jpe?g|png)$/i, '_story.png')
+    : baseFilename;
+  return filename.replace(/\.(jpe?g|png)$/i, '.png');
+}
+
+function stabilizeHtmlToImageClone(rootEl, postData, blurredUrl, postW, postH) {
+  activateGlassLayers(rootEl, blurredUrl, postW, postH);
+  rootEl.querySelectorAll('.lg-layer').forEach(layer => {
+    layer.style.setProperty('backdrop-filter', 'none', 'important');
+    layer.style.setProperty('-webkit-backdrop-filter', 'none', 'important');
+  });
+  bakeSignalPhotoTextureForCapture(rootEl, postData || {});
+  if (postData && postData.type === 'instagram-flat-post') {
+    stabilizeFlatCardsForHtmlToImage(rootEl);
+  }
+}
+
+async function capturePostWithHtmlToImage(postEl, postData, postW, postH, scale, logoDims, blurredUrl = null) {
+  const htmlToImage = await waitForHtmlToImage();
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = [
+    'position:fixed',
+    'left:-100000px',
+    'top:0',
+    `width:${postW}px`,
+    `height:${postH}px`,
+    'overflow:hidden',
+    'background:transparent',
+    'z-index:-1',
+    'pointer-events:none'
+  ].join(';');
+
+  const cloneEl = postEl.cloneNode(true);
+  cloneEl.id = `${postEl.id}-html-to-image-capture`;
+  cloneEl.style.width = `${postW}px`;
+  cloneEl.style.height = `${postH}px`;
+  cloneEl.style.transform = 'none';
+  cloneEl.style.margin = '0';
+  cloneEl.style.visibility = 'visible';
+  cloneEl.querySelectorAll('.safe-zone-guide').forEach(g => g.remove());
+  cloneEl.querySelectorAll('.hook').forEach(h => { h.style.paddingRight = '6px'; });
+
+  wrapper.appendChild(cloneEl);
+  document.body.appendChild(wrapper);
+  try {
+    inlineLogosForCapture(cloneEl, document, logoDims);
+    rasterizePhosphorIcons(cloneEl);
+    stabilizeHtmlToImageClone(cloneEl, postData, blurredUrl, postW, postH);
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const dataUrl = await htmlToImage.toPng(cloneEl, {
+      width: postW,
+      height: postH,
+      pixelRatio: scale,
+      cacheBust: true,
+      style: {
+        width: `${postW}px`,
+        height: `${postH}px`,
+        transform: 'none',
+      },
+    });
+    const resp = await fetch(dataUrl);
+    return await resp.blob();
+  } finally {
+    wrapper.remove();
+  }
+}
+
 // Download
 async function downloadCurrent() {
   const post = getActivePost();
@@ -19267,12 +19961,13 @@ async function downloadCurrent() {
     await new Promise(r => setTimeout(r, 80));
 
     const logoDims = captureLogoDims(postEl);
+    const effectiveBgImage = getEffectiveBgImage(post);
 
     // Preload pra signal/sidelight/logo ANTES do capture — assim textura/blurs ficam consistentes no export.
-    if (post.signalPhotoTexture && (post.bgImage || post.style === 'logo-cropware')) {
+    if (post.signalPhotoTexture && (effectiveBgImage || post.style === 'logo-cropware' || post.type === 'instagram-flat-post')) {
       try {
         const preloadJobs = [preloadSignalPhotoTexture(post.signalPhotoTexture)];
-        if (post.bgImage) preloadJobs.push(preloadSignalPhotoBg(post.bgImage));
+        if (effectiveBgImage) preloadJobs.push(preloadSignalPhotoBg(effectiveBgImage));
         await Promise.all(preloadJobs);
       } catch (_) { /* segue sem bake se falhar */ }
     }
@@ -19289,7 +19984,7 @@ async function downloadCurrent() {
       // Se tem signalPhotoTexture, usa foto+textura composta como base do blur.
       // Senão, usa a foto crua (blob URL same-origin pra evitar CORS com R2).
       let blurInputSrc;
-      if (post.signalPhotoTexture && post.bgImage) {
+      if (post.signalPhotoTexture && effectiveBgImage) {
         // Compõe nas dimensões reais do post (não hardcodar 1080x1080) — moldura usa 1080x1350.
         const composed = composeSignalPhotoTexture(post, postW, postH, true);
         blurInputSrc = composed || blurSrc;
@@ -19303,7 +19998,21 @@ async function downloadCurrent() {
     // Mobile: scale 2 em vez de 4 (limite de ~16M pixels em browsers mobile)
     const exportScale = isMobile() ? 2 : 4;
 
-    const bgSwap = await swapBgsToBlobUrl(postEl, post.bgImage);
+    if (shouldUseHtmlToImageExport(post)) {
+      const htmlToImageBgSwap = await swapBgsToBlobUrl(postEl, effectiveBgImage);
+      try {
+        const exportName = buildPngExportName(post, post.type === 'instagram-flat-post' ? 'cropware_flat.png' : 'cropware.png');
+        const blob = await capturePostWithHtmlToImage(postEl, post, postW, postH, exportScale, logoDims, blurredUrl);
+        downloadBlob(blob, exportName);
+        return;
+      } catch (err) {
+        console.warn('html-to-image export failed; falling back to html2canvas.', err);
+      } finally {
+        htmlToImageBgSwap.restore();
+      }
+    }
+
+    const bgSwap = await swapBgsToBlobUrl(postEl, effectiveBgImage);
 
     const blurSaved = [];
     postEl.querySelectorAll('.dash-card-blur, .classic2-card-blur, .moldura-glass-blur, .premium-glass-blur, .signal-card-blur').forEach(el => {
@@ -19345,6 +20054,7 @@ async function downloadCurrent() {
             rasterizePhosphorIcons(cloneEl);
             bakeNewsTextureForCapture(cloneEl, post);
             bakeSignalPhotoTextureForCapture(cloneEl, post);
+            bakeFlatBackgroundForCapture(cloneEl, post, postW, postH);
           }
         },
       });
@@ -19411,10 +20121,11 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
     const logoDims = captureLogoDims(postEl);
 
     // Preload pra signal/sidelight/logo ANTES do capture — assim textura/blurs ficam consistentes no export.
-    if (slideData.signalPhotoTexture && (slideData.bgImage || slideData.style === 'logo-cropware')) {
+    const effectiveBgImage = getEffectiveBgImage(slideData);
+    if (slideData.signalPhotoTexture && (effectiveBgImage || slideData.style === 'logo-cropware' || slideData.type === 'instagram-flat-post')) {
       try {
         const preloadJobs = [preloadSignalPhotoTexture(slideData.signalPhotoTexture)];
-        if (slideData.bgImage) preloadJobs.push(preloadSignalPhotoBg(slideData.bgImage));
+        if (effectiveBgImage) preloadJobs.push(preloadSignalPhotoBg(effectiveBgImage));
         await Promise.all(preloadJobs);
       } catch (_) { /* segue sem bake se falhar */ }
     }
@@ -19427,7 +20138,7 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
                      slideData.style === 'moldura'   ? Math.round((slideData.glassBlur == null ? 24 : slideData.glassBlur) * 0.9) :
                      slideData.style === 'spotlight' ? (slideData.spotlightBlur  == null ? 22 : slideData.spotlightBlur)  : 24;
       let blurInputSrc;
-      if (slideData.signalPhotoTexture && slideData.bgImage) {
+      if (slideData.signalPhotoTexture && effectiveBgImage) {
         const composed = composeSignalPhotoTexture(slideData, postW, postH, true);
         blurInputSrc = composed || blurSrc;
       } else {
@@ -19437,7 +20148,7 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
       if (blurInputSrc.startsWith('blob:')) URL.revokeObjectURL(blurInputSrc);
     }
 
-    const bgSwap = await swapBgsToBlobUrl(postEl, slideData.bgImage);
+    const bgSwap = await swapBgsToBlobUrl(postEl, effectiveBgImage);
 
     const blurSaved = [];
     postEl.querySelectorAll('.dash-card-blur, .classic2-card-blur, .moldura-glass-blur, .premium-glass-blur, .signal-card-blur').forEach(el => {
@@ -19484,6 +20195,7 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
             rasterizePhosphorIcons(cloneEl);
             bakeNewsTextureForCapture(cloneEl, slideData);
             bakeSignalPhotoTextureForCapture(cloneEl, slideData);
+            bakeFlatBackgroundForCapture(cloneEl, slideData, postW, postH);
           }
         },
       });
@@ -19502,12 +20214,24 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
   }
 }
 
+function getSlideExportExtension(slideData) {
+  return slideData && slideData.type === 'sinal-carousel-slide' ? 'png' : 'jpg';
+}
+
+function getSlideExportMime(slideData) {
+  return getSlideExportExtension(slideData) === 'png' ? 'image/png' : 'image/jpeg';
+}
+
 async function captureSlideAsBlob(slideData) {
   // Mobile: scale 2; Presentation (1920×1080) scale 2 → 3840×2160 4K; Feed/story: scale 4
   const isPres = slideData.format === 'presentation';
   const scale = (isMobile() || isPres) ? 2 : 4;
   const canvas = await captureSlideAsCanvas(slideData, scale);
-  return new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
+  const mime = getSlideExportMime(slideData);
+  return new Promise(resolve => {
+    if (mime === 'image/jpeg') canvas.toBlob(resolve, mime, 0.95);
+    else canvas.toBlob(resolve, mime);
+  });
 }
 
 async function downloadCarousel() {
@@ -19533,8 +20257,9 @@ async function downloadCarousel() {
     for (let i = 0; i < carousel.slides.length; i++) {
       setDownloadProgress(`Exportando slide ${i + 1} de ${carousel.slides.length}...`);
       setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Exportando slide ${i + 1}/${carousel.slides.length}...`, '');
-      const blob = await captureSlideAsBlob(carousel.slides[i]);
-      zip.file(`${filenameTitle} - slide ${i + 1}.jpg`, blob);
+      const slide = carousel.slides[i];
+      const blob = await captureSlideAsBlob(slide);
+      zip.file(`${filenameTitle} - slide ${i + 1}.${getSlideExportExtension(slide)}`, blob);
     }
 
     setDownloadProgress('Compactando arquivos...');
@@ -19950,6 +20675,7 @@ function openGenerator() {
   const platform = getPlatform();
   const isAds = isInstagramAdsMode();
   const isFlat = isInstagramFlatMode();
+  const isSinal = isSinalMode();
   const isNews = isNewsMode();
   const isFeature = isFeatureMode();
   const isLogoCropware = isLogoCropwareMode();
@@ -19959,7 +20685,7 @@ function openGenerator() {
   document.getElementById('genModal').classList.add('open');
   wireGenChipsOnce();
   resetGenChips();
-  if (isWeather) {
+  if (isWeather || isSinal) {
     const noPeopleChip = document.querySelector('#genChips .gen-chip[data-chip="no-people"]');
     if (noPeopleChip) noPeopleChip.classList.add('active');
   }
@@ -19972,6 +20698,8 @@ function openGenerator() {
   else if (isAds && isCarousel) headerSpan.textContent = 'Instagram Ads — Gerar Carrossel com IA';
   else if (isAds) headerSpan.textContent = 'Instagram Ads — Gerar Anuncio com IA';
   else if (isFlat && headerSpan) headerSpan.textContent = 'Instagram Flat — Gerar Post';
+  else if (isSinal && isCarousel && headerSpan) headerSpan.textContent = 'Sinal — Gerar Carrossel';
+  else if (isSinal && headerSpan) headerSpan.textContent = 'Sinal — Gerar Post';
   else if (isLogoCropware && headerSpan) headerSpan.textContent = 'Logo Cropware — Gerar Capa';
   else if (isFeature && isCarousel && headerSpan) headerSpan.textContent = 'Funcionalidades — Gerar Carrossel';
   else if (isFeature && headerSpan) headerSpan.textContent = 'Funcionalidades — Gerar Post';
@@ -19985,6 +20713,8 @@ function openGenerator() {
   if (genBtn && isAds && !isCarousel) genBtn.textContent = 'Gerar Anuncio';
   if (genBtn && isAds && isCarousel) genBtn.textContent = 'Gerar Carrossel de Anuncios';
   if (genBtn && isFlat) genBtn.textContent = 'Gerar Instagram Flat';
+  if (genBtn && isSinal && !isCarousel) genBtn.textContent = 'Gerar Sinal';
+  if (genBtn && isSinal && isCarousel) genBtn.textContent = 'Gerar Carrossel Sinal';
   if (genBtn && isLogoCropware) genBtn.textContent = 'Gerar Logo';
   if (genBtn && isFeature && isCarousel) genBtn.textContent = 'Gerar Carrossel';
   else if (genBtn && isFeature) genBtn.textContent = 'Gerar Post';
@@ -19999,6 +20729,7 @@ function openGenerator() {
     else if (isMotionReel) themeLabel.textContent = 'Tema / Contexto do Reel';
     else if (isLogoCropware) themeLabel.textContent = 'Destaque / Uso do Logo';
     else if (isFlat) themeLabel.textContent = 'Tema / Contexto do Flat';
+    else if (isSinal) themeLabel.textContent = 'Tema / Pilar do Sinal';
     else if (isFeature) themeLabel.textContent = 'Tema / Cultura / Contexto (opcional)';
     else if (isOpinion) themeLabel.textContent = 'Tema da análise';
     else if (isNews && isCarousel) themeLabel.textContent = 'Tema da tendência';
@@ -20011,6 +20742,8 @@ function openGenerator() {
     ? 'Ex: milho safrinha, NDVI em soja, previsão climática para tomada de decisão...'
     : isLogoCropware
     ? 'Ex: funcionalidades, previsão do tempo, NDVI, análises, agenda, relatórios...'
+    : isSinal
+    ? 'Ex: especialidades como correcao de gargalo; rastreabilidade em areas demonstrativas...'
     : isFeature
     ? 'Ex: soja, área de GD em milho, rotina de consultoria, safra de algodão...'
     : isOpinion
@@ -20043,7 +20776,7 @@ function openGenerator() {
   // News-carousel só aceita 3 / 5 / 7. Default 5.
   const slideCountSelect = document.getElementById('genSlideCount');
   if (slideCountSelect) {
-    const validOptions = (isNews && isCarousel) ? ['3', '5', '7'] : null;
+    const validOptions = (isSinal && isCarousel) ? ['5'] : (isNews && isCarousel) ? ['3', '5', '7'] : null;
     if (validOptions) {
       Array.from(slideCountSelect.options).forEach(opt => {
         opt.hidden = !validOptions.includes(opt.value);
@@ -20893,6 +21626,80 @@ function buildCropwarePositioningContext(channel) {
 
 const REVISTA_BLOCK_DEFAULT = '#2B452D';
 
+function buildSinalPostSystemPrompt() {
+  return `Voce e o redator do tipo de post "Sinal" do Cropware.
+
+Categoria: Sinal. Posicionamento 2026: "Menos ruido. Mais campo."
+Cada peca tem UMA ideia, dita com clareza, sobre fundo rural cinematografico ou grafite.
+
+CONTEXTO CROPWARE:
+- Plataforma digital para agronomos e desenvolvimento de mercado.
+- Foco: gestao de campo, talhoes, geracao de demanda, relatorios tecnicos e rastreabilidade.
+- Publico: agronomos, consultores, canais, desenvolvimento de mercado.
+
+REGRAS DE ESCRITA:
+- Tom consultivo e tecnico na medida. Credibilidade, nao hype.
+- Frases curtas. Texto enxuto. Sem emoji na arte.
+- Use "especialidades" em vez de "nutricao vegetal".
+- Gancho factual ou provocacao tecnica; nunca clickbait.
+- Portugues do Brasil.
+- Fechamento/micro-CTA leve pode entrar na legenda, nao precisa estar na arte.
+
+ARTE DO POST UNICO:
+- rotulo_mono: ate 22 caracteres, UPPERCASE.
+- titulo: ate 60 caracteres, curto, uma ideia.
+- apoio: ate 110 caracteres, opcional, no maximo 2 linhas.
+- imagePrompt: em ingles, sem pessoas, sem texto, sem logos, com zona limpa para texto no lower third.
+
+LEGENDA:
+- 2 a 4 frases curtas.
+- Pode terminar com micro-CTA leve: "Veja no start.cropware.com.br".
+- Sem hashtags em excesso.
+
+Responda SOMENTE JSON valido:
+{
+  "rotulo_mono": "ESPECIALIDADES",
+  "titulo": "Uma ideia curta para a arte.",
+  "apoio": "Subtexto curto de apoio.",
+  "title": "titulo curto para sidebar",
+  "legend": "Legenda curta.",
+  "hashtags": "#Cropware #DesenvolvimentoDeMercado",
+  "imagePrompt": "wide cinematic shot, 4:5 aspect ratio..."
+}`;
+}
+
+function buildSinalCarouselSystemPrompt(slideCount) {
+  return `Voce e o redator do tipo de post "Sinal" do Cropware.
+
+Crie um carrossel Sinal de ${slideCount || 5} cards. A categoria e aditiva, minimalista e tecnica.
+Cada card deve ter UMA ideia. Nada de hype, emojis ou texto longo.
+
+CONTEXTO CROPWARE:
+- Plataforma digital para agronomos e desenvolvimento de mercado.
+- Foco: gestao de campo, talhoes, geracao de demanda, relatorios tecnicos e rastreabilidade.
+- Publico: agronomos, consultores, canais, desenvolvimento de mercado.
+
+REGRAS:
+- Use "especialidades" em vez de "nutricao vegetal".
+- rotulo_mono ate 22 caracteres, UPPERCASE.
+- Capa: gancho ate 48 caracteres.
+- Cards 2 a 4: titulo ate 40 caracteres; apoio ate 90 caracteres.
+- Card 5: frase de sintese + micro-CTA leve.
+- Todos os textos devem ser enxutos e visualmente consistentes.
+- imagePrompt sempre em ingles, sem pessoas, sem texto, sem logos, com zona limpa para texto no lower third.
+
+Responda SOMENTE JSON valido:
+{
+  "title": "titulo curto do carrossel",
+  "legend": "legenda curta do carrossel",
+  "hashtags": "#Cropware #DesenvolvimentoDeMercado",
+  "slides": [
+    {"rotulo_mono":"ESPECIALIDADES","titulo":"Gancho curto da capa.","apoio":"","imagePrompt":"wide cinematic shot, 4:5 aspect ratio..."},
+    {"rotulo_mono":"ESPECIALIDADES","titulo":"O gargalo invisivel","apoio":"Apoio curto com uma ideia tecnica.","imagePrompt":"slow low-angle shot, 4:5 aspect ratio..."}
+  ]
+}`;
+}
+
 function buildInstagramAdsSystemPrompt(tone) {
   const toneDirectives = {
     casual:      'TOM: direto, claro e proximo do campo, sem parecer post organico.',
@@ -21474,8 +22281,10 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
     ? buildFeaturePostSystemPrompt(tone)
     : platform === 'instagram-flat'
     ? buildInstagramFlatSystemPrompt(tone)
+    : platform === 'sinal'
+    ? buildSinalPostSystemPrompt()
     : buildSystemPrompt(tone);
-  const platformLabel = platform === 'linkedin-pessoal' ? 'LinkedIn' : platform === 'linkedin' ? 'LinkedIn' : platform === 'news' ? 'Post Notícia' : platform === 'instagram-flat' ? 'Instagram Flat' : platform === 'features' ? 'Instagram' : 'Instagram';
+  const platformLabel = platform === 'linkedin-pessoal' ? 'LinkedIn' : platform === 'linkedin' ? 'LinkedIn' : platform === 'news' ? 'Post Notícia' : platform === 'instagram-flat' ? 'Instagram Flat' : platform === 'sinal' ? 'Sinal' : platform === 'features' ? 'Instagram' : 'Instagram';
   const brandLabel = platform === 'linkedin-pessoal' ? '' : ' da Cropware';
   const directionSuffix = extraDirection && extraDirection.trim()
     ? `\n\nDireção adicional do usuário: ${extraDirection.trim()}`
@@ -21632,6 +22441,7 @@ async function generatePost() {
   const platform  = getPlatform();
   const isAds     = platform === 'instagram-ads';
   const isFlat    = platform === 'instagram-flat';
+  const isSinal   = platform === 'sinal';
   const isLogoCropware = platform === 'logo-cropware';
   const isNews    = platform === 'news';
   const isFeature = platform === 'features';
@@ -21836,6 +22646,24 @@ async function generatePost() {
       postData.overlayOpacity = 0;
       postData.overlayDirection = 'full';
       postData.bulletDisplayMode = 'bullets';
+    }
+    else if (platform === 'sinal') {
+      postData.type = 'sinal-post';
+      postData.style = 'sinal';
+      postData.format = 'feed';
+      postData.sub = 'Sinal';
+      postData.title = parsed.title || parsed.titulo || theme || 'Sinal gerado';
+      postData.filename = `cropware_sinal_${timestamp}.png`;
+      postData.sinalLabel = (parsed.rotulo_mono || parsed.rotuloMono || 'SINAL').toString().toUpperCase().slice(0, 22);
+      postData.sinalTitle = (parsed.titulo || parsed.title || '').toString().trim();
+      postData.sinalSupport = (parsed.apoio || parsed.support || '').toString().trim();
+      postData.hookHTML = postData.sinalTitle;
+      postData.complementHTML = postData.sinalSupport;
+      postData.bullets = [];
+      postData.logoEnabled = false;
+      postData.siteEnabled = false;
+      postData.accentBarEnabled = false;
+      postData.stripEnabled = false;
     }
     else if (platform === 'features') {
       postData.type = 'feature-post';
@@ -22787,6 +23615,8 @@ async function callGeminiCarouselText(theme, tone, slideCount, userImageBase64, 
     ? buildLinkedInCarouselSystemPrompt(tone, slideCount)
     : platform === 'instagram-ads'
     ? buildInstagramAdsCarouselSystemPrompt(tone, slideCount)
+    : platform === 'sinal'
+    ? buildSinalCarouselSystemPrompt(slideCount)
     : platform === 'features'
     ? buildFeatureCarouselSystemPrompt(tone, slideCount)
     : buildCarouselSystemPrompt(tone, slideCount);
@@ -23925,6 +24755,7 @@ async function generateCarousel() {
   const platform   = getPlatform();
   const isAds      = isInstagramAdsMode();
   const isFeature  = platform === 'features';
+  const isSinal    = platform === 'sinal';
   const cfg        = getActiveDesignConfig();
   const tone       = cfg.tone || 'casual';
   const slideCount = Number(document.getElementById('genSlideCount').value) || 4;
@@ -23976,8 +24807,9 @@ async function generateCarousel() {
         slideId:  `slide-carousel-${timestamp}-${i}`,
         title:    `Slide ${i + 1}`,
         sub:      'Carrossel',
-        filename: isFeature ? `cropware_funcionalidade_${timestamp}_${i + 1}.jpg` : `cropware_carrossel_${timestamp}_${i + 1}.jpg`,
-        type:     isFeature ? 'feature-carousel-slide' : undefined,
+        filename: isSinal ? `cropware_sinal_${timestamp}_${i + 1}.png` : isFeature ? `cropware_funcionalidade_${timestamp}_${i + 1}.jpg` : `cropware_carrossel_${timestamp}_${i + 1}.jpg`,
+        type:     isSinal ? 'sinal-carousel-slide' : isFeature ? 'feature-carousel-slide' : undefined,
+        style:    isSinal ? 'sinal' : undefined,
         isGenerated:    true,
         bgImage:        `data:${imgMime};base64,${imgBase64}`,
         theme:          theme,
@@ -23989,6 +24821,11 @@ async function generateCarousel() {
         naturalHook:    usesNaturalHookPlatform(platform),
         hookHTML:       (s.hook       || '').replace(/\n/g, '<br>'),
         complementHTML: (s.complement || '').replace(/\n/g, '<br>'),
+        sinalLabel:     isSinal ? (s.rotulo_mono || s.rotuloMono || 'SINAL').toString().toUpperCase().slice(0, 22) : undefined,
+        sinalTitle:     isSinal ? (s.titulo || s.hook || '').toString().trim() : undefined,
+        sinalSupport:   isSinal ? (s.apoio || s.complement || '').toString().trim() : undefined,
+        sinalPage:      isSinal ? `${String(i + 1).padStart(2, '0')}/${String(slides.length).padStart(2, '0')}` : undefined,
+        slideTotal:     isSinal ? slides.length : undefined,
         bullets:        Array.isArray(s.bullets) ? s.bullets.slice(0, 3) : [],
         bulletDisplayMode: 'bullets',
         supportTextContinuous: s.supportTextContinuous || '',
@@ -24015,11 +24852,11 @@ async function generateCarousel() {
       legendsArr.splice(oldestIdx, 1);
     }
 
-    const carouselType = platform === 'instagram-ads' ? 'instagram-ads-carousel' : platform === 'features' ? 'feature-carousel' : platform === 'linkedin-pessoal' ? 'linkedin-pessoal-carousel' : platform === 'linkedin' ? 'linkedin-carousel' : 'carousel';
+    const carouselType = platform === 'instagram-ads' ? 'instagram-ads-carousel' : platform === 'sinal' ? 'sinal-carousel' : platform === 'features' ? 'feature-carousel' : platform === 'linkedin-pessoal' ? 'linkedin-pessoal-carousel' : platform === 'linkedin' ? 'linkedin-carousel' : 'carousel';
     const carouselData = {
       id:          `carousel-gen-${timestamp}`,
       type:        carouselType,
-      title:       parsed.title || (isAds ? 'Anuncio gerado' : isFeature ? selectedFeature.name : 'Carrossel gerado'),
+      title:       parsed.title || (isAds ? 'Anuncio gerado' : isSinal ? 'Sinal gerado' : isFeature ? selectedFeature.name : 'Carrossel gerado'),
       theme:       theme,
       featureId:   selectedFeature ? selectedFeature.id : undefined,
       featureName: selectedFeature ? selectedFeature.name : undefined,
@@ -25514,8 +26351,9 @@ async function regenerateImage() {
   try {
     const aspectRatio = post.format === 'presentation' ? '16:9' : (post.format === 'story' ? '9:16' : '4:5');
     const img = await callGeminiImage(imagePrompt, '', aspectRatio);
-    pushUndoSnapshot(post, { kind: 'image', bgImage: post.bgImage });
+    pushUndoSnapshot(post, { kind: 'image', bgImage: post.bgImage, imageEnabled: post.imageEnabled });
     post.bgImage = `data:${img.mime};base64,${img.base64}`;
+    post.imageEnabled = true;
     post._imageRegenerated = true;
     const postEl = document.getElementById(post.id);
     if (postEl) applyPostVariant(postEl, post);
@@ -28512,6 +29350,147 @@ const MR_MUSIC_TRACKS = [
 ];
 window.MR_MUSIC_TRACKS = MR_MUSIC_TRACKS;
 
+let _mrMusicPreviewAudio = null;
+let _mrMusicPreviewTrackId = '';
+let _mrMusicPreviewRaf = 0;
+
+function formatMotionReelMusicTime(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) return '0:00';
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${String(secs).padStart(2, '0')}`;
+}
+
+function ensureMotionReelMusicPreviewAudio(track) {
+  if (!_mrMusicPreviewAudio) {
+    _mrMusicPreviewAudio = new Audio();
+    _mrMusicPreviewAudio.preload = 'metadata';
+    _mrMusicPreviewAudio.volume = 0.7;
+    _mrMusicPreviewAudio.addEventListener('loadedmetadata', syncMotionReelMusicPreviewUI);
+    _mrMusicPreviewAudio.addEventListener('timeupdate', syncMotionReelMusicPreviewUI);
+    _mrMusicPreviewAudio.addEventListener('play', () => {
+      syncMotionReelMusicPreviewUI();
+      startMotionReelMusicPreviewTicker();
+    });
+    _mrMusicPreviewAudio.addEventListener('pause', () => {
+      stopMotionReelMusicPreviewTicker();
+      syncMotionReelMusicPreviewUI();
+    });
+    _mrMusicPreviewAudio.addEventListener('ended', () => {
+      stopMotionReelMusicPreviewTicker();
+      syncMotionReelMusicPreviewUI();
+    });
+  }
+  if (_mrMusicPreviewTrackId !== track.id) {
+    _mrMusicPreviewAudio.pause();
+    _mrMusicPreviewAudio.src = track.url;
+    _mrMusicPreviewTrackId = track.id;
+    _mrMusicPreviewAudio.currentTime = 0;
+    syncMotionReelMusicPreviewUI();
+  }
+  return _mrMusicPreviewAudio;
+}
+
+function startMotionReelMusicPreviewTicker() {
+  if (_mrMusicPreviewRaf) return;
+  const tick = () => {
+    _mrMusicPreviewRaf = 0;
+    syncMotionReelMusicPreviewUI();
+    if (_mrMusicPreviewAudio && !_mrMusicPreviewAudio.paused && !_mrMusicPreviewAudio.ended) {
+      _mrMusicPreviewRaf = requestAnimationFrame(tick);
+    }
+  };
+  _mrMusicPreviewRaf = requestAnimationFrame(tick);
+}
+
+function stopMotionReelMusicPreviewTicker() {
+  if (!_mrMusicPreviewRaf) return;
+  cancelAnimationFrame(_mrMusicPreviewRaf);
+  _mrMusicPreviewRaf = 0;
+}
+
+function syncMotionReelMusicPreviewUI() {
+  MR_MUSIC_TRACKS.forEach(track => {
+    const card = document.getElementById(`mrMusicCard-${track.id}`);
+    const icon = document.getElementById(`mrMusicPlayIcon-${track.id}`);
+    const fill = document.getElementById(`mrMusicProgress-${track.id}`);
+    const time = document.getElementById(`mrMusicTime-${track.id}`);
+    const isCurrent = _mrMusicPreviewTrackId === track.id && _mrMusicPreviewAudio;
+    const isPlaying = Boolean(isCurrent && !_mrMusicPreviewAudio.paused && !_mrMusicPreviewAudio.ended);
+    const currentTime = isCurrent ? _mrMusicPreviewAudio.currentTime : 0;
+    const duration = isCurrent ? _mrMusicPreviewAudio.duration : 0;
+    const progress = Number.isFinite(duration) && duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
+    if (card) card.classList.toggle('ds-track-card--playing', isPlaying);
+    if (icon) icon.className = `ph ph-${isPlaying ? 'pause' : 'play'}`;
+    if (fill) fill.style.width = `${progress}%`;
+    if (time) {
+      time.textContent = Number.isFinite(duration) && duration > 0
+        ? `${formatMotionReelMusicTime(currentTime)} / ${formatMotionReelMusicTime(duration)}`
+        : formatMotionReelMusicTime(currentTime);
+    }
+  });
+}
+
+function stopMotionReelMusicPreview(reset = false) {
+  stopMotionReelMusicPreviewTicker();
+  if (_mrMusicPreviewAudio) {
+    _mrMusicPreviewAudio.pause();
+    if (reset) _mrMusicPreviewAudio.currentTime = 0;
+  }
+  if (reset) _mrMusicPreviewTrackId = '';
+  syncMotionReelMusicPreviewUI();
+}
+
+function toggleMotionReelMusicPreview(trackId, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  const track = MR_MUSIC_TRACKS.find(t => t.id === trackId);
+  if (!track) return;
+  const audio = ensureMotionReelMusicPreviewAudio(track);
+  if (!audio.paused && _mrMusicPreviewTrackId === trackId) {
+    audio.pause();
+    return;
+  }
+  audio.play().catch(() => {
+    stopMotionReelMusicPreview(false);
+  });
+}
+
+function seekMotionReelMusicPreview(trackId, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  const track = MR_MUSIC_TRACKS.find(t => t.id === trackId);
+  if (!track) return;
+  const target = event && event.currentTarget ? event.currentTarget : null;
+  const rect = target ? target.getBoundingClientRect() : null;
+  const ratio = rect && rect.width
+    ? Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width))
+    : 0;
+  const audio = ensureMotionReelMusicPreviewAudio(track);
+  const applySeek = () => {
+    const duration = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 0;
+    if (duration) audio.currentTime = duration * ratio;
+    syncMotionReelMusicPreviewUI();
+  };
+  if (Number.isFinite(audio.duration) && audio.duration > 0) {
+    applySeek();
+  } else {
+    audio.addEventListener('loadedmetadata', applySeek, { once: true });
+    audio.load();
+  }
+}
+
+function handleMotionReelTrackKey(event, trackId) {
+  if (!event || (event.key !== 'Enter' && event.key !== ' ')) return;
+  if (event.target && event.currentTarget && event.target !== event.currentTarget) return;
+  event.preventDefault();
+  selectMotionReelMusicTrack(trackId);
+}
+
 function openMotionReelMusicDialog() {
   const dialog = document.getElementById('mrMusicDialog');
   const list = document.getElementById('mrMusicTrackList');
@@ -28521,19 +29500,32 @@ function openMotionReelMusicDialog() {
   list.innerHTML = MR_MUSIC_TRACKS.map(t => {
     const active = t.url === currentUrl;
     return `
-    <button type="button" class="ds-track-card${active ? ' ds-track-card--active' : ''}" onclick="selectMotionReelMusicTrack('${t.id}')">
+    <div id="mrMusicCard-${t.id}" class="ds-track-card${active ? ' ds-track-card--active' : ''}" role="button" tabindex="0" onclick="selectMotionReelMusicTrack('${t.id}')" onkeydown="handleMotionReelTrackKey(event, '${t.id}')">
       <i class="ph ph-music-note ds-track-card__icon"></i>
       <div class="ds-track-card__body">
         <div class="ds-track-card__title">${t.label}</div>
         <div class="ds-track-card__desc">${t.description || ''}</div>
+        <div class="ds-track-card__preview" onclick="event.stopPropagation()">
+          <button type="button" class="ds-track-card__play" onclick="toggleMotionReelMusicPreview('${t.id}', event)" aria-label="Prévia de ${t.label}">
+            <i id="mrMusicPlayIcon-${t.id}" class="ph ph-play"></i>
+          </button>
+          <button type="button" class="ds-track-card__progress" onclick="seekMotionReelMusicPreview('${t.id}', event)" aria-label="Avançar prévia de ${t.label}">
+            <span class="ds-track-card__progress-track">
+              <span id="mrMusicProgress-${t.id}" class="ds-track-card__progress-fill"></span>
+            </span>
+          </button>
+          <span id="mrMusicTime-${t.id}" class="ds-track-card__time">0:00</span>
+        </div>
       </div>
       ${active ? '<i class="ph ph-check-circle-fill ds-track-card__check"></i>' : ''}
-    </button>`;
+    </div>`;
   }).join('');
   dialog.classList.add('open');
+  syncMotionReelMusicPreviewUI();
 }
 
 function closeMotionReelMusicDialog() {
+  stopMotionReelMusicPreview(true);
   const dialog = document.getElementById('mrMusicDialog');
   if (dialog) dialog.classList.remove('open');
 }
@@ -28541,6 +29533,7 @@ function closeMotionReelMusicDialog() {
 function selectMotionReelMusicTrack(trackId) {
   const track = MR_MUSIC_TRACKS.find(t => t.id === trackId);
   if (!track) return;
+  stopMotionReelMusicPreview(true);
   const reel = motionReels[currentMotionReel];
   const cfg = getActiveMotionReelConfig();
   if (!cfg) return;
@@ -28571,6 +29564,9 @@ window.closeMotionReelScenePreview = closeMotionReelScenePreview;
 window.openMotionReelMusicDialog = openMotionReelMusicDialog;
 window.closeMotionReelMusicDialog = closeMotionReelMusicDialog;
 window.selectMotionReelMusicTrack = selectMotionReelMusicTrack;
+window.toggleMotionReelMusicPreview = toggleMotionReelMusicPreview;
+window.seekMotionReelMusicPreview = seekMotionReelMusicPreview;
+window.handleMotionReelTrackKey = handleMotionReelTrackKey;
 
 </script>
 
