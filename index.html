@@ -16541,7 +16541,17 @@ function pastePostStyle() {
   const panel = document.getElementById('postControls');
   if (panel && panel._showPanelFn) panel._showPanelFn(post);
   else updateStyleSectionPicker();
-  saveSession();
+  // Salva apenas o post alvo via Supabase direto — evita o stale R2 cleanup
+  // que o saveSession() completo dispara pra todos os posts da sessão.
+  try {
+    if (typeof sb !== 'undefined' && post.id) {
+      sb.from('cropware_posts')
+        .update({ post_data: post })
+        .eq('session_id', getSessionId())
+        .eq('post_data->>id', post.id)
+        .then(() => {});
+    }
+  } catch(e) { console.warn('[pastePostStyle] save error:', e); }
   // Feedback visual
   if (postEl) {
     postEl.style.outline = '3px solid #6ac58f';
