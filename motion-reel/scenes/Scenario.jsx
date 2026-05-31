@@ -113,7 +113,7 @@ export const Scenario = ({ kicker, scenario, theme, bgImage, bgImageBlur, bgOver
             toEm={T.kickerLetterSpacingTo ?? 0.06}
             style={{
               fontFamily: MR_FONTS.caps,
-              fontSize: T.kickerFontSize || 56,
+              fontSize: T.kickerFontSize || 72,
               fontWeight: 400,
               lineHeight: 1.18,
               maxWidth: T.kickerMaxWidth || 920,

@@ -135,7 +135,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
             toEm={T.kickerLetterSpacingTo ?? 0.06}
             style={{
               fontFamily: MR_FONTS.caps,
-              fontSize: T.kickerFontSize || 56,
+              fontSize: T.kickerFontSize || 72,
               fontWeight: 400,
               lineHeight: 1.18,
               maxWidth: T.kickerMaxWidth || 760,
@@ -165,10 +165,10 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
         {title ? (
           <div style={{
             fontFamily: MR_FONTS.display,
-            fontSize: T.titleFontSize || 82,
-            fontWeight: 700,
-            lineHeight: 1,
-            letterSpacing: '-0.03em',
+            fontSize: T.titleFontSize || 76,
+            fontWeight: 500,
+            lineHeight: 1.18,
+            letterSpacing: '-0.025em',
             maxWidth: T.titleMaxWidth || 1020,
             color: T.fg,
             overflowWrap: 'break-word',

@@ -1,6 +1,6 @@
 // Cena 12 — END CARD (locked, hardcoded).
 // Fundo branco, logo Cropware tintada em greenAccent (via CSS mask), tagline
-// em slateAbyss, Instagram CTA card animado (perfil à esquerda, botão à direita).
+// em slateAbyss, Instagram badge animado (pill expand + handle text).
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, Easing, staticFile, spring } from 'remotion';
 import { MR_COLORS, MR_FONTS } from '../theme.js';
 import { LottieAsset, EASE } from '../helpers.jsx';
@@ -21,26 +21,7 @@ export const EndCard = ({ start, end, theme = {} }) => {
     easing: Easing.bezier(0.22, 1, 0.36, 1),
   });
 
-  // CTA card: spring-up entrada (delay 1.2s, mola firme com bounce).
-  const ctaSpring = spring({
-    frame: frame - 1.2 * fps,
-    fps,
-    config: { damping: 12, stiffness: 110, mass: 0.9 },
-  });
-  // Botão "Seguir" press-in: fica pressionado entre 1.9-2.1s, depois bounce.
-  const pressIn = interpolate(frame, [1.9 * fps, 2.05 * fps], [1, 0.92], {
-    extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
-    easing: Easing.bezier(0.4, 0, 0.2, 1),
-  });
-  const release = spring({
-    frame: frame - 2.05 * fps,
-    fps,
-    config: { damping: 8, stiffness: 180, mass: 0.7 },
-  });
-  const buttonScale = frame < 2.05 * fps
-    ? pressIn
-    : 0.92 + 0.08 * release;
-  const isFollowing = frame >= 2.05 * fps;
+  // App Store badge shine
   const badgeSpring = spring({
     frame: frame - 2.45 * fps,
     fps,
@@ -60,7 +41,7 @@ export const EndCard = ({ start, end, theme = {} }) => {
       flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       padding: '0 80px', gap: 44, fontFamily: MR_FONTS.display,
     }}>
-      {/* Logo Cropware tintada em greenAccent (CSS mask + bg verde). */}
+      {/* Logo Cropware tintada em greenAccent */}
       <div style={{
         width: 560, height: 140,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -68,16 +49,12 @@ export const EndCard = ({ start, end, theme = {} }) => {
         transform: `scale(${0.92 + 0.08 * logoP})`,
       }}>
         <div style={{
-          width: '100%',
-          height: '100%',
+          width: '100%', height: '100%',
           WebkitMaskImage: `url('${staticFile(LOGO_URL)}')`,
           maskImage: `url('${staticFile(LOGO_URL)}')`,
-          WebkitMaskSize: 'contain',
-          maskSize: 'contain',
-          WebkitMaskPosition: 'center',
-          maskPosition: 'center',
-          WebkitMaskRepeat: 'no-repeat',
-          maskRepeat: 'no-repeat',
+          WebkitMaskSize: 'contain', maskSize: 'contain',
+          WebkitMaskPosition: 'center', maskPosition: 'center',
+          WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
           background: T.logoColor || MR_COLORS.greenAccent,
         }} />
       </div>
@@ -88,77 +65,14 @@ export const EndCard = ({ start, end, theme = {} }) => {
         color={T.fg || MR_COLORS.slateAbyss}
       />
 
-      {/* Instagram-style CTA card — row layout: perfil à esquerda, botão à direita. */}
-      <div style={{
-        background: T.cardBg || MR_COLORS.white,
-        borderRadius: 32,
-        padding: '28px 36px',
-        width: 880,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 24,
-        boxShadow: 'none',
-        border: '1px solid rgba(15,23,42,0.20)',
-        opacity: ctaSpring,
-        transform: `translateY(${(1 - ctaSpring) * 80}px) scale(${0.94 + 0.06 * ctaSpring})`,
-        marginTop: 12,
-      }}>
-        {/* ESQUERDA: avatar + handle */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexShrink: 0 }}>
-          <div style={{
-            width: 88, height: 88, borderRadius: '50%',
-            background: T.avatarBg || MR_COLORS.white,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: `3px solid ${T.avatarBg || MR_COLORS.white}`,
-            boxShadow: `0 0 0 2px ${T.avatarRing || '#c9c9c9'}`,
-            flexShrink: 0,
-            overflow: 'hidden',
-          }}>
-            <LottieAsset
-              src="lottie/instagram.json"
-              size={76}
-              delay={0}
-              playbackRate={1.0}
-              loop
-              tint={null}
-            />
-          </div>
-          <div style={{
-            fontFamily: MR_FONTS.display, fontSize: 42, fontWeight: 700,
-            letterSpacing: '-0.02em', color: T.handleColor || '#111111', lineHeight: 1,
-          }}>{HANDLE}</div>
-        </div>
-        {/* DIREITA: botão Seguir / Seguindo */}
-        <div style={{
-          background: isFollowing ? (T.followingBg || MR_COLORS.fog) : (T.buttonBg || MR_COLORS.greenAccent),
-          color: isFollowing ? (T.followingFg || '#111111') : (T.buttonFg || MR_COLORS.white),
-          padding: '16px 44px',
-          borderRadius: 14,
-          fontFamily: MR_FONTS.display, fontWeight: 600, fontSize: 30,
-          letterSpacing: '-0.005em',
-          display: 'flex', alignItems: 'center', gap: 10,
-          transform: `scale(${buttonScale})`,
-          transformOrigin: 'center',
-          boxShadow: T.flat
-            ? (isFollowing ? `inset 0 0 0 2px ${T.followingBorder || '#c9c9c9'}` : 'none')
-            : (isFollowing
-              ? `inset 0 0 0 2px ${T.followingBorder || '#c9c9c9'}`
-              : `0 8px 20px ${(T.buttonBg || MR_COLORS.greenAccent)}55`),
-          flexShrink: 0,
-        }}>
-          {isFollowing ? (
-            <>
-              <span style={{ fontSize: 26 }}>✓</span>
-              <span>Seguindo</span>
-            </>
-          ) : (
-            <span>Seguir</span>
-          )}
-        </div>
-      </div>
+      {/* Instagram badge: pill animado com ícone + handle */}
+      <InstagramHandleBadge
+        delay={1.25}
+        handle={HANDLE}
+        theme={T}
+      />
 
+      {/* App Store badge */}
       <div style={{
         position: 'absolute',
         left: '50%',
@@ -175,24 +89,14 @@ export const EndCard = ({ start, end, theme = {} }) => {
         <img
           src={staticFile(APP_STORE_BADGE_URL)}
           alt=""
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            display: 'block',
-          }}
+          style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
         />
         <div style={{
-          position: 'absolute',
-          top: '-60%',
-          left: '-80%',
-          width: '70%',
-          height: '220%',
+          position: 'absolute', top: '-60%', left: '-80%',
+          width: '70%', height: '220%',
           background: 'linear-gradient(105deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 38%, rgba(255,255,255,0.72) 50%, rgba(255,255,255,0.12) 62%, rgba(255,255,255,0) 100%)',
-          mixBlendMode: 'screen',
-          opacity: shineOpacity,
+          mixBlendMode: 'screen', opacity: shineOpacity,
           transform: `translateX(${(shineP * 360).toFixed(2)}%) rotate(8deg)`,
-          transformOrigin: 'center',
           pointerEvents: 'none',
         }} />
       </div>
@@ -200,21 +104,113 @@ export const EndCard = ({ start, end, theme = {} }) => {
   );
 };
 
+// Badge pill animado: ícone Instagram (círculo) expande para pill com handle.
+// Sequência: 1) círculo sobe com spring → 2) pill expande → 3) texto aparece.
+const InstagramHandleBadge = ({ delay = 1.25, handle, theme = {} }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const T = theme || {};
+
+  const CIRCLE = 118;
+  const PILL_FULL = 590;
+
+  // 1. Entrada do círculo
+  const circleSpring = spring({
+    frame: frame - delay * fps,
+    fps,
+    config: { damping: 13, stiffness: 115, mass: 0.85 },
+  });
+
+  // 2. Expansão do pill (começa 0.3s após o círculo)
+  const expandDelay = delay + 0.3;
+  const expandP = interpolate(
+    frame,
+    [expandDelay * fps, (expandDelay + 0.48) * fps],
+    [0, 1],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.bezier(0.25, 1, 0.35, 1) }
+  );
+
+  // 3. Texto aparece (começa quando pill está em ~60%)
+  const textDelay = expandDelay + 0.28;
+  const textP = interpolate(
+    frame,
+    [textDelay * fps, (textDelay + 0.32) * fps],
+    [0, 1],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.bezier(0.22, 1, 0.36, 1) }
+  );
+
+  const pillWidth = CIRCLE + expandP * (PILL_FULL - CIRCLE);
+  const opacity = Math.min(1, circleSpring * 1.4);
+  const scale = 0.72 + 0.28 * circleSpring;
+
+  return (
+    <div style={{
+      opacity,
+      transform: `scale(${scale.toFixed(4)}) translateY(${((1 - circleSpring) * 40).toFixed(2)}px)`,
+      transformOrigin: 'center',
+      marginTop: 8,
+    }}>
+      <div style={{
+        background: T.cardBg || MR_COLORS.white,
+        borderRadius: 999,
+        width: pillWidth,
+        height: CIRCLE,
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        boxShadow: T.flat
+          ? '0 0 0 1px rgba(15,23,42,0.10)'
+          : '0 2px 12px rgba(0,0,0,0.07), 0 0 0 1px rgba(15,23,42,0.06)',
+        position: 'relative',
+      }}>
+        {/* Ícone Instagram — absoluto à esquerda */}
+        <div style={{
+          position: 'absolute',
+          left: 0,
+          width: CIRCLE,
+          height: CIRCLE,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          <LottieAsset
+            src="lottie/instagram.json"
+            size={94}
+            delay={delay + 0.05}
+            playbackRate={0.9}
+            loop
+            tint={null}
+          />
+        </div>
+
+        {/* Handle text — levemente deslocado à direita do centro */}
+        <div style={{
+          fontFamily: MR_FONTS.display,
+          fontSize: 46,
+          fontWeight: 600,
+          letterSpacing: '-0.018em',
+          color: T.handleColor || '#111111',
+          whiteSpace: 'nowrap',
+          opacity: textP,
+          transform: `translateX(${((1 - textP) * 14 + 30).toFixed(2)}px)`,
+          lineHeight: 1,
+        }}>{handle}</div>
+      </div>
+    </div>
+  );
+};
+
 // Tagline 2-linhas com entrada elegante e stagger entre linhas.
-// Cada linha: opacity 0→1 + translateY 18→0 + blur 8→0 + letter-spacing
-// 0.10em→0.02em (efeito "settle in" — letras se acomodam). Stagger de 0.18s
-// entre as linhas. Pós-entrada, breath sutil no letter-spacing pra dar vida.
 const TaglineReveal = ({ lines, delay = 0, color }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   return (
     <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: 2,
-      marginTop: -28,
-      maxWidth: 880,
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      gap: 2, marginTop: -28, maxWidth: 880,
     }}>
       {lines.map((line, i) => {
         const lineDelay = delay + i * 0.18;
@@ -225,22 +221,15 @@ const TaglineReveal = ({ lines, delay = 0, color }) => {
         const blur = (1 - p) * 8;
         const ty = (1 - p) * 18;
         return (
-          <div
-            key={i}
-            style={{
-              fontFamily: '"Inter Tight", system-ui, sans-serif',
-              fontSize: 64,
-              fontWeight: 500,
-              lineHeight: 1.05,
-              letterSpacing: '-0.02em',
-              textAlign: 'center',
-              whiteSpace: 'nowrap',
-              color,
-              opacity: p,
-              filter: `blur(${blur.toFixed(2)}px)`,
-              transform: `translateY(${ty.toFixed(2)}px) translateZ(0)`,
-            }}
-          >{line}</div>
+          <div key={i} style={{
+            fontFamily: '"Inter Tight", system-ui, sans-serif',
+            fontSize: 64, fontWeight: 500, lineHeight: 1.05,
+            letterSpacing: '-0.02em', textAlign: 'center',
+            whiteSpace: 'nowrap', color,
+            opacity: p,
+            filter: `blur(${blur.toFixed(2)}px)`,
+            transform: `translateY(${ty.toFixed(2)}px) translateZ(0)`,
+          }}>{line}</div>
         );
       })}
     </div>

@@ -12644,7 +12644,9 @@ async function uploadImageToR2(base64DataUri, { userId, postId, fieldPath, index
   const safeField = safeStoragePart(fieldPath || 'image', 'image');
   const suffix = `${Date.now()}-${String(index || 1).padStart(2, '0')}`;
   const key = `images/studio/posts/${safeUser}/${safePost}/${safeField}-${suffix}.${ext}`;
-  const binary = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  // Gemini às vezes retorna base64 com quebras de linha — strip antes do atob.
+  const cleanB64 = b64.replace(/\s/g, '');
+  const binary = Uint8Array.from(atob(cleanB64), c => c.charCodeAt(0));
 
   const resp = await withTimeout(
     fetch(`${R2_WORKER_URL}/${key}`, {
@@ -28497,7 +28499,8 @@ TRANSIÇÕES (cada cena exceto a primeira DEVE ter transitionIn):
   Básicas: fade · wipe-up · wipe-down · push-up · push-left · mask-circle
   Cinematográficas: flash · zoom-blur · cinematic-blur · ring-tunnel · glitch · slide-radial · light-leak
   R13 (calmas/elegantes): glass-frost · iris-square · drift-fade
-Durações: 0.3s a 0.6s (1.0s para light-leak, 0.6-0.8s para cinematic-blur, 0.55s para glass-frost/iris-square). Use cada tipo cinematográfico no máximo 1x. Varie pra dar ritmo.
+  R28 (mergulho/dinâmicas): zoom-punch · whip-pan · split-slide · dip-to-brand · push-3d · blur-dissolve · glow-bloom
+Durações: 0.3s a 0.6s (1.0s para light-leak, 0.6-0.8s para cinematic-blur, 0.55s para glass-frost/iris-square, 1.0-1.2s para zoom-punch, 0.4-0.5s para whip-pan, 0.6-0.7s para split-slide, 0.7-0.9s para dip-to-brand, 0.6-0.8s para push-3d, 0.8-1.0s para blur-dissolve, 0.7-0.9s para glow-bloom). Use cada tipo cinematográfico no máximo 1x. Varie pra dar ritmo.
 EASINGS válidos: "in-out-quart", "out-quint", "out-quart", "in-out-cubic", "out-expo", "in-out-expo".
 
 PROPS EXTRAS POR TIPO:
@@ -28510,6 +28513,13 @@ NOVAS R13 (descrição):
   - glass-frost: cena vira vidro fosco/blur, clarea → revela. Combina com glass dos slides fixos. Boa em cenas de texto.
   - iris-square: abertura/fechamento quadrado (vibe câmera antiga). Bom em chapters e cards.
   - drift-fade: crossfade lento com leve drift horizontal. Muito calmo. Bom entre cenas de texto.
+  - zoom-punch: a câmera "mergulha" pra dentro da cena que sai (zoom suave) e a próxima emerge de dentro do zoom, desfocando pra focado. Sensação de continuidade fluida, como atravessar um plano. Ótima entre uma cena de card/destaque e a próxima. Use dur 1.0-1.2s. Aceita prop "origin" (center default, ou "50% 40%" pra apontar pra um elemento) e "scale" (default 2.8 — não passe de 4).
+  - whip-pan: "chicote" lateral rápido com motion blur horizontal — cena sai voando pro lado, a nova entra do lado oposto. Energético, dinâmico. Bom em pontos de virada/ritmo. Use dur 0.4-0.5s. Aceita prop "direction" ('left' default | 'right').
+  - split-slide: a cena nova chega em duas metades que se fecham no meio. Geométrico. Use dur 0.6-0.7s. Aceita prop "direction" ('horizontal' default | 'vertical').
+  - dip-to-brand: a tela mergulha numa cor sólida (verde Cropware) com blur e reemerge na próxima cena. Editorial, reforça a marca no corte. Use dur 0.7-0.9s. Aceita prop "color" (default verde Cropware).
+  - push-3d: rotação em perspectiva — a cena sai girando ~42° pra dentro (feito uma porta) escurecendo, a nova entra girando do lado oposto. Premium e marcante. Bom em pontos de virada. Use dur 0.6-0.8s. Aceita prop "direction" ('left' default | 'right').
+  - blur-dissolve: crossfade onde ambas as cenas desfocam no pico e a nova refoca emergindo. Sonhador, contemplativo. Ótimo como respiro antes do fim. Use dur 0.8-1.0s. Aceita prop "blur" (default 26px).
+  - glow-bloom: "estouro de luz" fotográfico — a cena superexpõe e satura até estourar de brilho, a nova emerge de dentro da luz voltando ao normal. Orgânico, luminoso (mais suave que flash). Use dur 0.7-0.9s. Aceita prop "tint" (cor do glow, default branco) e "intensity" (0.5-2, default 1).
   - light-streak: PROIBIDO. Não use feixes diagonais de luz, faixas brancas foscas ou streaks sobre a cena.
 
 SFX NAS TRANSIÇÕES (opcional, catálogo expandido R16):
@@ -29193,6 +29203,41 @@ window.MR_TEXTURE_POOL_FULL = TEXTURE_POOL_FULL;
 window.MR_SCENE_TYPES_WITH_TEXTURE = SCENE_TYPES_WITH_TEXTURE;
 window.mrPickRandomTexture = pickRandomTexture;
 
+// R28: transições padronizadas por TIPO de cena. Antes a IA escolhia transições
+// variando a cada geração; agora cada tipo tem uma transição fixa pra dar
+// consistência de marca. Aplicado em toda geração (mrValidateStoryboard) e
+// disponível pra aplicar em reels existentes via applyStandardTransitions.
+// R28: transições FLAT (fade + slide limpo) — sem blur, brilho ou zoom, pra
+// combinar com a identidade editorial/clean do Cropware. push-up nas cenas
+// conceituais (movimento ascendente = progresso), push-left nas de conteúdo/
+// demo, fade nos "respiros". Movimento sóbrio e coeso.
+const SCENE_TRANSITION_MAP = {
+  // brand-intro: primeira cena, não tem transitionIn (a engine ignora a 1ª).
+  'headline':      { type: 'push-up',   dur: 0.5,  easing: 'out-quart' },
+  'keyword':       { type: 'push-up',   dur: 0.5,  easing: 'out-quart' },
+  'feature-list':  { type: 'push-left', dur: 0.5,  easing: 'out-quart' },
+  'chapter':       { type: 'fade',     dur: 0.45, easing: 'out-quart' },
+  'scenario':      { type: 'push-up',   dur: 0.5,  easing: 'out-quart' },
+  'app-card':      { type: 'push-left', dur: 0.5,  easing: 'out-quart' },
+  'whatsapp-chat': { type: 'push-left', dur: 0.5,  easing: 'out-quart' },
+  'quote':         { type: 'fade',     dur: 0.5,  easing: 'out-quart' },
+  'lower-third':   { type: 'push-up',   dur: 0.5,  easing: 'out-quart' },
+  'cta':           { type: 'push-up',   dur: 0.5,  easing: 'out-quart' },
+  'end-card':      { type: 'fade',     dur: 0.5,  easing: 'out-quart' },
+};
+
+// Aplica o mapa de transições padrão por tipo. A 1ª cena nunca recebe (não há
+// transição de entrada pra ela). Preserva sfx/props definidos no mapa.
+function applyStandardTransitions(scenes) {
+  if (!Array.isArray(scenes)) return scenes;
+  scenes.forEach((s, i) => {
+    if (i === 0) { delete s.transitionIn; return; }
+    const std = SCENE_TRANSITION_MAP[s.type];
+    if (std) s.transitionIn = { ...std };
+  });
+  return scenes;
+}
+
 function mrValidateStoryboard(parsed, targetDuration) {
   if (!parsed || !Array.isArray(parsed.scenes) || !parsed.scenes.length) {
     throw new Error('Storyboard sem cenas.');
@@ -29357,6 +29402,8 @@ function mrValidateStoryboard(parsed, targetDuration) {
   const target = Number(targetDuration) || 60;
   const scale = target / totalAi;
   scenes.forEach(s => { s.start *= scale; s.end *= scale; });
+  // R28: padroniza transições por tipo de cena (sobrescreve o que a IA escolheu).
+  applyStandardTransitions(scenes);
   // Música de fundo: IA não decide trilha (prompt manda omitir). Sempre
   // herda do default storyboard, que carrega o track ativo em public/audio/.
   const defaultAudio = (window.MOTION_REEL_DEFAULT_STORYBOARD && window.MOTION_REEL_DEFAULT_STORYBOARD.audio) || null;

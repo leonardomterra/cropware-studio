@@ -6,8 +6,9 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, staticFile } from 'remotion';
 import { MR_FONTS } from '../theme.js';
 import { MR_THEMES } from '../themes.js';
-import { CharReveal, StaticMotionIcon, EASE } from '../helpers.jsx';
+import { CharReveal, StaticMotionIcon, EASE, balanceTwoLines } from '../helpers.jsx';
 import { resolveKeywordAnimatedIcon } from '../keyword-icons.js';
+import { KeywordWindow, KEYWORD_WINDOW_TYPES } from './keyword-windows.jsx';
 
 const FALLBACK = MR_THEMES.escuro.perSlide.keyword;
 
@@ -17,6 +18,7 @@ export const Keyword = ({
   word,
   icon = 'line-md:speed-loop',
   underline = true,
+  uiDemo,
   theme,
   bgImage,
   bgImageBlur,
@@ -86,6 +88,12 @@ export const Keyword = ({
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.inOutCubic }
   );
   const streakActive = streakP > 0 && streakP < 1;
+
+  // Keyword agora aceita palavra única OU frase curta. Conta palavras pra
+  // escalar a fonte; 2+ palavras quebram em 2 linhas balanceadas.
+  const _kwRaw = String(word || '').trim();
+  const _kwWordCount = _kwRaw ? _kwRaw.split(/\s+/).length : 1;
+  const _kwText = _kwWordCount >= 2 ? balanceTwoLines(_kwRaw) : _kwRaw;
 
   return (
     <AbsoluteFill style={{
@@ -159,6 +167,20 @@ export const Keyword = ({
       }} />
       </> : null}
 
+      {/* Slide 03 renderiza a janela-mockup por PADRÃO (modelo do slide 08), em
+          qualquer reel — gerado ou manual. uiDemo escolhe o tipo: um tipo válido
+          ('graph'|'dashboard'|'map'|'weather'|'tasks'|'alert') força aquela janela;
+          ausente/true/legado → janela default do tema (T.keywordWindow);
+          uiDemo:'card' é o escape-hatch que volta pro card de texto antigo. */}
+      {uiDemo !== 'card' ? (
+        <KeywordWindow
+          type={KEYWORD_WINDOW_TYPES.includes(uiDemo) ? uiDemo : (T.keywordWindow || 'graph')}
+          accent={T.accent}
+          fg={T.wordColor || T.fg}
+          flat={T.flat}
+        />
+      ) : (
+      <>
       {/* Camada 4: ícone animado — Lottie curado ou Iconify animado */}
       <div style={{
         position: 'relative',
@@ -217,9 +239,11 @@ export const Keyword = ({
           ) : null}
           <div style={{
             fontFamily: MR_FONTS.caps,
-            fontSize: 160,
+            // Tamanho adaptável ao nº de palavras: 1 palavra fica gigante (160);
+            // frases curtas reduzem pra caber e quebram em 2 linhas balanceadas.
+            fontSize: _kwWordCount >= 4 ? 78 : _kwWordCount === 3 ? 96 : _kwWordCount === 2 ? 120 : 160,
             fontWeight: 400,
-            lineHeight: 0.92,
+            lineHeight: _kwWordCount >= 2 ? 1.02 : 0.92,
             letterSpacing: '-0.01em',
             textTransform: 'uppercase',
             textAlign: 'center',
@@ -227,10 +251,12 @@ export const Keyword = ({
             color: T.wordColor || T.fg,
             textShadow: T.flat ? 'none' : (T.wordTextShadow || '0 6px 32px rgba(0,0,0,0.45)'),
           }}>
-            <CharReveal text={word || ''} delay={0.55} dur={0.4} stagger={0.032} ty={28} />
+            <CharReveal text={_kwText} delay={0.55} dur={0.4} stagger={0.032} ty={28} />
           </div>
         </div>
       </div>
+      </>
+      )}
     </AbsoluteFill>
   );
 };

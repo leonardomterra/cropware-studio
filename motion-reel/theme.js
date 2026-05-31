@@ -52,17 +52,18 @@ export function resolveColor(s) {
 }
 
 export const MR_FONTS = {
-  // R28d: Vend Sans como display — mesma fonte usada nos hooks dos
-  // posts do Studio (.hook className). Coerência app↔reel. Histórico:
-  // Inter Tight (R7) → Clash Display (R28c, descartada) → Vend Sans (R28d).
-  display: '"Vend Sans", "Inter Tight", system-ui, sans-serif',
-  grotesk: '"Vend Sans", "Inter Tight", system-ui, sans-serif',
+  // R28f: Inter Tight como display — variante oficial "apertada" da Inter
+  // (leve condensação no tracking/letterforms). Coerência app↔reel (mesma
+  // família do UI). Histórico: Inter Tight (R7) → Clash Display (R28c) →
+  // Vend Sans (R28d) → Inter Tight (R28f, volta com condensação leve).
+  display: '"Inter Tight", system-ui, sans-serif',
+  grotesk: '"Inter Tight", system-ui, sans-serif',
   mono:    '"Space Mono", ui-monospace, monospace',
   // R28: fonte uppercase display pra kickers, palavras gigantes (Keyword,
-  // Quote verbs), tagline (EndCard, BrandIntro). Token semântico `caps` —
-  // futuro-proof pra próximas trocas. Atualmente: Unica One.
-  // Histórico: Alumni Sans (R27) → Staatliches → JetBrains Mono → Unica One (R28e).
-  caps:    '"Unica One", "Inter Tight", system-ui, sans-serif',
+  // Quote verbs), tagline (EndCard, BrandIntro). Token semântico `caps`.
+  // Histórico: Alumni Sans (R27) → Staatliches → JetBrains Mono → Unica One
+  // (R28e) → Alumni Sans (R28f, voltou — condensada, ampla régua de pesos).
+  caps:    '"Alumni Sans", "Inter Tight", system-ui, sans-serif',
 };
 
 // Dimensões fixas do palco — Reels Instagram 9:16.

@@ -42,6 +42,23 @@ export function resolveEasingName(name) {
 // pra evitar que o browser quebre linha NO MEIO de palavras (cada char é
 // inline-block, e browsers permitem break entre inline-blocks por padrão).
 // Espaços ficam como texto normal entre palavras — esses sim podem quebrar.
+// Quebra o texto em 2 linhas de tamanho similar: acha o ponto entre palavras
+// que minimiza a diferença de comprimento entre as metades. Garante 2 linhas
+// equilibradas independente do comprimento. 1 palavra → retorna sem quebra.
+export function balanceTwoLines(text) {
+  const t = String(text || '').trim();
+  const words = t.split(/\s+/);
+  if (words.length < 2) return t;
+  let bestIdx = 1, bestDiff = Infinity;
+  for (let i = 1; i < words.length; i++) {
+    const left = words.slice(0, i).join(' ').length;
+    const right = words.slice(i).join(' ').length;
+    const diff = Math.abs(left - right);
+    if (diff < bestDiff) { bestDiff = diff; bestIdx = i; }
+  }
+  return words.slice(0, bestIdx).join(' ') + '\n' + words.slice(bestIdx).join(' ');
+}
+
 export const CharReveal = ({ text, delay = 0, dur = 0.35, stagger = 0.035, ty = 24, charStyle }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -56,9 +73,11 @@ export const CharReveal = ({ text, delay = 0, dur = 0.35, stagger = 0.035, ty = 
     <Fragment>
       {segments.map((seg, si) => {
         if (seg === '') return null;
-        // Whitespace puro — render como texto plain, browser permite quebra aqui
+        // Whitespace puro — render como texto plain, browser permite quebra aqui.
+        // Se contém \n (quebra explícita, ex: headline balanceado), força <br>.
         if (/^\s+$/.test(seg)) {
           cursor += seg.length;
+          if (seg.includes('\n')) return <br key={si} />;
           return <Fragment key={si}>{seg}</Fragment>;
         }
         // Palavra — agrupa chars em wrapper nowrap pra não quebrar internamente

@@ -187,7 +187,7 @@ export const MOTION_REEL_DEFAULT = {
         { from: 'user', text: 'O que pode estar acontecendo?' },
         { from: 'ai',   text: 'Padrão sugere falta de nitrogênio. Quer abrir um plano de adubação?' },
       ],
-      transitionIn: { type: 'zoom-blur', dur: 0.45, easing: 'out-quart', sfx: 'ui-confirm-modern', sfxOffset: 0.06, sfxVolume: 0.07 },
+      transitionIn: { type: 'zoom-punch', dur: 1.1, easing: 'in-out-cubic', origin: 'center', sfx: 'whoosh-fast-cinematic', sfxOffset: 0.04, sfxVolume: 0.09 },
     },
     // ─────────────── 10 QUOTE (custom) ───────────────
     // Visual fixo em Quote.jsx: imagem `og-bg.webp` (close folha com orvalho)

@@ -93,6 +93,7 @@ export const MR_THEMES = {
         wordColor: MR_COLORS.slateAbyss,
         iconColor: MR_COLORS.greenForest,
         accent: MR_COLORS.greenForest, textureMode: 'multiply',
+        keywordWindow: 'graph', // janela default deste tema (slide 03)
       },
       quote: {
         bg: MR_COLORS.cream, fg: MR_COLORS.slateAbyss,
@@ -178,6 +179,7 @@ export const MR_THEMES = {
         iconColor: MR_COLORS.greenBright,
         iconFilter: `drop-shadow(0 0 28px ${MR_COLORS.greenBright}99)`,
         accent: MR_COLORS.greenBright, textureMode: 'multiply',
+        keywordWindow: 'map', // janela default deste tema (slide 03)
       },
       quote: {
         bg: MR_COLORS.slateAbyss, fg: MR_COLORS.white,
@@ -253,6 +255,7 @@ export const MR_THEMES = {
         wordColor: MR_COLORS.slateAbyss,
         iconColor: MR_COLORS.greenForest,
         accent: MR_COLORS.greenForest,
+        keywordWindow: 'weather', // janela default deste tema (slide 03)
       },
       quote: {
         bg: MR_COLORS.white, fg: MR_COLORS.slateAbyss,
@@ -321,6 +324,7 @@ export const MR_THEMES = {
         wordColor: MR_COLORS.white,
         iconColor: MR_COLORS.greenBright,
         accent: MR_COLORS.greenBright,
+        keywordWindow: 'dashboard', // janela default deste tema (slide 03)
       },
       quote: {
         bg: MR_COLORS.greenAbyss, fg: MR_COLORS.white,

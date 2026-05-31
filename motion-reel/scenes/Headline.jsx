@@ -6,7 +6,7 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, staticFile, spring } from 'remotion';
 import { MR_FONTS } from '../theme.js';
 import { MR_THEMES } from '../themes.js';
-import { CharReveal, KickerReveal, EASE, LottieAsset } from '../helpers.jsx';
+import { CharReveal, KickerReveal, EASE, LottieAsset, balanceTwoLines } from '../helpers.jsx';
 
 const FALLBACK = MR_THEMES.escuro.perSlide.headline;
 
@@ -141,7 +141,7 @@ export const Headline = ({
             toEm={0.06}
             style={{
               fontFamily: MR_FONTS.caps,
-              fontSize: 44,
+              fontSize: 72,
               fontWeight: 400,
               color: T.kickerColor || T.accent,
               textTransform: 'uppercase',
@@ -153,17 +153,17 @@ export const Headline = ({
 
         <div style={{
           fontFamily: MR_FONTS.display,
-          fontSize: 92,
-          fontWeight: 600,
-          lineHeight: 1,
-          letterSpacing: '-0.03em',
-          maxWidth: 940,
+          fontSize: 76,
+          fontWeight: 500,
+          lineHeight: 1.18,
+          letterSpacing: '-0.025em',
+          maxWidth: 980,
           color: T.fg,
           textShadow: T.flat ? 'none' : (T.textShadow || '0 4px 28px rgba(0,0,0,0.55)'),
           transform: 'translateZ(0)',
         }}>
           <CharReveal
-            text={headline || ''}
+            text={balanceTwoLines(headline)}
             delay={0.65}
             dur={0.45}
             stagger={0.028}

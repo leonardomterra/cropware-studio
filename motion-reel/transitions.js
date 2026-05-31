@@ -10,7 +10,7 @@ import { none } from '@remotion/transitions/none';
 import { linearTiming } from '@remotion/transitions';
 import { Easing } from 'remotion';
 
-import { flash, zoomBlur, maskCircle, cinematicBlur, ringTunnel, glitch, slideRadial, glassFrost, irisSquare, driftFade } from './custom-transitions.jsx';
+import { flash, zoomBlur, maskCircle, cinematicBlur, ringTunnel, glitch, slideRadial, glassFrost, irisSquare, driftFade, zoomPunch, whipPan, splitSlide, dipToBrand, push3D, blurDissolve, glowBloom } from './custom-transitions.jsx';
 
 export function resolvePresentation(type, sceneTransitionConfig) {
   switch (type) {
@@ -23,6 +23,13 @@ export function resolvePresentation(type, sceneTransitionConfig) {
     case 'mask-circle':    return maskCircle();
     case 'flash':          return flash({ color: (sceneTransitionConfig && sceneTransitionConfig.color) || '#FFFFFF' });
     case 'zoom-blur':      return zoomBlur();
+    case 'zoom-punch':     return zoomPunch({ origin: (sceneTransitionConfig && sceneTransitionConfig.origin) || 'center', scale: (sceneTransitionConfig && sceneTransitionConfig.scale) });
+    case 'whip-pan':       return whipPan({ direction: (sceneTransitionConfig && sceneTransitionConfig.direction) || 'left' });
+    case 'split-slide':    return splitSlide({ direction: (sceneTransitionConfig && sceneTransitionConfig.direction) || 'horizontal' });
+    case 'dip-to-brand':   return dipToBrand({ color: (sceneTransitionConfig && sceneTransitionConfig.color) || '#6AC58F' });
+    case 'push-3d':        return push3D({ direction: (sceneTransitionConfig && sceneTransitionConfig.direction) || 'left' });
+    case 'blur-dissolve':  return blurDissolve({ blur: (sceneTransitionConfig && sceneTransitionConfig.blur) });
+    case 'glow-bloom':     return glowBloom({ tint: (sceneTransitionConfig && sceneTransitionConfig.tint), intensity: (sceneTransitionConfig && sceneTransitionConfig.intensity) });
     // R9 — transições cinematográficas novas
     case 'cinematic-blur': return cinematicBlur();
     case 'ring-tunnel':    return ringTunnel({ color: (sceneTransitionConfig && sceneTransitionConfig.color) || '#6AC58F' });

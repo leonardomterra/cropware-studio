@@ -326,6 +326,337 @@ const DriftFadePresentation = ({ children, presentationProgress, presentationDir
 };
 export const driftFade = () => ({ component: DriftFadePresentation, props: {} });
 
+// ─── WHIP-PAN ────────────────────────────────────────────────────────
+// "Chicote" lateral: a cena que sai desliza rápido pra fora com motion blur
+// horizontal crescente; a nova entra do lado oposto e assenta desfocando.
+// Energia de reels modernos. passedProps.direction: 'left' (default) | 'right'.
+// 'left' = conteúdo sai pra esquerda, novo entra pela direita.
+const WhipPanPresentation = ({ children, presentationProgress, presentationDirection, passedProps }) => {
+  const p = presentationProgress;
+  const dir = (passedProps && passedProps.direction) || 'left';
+  const sign = dir === 'right' ? 1 : -1;
+  // Motion blur horizontal via SVG (stdDeviation só no eixo X). Pico no meio.
+  const blurX = Math.sin(p * Math.PI) * 34;
+  const filterId = `whip-blur-${presentationDirection}`;
+
+  const svgFilter = (
+    <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden>
+      <defs>
+        <filter id={filterId} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation={`${blurX.toFixed(2)} 0`} />
+        </filter>
+      </defs>
+    </svg>
+  );
+
+  if (presentationDirection === 'entering') {
+    // Entra do lado oposto: de +120% (ou -120%) → 0, ease-out.
+    const ease = 1 - Math.pow(1 - p, 2.2);
+    const tx = -sign * (1 - ease) * 120;
+    return (
+      <AbsoluteFill style={{ transform: `translateX(${tx.toFixed(2)}%)`, filter: `url(#${filterId})` }}>
+        {svgFilter}
+        {children}
+      </AbsoluteFill>
+    );
+  }
+  // Sai pro lado: 0 → 120% na direção, ease-in (acelera).
+  const ease = Math.pow(p, 2);
+  const tx = sign * ease * 120;
+  return (
+    <AbsoluteFill style={{ transform: `translateX(${tx.toFixed(2)}%)`, filter: `url(#${filterId})` }}>
+      {svgFilter}
+      {children}
+    </AbsoluteFill>
+  );
+};
+export const whipPan = (props = {}) => ({ component: WhipPanPresentation, props });
+
+// ─── SPLIT-SLIDE ─────────────────────────────────────────────────────
+// A cena nova chega em DUAS METADES que entram de fora e se fecham no meio
+// (cima+baixo ou esquerda+direita), cobrindo a cena anterior. Geométrico e
+// elegante. O split é feito na cena que ENTRA porque ela fica por cima no
+// empilhamento do TransitionSeries. passedProps.direction: 'horizontal'
+// (default, metades vêm de cima/baixo) | 'vertical' (metades vêm dos lados).
+const SplitSlidePresentation = ({ children, presentationProgress, presentationDirection, passedProps }) => {
+  const p = presentationProgress;
+  const dir = (passedProps && passedProps.direction) || 'horizontal';
+
+  if (presentationDirection !== 'entering') {
+    // Cena que sai fica parada por baixo, leve scale pra dar profundidade.
+    const scale = 1 - 0.04 * p;
+    return (
+      <AbsoluteFill style={{ transform: `scale(${scale.toFixed(4)})` }}>
+        {children}
+      </AbsoluteFill>
+    );
+  }
+  // Entrada: duas metades vêm de fora (±110%) → 0, ease-out, fechando no meio.
+  const ease = 1 - Math.pow(1 - p, 2.4);
+  const off = (1 - ease) * 110;
+
+  if (dir === 'vertical') {
+    // Metades esquerda/direita entram dos lados.
+    return (
+      <AbsoluteFill>
+        <AbsoluteFill style={{ clipPath: 'inset(0 50% 0 0)', transform: `translateX(${-off.toFixed(2)}%)` }}>
+          {children}
+        </AbsoluteFill>
+        <AbsoluteFill style={{ clipPath: 'inset(0 0 0 50%)', transform: `translateX(${off.toFixed(2)}%)` }}>
+          {children}
+        </AbsoluteFill>
+      </AbsoluteFill>
+    );
+  }
+  // Horizontal: metade de cima desce, metade de baixo sobe — encontram no meio.
+  return (
+    <AbsoluteFill>
+      <AbsoluteFill style={{ clipPath: 'inset(0 0 50% 0)', transform: `translateY(${-off.toFixed(2)}%)` }}>
+        {children}
+      </AbsoluteFill>
+      <AbsoluteFill style={{ clipPath: 'inset(50% 0 0 0)', transform: `translateY(${off.toFixed(2)}%)` }}>
+        {children}
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
+};
+export const splitSlide = (props = {}) => ({ component: SplitSlidePresentation, props });
+
+// ─── GLOW-BLOOM ──────────────────────────────────────────────────────
+// "Estouro de luz" fotográfico: a cena que sai superexpõe (brightness sobe,
+// satura, ganha um glow radial) até estourar de luz; a nova EMERGE de dentro
+// do brilho, voltando da superexposição ao normal. Mais orgânico que o flash.
+// passedProps.tint: cor do glow (default branco). passedProps.intensity (0.5-2).
+const GlowBloomPresentation = ({ children, presentationProgress, presentationDirection, passedProps }) => {
+  const p = presentationProgress;
+  const tint = (passedProps && passedProps.tint) || '#FFFFFF';
+  const k = (passedProps && passedProps.intensity) || 1;
+  // Glow em sino (0→1→0), pico em p=0.5.
+  const bell = 1 - Math.pow(2 * p - 1, 2);
+
+  if (presentationDirection === 'entering') {
+    // Emerge da luz: brightness alto → 1, blur leve → 0, opacity sobe.
+    const ep = Math.max(0, (p - 0.4) / 0.6);
+    const bright = 1 + (1 - ep) * 2.2 * k;
+    const blur = (1 - ep) * 10;
+    const opacity = Math.min(1, p * 2);
+    return (
+      <AbsoluteFill style={{
+        opacity,
+        filter: `brightness(${bright.toFixed(3)}) saturate(${(1 + (1 - ep) * 0.5).toFixed(3)}) blur(${blur.toFixed(2)}px)`,
+      }}>
+        {children}
+        <AbsoluteFill style={{
+          background: `radial-gradient(circle at 50% 50%, ${tint} 0%, transparent 70%)`,
+          opacity: (bell * 0.85).toFixed(3),
+          mixBlendMode: 'screen',
+          pointerEvents: 'none',
+        }} />
+      </AbsoluteFill>
+    );
+  }
+  // Saída: estoura de luz — brightness sobe, satura, glow cresce, some no fim.
+  const ep = Math.min(1, p / 0.6);
+  const bright = 1 + ep * 2.4 * k;
+  const opacity = p < 0.55 ? 1 : Math.max(0, 1 - (p - 0.55) / 0.45);
+  return (
+    <AbsoluteFill style={{
+      opacity,
+      filter: `brightness(${bright.toFixed(3)}) saturate(${(1 + ep * 0.5).toFixed(3)})`,
+    }}>
+      {children}
+      <AbsoluteFill style={{
+        background: `radial-gradient(circle at 50% 50%, ${tint} 0%, transparent 70%)`,
+        opacity: (bell * 0.85).toFixed(3),
+        mixBlendMode: 'screen',
+        pointerEvents: 'none',
+      }} />
+    </AbsoluteFill>
+  );
+};
+export const glowBloom = (props = {}) => ({ component: GlowBloomPresentation, props });
+
+// ─── BLUR-DISSOLVE ───────────────────────────────────────────────────
+// Crossfade contemplativo: ambas as cenas desfocam em direção ao pico e a
+// nova refoca emergindo. Sonhador, suave — ótimo como respiro antes do fim.
+// passedProps.blur: blur máximo no pico (default 26px).
+const BlurDissolvePresentation = ({ children, presentationProgress, presentationDirection, passedProps }) => {
+  const p = presentationProgress;
+  const maxBlur = (passedProps && passedProps.blur) || 26;
+
+  if (presentationDirection === 'entering') {
+    // Entra desfocada e foca; opacity sobe na segunda metade (crossfade).
+    const blur = (1 - p) * maxBlur;
+    const scale = 1.03 - 0.03 * p;
+    const opacity = Math.max(0, p * 1.6 - 0.6); // começa a aparecer em ~37%
+    return (
+      <AbsoluteFill style={{
+        opacity,
+        transform: `scale(${scale.toFixed(4)})`,
+        filter: `blur(${blur.toFixed(2)}px)`,
+      }}>{children}</AbsoluteFill>
+    );
+  }
+  // Saída: desfoca e some na primeira metade.
+  const blur = p * maxBlur;
+  const scale = 1 + 0.03 * p;
+  const opacity = Math.max(0, 1 - p * 1.6); // some até ~62%
+  return (
+    <AbsoluteFill style={{
+      opacity,
+      transform: `scale(${scale.toFixed(4)})`,
+      filter: `blur(${blur.toFixed(2)}px)`,
+    }}>{children}</AbsoluteFill>
+  );
+};
+export const blurDissolve = (props = {}) => ({ component: BlurDissolvePresentation, props });
+
+// ─── PUSH-3D ─────────────────────────────────────────────────────────
+// Rotação em perspectiva: a cena que sai gira pra dentro (feito uma porta
+// abrindo) escurecendo, a nova entra girando do lado oposto. Premium, sutil.
+// passedProps.direction: 'left' (default) | 'right' — lado do eixo de rotação.
+const Push3DPresentation = ({ children, presentationProgress, presentationDirection, passedProps }) => {
+  const p = presentationProgress;
+  const dir = (passedProps && passedProps.direction) || 'left';
+  const sign = dir === 'right' ? -1 : 1;
+  const PERSPECTIVE = 1600; // px — quanto menor, mais dramática a perspectiva
+  const MAX_ROT = 42;       // graus de rotação no extremo
+
+  if (presentationDirection === 'entering') {
+    // Entra girando do lado oposto: rotateY de +MAX → 0, ease-out.
+    const ease = 1 - Math.pow(1 - p, 2.6);
+    const rot = -sign * (1 - ease) * MAX_ROT;
+    const tx = -sign * (1 - ease) * 18; // leve deslize lateral acompanhando
+    const shade = (1 - ease) * 0.5;     // sombra que clareia
+    return (
+      <AbsoluteFill style={{ perspective: `${PERSPECTIVE}px` }}>
+        <AbsoluteFill style={{
+          transform: `translateX(${tx.toFixed(2)}%) rotateY(${rot.toFixed(2)}deg)`,
+          transformOrigin: dir === 'right' ? 'right center' : 'left center',
+          backfaceVisibility: 'hidden',
+        }}>
+          {children}
+          <AbsoluteFill style={{ background: '#000', opacity: shade.toFixed(3), pointerEvents: 'none' }} />
+        </AbsoluteFill>
+      </AbsoluteFill>
+    );
+  }
+  // Saída: gira pra dentro (rotateY 0 → -MAX), escurece. Ease-in.
+  const ease = Math.pow(p, 1.8);
+  const rot = sign * ease * MAX_ROT;
+  const tx = sign * ease * 18;
+  const shade = ease * 0.5;
+  return (
+    <AbsoluteFill style={{ perspective: `${PERSPECTIVE}px` }}>
+      <AbsoluteFill style={{
+        transform: `translateX(${tx.toFixed(2)}%) rotateY(${rot.toFixed(2)}deg)`,
+        transformOrigin: dir === 'right' ? 'left center' : 'right center',
+        backfaceVisibility: 'hidden',
+      }}>
+        {children}
+        <AbsoluteFill style={{ background: '#000', opacity: shade.toFixed(3), pointerEvents: 'none' }} />
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
+};
+export const push3D = (props = {}) => ({ component: Push3DPresentation, props });
+
+// ─── DIP-TO-BRAND ────────────────────────────────────────────────────
+// A tela mergulha numa cor sólida (verde Cropware default) no boundary e
+// reemerge na próxima cena. Cada cena desfoca + escurece em direção à cor;
+// no pico (progress=0.5) a tela é quase 100% a cor. Editorial, reforça marca.
+// passedProps.color: cor do dip (default verde Cropware).
+const DipToBrandPresentation = ({ children, presentationProgress, presentationDirection, passedProps }) => {
+  const p = presentationProgress;
+  const color = (passedProps && passedProps.color) || '#6AC58F';
+  // Cobertura com PLATÔ: sobe 0→1 até 38%, fica 100% entre 38%-62% (a tela
+  // fica totalmente na cor — corte presente), desce 1→0 de 62% a 100%.
+  let cover;
+  if (p < 0.38)      cover = p / 0.38;
+  else if (p > 0.62) cover = Math.max(0, 1 - (p - 0.62) / 0.38);
+  else               cover = 1;
+
+  if (presentationDirection === 'entering') {
+    // Reemerge: aparece no segundo meio. Leve scale-down + blur que assenta.
+    const ep = Math.max(0, (p - 0.4) / 0.6);
+    const scale = 1.06 - 0.06 * ep;
+    const blur = (1 - ep) * 12;
+    return (
+      <AbsoluteFill style={{ transform: `scale(${scale.toFixed(4)})`, filter: `blur(${blur.toFixed(2)}px)` }}>
+        {children}
+        <AbsoluteFill style={{ background: color, opacity: cover.toFixed(3), pointerEvents: 'none' }} />
+      </AbsoluteFill>
+    );
+  }
+  // Saída: mergulha na cor. Leve scale-up + blur crescente em direção ao pico.
+  const ep = Math.min(1, p / 0.6);
+  const scale = 1 + 0.06 * ep;
+  const blur = ep * 12;
+  return (
+    <AbsoluteFill style={{ transform: `scale(${scale.toFixed(4)})`, filter: `blur(${blur.toFixed(2)}px)` }}>
+      {children}
+      <AbsoluteFill style={{ background: color, opacity: cover.toFixed(3), pointerEvents: 'none' }} />
+    </AbsoluteFill>
+  );
+};
+export const dipToBrand = (props = {}) => ({ component: DipToBrandPresentation, props });
+
+// ─── ZOOM-PUNCH ──────────────────────────────────────────────────────
+// "Mergulho" cinematográfico: a cena que sai acelera num zoom forte
+// (scale 1 → ~3.8) com origem configurável (default center) — como se a
+// câmera entrasse PRA DENTRO de um elemento. A cena nova emerge de scale
+// ~1.5 desfocada e foca rápido, dando a ilusão de zoom contínuo através do
+// plano. Os elementos da cena nova seguem suas próprias animações de entrada.
+//
+// passedProps.origin: 'center' | 'top-left' | ... | '50% 38%' (CSS string).
+// passedProps.scale: scale máximo da saída (default 3.8).
+const ZoomPunchPresentation = ({ children, presentationProgress, presentationDirection, passedProps }) => {
+  const p = presentationProgress;
+  const originRaw = (passedProps && passedProps.origin) || 'center';
+  // Normaliza atalhos pra CSS transform-origin.
+  const originMap = {
+    'center': '50% 50%',
+    'top-left': '0% 0%', 'top-right': '100% 0%',
+    'bottom-left': '0% 100%', 'bottom-right': '100% 100%',
+    'top': '50% 0%', 'bottom': '50% 100%',
+  };
+  const origin = originMap[originRaw] || originRaw;
+  const exitScaleMax = (passedProps && passedProps.scale) || 2.8;
+
+  if (presentationDirection === 'entering') {
+    // Emerge bem gentil: scale 1.6 → 1 com ease-out macio e blur sutil.
+    // Crossfade longo (aparece já a partir de 30%) pra dissolver suavemente.
+    const ep = Math.max(0, (p - 0.3) / 0.7);
+    const ease = 1 - Math.pow(1 - ep, 1.6);    // ease-out macio
+    const scale = 1.6 - 0.6 * ease;
+    const blur = (1 - ease) * 9;
+    const opacity = Math.min(1, ep * 1.35);
+    return (
+      <AbsoluteFill style={{
+        opacity,
+        transform: `scale(${scale.toFixed(4)})`,
+        transformOrigin: origin,
+        filter: `blur(${blur.toFixed(2)}px)`,
+      }}>{children}</AbsoluteFill>
+    );
+  }
+  // Saída: mergulho leve e fluido. Ease-in muito suave (1.05 ≈ linear),
+  // crossfade bem longo (45%→90%) pra dissolver sem corte perceptível.
+  const easeIn = Math.pow(p, 1.05);
+  const scale = 1 + (exitScaleMax - 1) * easeIn;
+  const blur = easeIn * 9;
+  const opacity = p < 0.45 ? 1 : Math.max(0, 1 - (p - 0.45) / 0.45);
+  return (
+    <AbsoluteFill style={{
+      opacity,
+      transform: `scale(${scale.toFixed(4)})`,
+      transformOrigin: origin,
+      filter: `blur(${blur.toFixed(2)}px)`,
+    }}>{children}</AbsoluteFill>
+  );
+};
+export const zoomPunch = (props = {}) => ({ component: ZoomPunchPresentation, props });
+
 // ─── LIGHT-STREAK ────────────────────────────────────────────────────
 // Feixe diagonal de luz cruza a tela e "carrega" a nova cena. Renderiza
 // o streak sobre a cena que sai pra não duplicar.
