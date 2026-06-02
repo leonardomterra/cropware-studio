@@ -6,7 +6,8 @@
 <title>Cropware — Studio de Posts</title>
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Alumni+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Vend+Sans:wght@400..700&family=Sora:wght@400;500;600;700;800&family=Geist:wght@100..900&family=Pathway+Extreme:wdth,wght@75..125,400..700&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Mozilla+Text:wght@400;500;600;700&family=Mozilla+Headline:wght@200;300;400;500;600;700&family=Alumni+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Vend+Sans:wght@400..700&family=Sora:wght@400;500;600;700;800&family=Geist:wght@100..900&family=Pathway+Extreme:wdth,wght@75..125,400..700&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource-variable/hubot-sans/index.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.11/dist/html2canvas-pro.min.js"></script>
@@ -1481,6 +1482,30 @@
     color: inherit !important;
     font-weight: inherit !important;
     font-style: normal !important;
+  }
+
+  /* Instagram Ads: hook e complement em Inter Tight (levemente condensado). */
+  .post[data-type="instagram-ads-carousel"] .hook,
+  .post[data-type="instagram-ads-ii-post"] .hook,
+  .post[data-type="instagram-ads-ii-carousel"] .hook,
+  .post[data-type="instagram-ads-post"] .complement,
+  .post[data-type="instagram-ads-carousel"] .complement,
+  .post[data-type="instagram-ads-ii-post"] .complement,
+  .post[data-type="instagram-ads-ii-carousel"] .complement {
+    font-family: 'Inter Tight', 'Inter', sans-serif !important;
+    letter-spacing: -0.015em;
+  }
+  /* Ads I — Post: hook em Inter Tight */
+  .post[data-type="instagram-ads-post"] .hook {
+    font-family: 'Inter Tight', 'Inter', sans-serif !important;
+    letter-spacing: -0.015em;
+    font-weight: 500 !important;
+  }
+  .post[data-type="instagram-ads-post"] .complement,
+  .post[data-type="instagram-ads-carousel"] .complement,
+  .post[data-type="instagram-ads-ii-post"] .complement,
+  .post[data-type="instagram-ads-ii-carousel"] .complement {
+    font-size: calc(40px * var(--complement-scale, 1)) !important;
   }
 
   .separator {
@@ -3736,6 +3761,176 @@
     opacity: 0.55;
     filter: grayscale(1);
     pointer-events: none;
+  }
+  /* ── Ads I — Mockup: celular DE FRENTE (sem 3D), tema claro. A tela mostra o
+     skeleton de 2 funcionalidades; uma "janelinha zoom" detalhada (com numeros)
+     salta sobre uma das funcoes (parte na tela, parte fora). Foco + contexto. ── */
+  .ads-mockup {
+    position: absolute;
+    right: 24px; bottom: -42px;
+    width: 300px; height: 620px;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .ads-mockup-phone {
+    position: relative;
+    width: 100%; height: 100%;
+    background: #0b0e13;
+    border-radius: 46px;
+    box-shadow: 0 34px 70px rgba(0,0,0,0.42), inset 0 0 0 1px rgba(255,255,255,0.07);
+    padding: 7px;
+    box-sizing: border-box;
+  }
+  /* botões laterais p/ realismo (fora do overflow do phone) */
+  .ads-mockup-phone::before { content: ''; position: absolute; left: -3px; top: 152px; width: 4px; height: 94px; border-radius: 3px; background: #2b323d; }
+  .ads-mockup-phone::after  { content: ''; position: absolute; right: -3px; top: 182px; width: 4px; height: 66px; border-radius: 3px; background: #2b323d; }
+  .ads-mockup-screen {
+    position: relative;
+    width: 100%; height: 100%;
+    border-radius: 40px;
+    background: linear-gradient(170deg, #f6f8fa 0%, #eaeef2 100%);
+    padding: 44px 16px 20px;
+    display: flex; flex-direction: column; gap: 14px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .amk-island {
+    position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
+    width: 80px; height: 21px; border-radius: 11px; background: #0b0e13;
+    z-index: 2;
+  }
+  .amk-bar { display: block; border-radius: 6px; background: rgba(15,23,42,0.13); }
+  .amk-fn-head { display: flex; align-items: center; gap: 10px; }
+  .amk-dot { width: 24px; height: 24px; border-radius: 50%; flex: 0 0 auto; }
+  .amk-bar-t { width: 96px; height: 13px; }
+  /* blocos de funcionalidade (skeleton) na tela */
+  .amk-fn {
+    flex: 1;
+    background: #fff;
+    border: 1px solid rgba(15,23,42,0.06);
+    border-radius: 16px;
+    padding: 16px 14px;
+    display: flex; flex-direction: column; justify-content: center; gap: 12px;
+    box-shadow: 0 2px 8px rgba(15,23,42,0.04);
+  }
+  .amk-bar-s { width: 62%; height: 11px; }
+  .amk-fn-chart { display: flex; align-items: flex-end; gap: 8px; height: 88px; }
+  .amk-fn-chart > span { flex: 1; border-radius: 5px 5px 0 0; background: rgba(15,23,42,0.12); }
+  .amk-fn-row { display: flex; align-items: center; gap: 11px; }
+  .amk-chip { width: 32px; height: 32px; border-radius: 9px; background: rgba(15,23,42,0.07); flex: 0 0 auto; }
+  .amk-bar-r  { width: 68%; height: 10px; }
+  .amk-bar-r2 { width: 50%; height: 10px; }
+  /* cabeçalho + desenhos distintos por funcionalidade na tela */
+  .amk-fn-h { display: flex; align-items: center; gap: 8px; }
+  .amk-fn-ic { font-size: 18px; color: var(--post-accent); }
+  .amk-fn-fore { display: flex; justify-content: space-between; gap: 8px; }
+  .amk-fn-fore > div { display: flex; flex-direction: column; align-items: center; gap: 7px; flex: 1; }
+  .amk-fn-fore i { font-size: 19px; color: #9aa3af; }
+  .amk-fn-fore .amk-bar { width: 60%; height: 8px; }
+  .amk-fn-week { display: flex; gap: 7px; }
+  .amk-fn-week > span { flex: 1; aspect-ratio: 1 / 1; border-radius: 7px; background: rgba(15,23,42,0.08); }
+  .amk-fn-week > span.on { background: var(--post-accent); }
+  .amk-ckbox { width: 20px; height: 20px; border-radius: 6px; flex: 0 0 auto; background: rgba(15,23,42,0.09); display: flex; align-items: center; justify-content: center; }
+  .amk-ckbox.on { background: var(--post-accent); }
+  .amk-ckbox i { font-size: 12px; color: #fff; }
+  /* janelinha ZOOM: detalhada (numeros reais-ish), salta sobre a funcao */
+  .amk-zoom {
+    position: absolute;
+    width: 258px;
+    background: rgba(255,255,255,0.93);
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.85);
+    box-shadow: 0 20px 44px rgba(15,23,42,0.34);
+    padding: 15px 15px 17px;
+    height: 196px; box-sizing: border-box;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
+    font-family: 'Inter Tight', sans-serif;
+  }
+  /* duas janelinhas: mesmo tamanho; uma salta da função de cima, outra da de baixo */
+  .amk-zoom-1 { left: -118px; top: 60px;  z-index: 6; }
+  .amk-zoom-2 { left: -118px; top: 320px; z-index: 7; }
+  .amk-zoom-head { display: flex; align-items: center; justify-content: space-between; }
+  .amk-zoom-eyebrow { font-size: 14px; font-weight: 600; letter-spacing: .005em; color: #6b7480; }
+  .amk-zoom-badge { font-size: 13px; font-weight: 600; color: var(--post-accent); background: rgba(15,23,42,0.05); padding: 4px 9px; border-radius: 8px; }
+  .amk-zoom-value { font-size: 33px; font-weight: 700; letter-spacing: -.01em; color: #1a2230; line-height: 1; }
+  .amk-zoom-value span { font-size: 33px; font-weight: 600; color: #8a93a0; margin-left: 6px; }
+  .amk-zoom-cap { display: flex; align-items: center; gap: 6px; font-family: 'Inter Tight', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: -.01em; line-height: 1.15; color: #5a636f; }
+  .amk-zoom-cap::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--post-accent); flex: none; }
+  .amk-zoom-chart { display: flex; align-items: flex-end; gap: 8px; height: 54px; }
+  .amk-zoom-chart > span { flex: 1; border-radius: 5px 5px 0 0; background: rgba(15,23,42,0.13); }
+  /* zoom — variantes por funcionalidade */
+  .amk-zoom-ico { font-size: 30px; line-height: 1; color: var(--post-accent); }
+  .amk-zoom-rows { display: flex; flex-direction: column; gap: 11px; }
+  .amk-zr { display: flex; align-items: center; gap: 10px; }
+  .amk-gauge { flex: 1; height: 8px; border-radius: 4px; background: rgba(15,23,42,0.08); overflow: hidden; }
+  .amk-gauge i { display: block; height: 100%; border-radius: 4px; background: rgba(15,23,42,0.22); }
+  .amk-zoom-fore { display: flex; justify-content: space-between; gap: 10px; }
+  .amk-zoom-fore > div { display: flex; flex-direction: column; align-items: center; gap: 9px; flex: 1; }
+  .amk-zoom-fore i { font-size: 25px; color: #6b7480; }
+  .amk-zoom-fore .amk-bar { width: 60%; height: 9px; }
+  .amk-zoom-events { display: flex; flex-direction: column; gap: 10px; }
+  .amk-ev { display: flex; align-items: center; gap: 12px; }
+  .amk-ev-time { font-size: 14px; font-weight: 600; color: #6b7480; width: 46px; flex: 0 0 auto; }
+  .amk-ev-bar { flex: 1; height: 22px; border-radius: 7px; background: rgba(15,23,42,0.07); }
+  .amk-zoom-tasks { display: flex; flex-direction: column; gap: 11px; }
+  .amk-task { display: flex; align-items: center; gap: 11px; }
+  .amk-check { width: 22px; height: 22px; border-radius: 7px; flex: 0 0 auto; background: rgba(15,23,42,0.10); display: flex; align-items: center; justify-content: center; }
+  .amk-check i { font-size: 13px; color: #fff; }
+  /* Ads I — texto em coluna à esquerda p/ não cobrir o device à direita (layout myFarm). */
+  .post[data-type="instagram-ads-post"] .content-top { max-width: 924px !important; top: 270px !important; }
+  .post[data-type="instagram-ads-post"] .hook { max-width: 100% !important; font-size: calc(52px * var(--hook-scale, 1)) !important; }
+  .post[data-type="instagram-ads-post"] .complement { max-width: 820px !important; font-size: calc(34px * var(--complement-scale, 1)) !important; font-family: 'Mozilla Text', 'Inter', serif !important; }
+  .post[data-type="instagram-ads-post"] .complement strong { font-weight: 600 !important; }
+  .post[data-type="instagram-ads-post"] .hook,
+  .post[data-type="instagram-ads-post"] .complement { text-shadow: none !important; }
+  .post[data-type="instagram-ads-post"] .separator-short { height: 6px !important; width: 340px !important; background: var(--post-accent) !important; border-radius: 0 !important; }
+  /* Ads I — logo + insight (card glassmorphism) no canto inferior esquerdo */
+  /* Ads I — logo + 2 cards de insight (glass), cada card alinhado a uma janelinha do mockup */
+  .ads-brand {
+    position: absolute; left: 56px; bottom: 110px; z-index: 3;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
+  }
+  .ads-insight-logo {
+    width: 418px; height: 74px;
+    -webkit-mask: url('logo-cropware-pb-final.svg') left center / contain no-repeat;
+    mask: url('logo-cropware-pb-final.svg') left center / contain no-repeat;
+    background: #eef2f6;
+  }
+  .ads-brand-site {
+    font-family: 'Space Mono', monospace;
+    font-size: 26px; font-weight: 400; line-height: 1;
+    text-transform: uppercase; letter-spacing: -0.035em;
+    color: rgba(255,255,255,0.72);
+  }
+  .ads-brand-site::before {
+    content: '\2192';
+    color: var(--post-accent);
+    font-weight: 700;
+    margin-right: 12px;
+  }
+  /* Gradiente direcional: escurece topo-esquerda (texto) + base (aterra logo/CTA/celular) */
+  .ads-grade {
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(8,12,11,0.30) 0%, rgba(8,12,11,0) 28%, rgba(8,12,11,0) 58%, rgba(8,12,11,0.58) 100%),
+      linear-gradient(90deg, rgba(8,12,11,0.32) 0%, rgba(8,12,11,0) 52%);
+  }
+  .ads-insight-card {
+    position: absolute; left: 56px; top: 148px; z-index: 3;
+    width: max-content; max-width: 960px; white-space: nowrap; box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 20px 26px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px; font-weight: 400; line-height: 1.3;
+    text-transform: uppercase; letter-spacing: 0;
+    color: #f1f4f7;
   }
   .signal-card-icon {
     display: inline-flex;
@@ -9947,8 +10142,10 @@
         <option value="carousel">Instagram — Carrossel</option>
         <option value="funcionalidades-post">Funcionalidades — Post</option>
         <option value="funcionalidades-carousel">Funcionalidades — Carrossel</option>
-        <option value="instagram-ads-post">Instagram Ads — Post</option>
-        <option value="instagram-ads-carousel">Instagram Ads — Carrossel</option>
+        <option value="instagram-ads-post">Instagram Ads I — Post</option>
+        <option value="instagram-ads-ii-post">Instagram Ads II — Post</option>
+        <option value="instagram-ads-carousel">Instagram Ads I — Carrossel</option>
+        <option value="instagram-ads-ii-carousel">Instagram Ads II — Carrossel</option>
         <option value="logo-cropware-post">Logo Cropware</option>
       </optgroup>
       <optgroup label="LinkedIn">
@@ -11049,6 +11246,14 @@ const instagramAdsCarousels = [];
 const instagramAdsCarouselLegends = [];
 let instagramAdsCurrentCarousel = 0;
 let instagramAdsCurrentSlide = 0;
+// Ads II — duplicata de Ads I (mesma plataforma/discurso/render), colecao propria.
+const instagramAdsIIPosts = [];
+const instagramAdsIILegends = [];
+let instagramAdsIICurrentPost = 0;
+const instagramAdsIICarousels = [];
+const instagramAdsIICarouselLegends = [];
+let instagramAdsIICurrentCarousel = 0;
+let instagramAdsIICurrentSlide = 0;
 const instagramFlatPosts = [];
 const instagramFlatLegends = [];
 let instagramFlatCurrentPost = 0;
@@ -11133,7 +11338,7 @@ function getPlatform() {
   if (activeMode === 'instagram-flat-post') return 'instagram-flat';
   if (activeMode === 'instagram-flat-ii-post') return 'instagram-flat-ii';
   if (activeMode === 'sinal-post' || activeMode === 'sinal-carousel') return 'sinal';
-  if (activeMode === 'instagram-ads-post' || activeMode === 'instagram-ads-carousel') return 'instagram-ads';
+  if (activeMode === 'instagram-ads-post' || activeMode === 'instagram-ads-carousel' || activeMode === 'instagram-ads-ii-post' || activeMode === 'instagram-ads-ii-carousel') return 'instagram-ads';
   if (activeMode.startsWith('linkedin-pessoal')) return 'linkedin-pessoal';
   return activeMode.startsWith('linkedin') ? 'linkedin' : 'instagram';
 }
@@ -11143,7 +11348,17 @@ function isNewsMode(mode) {
 }
 function isInstagramAdsMode(mode) {
   const m = mode || activeMode;
-  return m === 'instagram-ads-post' || m === 'instagram-ads-carousel';
+  return m === 'instagram-ads-post' || m === 'instagram-ads-carousel'
+      || m === 'instagram-ads-ii-post' || m === 'instagram-ads-ii-carousel';
+}
+function isInstagramAdsIIMode(mode) {
+  const m = mode || activeMode;
+  return m === 'instagram-ads-ii-post' || m === 'instagram-ads-ii-carousel';
+}
+// Aceita os 4 tipos de anuncio (Ads I e II) — usado em render/CSS/copy partilhados.
+function isInstagramAdsTypeAny(t) {
+  return t === 'instagram-ads-post' || t === 'instagram-ads-carousel'
+      || t === 'instagram-ads-ii-post' || t === 'instagram-ads-ii-carousel';
 }
 function isInstagramFlatMode(mode) {
   return (mode || activeMode) === 'instagram-flat-post';
@@ -11173,7 +11388,7 @@ function isBoletimAgroMode(mode) {
   return (mode || activeMode) === 'boletim-agro-carrossel';
 }
 function isCarouselMode() {
-  return activeMode === 'carousel' || activeMode === 'sinal-carousel' || activeMode === 'funcionalidades-carousel' || activeMode === 'previsao-carrossel' || activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel' || activeMode === 'presentation' || activeMode === 'instagram-ads-carousel' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel' || activeMode === 'boletim-agro-carrossel';
+  return activeMode === 'carousel' || activeMode === 'sinal-carousel' || activeMode === 'funcionalidades-carousel' || activeMode === 'previsao-carrossel' || activeMode === 'linkedin-carousel' || activeMode === 'linkedin-pessoal-carousel' || activeMode === 'presentation' || activeMode === 'instagram-ads-carousel' || activeMode === 'instagram-ads-ii-carousel' || activeMode === 'tendencia-carrossel' || activeMode === 'opiniao-carrossel' || activeMode === 'boletim-agro-carrossel';
 }
 function isOpinionCarouselMode(mode) {
   return (mode || activeMode) === 'opiniao-carrossel';
@@ -11422,6 +11637,8 @@ function getModeItems() {
     case 'boletim-agro-carrossel':    return boletimAgroCarousels;
     case 'instagram-ads-post':        return instagramAdsPosts;
     case 'instagram-ads-carousel':    return instagramAdsCarousels;
+    case 'instagram-ads-ii-post':     return instagramAdsIIPosts;
+    case 'instagram-ads-ii-carousel': return instagramAdsIICarousels;
     case 'linkedin-post':             return linkedinPosts;
     case 'linkedin-carousel':         return linkedinCarousels;
     case 'linkedin-pessoal-post':     return linkedinPessoalPosts;
@@ -11448,6 +11665,8 @@ function getModeLegends() {
     case 'boletim-agro-carrossel':    return boletimAgroCarouselLegends;
     case 'instagram-ads-post':        return instagramAdsLegends;
     case 'instagram-ads-carousel':    return instagramAdsCarouselLegends;
+    case 'instagram-ads-ii-post':     return instagramAdsIILegends;
+    case 'instagram-ads-ii-carousel': return instagramAdsIICarouselLegends;
     case 'linkedin-post':             return linkedinLegends;
     case 'linkedin-carousel':         return linkedinCarouselLegends;
     case 'linkedin-pessoal-post':     return linkedinPessoalLegends;
@@ -11474,6 +11693,8 @@ function getModeCurrentIdx() {
     case 'boletim-agro-carrossel':    return currentBoletimAgroCarousel;
     case 'instagram-ads-post':        return instagramAdsCurrentPost;
     case 'instagram-ads-carousel':    return instagramAdsCurrentCarousel;
+    case 'instagram-ads-ii-post':     return instagramAdsIICurrentPost;
+    case 'instagram-ads-ii-carousel': return instagramAdsIICurrentCarousel;
     case 'linkedin-post':             return linkedinCurrentPost;
     case 'linkedin-carousel':         return linkedinCurrentCarousel;
     case 'linkedin-pessoal-post':     return linkedinPessoalCurrentPost;
@@ -11500,6 +11721,8 @@ function setModeCurrentIdx(idx) {
     case 'boletim-agro-carrossel':    currentBoletimAgroCarousel = idx; break;
     case 'instagram-ads-post':        instagramAdsCurrentPost = idx; break;
     case 'instagram-ads-carousel':    instagramAdsCurrentCarousel = idx; break;
+    case 'instagram-ads-ii-post':     instagramAdsIICurrentPost = idx; break;
+    case 'instagram-ads-ii-carousel': instagramAdsIICurrentCarousel = idx; break;
     case 'linkedin-post':             linkedinCurrentPost = idx; break;
     case 'linkedin-carousel':         linkedinCurrentCarousel = idx; break;
     case 'linkedin-pessoal-post':     linkedinPessoalCurrentPost = idx; break;
@@ -11517,6 +11740,7 @@ function getCurrentSlide() {
   if (activeMode === 'sinal-carousel') return sinalCurrentSlide;
   if (activeMode === 'previsao-carrossel') return weatherCarouselCurrentSlide;
   if (activeMode === 'instagram-ads-carousel') return instagramAdsCurrentSlide;
+  if (activeMode === 'instagram-ads-ii-carousel') return instagramAdsIICurrentSlide;
   if (activeMode === 'tendencia-carrossel') return newsCarouselCurrentSlide;
   if (activeMode === 'opiniao-carrossel') return opinionCarouselCurrentSlide;
   if (activeMode === 'boletim-agro-carrossel') return boletimAgroCarouselCurrentSlide;
@@ -11530,6 +11754,7 @@ function setCurrentSlide(idx) {
   else if (activeMode === 'sinal-carousel') sinalCurrentSlide = idx;
   else if (activeMode === 'previsao-carrossel') weatherCarouselCurrentSlide = idx;
   else if (activeMode === 'instagram-ads-carousel') instagramAdsCurrentSlide = idx;
+  else if (activeMode === 'instagram-ads-ii-carousel') instagramAdsIICurrentSlide = idx;
   else if (activeMode === 'tendencia-carrossel') newsCarouselCurrentSlide = idx;
   else if (activeMode === 'opiniao-carrossel') opinionCarouselCurrentSlide = idx;
   else if (activeMode === 'boletim-agro-carrossel') boletimAgroCarouselCurrentSlide = idx;
@@ -11613,7 +11838,7 @@ const STUDIO_MODE_GROUPS = [
   {
     id: 'instagram',
     label: 'Instagram',
-    modes: ['post', 'instagram-flat-post', 'instagram-flat-ii-post', 'sinal-post', 'sinal-carousel', 'carousel', 'funcionalidades-post', 'funcionalidades-carousel', 'instagram-ads-post', 'instagram-ads-carousel']
+    modes: ['post', 'instagram-flat-post', 'instagram-flat-ii-post', 'sinal-post', 'sinal-carousel', 'carousel', 'funcionalidades-post', 'funcionalidades-carousel', 'instagram-ads-post', 'instagram-ads-ii-post', 'instagram-ads-carousel', 'instagram-ads-ii-carousel']
   },
   {
     id: 'linkedin',
@@ -12906,6 +13131,14 @@ const _saveSessionCore = async function() {
     .map((c, i) => ({ post: c, legend: instagramAdsCarouselLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
+  const generatedInstagramAdsIIPosts = instagramAdsIIPosts
+    .map((p, i) => ({ post: p, legend: instagramAdsIILegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
+  const generatedInstagramAdsIICarousels = instagramAdsIICarousels
+    .map((c, i) => ({ post: c, legend: instagramAdsIICarouselLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
   const generatedInstagramFlatPosts = instagramFlatPosts
     .map((p, i) => ({ post: p, legend: instagramFlatLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
@@ -12974,7 +13207,7 @@ const _saveSessionCore = async function() {
     .map((p, i) => ({ post: p, legend: presentationLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
-  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedInstagramFlatPosts, ...generatedInstagramFlatIIPosts, ...generatedSinalPosts, ...generatedSinalCarousels, ...generatedFeaturePosts, ...generatedFeatureCarousels, ...generatedLogoCropwarePosts, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedOpinionCarousels, ...generatedWeatherCarousels, ...generatedBoletimAgroCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
+  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedInstagramAdsIIPosts, ...generatedInstagramAdsIICarousels, ...generatedInstagramFlatPosts, ...generatedInstagramFlatIIPosts, ...generatedSinalPosts, ...generatedSinalCarousels, ...generatedFeaturePosts, ...generatedFeatureCarousels, ...generatedLogoCropwarePosts, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedOpinionCarousels, ...generatedWeatherCarousels, ...generatedBoletimAgroCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
   if (!allRows.length) return;
   const sid = getSessionId();
   const now = new Date().toISOString();
@@ -13054,7 +13287,7 @@ async function loadSession() {
         const type = postData.type;
         if (type === 'presentation') {
           renderGeneratedPresentation(postData, row.legend || '');
-        } else if (type === 'carousel' || type === 'sinal-carousel' || type === 'feature-carousel' || type === 'weather-carousel' || type === 'linkedin-carousel' || type === 'linkedin-pessoal-carousel' || type === 'instagram-ads-carousel' || type === 'news-carousel-post' || type === 'opinion-carousel-post' || type === 'boletim-agro-post') {
+        } else if (type === 'carousel' || type === 'sinal-carousel' || type === 'feature-carousel' || type === 'weather-carousel' || type === 'linkedin-carousel' || type === 'linkedin-pessoal-carousel' || type === 'instagram-ads-carousel' || type === 'instagram-ads-ii-carousel' || type === 'news-carousel-post' || type === 'opinion-carousel-post' || type === 'boletim-agro-post') {
           renderGeneratedCarousel(postData, row.legend || '');
         } else {
           renderGeneratedPost(postData, row.legend || '');
@@ -13620,7 +13853,21 @@ function renderGeneratedPost(postData, legendText) {
     postData._molduraInitialized = true;
   }
 
+  // Instagram Ads (I/II) — defaults iniciais de overlay + textura (uma vez).
+  if (isInstagramAdsTypeAny(postData.type) && !postData._adsInitialized) {
+    if (postData.overlayColor == null || postData.overlayColor === '#000000' || postData.overlayColor === 'transparent') postData.overlayColor = '#374151'; // Gray 700
+    if (postData.overlayOpacity == null) postData.overlayOpacity = 55;
+    if (!postData.overlayDirection || postData.overlayDirection === 'top') postData.overlayDirection = 'full';
+    if (postData.signalPhotoTexture == null) postData.signalPhotoTexture = 'assets/ads-textures/linhas-claras-3.webp';
+    if (postData.signalPhotoTextureIntensity == null) postData.signalPhotoTextureIntensity = 80;
+    if (!postData.signalPhotoTextureBlendMode) postData.signalPhotoTextureBlendMode = 'overlay';
+    if (postData.signalPhotoTextureInvert == null) postData.signalPhotoTextureInvert = true;
+    if (postData.type === 'instagram-ads-post') { postData.layout = 'top'; postData.logoEnabled = false; } // modelo mockup: logo vai acima do hook
+    postData._adsInitialized = true;
+  }
+
   const isInstagramAds = postData.type === 'instagram-ads-post';
+  const isInstagramAdsII = postData.type === 'instagram-ads-ii-post';
   const isInstagramFlat = postData.type === 'instagram-flat-post';
   const isInstagramFlatII = postData.type === 'instagram-flat-ii-post';
   const isFeaturePost = postData.type === 'feature-post';
@@ -13629,8 +13876,8 @@ function renderGeneratedPost(postData, legendText) {
   const isSinal = postData.type === 'sinal-post';
   const isLinkedinPessoal = postData.type === 'linkedin-pessoal-post';
   const isLinkedin = postData.type === 'linkedin-post';
-  const targetPosts = isInstagramAds ? instagramAdsPosts : isInstagramFlat ? instagramFlatPosts : isInstagramFlatII ? instagramFlatIIPosts : isFeaturePost ? featurePosts : isLogoCropware ? logoCropwarePosts : isNews ? newsPosts : isSinal ? sinalPosts : isLinkedinPessoal ? linkedinPessoalPosts : isLinkedin ? linkedinPosts : posts;
-  const targetLegends = isInstagramAds ? instagramAdsLegends : isInstagramFlat ? instagramFlatLegends : isInstagramFlatII ? instagramFlatIILegends : isFeaturePost ? featureLegends : isLogoCropware ? logoCropwareLegends : isNews ? newsLegends : isSinal ? sinalLegends : isLinkedinPessoal ? linkedinPessoalLegends : isLinkedin ? linkedinLegends : legends;
+  const targetPosts = isInstagramAdsII ? instagramAdsIIPosts : isInstagramAds ? instagramAdsPosts : isInstagramFlat ? instagramFlatPosts : isInstagramFlatII ? instagramFlatIIPosts : isFeaturePost ? featurePosts : isLogoCropware ? logoCropwarePosts : isNews ? newsPosts : isSinal ? sinalPosts : isLinkedinPessoal ? linkedinPessoalPosts : isLinkedin ? linkedinPosts : posts;
+  const targetLegends = isInstagramAdsII ? instagramAdsIILegends : isInstagramAds ? instagramAdsLegends : isInstagramFlat ? instagramFlatLegends : isInstagramFlatII ? instagramFlatIILegends : isFeaturePost ? featureLegends : isLogoCropware ? logoCropwareLegends : isNews ? newsLegends : isSinal ? sinalLegends : isLinkedinPessoal ? linkedinPessoalLegends : isLinkedin ? linkedinLegends : legends;
 
   targetPosts.push(postData);
   targetLegends.push(normalizePanelText(legendText || '', postData.type));
@@ -13799,6 +14046,7 @@ function renderGeneratedCarousel(carouselData, legendText) {
   });
 
   const isInstagramAdsCarousel = carouselData.type === 'instagram-ads-carousel';
+  const isInstagramAdsIICarousel = carouselData.type === 'instagram-ads-ii-carousel';
   const isSinalCarousel = carouselData.type === 'sinal-carousel';
   const isFeatureCarousel = carouselData.type === 'feature-carousel';
   const isWeatherCarousel = carouselData.type === 'weather-carousel';
@@ -13807,8 +14055,8 @@ function renderGeneratedCarousel(carouselData, legendText) {
   const isNewsCarousel = carouselData.type === 'news-carousel-post';
   const isOpinionCarousel = carouselData.type === 'opinion-carousel-post' || carouselData.editorialFlavor === 'opinion';
   const isBoletimAgro = carouselData.type === 'boletim-agro-post';
-  const targetArr = isBoletimAgro ? boletimAgroCarousels : isOpinionCarousel ? opinionCarousels : isNewsCarousel ? newsCarousels : isInstagramAdsCarousel ? instagramAdsCarousels : isSinalCarousel ? sinalCarousels : isFeatureCarousel ? featureCarousels : isWeatherCarousel ? weatherCarousels : isLinkedinPessoal ? linkedinPessoalCarousels : isLinkedin ? linkedinCarousels : carousels;
-  const targetLeg = isBoletimAgro ? boletimAgroCarouselLegends : isOpinionCarousel ? opinionCarouselLegends : isNewsCarousel ? newsCarouselLegends : isInstagramAdsCarousel ? instagramAdsCarouselLegends : isSinalCarousel ? sinalCarouselLegends : isFeatureCarousel ? featureCarouselLegends : isWeatherCarousel ? weatherCarouselLegends : isLinkedinPessoal ? linkedinPessoalCarouselLegends : isLinkedin ? linkedinCarouselLegends : carouselLegends;
+  const targetArr = isBoletimAgro ? boletimAgroCarousels : isOpinionCarousel ? opinionCarousels : isNewsCarousel ? newsCarousels : isInstagramAdsIICarousel ? instagramAdsIICarousels : isInstagramAdsCarousel ? instagramAdsCarousels : isSinalCarousel ? sinalCarousels : isFeatureCarousel ? featureCarousels : isWeatherCarousel ? weatherCarousels : isLinkedinPessoal ? linkedinPessoalCarousels : isLinkedin ? linkedinCarousels : carousels;
+  const targetLeg = isBoletimAgro ? boletimAgroCarouselLegends : isOpinionCarousel ? opinionCarouselLegends : isNewsCarousel ? newsCarouselLegends : isInstagramAdsIICarousel ? instagramAdsIICarouselLegends : isInstagramAdsCarousel ? instagramAdsCarouselLegends : isSinalCarousel ? sinalCarouselLegends : isFeatureCarousel ? featureCarouselLegends : isWeatherCarousel ? weatherCarouselLegends : isLinkedinPessoal ? linkedinPessoalCarouselLegends : isLinkedin ? linkedinCarouselLegends : carouselLegends;
 
   targetArr.push(carouselData);
   targetLeg.push(isInstagramAdsCarousel ? (legendText || '').trim() : sanitizeLegend(legendText || ''));
@@ -14217,11 +14465,98 @@ function renderClassicStyle(postData) {
     ${topDetail}
     <div class="post-accent-bar"></div>
     ${contentHTML}
+    ${postData.type === 'instagram-ads-post' ? '<div class="ads-grade"></div>' : ''}
+    ${postData.type === 'instagram-ads-post' ? renderAdsSkeletonMockup(postData) : ''}
+    ${postData.type === 'instagram-ads-post' ? renderAdsInsight(postData) : ''}
+    ${postData.type === 'instagram-ads-post' ? renderAdsFlow() : ''}
     ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
     ${renderSiteText(postData)}
     ${renderAppStoreBadge(postData)}
     ${bottomDetail}
   `;
+}
+
+// Repertorio de funcionalidades do mockup do Ads I. Cada funcao tem:
+//  screen(): bloco skeleton (abstrato) que aparece na TELA do celular
+//  zoom():   janelinha detalhada (numeros/icones reais-ish) que SALTA sobre a funcao
+// A IA escolhe o par (mockupFns) e qual vai no zoom (mockupZoom) conforme o tema.
+const ADS_MOCKUP_FUNCTIONS = {
+  graph: {
+    label: 'Produtividade',
+    screen: () => `<div class="amk-fn"><div class="amk-fn-h"><i class="ph-fill ph-chart-bar amk-fn-ic"></i><span class="amk-bar amk-bar-s"></span></div><div class="amk-fn-chart"><span style="height:40%;"></span><span style="height:64%;"></span><span style="height:50%;"></span><span style="height:86%;background:var(--post-accent);"></span><span style="height:58%;"></span></div></div>`,
+    zoom: (c, cap) =>`<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">Produtividade</span><span class="amk-zoom-badge">&#9650; 14%</span></div><div class="amk-zoom-value">72<span>sc/ha</span></div><div class="amk-zoom-chart"><span style="height:44%;"></span><span style="height:60%;"></span><span style="height:52%;"></span><span style="height:78%;"></span><span style="height:92%;background:var(--post-accent);"></span><span style="height:70%;"></span></div></div>`,
+  },
+  evaluation: {
+    label: 'Avaliação',
+    screen: () => `<div class="amk-fn"><div class="amk-fn-h"><i class="ph-fill ph-star amk-fn-ic"></i><span class="amk-bar amk-bar-s"></span></div><div class="amk-zr"><span class="amk-bar" style="width:36%;height:9px;"></span><span class="amk-gauge"><i style="width:82%;background:var(--post-accent);"></i></span></div><div class="amk-zr"><span class="amk-bar" style="width:30%;height:9px;"></span><span class="amk-gauge"><i style="width:60%;"></i></span></div><div class="amk-zr"><span class="amk-bar" style="width:42%;height:9px;"></span><span class="amk-gauge"><i style="width:90%;"></i></span></div></div>`,
+    zoom: (c, cap) =>`<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">Avaliação</span><span class="amk-zoom-badge">Nota</span></div><div class="amk-zoom-value">8,7<span>/10</span></div><div class="amk-zoom-rows"><div class="amk-zr"><span class="amk-bar" style="width:42%;height:9px;"></span><span class="amk-gauge"><i style="width:82%;"></i></span></div><div class="amk-zr"><span class="amk-bar" style="width:34%;height:9px;"></span><span class="amk-gauge"><i style="width:64%;"></i></span></div><div class="amk-zr"><span class="amk-bar" style="width:48%;height:9px;"></span><span class="amk-gauge"><i style="width:90%;background:var(--post-accent);"></i></span></div></div></div>`,
+  },
+  weather: {
+    label: 'Clima',
+    screen: () => `<div class="amk-fn"><div class="amk-fn-h"><i class="ph-fill ph-cloud-sun amk-fn-ic"></i><span class="amk-bar amk-bar-s"></span></div><div class="amk-fn-fore"><div><i class="ph-fill ph-sun"></i><span class="amk-bar"></span></div><div><i class="ph-fill ph-cloud-sun"></i><span class="amk-bar"></span></div><div><i class="ph-fill ph-cloud-rain"></i><span class="amk-bar"></span></div><div><i class="ph-fill ph-cloud"></i><span class="amk-bar"></span></div></div></div>`,
+    zoom: (c, cap) =>`<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">Clima</span><i class="ph-fill ph-cloud-sun amk-zoom-ico"></i></div><div class="amk-zoom-value">29<span>°C</span></div><div class="amk-zoom-fore"><div><i class="ph-fill ph-sun"></i><span class="amk-bar"></span></div><div><i class="ph-fill ph-cloud-sun"></i><span class="amk-bar"></span></div><div><i class="ph-fill ph-cloud-rain"></i><span class="amk-bar"></span></div></div></div>`,
+  },
+  agenda: {
+    label: 'Agenda',
+    screen: () => `<div class="amk-fn"><div class="amk-fn-h"><i class="ph-fill ph-calendar-dots amk-fn-ic"></i><span class="amk-bar amk-bar-s"></span></div><div class="amk-fn-week"><span></span><span></span><span class="on"></span><span></span><span></span></div><div class="amk-fn-row"><span class="amk-bar" style="width:28%;height:9px;"></span><span class="amk-bar" style="width:48%;height:9px;"></span></div></div>`,
+    zoom: (c, cap) =>`<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">Agenda</span><span class="amk-zoom-badge">Hoje</span></div><div class="amk-zoom-events"><div class="amk-ev"><span class="amk-ev-time">08:00</span><span class="amk-ev-bar"></span></div><div class="amk-ev"><span class="amk-ev-time">11:30</span><span class="amk-ev-bar" style="background:var(--post-accent);opacity:.22;"></span></div><div class="amk-ev"><span class="amk-ev-time">15:00</span><span class="amk-ev-bar"></span></div></div></div>`,
+  },
+  activity: {
+    label: 'Atividade',
+    screen: () => `<div class="amk-fn"><div class="amk-fn-h"><i class="ph-fill ph-check-circle amk-fn-ic"></i><span class="amk-bar amk-bar-s"></span></div><div class="amk-fn-row"><span class="amk-ckbox on"><i class="ph-fill ph-check"></i></span><span class="amk-bar" style="width:64%;height:9px;"></span></div><div class="amk-fn-row"><span class="amk-ckbox on"><i class="ph-fill ph-check"></i></span><span class="amk-bar" style="width:52%;height:9px;"></span></div><div class="amk-fn-row"><span class="amk-ckbox"></span><span class="amk-bar" style="width:58%;height:9px;"></span></div></div>`,
+    zoom: (c, cap) =>`<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">Atividade</span><span class="amk-zoom-badge">3/4</span></div><div class="amk-zoom-tasks"><div class="amk-task"><span class="amk-check" style="background:var(--post-accent);"><i class="ph-fill ph-check"></i></span><span class="amk-bar" style="width:70%;height:9px;"></span></div><div class="amk-task"><span class="amk-check" style="background:var(--post-accent);"><i class="ph-fill ph-check"></i></span><span class="amk-bar" style="width:55%;height:9px;"></span></div><div class="amk-task"><span class="amk-check"></span><span class="amk-bar" style="width:62%;height:9px;"></span></div></div></div>`,
+  },
+};
+const ADS_MOCKUP_FN_KEYS = Object.keys(ADS_MOCKUP_FUNCTIONS);
+// Fallback de caption (insight) por funcao, caso a IA nao gere mockupCaps.
+const ADS_MOCKUP_DEFAULT_CAPS = {
+  graph: 'Tendência de alta',
+  evaluation: 'Acima da média',
+  weather: 'Sem chuva por 48h',
+  agenda: 'Rota do dia pronta',
+  activity: '75% concluído',
+};
+
+// Insight (frase de efeito, 1 linha) num card glassmorphism + logo, canto inferior esquerdo.
+function renderAdsInsight(postData) {
+  return `
+    <div class="ads-insight-card">Desenvolvimento de mercado, com inteligência de campo</div>
+    <div class="ads-brand">
+      <div class="ads-insight-logo"></div>
+      <div class="ads-brand-site">Saiba mais em cropware.app</div>
+    </div>`;
+}
+
+// Micro-fluxo do CDM: visita -> avaliacao -> historico (3 chips de vidro com setas).
+function renderAdsFlow() {
+  const steps = [
+    { ic: 'ph-map-pin',                 label: 'Visita' },
+    { ic: 'ph-clipboard-text',          label: 'Avaliação' },
+    { ic: 'ph-clock-counter-clockwise', label: 'Histórico' },
+  ];
+  return `<div class="ads-flow">${steps.map((s, i) => `${i ? '<span class="ads-flow-arrow">→</span>' : ''}<div class="ads-flow-step"><i class="ph-fill ${s.ic}"></i><span>${s.label}</span></div>`).join('')}</div>`;
+}
+
+// Mockup do Ads I: celular de frente, tela = skeleton de 2 funcoes (mockupFns),
+// + janelinha zoom (mockupZoom) detalhada saltando sobre uma delas.
+function renderAdsSkeletonMockup(postData) {
+  const fns = (Array.isArray(postData.mockupFns) ? postData.mockupFns.filter(k => ADS_MOCKUP_FUNCTIONS[k]) : []);
+  const pair = fns.length === 2 ? fns : ['graph', 'evaluation'];
+  const f1 = ADS_MOCKUP_FUNCTIONS[pair[0]];
+  const f2 = ADS_MOCKUP_FUNCTIONS[pair[1]];
+  return `
+    <div class="ads-mockup">
+      <div class="ads-mockup-phone">
+        <div class="ads-mockup-screen">
+          <span class="amk-island"></span>
+          <div class="amk-fn-head"><span class="amk-dot" style="background:var(--post-accent);"></span><span class="amk-bar amk-bar-t"></span></div>
+          ${f1.screen()}
+          ${f2.screen()}
+        </div>
+      </div>
+      ${f1.zoom('amk-zoom-1')}
+      ${f2.zoom('amk-zoom-2')}
+    </div>`;
 }
 
 function renderDashboardStyle(postData) {
@@ -15358,8 +15693,17 @@ function applyPostVariant(postEl, postData) {
     postData.naturalHook = true;
   }
   if (useNaturalText && postData.complementHTML) {
-    postData.complementHTML = normalizeNaturalComplementHTML(postData.complementHTML);
+    postData.complementHTML = (postData.type === 'instagram-ads-post')
+      ? normalizeAdsComplementHTML(postData.complementHTML)
+      : normalizeNaturalComplementHTML(postData.complementHTML);
     postData.naturalHook = true;
+  }
+  // Ads I — hook quebra a linha após cada ponto final + logo vai acima do hook
+  // (sem logo de baixo). Aplicado no render (vale retroativo).
+  if (postData.type === 'instagram-ads-post') {
+    if (postData.hookHTML) postData.hookHTML = postData.hookHTML.replace(/<br\s*\/?>/gi, ' ').replace(/\.\s+/g, '.<br>');
+    postData.logoEnabled = false;
+    postData.siteEnabled = false; // site fixo "Conheça em cropware.app" vai no bloco de marca
   }
   if (useNaturalText) {
     postData.bulletDisplayMode = normalizeBulletDisplayMode(postData.bulletDisplayMode);
@@ -15752,6 +16096,11 @@ function updatePostControls(idx) {
         const isNewsOpt = opt.value === 'news-editorial';
         opt.hidden   = !isNewsOpt;
         opt.disabled = !isNewsOpt;
+      } else if (isInstagramAdsMode()) {
+        // Instagram Ads: apenas o modelo Padrão (classic).
+        const isPadrao = opt.value === 'classic';
+        opt.hidden   = !isPadrao;
+        opt.disabled = !isPadrao;
       } else {
         // Fora de news, esconde "news-editorial"
         if (opt.value === 'news-editorial') {
@@ -15782,6 +16131,7 @@ function updatePostControls(idx) {
     if (isInstagramFlatIIMode() || post.type === 'instagram-flat-ii-post') styleSelect.value = 'flat-wave';
     else if (instagramFlatMode) styleSelect.value = 'flat';
     if (newsMode) styleSelect.value = 'news-editorial';
+    if (isInstagramAdsMode()) { post.style = 'classic'; styleSelect.value = 'classic'; }
     if (!classic2Allowed && post.style === 'classic-2') {
       post.style = 'classic';
       styleSelect.value = 'classic';
@@ -15867,6 +16217,11 @@ function updatePostControls(idx) {
   setSubVisible('pcSubLogoScale',          logoOn);
   setSubVisible('pcSubBrandMode',          logoOn);
   setSubVisible('pcSubLogoOffsets',        logoOn);
+  // Ads (modelo mockup): a logo fica acima do hook — esconde o bloco de ajustes de logo.
+  const _sigLogoBlock = document.getElementById('pcSigBlockLogo');
+  if (_sigLogoBlock) _sigLogoBlock.style.display = (post.type === 'instagram-ads-post') ? 'none' : '';
+  const _sigSiteBlock = document.getElementById('pcSigBlockSite');
+  if (_sigSiteBlock) _sigSiteBlock.style.display = (post.type === 'instagram-ads-post') ? 'none' : '';
   const siteOn = post.siteEnabled !== false;
   setSubVisible('pcSubSiteText',           siteOn);
   setSubVisible('pcSubSitePosition',       siteOn);
@@ -16393,6 +16748,10 @@ function isControlBaseVisible(el) {
 }
 
 function isStyleSectionAvailable(id) {
+  if (id === 'pcSectionSite') {
+    const ap = getActivePost();
+    if (ap && ap.type === 'instagram-ads-post') return false; // ads I: site é fixo
+  }
   const group = document.getElementById(resolveStyleSectionGroupId(id));
   if (!group) return false;
   if (group.classList.contains('hidden')) return false;
@@ -17723,29 +18082,9 @@ function initPostControls() {
 
   // Picker de textura do signal/highlights — toggle de ativar separado, grid só com texturas.
   const signalTextureGrid = document.getElementById('pcSignalTextureGrid');
-  if (signalTextureGrid && signalTextureGrid.dataset.wired !== 'true') {
-    signalTextureGrid.dataset.wired = 'true';
-    SIGNAL_CARD_TEXTURES.forEach((url, i) => {
-      const label = getSignalTextureLabel(url, i);
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'ds-dropdown__option pc-texture-option';
-      btn.dataset.url = url;
-      btn.dataset.label = label;
-      btn.setAttribute('role', 'option');
-      const swatch = document.createElement('span');
-      swatch.className = 'ds-dropdown__swatch ds-dropdown__swatch--texture';
-      swatch.style.backgroundImage = `url('${url}')`;
-      btn.appendChild(swatch);
-      const text = document.createElement('span');
-      text.className = 'ds-dropdown__option-label';
-      text.textContent = label;
-      btn.appendChild(text);
-      const check = document.createElement('i');
-      check.className = 'ph ph-check ds-dropdown__check';
-      btn.appendChild(check);
-      signalTextureGrid.appendChild(btn);
-    });
+  if (signalTextureGrid && signalTextureGrid.dataset.clickWired !== 'true') {
+    signalTextureGrid.dataset.clickWired = 'true';
+    rebuildSignalTextureGrid();
     signalTextureGrid.addEventListener('click', e => {
       const option = e.target.closest('.ds-dropdown__option[data-url]');
       if (!option) return;
@@ -18891,6 +19230,8 @@ function findPostDataById(elementId) {
   if (p) return p;
   const ad = instagramAdsPosts.find(p => p.id === elementId);
   if (ad) return ad;
+  const adII = instagramAdsIIPosts.find(p => p.id === elementId);
+  if (adII) return adII;
   const fp = featurePosts.find(p => p.id === elementId);
   if (fp) return fp;
   const logoPost = logoCropwarePosts.find(p => p.id === elementId);
@@ -18937,6 +19278,14 @@ function findPostDataById(elementId) {
   }
   for (const c of weatherCarousels) {
     const s = c.slides.find(s => s.id === elementId);
+    if (s) return s;
+  }
+  for (const c of instagramAdsCarousels) {
+    const s = (c.slides || []).find(s => s.id === elementId);
+    if (s) return s;
+  }
+  for (const c of instagramAdsIICarousels) {
+    const s = (c.slides || []).find(s => s.id === elementId);
     if (s) return s;
   }
   return null;
@@ -19308,6 +19657,37 @@ const SIGNAL_CARD_TEXTURES = [
 ];
 const SIGNAL_CARD_TEXTURE_OVERRIDES = {};
 
+// Pool de texturas dos Instagram Ads (Ads I/II) — 12 texturas classificadas,
+// usadas no MESMO sistema de overlay (signalPhotoTexture) do instagram post,
+// só trocando o conjunto de swatches quando o modo ativo e de anuncio.
+const ADS_TEXTURES = [
+  'assets/ads-textures/linhas-claras-1.webp', 'assets/ads-textures/linhas-claras-2.webp', 'assets/ads-textures/linhas-claras-3.webp',
+  'assets/ads-textures/linhas-escuras-1.webp', 'assets/ads-textures/linhas-escuras-2.webp', 'assets/ads-textures/linhas-escuras-3.webp',
+  'assets/ads-textures/morros-claros-1.webp', 'assets/ads-textures/morros-claros-2.webp', 'assets/ads-textures/morros-claros-3.webp',
+  'assets/ads-textures/morros-escuros-1.webp', 'assets/ads-textures/morros-escuros-2.webp', 'assets/ads-textures/morros-escuros-3.webp',
+];
+const ADS_TEXTURE_LABELS = {
+  'assets/ads-textures/linhas-claras-1.webp': 'Linhas claras 1',
+  'assets/ads-textures/linhas-claras-2.webp': 'Linhas claras 2',
+  'assets/ads-textures/linhas-claras-3.webp': 'Linhas claras 3',
+  'assets/ads-textures/linhas-escuras-1.webp': 'Linhas escuras 1',
+  'assets/ads-textures/linhas-escuras-2.webp': 'Linhas escuras 2',
+  'assets/ads-textures/linhas-escuras-3.webp': 'Linhas escuras 3',
+  'assets/ads-textures/morros-claros-1.webp': 'Morros claros 1',
+  'assets/ads-textures/morros-claros-2.webp': 'Morros claros 2',
+  'assets/ads-textures/morros-claros-3.webp': 'Morros claros 3',
+  'assets/ads-textures/morros-escuros-1.webp': 'Morros escuros 1',
+  'assets/ads-textures/morros-escuros-2.webp': 'Morros escuros 2',
+  'assets/ads-textures/morros-escuros-3.webp': 'Morros escuros 3',
+};
+// Pool ativo do picker: Ads usam o conjunto proprio; demais usam o padrao.
+function getActiveTexturePool() {
+  return isInstagramAdsMode() ? ADS_TEXTURES : SIGNAL_CARD_TEXTURES;
+}
+function getTextureOptionLabel(url, idx) {
+  return ADS_TEXTURE_LABELS[url] || getSignalTextureLabel(url, idx);
+}
+
 // Aplica mudança de textura: re-renderiza o post e atualiza o grid + persiste.
 function _applyTextureChange(post) {
   const postEl = document.getElementById(post.id);
@@ -19445,8 +19825,42 @@ function syncSignalTextureDropdown(post) {
   }
 }
 
+// (Re)constrói as opções do grid de textura conforme o pool ativo: Ads usam
+// o conjunto proprio de 12 swatches; demais modos usam SIGNAL_CARD_TEXTURES.
+// Só reconstrói quando o pool muda (data-pool), pra não recriar à toa.
+function rebuildSignalTextureGrid() {
+  const grid = document.getElementById('pcSignalTextureGrid');
+  if (!grid) return;
+  const key = isInstagramAdsMode() ? 'ads' : 'signal';
+  if (grid.dataset.pool === key) return;
+  grid.dataset.pool = key;
+  grid.querySelectorAll('.ds-dropdown__option[data-url]').forEach(o => o.remove());
+  getActiveTexturePool().forEach((url, i) => {
+    const label = getTextureOptionLabel(url, i);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ds-dropdown__option pc-texture-option';
+    btn.dataset.url = url;
+    btn.dataset.label = label;
+    btn.setAttribute('role', 'option');
+    const swatch = document.createElement('span');
+    swatch.className = 'ds-dropdown__swatch ds-dropdown__swatch--texture';
+    swatch.style.backgroundImage = `url('${url}')`;
+    btn.appendChild(swatch);
+    const text = document.createElement('span');
+    text.className = 'ds-dropdown__option-label';
+    text.textContent = label;
+    btn.appendChild(text);
+    const check = document.createElement('i');
+    check.className = 'ph ph-check ds-dropdown__check';
+    btn.appendChild(check);
+    grid.appendChild(btn);
+  });
+}
+
 // Sincroniza menu de textura do signal/highlights
 function syncSignalTextureGrid(post) {
+  rebuildSignalTextureGrid();
   const grid = document.getElementById('pcSignalTextureGrid');
   const active = (post && post.signalPhotoTexture) || 'none';
   if (grid) {
@@ -20107,7 +20521,7 @@ async function bootStudio() {
   // Restaura último modo selecionado (persistido no localStorage)
   try {
     const savedMode = localStorage.getItem('cropware-active-mode');
-    const validModes = ['post','instagram-flat-post','instagram-flat-ii-post','sinal-post','sinal-carousel','carousel','funcionalidades-post','funcionalidades-carousel','logo-cropware-post','previsao-carrossel','news-post','tendencia-carrossel','opiniao-carrossel','boletim-agro-carrossel','instagram-ads-post','instagram-ads-carousel',
+    const validModes = ['post','instagram-flat-post','instagram-flat-ii-post','sinal-post','sinal-carousel','carousel','funcionalidades-post','funcionalidades-carousel','logo-cropware-post','previsao-carrossel','news-post','tendencia-carrossel','opiniao-carrossel','boletim-agro-carrossel','instagram-ads-post','instagram-ads-carousel','instagram-ads-ii-post','instagram-ads-ii-carousel',
                         'linkedin-post','linkedin-carousel','linkedin-pessoal-post','linkedin-pessoal-carousel',
                         'presentation','motion-reel'];
     if (savedMode && validModes.includes(savedMode) && savedMode !== activeMode) {
@@ -20270,11 +20684,25 @@ function stabilizeFlatCardsForHtmlToImage(rootEl) {
   });
 }
 
+// Mesma técnica do flat: o html-to-image renderiza backdrop-filter via foreignObject
+// e o blur "vaza" pra fora dos limites do card. Achatamos pro fundo translúcido sólido
+// já computado (.amk-zoom ~rgba(255,255,255,0.93), .ads-insight-card ~rgba(255,255,255,0.2)),
+// sem blur — visualmente fiel ao preview e sem espalhamento.
+function stabilizeAdsCardsForHtmlToImage(rootEl) {
+  rootEl.querySelectorAll('.amk-zoom, .ads-insight-card').forEach(card => {
+    const bg = getComputedStyle(card).backgroundColor || 'rgba(255,255,255,0.9)';
+    card.style.setProperty('background', bg, 'important');
+    card.style.setProperty('backdrop-filter', 'none', 'important');
+    card.style.setProperty('-webkit-backdrop-filter', 'none', 'important');
+  });
+}
+
 function shouldUseHtmlToImageExport(postData) {
   if (!postData) return false;
   const rawStyle = postData.style || '';
   const style = normalizePostStyle(rawStyle);
   if (isInstagramFlatTypeAny(postData.type)) return true;
+  if (isInstagramAdsTypeAny(postData.type)) return true;
   if (postData.type === 'sinal-post' || postData.type === 'sinal-carousel-slide') return true;
   if (['dashboard', 'moldura', 'signal'].includes(style)) return true;
   if (['classic-2', 'spotlight', 'sidelight'].includes(rawStyle)) return true;
@@ -20299,6 +20727,9 @@ function stabilizeHtmlToImageClone(rootEl, postData, blurredUrl, postW, postH) {
   bakeSignalPhotoTextureForCapture(rootEl, postData || {});
   if (postData && isInstagramFlatTypeAny(postData.type)) {
     stabilizeFlatCardsForHtmlToImage(rootEl);
+  }
+  if (postData && isInstagramAdsTypeAny(postData.type)) {
+    stabilizeAdsCardsForHtmlToImage(rootEl);
   }
 }
 
@@ -21930,10 +22361,9 @@ function parseInstagramAdsPanelCopy(text) {
 function getActiveInstagramAdsCopyOwner() {
   const items = getModeItems();
   const idx = getModeCurrentIdx();
-  if (activeMode === 'instagram-ads-carousel') return items[idx] || null;
-  if (activeMode === 'instagram-ads-post') return items[idx] || null;
+  if (isInstagramAdsMode()) return items[idx] || null;
   const post = getActivePost();
-  if (post && (post.type === 'instagram-ads-post' || post.type === 'instagram-ads-carousel')) return post;
+  if (post && isInstagramAdsTypeAny(post.type)) return post;
   return null;
 }
 
@@ -21986,7 +22416,7 @@ function buildPanelTextFromParsed(parsed, platform) {
 }
 
 function applyInstagramAdsFields(postData, parsed, adContext) {
-  if (!postData || (postData.type !== 'instagram-ads-post' && postData.type !== 'instagram-ads-carousel')) return;
+  if (!postData || !isInstagramAdsTypeAny(postData.type)) return;
   postData.adPrimaryText   = parsed.primaryText || '';
   postData.adHeadline      = parsed.headline || '';
   postData.adDescription   = parsed.description || '';
@@ -22025,16 +22455,24 @@ function buildCropwarePositioningContext(channel) {
 - Estrutura ideal: hook forte, problema do campo, consequencia pratica, boa pratica, dados/tecnologia, analogia com Cropware e CTA leve.
 - Tom didatico, profissional, simples e visual.`,
     instagramAds: `DIRECIONAMENTO DO CANAL — INSTAGRAM ADS:
-- Linguagem mais comercial, objetiva e persuasiva.
-- Fale diretamente com profissionais de campo, DM, GD, promotores, consultores e assistentes tecnicos.
-- Destaque dor + solucao + beneficio.
-- Reforce organizacao de visitas, areas demonstrativas, relatorios, mapas, dados de campo, historico tecnico e inteligencia para desenvolvimento de mercado.
-- Evite texto generico e qualquer leitura de "software para fazenda".`,
+- Objetivo do anuncio: atrair o profissional para CONHECER a Cropware (descoberta). CTA leve, tipo "Saiba mais" ou "Conheca a Cropware". Nao e venda dura nem demo.
+- ESTRUTURA OBRIGATORIA: DOR -> SOLUCAO -> CTA.
+  - DOR (hook): um gargalo concreto e reconhecivel da rotina de quem desenvolve mercado no campo (dados de visita perdidos, evidencias soltas em WhatsApp/foto/planilha, area demonstrativa sem historico, dificuldade de provar resultado tecnico-comercial).
+  - SOLUCAO (complement + bullets): como a Cropware resolve, de forma objetiva e tangivel (organiza visitas, centraliza evidencias, historico por cliente/regiao/talhao, dados que sustentam a decisao comercial).
+  - CTA: convite leve a conhecer.
+- Linguagem comercial, objetiva e crivel. Frases curtas. Zero rodeio e zero formula publicitaria ("transforme", "revolucione", "potencialize", "o futuro do agro").
+- Fale com DM, GD, promotores, consultores e ATC. Evite qualquer leitura de "software para fazenda" ou "app para produtor".
+- NOMENCLATURA: ao nomear a plataforma no texto, use "Cropware CDM" (ex.: "o Cropware CDM organiza suas avaliacoes..."), reforcando o posicionamento de plataforma de desenvolvimento de mercado. Nao use apenas "Cropware" ou "a Cropware" como sujeito da solucao no corpo do anuncio.`,
     instagramAdsCarousel: `DIRECIONAMENTO DO CANAL — INSTAGRAM ADS CARROSSEL:
-- Mais comercial que o carrossel organico, com progressao de argumentos de conversao.
-- Sequencia sugerida: dor principal, rotina desorganizada, perda de dados/evidencias, necessidade de rastreabilidade, Cropware como solucao, beneficios principais e CTA.
-- Gere desejo de teste, cadastro ou demonstracao sem exageros.
-- Fale com quem vive a rotina de campo e precisa provar resultado.`,
+- Objetivo: atrair para CONHECER a Cropware. CTA final leve ("Saiba mais").
+- Progressao DOR -> SOLUCAO -> CTA distribuida nos slides:
+  - Capa (slide 1): a DOR principal, concreta, que para o scroll.
+  - Meio: desdobra a dor (rotina desorganizada, evidencia perdida, dificuldade de provar resultado) e aponta a virada.
+  - Penultimo: a Cropware como solucao objetiva, com o ganho pratico.
+  - Ultimo: CTA leve convidando a conhecer.
+- Cada slide UMA ideia objetiva, sem encher de texto. Linguagem comercial, crivel, sem formula publicitaria.
+- Publico: DM, GD, promotores, consultores e ATC. Evite "software para fazenda" / "app para produtor".
+- NOMENCLATURA: nomeie a plataforma como "Cropware CDM" (ex.: "o Cropware CDM..."), reforcando o posicionamento de desenvolvimento de mercado. Nao use apenas "Cropware"/"a Cropware" como sujeito da solucao.`,
     linkedin: `DIRECIONAMENTO DO CANAL — LINKEDIN OFICIAL:
 - Conteudo tecnico, consultivo e estrategico.
 - Fale com agronomos, gestores, coordenadores, promotores, consultores, analistas, DM e GD.
@@ -22154,41 +22592,37 @@ function buildInstagramAdsSystemPrompt(tone) {
 REGRA ABSOLUTA: NUNCA invente numeros, porcentagens, estatisticas ou dados quantitativos.
 
 Seu trabalho e criar um criativo estatico para Instagram Ads com linguagem de anuncio, nao de post organico.
-O anuncio precisa ser claro, objetivo, orientado a clique e crivel para publico agro.
+O anuncio precisa ser claro, objetivo, orientado a clique e crivel para publico tecnico-comercial do agro.
+O FIM do anuncio e atrair o profissional para CONHECER a Cropware (descoberta), nao venda dura.
+
+ESTRUTURA OBRIGATORIA DO DISCURSO: DOR -> SOLUCAO -> CTA, em APENAS 2 blocos de texto + CTA.
+- HOOK (bloco 1) = a DOR + a virada, em texto corrido.
+- COMPLEMENT (bloco 2) = a SOLUCAO / os ganhos concretos da Cropware, em texto corrido.
+- CTA = convite leve a conhecer ("Saiba mais" / "Conheca a Cropware").
+Seja objetivo: frases curtas, zero rodeio, zero formula publicitaria ("transforme", "revolucione", "potencialize", "o futuro do agro").
 
 ${buildCropwarePositioningContext('instagramAds')}
 
-PARTE VISUAL DO CRIATIVO:
+PARTE VISUAL DO CRIATIVO (APENAS 2 BLOCOS DE TEXTO):
 
-HOOK (texto grande do criativo):
-- 1 ou 2 linhas no total
-- A ultima parte OBRIGATORIAMENTE envolvida em <em>...</em>
-- Frase curta, beneficio claro, leitura imediata
-- Maximo 8 palavras por linha
-- Sem hashtags, sem emoji, sem tom de legenda
-- Sempre terminar com ponto final
+HOOK (bloco principal, texto corrido):
+- Funde a DOR + a virada/solucao em UMA fala corrida, natural e objetiva.
+- 1 a 2 frases curtas. Maximo ~22 palavras no total.
+- Texto puro, SEM HTML, sem <em>, <strong>, <br>, sem bullets, sem emoji, sem hashtag.
+- Termina com ponto final. Leitura imediata, sem formula publicitaria.
 
-COMPLEMENT (apoio menor):
-- 1-2 linhas, maximo 50 caracteres cada
-- Use <strong> para destacar palavras-chave
-- Complementa o hook com promessa, contexto ou desdobramento pratico
+COMPLEMENT (bloco de apoio, texto corrido):
+- Resume em texto corrido os ganhos concretos da Cropware. 1 a 2 frases curtas, ~26 palavras.
+- Destaque 1 ou 2 palavras-chave (as mais relevantes) com <strong>...</strong>. NENHUMA outra tag, sem bullets/lista.
+- Nao repita literalmente o hook. Termina com ponto final.
 
-BULLETS:
-- Exatamente 3 bullets
-- Cada text com no maximo 8 palavras
-- Cada bullet termina com ponto final
-- Sem repetir o hook
-- Escolha icones apenas desta lista:
-check_circle, task_alt, trending_up, trending_down, schedule, bolt, savings,
-insights, analytics, agriculture, eco, grass, water_drop, sunny, landscape,
-sensors, visibility, shield, speed, psychology, hub, timeline, query_stats,
-monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturing
+NAO gere bullets, icones nem listas. Apenas hook e complement.
 
 COPY DO ANUNCIO:
 - primaryText: 1-3 frases curtas para o texto principal do anuncio
 - headline: titulo curto e direto para o card/link
 - description: apoio curto para o link
-- cta: CTA curto e objetivo
+- cta: CTA leve de descoberta (ex: "Saiba mais", "Conheca a Cropware"); nunca venda dura nem CTA generico de post social
 - angle: resumo do angulo criativo em uma frase curta
 - offer: proposta de valor resumida
 - creativeNotes: orientacao curta sobre a intencao da peca
@@ -22198,6 +22632,18 @@ COPY DO ANUNCIO:
 
 ${toneBlock}
 ${buildDesignContext('instagram')}
+MOCKUP (escolha conforme o TEMA/dor do anuncio):
+- O criativo tem um mockup de celular cuja tela mostra 2 funcionalidades do app + 1 "zoom" detalhado sobre uma delas.
+- Escolha as 2 funcionalidades mais coerentes com o tema e qual vai no zoom.
+- Use EXATAMENTE estas chaves: graph (produtividade/grafico), evaluation (avaliacao/nota), weather (clima/previsao), agenda (calendario/eventos), activity (atividade/tarefas).
+- Retorne "mockupFns" (array com 2 chaves distintas) e "mockupZoom" (uma das 2 chaves).
+- Para CADA funcionalidade escolhida, escreva um INSIGHT curtissimo (ate ~5 palavras) sobre o que aquele dado revela na pratica — uma observacao concreta, de analista (ex: "Talhao 7 puxou a media", "Vigor caiu em 2 areas", "Janela seca pra aplicar", "Falta 1 visita pra fechar"). NAO use slogan nem frase publicitaria. Retorne em "mockupCaps" (objeto com as 2 chaves escolhidas).
+
+INSIGHT (frase de efeito, 1 linha curtissima):
+- Uma frase de efeito de 3 a 6 palavras, memoravel, que sintetize o valor central do anuncio.
+- SEM ponto final. Pode usar contraste (ex: "Menos achismo, mais evidencia").
+- NAO repita o hook nem o complemento. Retorne em "insight".
+
 IMAGE_PROMPT:
 - Foto ultra-realista editorial premium
 - Agro brasileiro bem manejado
@@ -22207,13 +22653,8 @@ IMAGE_PROMPT:
 
 Responda APENAS em JSON valido:
 {
-  "hook": "primeira linha<br><em>beneficio final.</em>",
-  "complement": "apoio curto<br><strong>com destaque</strong>",
-  "bullets": [
-    {"icon": "check_circle", "text": "Afirmacao curta."},
-    {"icon": "trending_up", "text": "Afirmacao curta."},
-    {"icon": "schedule", "text": "Afirmacao curta."}
-  ],
+  "hook": "Dor concreta da rotina + a virada, em texto corrido.",
+  "complement": "O Cropware CDM centraliza <strong>evidencias</strong> e gera <strong>historico</strong> por cliente e talhao.",
   "title": "titulo curto para sidebar",
   "primaryText": "texto principal do anuncio",
   "headline": "headline curta",
@@ -22222,14 +22663,19 @@ Responda APENAS em JSON valido:
   "angle": "angulo criativo resumido",
   "offer": "proposta de valor resumida",
   "creativeNotes": "observacao criativa curta",
+  "mockupFns": ["graph", "evaluation"],
+  "mockupZoom": "graph",
+  "mockupCaps": { "graph": "Talhao 7 puxou a media", "evaluation": "Vigor caiu em 2 areas" },
+  "insight": "Menos achismo, mais evidencia",
   "imagePrompt": "photorealistic image prompt in english"
 }`;
 }
 
 function usesNaturalHookPlatform(platform) {
+  // instagram-ads NAO entra aqui: o discurso do anuncio (2 blocos: hook corrido +
+  // complement corrido, sem bullets) e governado direto por buildInstagramAds*SystemPrompt.
   return platform === 'instagram'
     || platform === 'features'
-    || platform === 'instagram-ads'
     || platform === 'linkedin'
     || platform === 'linkedin-pessoal';
 }
@@ -22284,6 +22730,17 @@ function normalizeNaturalComplementHTML(complement) {
   if (!text) return '';
   const withFinalPunctuation = /[.!?]$/.test(text) ? text : `${text}.`;
   return escapeHTML(withFinalPunctuation);
+}
+
+// Variante do complemento para Ads: preserva <strong> (palavras-chave em
+// destaque) e remove qualquer outra tag. Usada só no instagram-ads-post.
+function normalizeAdsComplementHTML(complement) {
+  let s = String(complement || '').replace(/<br\s*\/?>/gi, ' ');
+  s = s.replace(/<(?!\/?strong\b)[^>]*>/gi, '');
+  s = s.replace(/\s+/g, ' ').replace(/\s+([,.!?;:])/g, '$1').trim();
+  if (!s) return '';
+  const plain = s.replace(/<\/?strong>/gi, '');
+  return /[.!?]$/.test(plain) ? s : `${s}.`;
 }
 
 function normalizeSupportTextHTML(text) {
@@ -22358,6 +22815,8 @@ function shouldUseNaturalHookForPostData(postData) {
     'feature-carousel-slide',
     'instagram-ads-post',
     'instagram-ads-carousel',
+    'instagram-ads-ii-post',
+    'instagram-ads-ii-carousel',
     'linkedin-post',
     'linkedin-carousel',
     'linkedin-pessoal-post',
@@ -23146,7 +23605,16 @@ async function generatePost() {
       supportTextQuick:      parsed.supportTextQuick || '',
       supportTextLong:       parsed.supportTextLong || '',
     };
-    if (platform === 'instagram-ads') postData.type = 'instagram-ads-post';
+    if (platform === 'instagram-ads') postData.type = (activeMode === 'instagram-ads-ii-post') ? 'instagram-ads-ii-post' : 'instagram-ads-post';
+    if (postData.type === 'instagram-ads-post') {
+      const _fns = Array.isArray(parsed.mockupFns) ? parsed.mockupFns.filter(k => ADS_MOCKUP_FUNCTIONS[k]) : [];
+      postData.mockupFns = (_fns.length === 2 && _fns[0] !== _fns[1]) ? _fns : ['graph', 'evaluation'];
+      postData.mockupZoom = (ADS_MOCKUP_FUNCTIONS[parsed.mockupZoom] && postData.mockupFns.includes(parsed.mockupZoom)) ? parsed.mockupZoom : postData.mockupFns[0];
+      const _caps = (parsed.mockupCaps && typeof parsed.mockupCaps === 'object') ? parsed.mockupCaps : {};
+      postData.mockupCaps = {};
+      postData.mockupFns.forEach(k => { const v = (_caps[k] || '').toString().trim(); if (v) postData.mockupCaps[k] = v.slice(0, 42); });
+      postData.adInsight = (parsed.insight || '').trim();
+    }
     else if (platform === 'instagram-flat' || platform === 'instagram-flat-ii') {
       const isII = platform === 'instagram-flat-ii';
       postData.type = isII ? 'instagram-flat-ii-post' : 'instagram-flat-post';
@@ -23446,38 +23914,30 @@ Seu trabalho e criar um CARROSSEL de ${slideCount} slides para Instagram Ads. Li
 
 ${buildCropwarePositioningContext('instagramAdsCarousel')}
 
-ESTRUTURA DO CARROSSEL:
-- Slide 1 (CAPA): hook forte que para o scroll e provoca o swipe. Beneficio imediato, frase curta.
-- Slides do meio (DESENVOLVIMENTO): cada slide aprofunda um argumento de conversao.
-- Ultimo slide (CTA): fecha com chamada de acao clara e reforco de marca.
+ESTRUTURA DO CARROSSEL (DOR -> SOLUCAO -> CTA):
+- Slide 1 (CAPA): a DOR principal e concreta que para o scroll (gargalo real de quem desenvolve mercado no campo). Frase curta.
+- Slides do meio: desdobram a dor (rotina desorganizada, evidencia perdida, dificuldade de provar resultado) e ja apontam a virada; o ultimo do meio apresenta a Cropware como SOLUCAO objetiva, com o ganho pratico.
+- Ultimo slide (CTA): convite leve a conhecer a Cropware ("Saiba mais"), com reforco de marca. Nao e venda dura.
 
-PARA CADA SLIDE:
-HOOK (texto grande):
-- 1 ou 2 linhas no total
-- A ultima parte OBRIGATORIAMENTE envolvida em <em>...</em>
-- Frase curta, beneficio claro, leitura imediata
-- Maximo 8 palavras por linha
-- Sem hashtags, sem emoji
-- Sempre terminar com ponto final
+PARA CADA SLIDE (APENAS 2 BLOCOS DE TEXTO):
+HOOK (bloco principal, texto corrido):
+- 1 a 2 frases curtas, naturais e objetivas. Maximo ~20 palavras.
+- Na capa: a DOR. Nos demais: o argumento daquele slide (desdobramento ou solucao).
+- Texto puro, SEM HTML (<em>, <strong>, <br>), sem bullets, sem emoji, sem hashtag.
+- Termina com ponto final.
 
-COMPLEMENT (apoio menor):
-- 1-2 linhas, maximo 50 caracteres cada
-- Use <strong> para destacar palavras-chave
+COMPLEMENT (bloco de apoio, texto corrido):
+- 1 a 2 frases curtas que reforcam a ideia do slide, em texto corrido.
+- Texto puro, SEM HTML e SEM lista/bullets.
+- Termina com ponto final.
 
-BULLETS (3 pontos de apoio por slide):
-- Exatamente 3 bullets, cada text com no maximo 8 palavras
-- Ponto final obrigatorio em cada bullet
-- Escolha icones apenas desta lista:
-check_circle, task_alt, trending_up, trending_down, schedule, bolt, savings,
-insights, analytics, agriculture, eco, grass, water_drop, sunny, landscape,
-sensors, visibility, shield, speed, psychology, hub, timeline, query_stats,
-monitoring, pest_control, forest, map, radar, leaderboard, precision_manufacturing
+NAO gere bullets, icones nem listas. Apenas hook e complement por slide.
 
 COPY DO ANUNCIO (campos compartilhados para todo o carrossel):
 - primaryText: 1-3 frases curtas para o texto principal do anuncio
 - headline: titulo curto e direto para o card/link
 - description: apoio curto para o link
-- cta: CTA curto e objetivo
+- cta: CTA leve de descoberta (ex: "Saiba mais", "Conheca a Cropware"); nunca venda dura nem CTA generico de post social
 - angle: resumo do angulo criativo em uma frase curta
 - offer: proposta de valor resumida
 - creativeNotes: orientacao criativa curta sobre o conjunto de slides
@@ -23499,13 +23959,8 @@ Responda APENAS em JSON valido:
   "creativeNotes": "observacao criativa curta",
   "slides": [
     {
-      "hook": "primeira linha<br><em>beneficio final.</em>",
-      "complement": "apoio curto<br><strong>destaque</strong>",
-      "bullets": [
-        {"icon": "check_circle", "text": "Afirmacao curta."},
-        {"icon": "trending_up", "text": "Afirmacao curta."},
-        {"icon": "schedule", "text": "Afirmacao curta."}
-      ],
+      "hook": "Texto corrido do slide (dor na capa; argumento nos demais).",
+      "complement": "Apoio em texto corrido.",
       "imagePrompt": "photorealistic image prompt in english"
     }
   ]
@@ -25386,7 +25841,7 @@ async function generateCarousel() {
       legendsArr.splice(oldestIdx, 1);
     }
 
-    const carouselType = platform === 'instagram-ads' ? 'instagram-ads-carousel' : platform === 'sinal' ? 'sinal-carousel' : platform === 'features' ? 'feature-carousel' : platform === 'linkedin-pessoal' ? 'linkedin-pessoal-carousel' : platform === 'linkedin' ? 'linkedin-carousel' : 'carousel';
+    const carouselType = platform === 'instagram-ads' ? (activeMode === 'instagram-ads-ii-carousel' ? 'instagram-ads-ii-carousel' : 'instagram-ads-carousel') : platform === 'sinal' ? 'sinal-carousel' : platform === 'features' ? 'feature-carousel' : platform === 'linkedin-pessoal' ? 'linkedin-pessoal-carousel' : platform === 'linkedin' ? 'linkedin-carousel' : 'carousel';
     const carouselData = {
       id:          `carousel-gen-${timestamp}`,
       type:        carouselType,
