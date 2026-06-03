@@ -387,14 +387,28 @@ export function normalizeThemeName(name) {
 // scene.overlayColor (hex) injeta um gradient de profundidade sobre o
 // glassTint default do tema — permite ao usuário escolher cor do overlay
 // por cena sem precisar de tema próprio.
+// Slides 1/9/10 (brand-intro, lower-third, end-card) são SEMPRE flat branco —
+// sem imagem, overlay ou textura — independente do tema do reel ou dos ajustes
+// da coluna. Os outros 7 slides seguem o tema/coluna normalmente.
+const MR_FORCE_FLAT_WHITE = new Set(['brand-intro', 'lower-third', 'end-card']);
+
 export function resolveTheme(storyboard, scene) {
-  const rawName = (scene && scene.theme) || (storyboard && storyboard.theme) || MR_DEFAULT_THEME;
+  const rawName = MR_FORCE_FLAT_WHITE.has(scene && scene.type)
+    ? 'flatClaro'
+    : ((scene && scene.theme) || (storyboard && storyboard.theme) || MR_DEFAULT_THEME);
   const name = normalizeThemeName(rawName);
   const themeDef = MR_THEMES[name] || MR_THEMES[MR_DEFAULT_THEME];
   const perSlide = themeDef.perSlide || {};
   const sliceData = perSlide[scene && scene.type] || perSlide.headline || MR_THEMES[MR_DEFAULT_THEME].perSlide.headline;
   // Propaga o flag `flat` do tema raiz pra cada slice.
   let result = themeDef.flat ? { ...sliceData, flat: true } : { ...sliceData };
+  // Fundo COMPARTILHADO: slides 2–8 (não-bookend) usam a camada da coluna
+  // (ReelSceneBg). Marca reelSharedBg pra cena renderizar fundo transparente
+  // e pular suas próprias camadas de imagem/overlay/textura. Só quando há
+  // storyboard.adjust (senão a cena mantém o fundo próprio).
+  if (!MR_FORCE_FLAT_WHITE.has(scene && scene.type) && storyboard && storyboard.adjust) {
+    result.reelSharedBg = true;
+  }
   // Injeta overlay color como gradient se setado no scene.
   if (scene && scene.overlayColor && !themeDef.flat) {
     const grad = buildOverlayGradient(scene.overlayColor);

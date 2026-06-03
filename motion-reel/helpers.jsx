@@ -230,6 +230,58 @@ export const GlassCard = ({
   );
 };
 
+// ── Fundo COMPARTILHADO dos slides 2–8 (paridade com Instagram Ads) ──────
+// Imagem + overlay direcional + textura, dirigido por storyboard.adjust (a
+// coluna de Ajustes do Reel). Renderizado por MotionReel ATRÁS do conteúdo;
+// as cenas editáveis ficam com fundo transparente (theme.reelSharedBg) pra
+// esta camada aparecer igual em todas. Garante consistência total.
+const _mrAlphaHex = (v) => Math.round(Math.max(0, Math.min(1, Number(v))) * 255).toString(16).padStart(2, '0');
+
+// Gradiente do overlay conforme a direção (mesmas opções do Ads:
+// uniforme / topo / base / radial).
+function buildReelOverlay(color, opacity, direction) {
+  const c = color || '#1A1B1A';
+  const a = c + _mrAlphaHex(opacity == null ? 0.55 : opacity);
+  const z = c + '00';
+  switch (direction) {
+    case 'top':    return `linear-gradient(180deg, ${a} 0%, ${z} 62%)`;
+    case 'bottom': return `linear-gradient(0deg, ${a} 0%, ${z} 62%)`;
+    case 'radial': return `radial-gradient(ellipse at center, ${z} 28%, ${a} 100%)`;
+    default:       return a; // 'full'/uniforme — cor sólida translúcida
+  }
+}
+
+const _mrMediaUrl = (v) => v ? (/^(https?:|data:|\/)/.test(v) ? v : staticFile(v)) : null;
+
+export const ReelSceneBg = ({ adjust }) => {
+  if (!adjust) return null;
+  const {
+    image, overlayEnabled = true, overlayColor = '#1A1B1A', overlayOpacity = 0.55,
+    overlayDirection = 'full', textureEnabled = false, texturePath,
+    textureIntensity = 0.08, textureBlend = 'overlay', textureInvert = false,
+  } = adjust;
+  const imgUrl = _mrMediaUrl(image);
+  const texUrl = _mrMediaUrl(texturePath);
+  return (
+    // Base escura: garante legibilidade do texto branco mesmo sem imagem.
+    <AbsoluteFill style={{ background: MR_COLORS.slateAbyss, overflow: 'hidden' }}>
+      {imgUrl ? (
+        <AbsoluteFill style={{ backgroundImage: `url('${imgUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+      ) : null}
+      {overlayEnabled ? (
+        <AbsoluteFill style={{ background: buildReelOverlay(overlayColor, overlayOpacity, overlayDirection), pointerEvents: 'none' }} />
+      ) : null}
+      {textureEnabled && texUrl ? (
+        <AbsoluteFill style={{
+          backgroundImage: `url('${texUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center',
+          opacity: textureIntensity, mixBlendMode: textureBlend, filter: textureInvert ? 'invert(1)' : 'none',
+          pointerEvents: 'none',
+        }} />
+      ) : null}
+    </AbsoluteFill>
+  );
+};
+
 // IconInOut — wrapper pra um ícone/elemento FIXO com entrada (pop-in: fade +
 // scale com leve overshoot) e saída (fade + leve shrink) cronometrada pro fim
 // da cena. Recebe `durFrames` (duração total da Sequence) pra saber quando sair.

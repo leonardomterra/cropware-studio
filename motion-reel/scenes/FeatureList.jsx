@@ -54,7 +54,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
 
   return (
     <AbsoluteFill style={{
-      background: T.bg,
+      background: T.reelSharedBg ? 'transparent' : T.bg,
       color: T.fg,
       flexDirection: 'column',
       alignItems: 'flex-start',
@@ -64,7 +64,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
       fontFamily: MR_FONTS.display,
       opacity: bgIn,
     }}>
-      {!T.flat ? <>
+      {(!T.flat && !T.reelSharedBg) ? <>
       {/* Camada 0: foto de fundo com Ken Burns. Theme define bgImageOverlayBlend
           + bgImageOverlayAlpha pra tonalizar diferentemente em light vs dark themes. */}
       {resolvedBgImage ? (
@@ -139,7 +139,8 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
               fontWeight: 400,
               lineHeight: 1.18,
               maxWidth: T.kickerMaxWidth || 760,
-              color: T.accentDeep || T.accent,
+              // Sobre o fundo compartilhado escuro (slides 2–8), texto claro.
+              color: T.reelSharedBg ? MR_COLORS.greenBright : (T.accentDeep || T.accent),
               textTransform: 'uppercase',
               whiteSpace: 'normal',
               overflowWrap: 'break-word',
@@ -170,7 +171,7 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
             lineHeight: 1.18,
             letterSpacing: '-0.025em',
             maxWidth: T.titleMaxWidth || 1020,
-            color: T.fg,
+            color: T.reelSharedBg ? MR_COLORS.white : T.fg,
             overflowWrap: 'break-word',
             transform: 'translateZ(0)',
           }}>

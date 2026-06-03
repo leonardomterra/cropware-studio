@@ -194,8 +194,8 @@ export const Quote = ({ start, end, words, items, features, theme, bgImage: bgIm
   });
 
   return (
-    <AbsoluteFill style={{ background: bgColor, overflow: 'hidden' }}>
-      {!T.flat ? <>
+    <AbsoluteFill style={{ background: T.reelSharedBg ? 'transparent' : bgColor, overflow: 'hidden' }}>
+      {(!T.flat && !T.reelSharedBg) ? <>
       {/* Camada 1: imagem (close folhas com orvalho) com Ken Burns */}
       <AbsoluteFill style={{
         backgroundImage: `url('${staticFile(bgImage)}')`,

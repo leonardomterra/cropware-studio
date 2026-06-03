@@ -97,7 +97,7 @@ export const Keyword = ({
 
   return (
     <AbsoluteFill style={{
-      background: T.bg,
+      background: T.reelSharedBg ? 'transparent' : T.bg,
       color: T.fg,
       flexDirection: 'column',
       alignItems: 'center',
@@ -107,7 +107,7 @@ export const Keyword = ({
       fontFamily: MR_FONTS.caps,
       overflow: 'hidden',
     }}>
-      {!T.flat ? <>
+      {(!T.flat && !T.reelSharedBg) ? <>
       {/* Camada 0: foto de fundo com Ken Burns — escurecida/dessaturada
           pra a palavra/ícone respirarem. Só renderiza quando há bgImage. */}
       {resolvedBgImage ? (

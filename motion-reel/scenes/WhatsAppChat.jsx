@@ -74,8 +74,8 @@ export const WhatsAppChat = ({ messages = DEFAULT_MESSAGES, theme, bgImage, bgIm
   const phoneOffsetY = (1 - phoneIn) * 80;
 
   return (
-    <AbsoluteFill style={{ background: T.bg || MR_COLORS.slateAbyss, overflow: 'hidden', fontFamily: MR_FONTS.display }}>
-      {!T.flat ? <>
+    <AbsoluteFill style={{ background: T.reelSharedBg ? 'transparent' : (T.bg || MR_COLORS.slateAbyss), overflow: 'hidden', fontFamily: MR_FONTS.display }}>
+      {(!T.flat && !T.reelSharedBg) ? <>
       {/* Camada 1: imagem de fundo com Ken Burns lento (varia por tema) */}
       <AbsoluteFill style={{
         backgroundImage: `url('${staticFile(bgImage || T.bgImage || 'wpp-bg-pattern.png')}')`,

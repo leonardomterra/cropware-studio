@@ -68,11 +68,11 @@ export const AppCard = ({
 
   return (
     <AbsoluteFill style={{
-      background: bgColor, color: fgColor,
+      background: T.reelSharedBg ? 'transparent' : bgColor, color: fgColor,
       flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       padding: '140px 80px', gap: 52, fontFamily: MR_FONTS.display,
     }}>
-      {!T.flat ? <>
+      {(!T.flat && !T.reelSharedBg) ? <>
       {/* Camada 0: foto de fundo com Ken Burns + overlay de tonalização */}
       {resolvedBgImage ? (
         <>

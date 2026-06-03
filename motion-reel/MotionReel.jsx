@@ -8,6 +8,7 @@ import { resolvePresentation, resolveTiming } from './transitions.js';
 import { resolveSfxDefaultVolume, resolveSfxUrl } from './sfx.js';
 import { resolveTheme } from './themes.js';
 import { Overlay } from './overlays.jsx';
+import { ReelSceneBg } from './helpers.jsx';
 import { BrandIntro } from './scenes/BrandIntro.jsx';
 import { Keyword } from './scenes/Keyword.jsx';
 import { Headline } from './scenes/Headline.jsx';
@@ -20,6 +21,9 @@ import { Cta } from './scenes/Cta.jsx';
 import { Chapter } from './scenes/Chapter.jsx';
 import { LowerThird } from './scenes/LowerThird.jsx';
 import { AppCard } from './scenes/AppCard.jsx';
+
+// Slides 1/9/10 (bookends): sempre flat branco, sem o fundo compartilhado.
+const BOOKEND_TYPES = new Set(['brand-intro', 'lower-third', 'end-card']);
 
 const SCENE_COMPONENTS = {
   'brand-intro':  BrandIntro,
@@ -143,9 +147,15 @@ export const MotionReel = ({ storyboard }) => {
     // Tema resolvido por cena (theme.js per-slide-type). Locked scenes não
     // consomem (são hardcoded) mas passar não atrapalha.
     const sceneTheme = resolveTheme(storyboard, scene);
+    // Fundo COMPARTILHADO (igual Ads): slides 2–8 (não-bookend) recebem a mesma
+    // camada de imagem+overlay+textura da coluna, atrás do conteúdo. Os bookends
+    // (1/9/10) ficam de fora (flatClaro branco). Só quando há storyboard.adjust.
+    const isBookendScene = BOOKEND_TYPES.has(scene.type);
+    const showSharedBg = !isBookendScene && !!storyboard.adjust;
     children.push(
       <TransitionSeries.Sequence key={scene.id || `scene-${i}`} durationInFrames={sceneDurFrames}>
         <AbsoluteFill>
+          {showSharedBg ? <ReelSceneBg adjust={storyboard.adjust} /> : null}
           <Comp {...scene} theme={sceneTheme} />
           {Array.isArray(sceneOverlays) && sceneOverlays.map((ov, oIdx) => (
             <Overlay key={`ov-${oIdx}`} overlay={ov} durSec={durSec} />

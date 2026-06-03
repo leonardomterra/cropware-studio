@@ -49,8 +49,8 @@ export const Headline = ({
   });
 
   return (
-    <AbsoluteFill style={{ background: T.bg, overflow: 'hidden' }}>
-      {!T.flat ? <>
+    <AbsoluteFill style={{ background: T.reelSharedBg ? 'transparent' : T.bg, overflow: 'hidden' }}>
+      {(!T.flat && !T.reelSharedBg) ? <>
       {/* Camada 1: imagem com Ken Burns */}
       <AbsoluteFill style={{
         backgroundImage: `url('${staticFile(bgImage || T.bgImage || 'conheca-solucao-bg.webp')}')`,

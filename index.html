@@ -201,7 +201,7 @@
     --btn-danger-bg: #fee2e2;
     --btn-danger-bg-hover: #fecaca;
     --btn-danger-text: #991b1b;
-    --side-panel-width: 320px;
+    --side-panel-width: 256px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -307,7 +307,7 @@
     display: block;
     width: 142px;
     height: 20px;
-    background: var(--ds-neutral-800);
+    background: #1e293b;
     -webkit-mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
     mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
     flex-shrink: 0;
@@ -334,11 +334,12 @@
     padding: 0;
     border: none;
     background: none;
-    color: var(--ds-neutral-400);
+    color: #64748b;
     font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
-    font-size: 14px;
-    font-weight: 500;
+    font-stretch: 100%;
+    font-size: 12.5px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
     letter-spacing: 0;
     line-height: 1;
     white-space: nowrap;
@@ -356,30 +357,30 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 0 14px;
-    height: var(--ds-btn-h);
+    gap: 6px;
+    padding: 5px 10px;
     background: #ffffff;
-    color: var(--ds-neutral-700);
+    color: #64748b;
     border: 1px solid var(--ds-neutral-200);
-    border-radius: var(--ds-btn-radius);
+    border-radius: 5px;
     font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
-    font-size: 13px;
-    font-weight: 500;
+    font-stretch: 100%;
+    font-size: 12.5px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
     cursor: pointer;
     transition: var(--ds-btn-transition);
   }
   .app-logout-btn:hover {
     background: var(--ds-neutral-50);
     border-color: var(--ds-neutral-300);
-    color: var(--ds-neutral-900);
+    color: #334155;
   }
 
   /* ── SIDEBAR ── */
   aside {
     order: 1;
-    width: var(--side-panel-width);
+    width: 256px;
     flex-shrink: 0;
     background: var(--surface);
     /* sem border-right — corpo e header têm bordas próprias */
@@ -491,7 +492,11 @@
 
   .thumb-item:hover { background: var(--ds-neutral-100); }
   .thumb-item.active {
-    background: var(--ds-neutral-200);
+    background: #1e293b;
+  }
+  .thumb-item.active .thumb-title { color: #f1f5f9; }
+  .thumb-item.active .thumb-time {
+    color: #aeb8c4;
   }
 
   .thumb-preview {
@@ -507,16 +512,18 @@
 
   .thumb-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
   .thumb-title {
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 12.5px;
+    font-weight: 400;
     color: var(--ds-neutral-900);
     font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
+    font-stretch: 100%;
+    letter-spacing: 0.01em;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     line-height: 1.35;
+    min-height: 2.7em;
   }
   .thumb-sub {
     display: none;
@@ -527,14 +534,10 @@
     align-items: center;
     font-size: 13px;
     font-weight: 500;
-    color: var(--ds-neutral-600);
+    color: #aeb8c4;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     line-height: 1;
-    padding: 4px 8px;
-    border-radius: 6px;
-    background: var(--ds-neutral-100);
-    border: 1px solid var(--ds-neutral-200);
     letter-spacing: 0;
   }
   /* Overlay de loading durante export (PDF, ZIP). Bloqueia interação até concluir. */
@@ -1077,6 +1080,15 @@
   }
   /* Carrossel notícia: site sem text-shadow (fundo do bloco já é sólido) */
   .post[data-news-context="carousel"] .post-site { text-shadow: none; }
+  /* LinkedIn Editorial: site sem sombra, um tico maior e mais condensado (Space Mono é mono → scaleX) */
+  .post[data-type="linkedin-editorial-post"] .post-site,
+  .post[data-type="linkedin-editorial-ii-post"] .post-site {
+    text-shadow: none;
+    font-size: calc(37px * var(--site-scale, 1));
+    letter-spacing: -0.005em;
+    transform: scaleX(0.95);
+    transform-origin: right center;
+  }
   .post-site[data-pos="tl"] { top: calc(56px + var(--site-offset-y, 0px)); left: calc(64px + var(--site-offset-x, 0px)); }
   .post-site[data-pos="tc"] { top: calc(56px + var(--site-offset-y, 0px)); left: 50%; transform: translateX(calc(-50% + var(--site-offset-x, 0px))); }
   .post-site[data-pos="tr"] { top: calc(56px + var(--site-offset-y, 0px)); right: calc(64px + var(--site-offset-x, 0px)); }
@@ -1429,8 +1441,44 @@
       radial-gradient(circle at 18% 12%, rgba(106,197,143,0.22), transparent 34%),
       linear-gradient(145deg, #102118 0%, #07110d 58%, #0d2417 100%) !important;
   }
-  .post[data-style="flat"] .hook,
-  .post[data-style="flat"] .complement {
+  /* Flat I: Inter Tight 500 branca — mesma família do Ads I, mais conciso */
+  .post[data-type="instagram-flat-post"][data-style="flat"] .hook {
+    font-family: 'Inter Tight', 'Inter', sans-serif;
+    font-weight: 500;
+    font-stretch: 100%;
+    font-size: calc(64px * var(--hook-scale, 1));
+    line-height: 1.12;
+    color: #ffffff;
+    letter-spacing: -0.015em;
+    text-shadow: none;
+    max-width: 880px;
+  }
+  .post[data-type="instagram-flat-post"][data-style="flat"] .complement {
+    font-family: 'Space Mono', monospace;
+    font-weight: 400;
+    font-stretch: 100%;
+    font-size: calc(30px * var(--complement-scale, 1));
+    line-height: 1.4;
+    color: rgba(255,255,255,0.72);
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    text-shadow: none;
+    max-width: 820px;
+    margin-top: 12px;
+  }
+
+  .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullets { display: none; }
+  /* Flat I: texto mais baixo e centralizado */
+  .post[data-type="instagram-flat-post"][data-style="flat"] .content-top {
+    top: 400px;
+    left: 80px;
+    right: 80px;
+    max-width: 100%;
+  }
+
+  /* Flat II: Vend Sans — mantém o estilo display original */
+  .post[data-type="instagram-flat-ii-post"][data-style="flat"] .hook,
+  .post[data-type="instagram-flat-ii-post"][data-style="flat"] .complement {
     font-family: 'Vend Sans', 'Inter', 'Inter Tight', sans-serif;
     font-weight: 700;
     font-stretch: 92%;
@@ -1441,9 +1489,6 @@
     text-shadow: 0 2px 28px rgba(0,0,0,0.42);
     max-width: 860px;
   }
-  /* Flat II: Inter Tight no hook — tom técnico-comercial, sem a personalidade
-     display do Vend Sans. letter-spacing mais apertado compensa a largura maior
-     da Inter pra manter densidade visual semelhante. */
   .post[data-type="instagram-flat-ii-post"][data-style="flat"] .hook {
     font-family: 'Inter Tight', sans-serif;
     font-weight: 700;
@@ -2336,6 +2381,43 @@
   .news-edit-block.text-dark  .news-edit-manchete { color: #1a1a1a; }
   .news-edit-block.text-light .news-edit-dataline { color: rgba(255, 255, 255, 0.75); }
   .news-edit-block.text-dark  .news-edit-dataline { color: rgba(0, 0, 0, 0.65); }
+
+  /* ── LinkedIn Editorial — variante full-bleed (sem bloco): imagem + overlay + textura + texto ── */
+  .li-edit-photo { height: 100% !important; }
+  .li-edit-texture {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    mix-blend-mode: overlay; opacity: var(--spt-opacity, 0.42);
+    pointer-events: none; z-index: 1;
+  }
+  .li-edit-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+  .li-edit-textblock {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+    padding: 0 64px 300px 64px;
+    display: flex; flex-direction: column; align-items: flex-start; gap: 26px;
+  }
+  .li-edit-chamada {
+    font-family: 'Space Mono', monospace; font-weight: 400;
+    font-size: calc(33px * var(--kicker-scale, 1));
+    letter-spacing: 0.5px; text-transform: uppercase; line-height: 1;
+    color: #f1f4f7;
+    /* Mesmo glass do Ads I (.ads-insight-card), tingido de verde. Fundo translúcido SÓLIDO
+       (não gradiente) pra o export achatar pro mesmo tom — sem o blur vazar pra fora do card. */
+    background: rgba(74, 170, 113, 0.46);
+    border: 1px solid rgba(180, 240, 205, 0.40);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.14);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    padding: 14px 20px; border-radius: 14px;
+    transform: scaleX(0.96); transform-origin: left center;
+  }
+  .li-edit-textblock .li-edit-manchete {
+    margin-bottom: 0; color: #ffffff;
+    font-family: 'Inter Tight', 'Inter', sans-serif;
+    font-stretch: normal;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
 
   /* Carrossel de tendência: header (só kicker, à direita) sobre a foto */
   .news-edit-photo .news-edit-header {
@@ -3758,7 +3840,7 @@
     background-position: center;
     background-repeat: no-repeat;
     mix-blend-mode: overlay;
-    opacity: 0.55;
+    opacity: var(--spt-opacity, 0.55);
     filter: grayscale(1);
     pointer-events: none;
   }
@@ -5458,6 +5540,48 @@
     padding: 0 0 6px;
     flex-shrink: 0;
   }
+  /* LinkedIn Editorial (I e II): só o seletor de Formato (Modelo é travado), ocupando a largura toda. */
+  #postControls.style-li-editorial #pcSubStyle { display: none; }
+  #postControls.style-li-editorial .pc-direct-controls { grid-template-columns: 1fr; }
+
+  /* Instagram Flat (I e II): mesmo padrão do editorial — sem labels, Modelo oculto, divisores limpos. */
+  #postControls.style-flat #pcSubStyle { display: none; }
+  #postControls.style-flat .pc-direct-controls { grid-template-columns: 1fr; }
+  /* Editorial: toggles de Hook/Complemento não se aplicam → some o divisor órfão acima de "Cor de Destaque" */
+  #postControls.style-li-editorial #pcSubVisibilityDivider { display: none; }
+  /* Editorial + Flat: alinha com aside-mode-wrap (mesmos espaçamentos). */
+  #postControls.style-li-editorial .pc-body,
+  #postControls.style-flat .pc-body { padding-top: 10px; }
+
+  #postControls.style-li-editorial .pc-direct-controls,
+  #postControls.style-flat .pc-direct-controls { padding-bottom: 0; }
+
+  #postControls.style-li-editorial .pc-section-picker,
+  #postControls.style-flat .pc-section-picker {
+    border-top: none;
+    border-bottom: 1px solid rgba(226,232,240,0.6);
+    padding-top: 0;
+    padding-bottom: 10px;
+  }
+
+  #postControls.style-li-editorial #pcSubFormat .pc-label,
+  #postControls.style-li-editorial .pc-section-picker .pc-label,
+  #postControls.style-flat #pcSubFormat .pc-label,
+  #postControls.style-flat .pc-section-picker .pc-label { display: none; }
+
+  /* Flat: desativa os controles de visibilidade, escalas, posição, bullets e upload de imagem */
+  #postControls.style-flat #pcGroupBullets { display: none !important; }
+  #postControls.style-flat #pcSubImageEnabled { display: none !important; }
+  #postControls.style-flat #pcSubBgImage { display: none !important; }
+  #postControls.style-flat #pcSubVisibility,
+  #postControls.style-flat #pcSubVisibilityDivider,
+  #postControls.style-flat #pcSubHookScale,
+  #postControls.style-flat #pcSubComplementScale,
+  #postControls.style-flat #pcSubTextScalesReset,
+  #postControls.style-flat #pcSubTextPosition { display: none !important; }
+
+  /* Editorial: divisor órfão acima de "Cor de Destaque" */
+  #postControls.style-li-editorial #pcSubVisibilityDivider { display: none; }
   .pc-section-picker {
     margin: 0 -28px 0 -14px;
     padding: 10px 28px 6px 14px;
@@ -5467,7 +5591,7 @@
   .pc-style-clipboard {
     display: flex;
     gap: 8px;
-    padding: 10px 14px 6px;
+    padding: 10px 28px 6px 14px;
     margin: 0 -28px 0 -14px;
     border-top: 1px solid #e2e8f0;
     flex-shrink: 0;
@@ -5479,12 +5603,15 @@
     justify-content: center;
     gap: 6px;
     padding: 8px 14px;
-    border-radius: 8px;
+    border-radius: 5px;
     border: 1px solid #e2e8f0;
     background: #f8fafc;
     color: #475569;
-    font-size: 13px;
-    font-weight: 500;
+    font-family: var(--ds-font);
+    font-stretch: 100%;
+    font-size: 12.5px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
   }
@@ -5493,12 +5620,13 @@
     border-color: #cbd5e1;
   }
   .pc-style-clip-btn.pc-style-clip-paste {
-    background: #f0fdf4;
-    border-color: #86efac;
-    color: #16a34a;
+    background: #334155;
+    border-color: #334155;
+    color: #f8fafc;
   }
   .pc-style-clip-btn.pc-style-clip-paste:hover {
-    background: #dcfce7;
+    background: #1e293b;
+    border-color: #1e293b;
   }
   #postControls.logo-cropware-mode .pc-body {
     padding-top: 6px;
@@ -5520,7 +5648,7 @@
     margin: 4px 0 2px;
   }
   .pc-label {
-    font-size: 14px;
+    font-size: 12.5px;
     font-weight: 400;
     color: #334155;
     letter-spacing: 0;
@@ -5694,7 +5822,7 @@
     gap: 4px;
   }
   .pc-offset-field .pc-label {
-    font-size: 14px;
+    font-size: 12.5px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -5875,8 +6003,8 @@
     border-radius: 4px;
     cursor: pointer;
     font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
-    font-size: 13px;
+    font-stretch: 100%;
+    font-size: 12.5px;
     color: var(--text);
     transition: border-color 120ms, box-shadow 120ms;
   }
@@ -5897,10 +6025,11 @@
     flex: 1;
     text-align: left;
     font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
-    font-size: 14px;
-    font-weight: 300;
-    letter-spacing: 0;
+    font-stretch: 100%;
+    font-size: 12.5px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    text-transform: none;
     color: var(--text);
   }
   .pc-color-btn-chevron {
@@ -6999,15 +7128,16 @@
     width: 100%;
     height: 36px;
     padding: 0 12px;
-    background: var(--ds-neutral-50);
+    background: #fff;
     border: 1px solid var(--ds-neutral-200);
     border-radius: 4px;
     color: var(--ds-neutral-800);
     cursor: pointer;
     font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
-    font-size: 14px;
+    font-stretch: 100%;
+    font-size: 12.5px;
     font-weight: 400;
+    letter-spacing: 0.01em;
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -7015,9 +7145,9 @@
     box-sizing: border-box;
     text-align: left;
   }
-  .ds-dropdown__trigger:hover { background: var(--ds-neutral-100); border-color: var(--ds-neutral-300); }
+  .ds-dropdown__trigger:hover { background: #fff; border-color: var(--ds-neutral-300); }
   .ds-dropdown.open .ds-dropdown__trigger {
-    background: var(--ds-neutral-50);
+    background: #fff;
     border-color: var(--ds-neutral-400);
   }
   .ds-dropdown__swatch {
@@ -7073,9 +7203,10 @@
     color: var(--ds-neutral-800);
     cursor: pointer;
     font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
-    font-size: 14px;
+    font-stretch: 100%;
+    font-size: 12.5px;
     font-weight: 400;
+    letter-spacing: 0.01em;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -7083,8 +7214,8 @@
     transition: background 120ms ease;
   }
   .ds-dropdown__option:hover { background: var(--ds-neutral-100); }
-  .ds-dropdown__option.active { background: var(--ds-neutral-200); }
-  .ds-dropdown__option.active:hover { background: var(--ds-neutral-200); }
+  .ds-dropdown__option.active { background: #e2e8f0; color: #1e293b; }
+  .ds-dropdown__option.active:hover { background: #e2e8f0; }
   .ds-dropdown__option-label {
     flex: 1 1 auto;
   }
@@ -7121,7 +7252,7 @@
   }
   .ds-track-card__icon {
     font-size: 24px;
-    color: #94a3b8;
+    color: #aeb8c4;
     flex-shrink: 0;
   }
   .ds-track-card--active .ds-track-card__icon {
@@ -7354,142 +7485,73 @@
     font-size: 14px;
     color: currentColor !important;
   }
+  /* Stepper compacto — substitui o card com slider */
   #postControls .pc-offset-field:has(.pc-range) {
-    position: relative;
-    gap: 0;
-    margin-top: 27px;
-    padding: 12px 14px;
-    border: 1px solid var(--ds-neutral-200);
-    border-radius: var(--ds-btn-radius);
-    background: var(--ds-neutral-50);
-    box-sizing: border-box;
-    overflow: visible;
+    gap: 4px;
   }
   #postControls .pc-offset-field:has(.pc-range) .pc-label-row {
     justify-content: flex-start;
-    gap: 18px;
   }
-  #postControls .pc-offset-field:has(.pc-range) .pc-label {
-    position: absolute;
-    left: 0;
-    top: -27px;
-    flex: 0 0 auto;
-    margin-right: 0;
-    font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
-    font-size: 14px;
-    font-weight: 400;
-    letter-spacing: 0;
-    text-transform: none;
-    color: #334155;
+  .pc-stepper-row { display: none; }
+  /* Slider e pill ficam hidden — substituídos pelo stepper */
+  #postControls .pc-offset-field:has(.pc-range) .pc-range { display: none; }
+  #postControls .pc-offset-field:has(.pc-range) .pc-value-pill { display: none; }
+  #postControls .pc-offset-field:has(.pc-range) .pc-range-reset { display: none; }
+
+  /* Stepper compacto — card único com divisórias verticais: [−]│[85%]│[+]│[↺] */
+  .pc-inline-stepper {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: #fff;
+    overflow: hidden;
   }
-  #postControls .pc-offset-field:has(.pc-range) .pc-label::after {
-    content: none;
-  }
-  #postControls .pc-offset-field:has(.pc-range) .pc-value-pill {
-    flex: 0 0 auto;
-    min-width: 56px;
-    height: 24px;
-    padding: 0 8px;
-    border: 1px solid var(--ds-neutral-200);
-    border-radius: 3px;
-    background: var(--ds-neutral-50);
-    color: var(--ds-neutral-700);
-    font-family: 'Pathway Extreme', var(--ds-font);
-    font-stretch: 90%;
-    font-size: 12px;
-    font-weight: 400;
-    letter-spacing: 0.06em;
-    line-height: 22px;
-    text-transform: none;
-  }
-  #postControls .pc-offset-field:has(.pc-range) .pc-range-reset {
-    position: relative;
-    flex: 0 0 auto;
-    width: auto;
-    min-width: 0;
-    height: 24px;
-    padding: 0 12px;
-    border: 1px solid var(--ds-neutral-200);
-    border-radius: 3px;
-    background: var(--ds-neutral-100);
+  .pc-inline-stepper-btn,
+  .pc-inline-reset {
+    flex-shrink: 0;
+    border: none;
+    border-right: 1px solid var(--border);
+    background: transparent;
     color: var(--ds-neutral-500);
-    font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 120ms;
+    user-select: none;
+  }
+  .pc-inline-stepper-btn { width: 34px; font-size: 15px; }
+  .pc-inline-reset {
+    width: 34px;
     font-size: 13px;
-    font-weight: 500;
-    gap: 5px;
+    border-right: none;
+    border-left: none;
+    color: var(--ds-neutral-500);
+    margin-left: auto;
   }
-  #postControls .pc-offset-field:has(.pc-range) .pc-range-reset::before {
-    content: '|';
-    position: absolute;
-    left: -10px;
-    top: 50%;
-    transform: translateY(-50%);
-    margin: 0;
-    color: var(--ds-neutral-300);
+  .pc-inline-stepper-btn:hover,
+  .pc-inline-reset:hover { background: var(--ds-neutral-50); color: var(--ds-neutral-700); }
+  .pc-inline-stepper-btn:active,
+  .pc-inline-reset:active { background: var(--ds-neutral-100); }
+  .pc-inline-stepper-val {
+    flex: 1;
+    min-width: 0;
+    font-size: 12.5px;
     font-weight: 400;
+    font-family: var(--ds-font);
+    font-stretch: 100%;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+    color: #334155;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     pointer-events: none;
-  }
-  #postControls .pc-offset-field:has(.pc-range) .pc-range-reset:hover {
-    background: var(--ds-neutral-200);
-    border-color: var(--ds-neutral-300);
-    color: var(--ds-neutral-700);
-  }
-  #postControls .pc-offset-field:has(.pc-range) .pc-range {
-    width: calc(100% + 28px);
-    height: 40px;
-    margin: 10px -14px -12px;
-    padding: 0 14px;
-    background: #ffffff !important;
-    border: 0 !important;
-    border-top: 1px solid var(--ds-neutral-200) !important;
-    border-radius: 0 0 calc(var(--ds-btn-radius) - 1px) calc(var(--ds-btn-radius) - 1px);
-    box-shadow: none !important;
-    outline: none !important;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  #postControls .pc-offset-field:has(.pc-range) .pc-range:focus,
-  #postControls .pc-offset-field:has(.pc-range) .pc-range:focus-visible {
-    border-top-color: var(--ds-neutral-200) !important;
-    outline: none !important;
-    box-shadow: none !important;
-  }
-  #postControls .pc-offset-field:has(.pc-range) .pc-range::-webkit-slider-runnable-track {
-    height: 3px;
-    border-radius: 999px;
-    background: linear-gradient(
-      to right,
-      var(--ds-color-primary) 0%,
-      var(--ds-neutral-800) calc(var(--fill, 0) * 1%),
-      var(--ds-neutral-200) calc(var(--fill, 0) * 1%),
-      var(--ds-neutral-200) 100%
-    );
-  }
-  #postControls .pc-offset-field:has(.pc-range) .pc-range::-moz-range-track {
-    height: 3px;
-    border-radius: 999px;
-    background: linear-gradient(
-      to right,
-      var(--ds-color-primary) 0%,
-      var(--ds-neutral-800) calc(var(--fill, 0) * 1%),
-      var(--ds-neutral-200) calc(var(--fill, 0) * 1%),
-      var(--ds-neutral-200) 100%
-    );
-  }
-  #postControls .pc-offset-field:has(.pc-range) .pc-range::-webkit-slider-thumb {
-    width: 14px;
-    height: 14px;
-    margin-top: -6px;
-    background: var(--ds-neutral-800);
-    box-shadow: none;
-  }
-  #postControls .pc-offset-field:has(.pc-range) .pc-range::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    background: var(--ds-neutral-800);
-    box-shadow: none;
+    border-right: 1px solid var(--border);
   }
   #postControls .pc-range-title {
     font-family: var(--ds-font);
@@ -8060,9 +8122,10 @@
     border: none;
     border-radius: var(--ds-btn-radius);
     font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
+    font-stretch: 100%;
     font-size: var(--ds-font-size);
-    font-weight: var(--ds-font-weight);
+    font-weight: 400;
+    letter-spacing: 0.01em;
     cursor: pointer;
     transition: var(--ds-btn-transition);
     display: inline-flex;
@@ -8120,9 +8183,10 @@
     background: transparent;
     color: var(--ds-text);
     font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
+    font-stretch: 100%;
     font-size: var(--ds-font-size);
-    font-weight: var(--ds-font-weight);
+    font-weight: 400;
+    letter-spacing: 0.01em;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -8146,7 +8210,7 @@
   .actions-menu-divider {
     height: 1px;
     background: var(--ds-color-secondary-border);
-    margin: 4px 2px;
+    margin: 3px -6px;
   }
   .btn-cfg {
     width: 100%;
@@ -8257,7 +8321,7 @@
   .gen-close {
     background: transparent;
     border: none;
-    color: #94a3b8;
+    color: #aeb8c4;
     cursor: pointer;
     width: var(--ds-btn-icon-size);
     height: var(--ds-btn-icon-size);
@@ -8319,7 +8383,7 @@
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 11px;
-    color: #94a3b8;
+    color: #aeb8c4;
   }
   .gen-chips {
     display: grid;
@@ -8351,7 +8415,7 @@
     height: 26px;
     background: transparent;
     border: none;
-    color: #94a3b8;
+    color: #aeb8c4;
     font-size: 18px;
     line-height: 1;
     cursor: pointer;
@@ -8497,7 +8561,7 @@
   .news-card-action:hover { background: #cbd5e1; color: #0f172a; }
   .news-empty {
     font-size: 13px;
-    color: #94a3b8;
+    color: #aeb8c4;
     line-height: 1.4;
     padding: 4px 0;
   }
@@ -8527,7 +8591,7 @@
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 13px;
-    color: #94a3b8;
+    color: #aeb8c4;
     pointer-events: none;
     user-select: none;
   }
@@ -8692,6 +8756,16 @@
     box-sizing: border-box;
   }
 
+  /* Botões de ação (menu Ações + toggle): mesma fonte do nome do post —
+     sobrepõe a regra .btn compartilhada acima (que reapertava o font-stretch). */
+  .actions-menu-btn,
+  .btn-actions-menu-trigger {
+    font-stretch: 100%;
+    font-weight: 400;
+    font-size: 12.5px;
+    letter-spacing: 0.01em;
+  }
+
   .cw-btn {
     border: none;
     white-space: nowrap;
@@ -8797,6 +8871,25 @@
     background: var(--btn-danger-bg-hover);
     color: #7f1d1d;
   }
+  /* Botão Sair — override após regras .btn compartilhadas */
+  .app-logout-btn {
+    min-height: unset;
+    height: auto;
+    padding: 5px 10px;
+    background: #ffffff;
+    color: #64748b;
+    border: 1px solid var(--ds-neutral-200);
+    border-radius: 5px;
+    font-stretch: 100%;
+    font-size: 12.5px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+  .app-logout-btn:hover {
+    background: var(--ds-neutral-50);
+    border-color: var(--ds-neutral-300);
+    color: #334155;
+  }
 
   .pc-segment-grid button.active {
     background: var(--btn-dark-bg);
@@ -8880,9 +8973,10 @@
     background: #fff;
     color: var(--ds-neutral-900);
     font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
+    font-stretch: 100%;
     font-size: var(--ds-font-size);
-    font-weight: var(--ds-font-weight);
+    font-weight: 400;
+    letter-spacing: 0.01em;
     line-height: 1.2;
     display: inline-flex;
     align-items: center;
@@ -8894,7 +8988,7 @@
   .studio-mode-trigger:hover,
   .studio-mode-picker.open .studio-mode-trigger {
     border-color: var(--ds-neutral-300);
-    background: var(--ds-neutral-50);
+    background: #fff;
   }
   .studio-mode-trigger-text {
     overflow: hidden;
@@ -9005,6 +9099,29 @@
     border-color: var(--ds-neutral-300);
     background: var(--ds-neutral-100);
   }
+  /* Seletores de categoria/tipo: mesma fonte do nome do post (menos condensada) + fundo branco */
+  #studioModeCategorySelect + .cw-select-picker .cw-select-trigger,
+  #studioModeTypeSelect + .cw-select-picker .cw-select-trigger {
+    background: #fff;
+    font-stretch: 100%;
+    font-size: 12.5px;
+    letter-spacing: 0.01em;
+  }
+  #studioModeCategorySelect + .cw-select-picker .cw-select-trigger:hover,
+  #studioModeCategorySelect + .cw-select-picker.open .cw-select-trigger,
+  #studioModeTypeSelect + .cw-select-picker .cw-select-trigger:hover,
+  #studioModeTypeSelect + .cw-select-picker.open .cw-select-trigger {
+    background: #fff;
+  }
+  /* Coluna de ajustes: selects em 12,5px e fundo branco (inclusive hover/aberto) */
+  #postControls .cw-select-trigger {
+    background: #fff;
+    font-size: 12.5px;
+  }
+  #postControls .cw-select-trigger:hover,
+  #postControls .cw-select-picker.open .cw-select-trigger {
+    background: #fff;
+  }
   .cw-select-trigger-text {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -9037,7 +9154,7 @@
   }
   .cw-select-menu-group {
     padding: 7px 9px 4px;
-    color: #94a3b8;
+    color: #aeb8c4;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 12px;
@@ -9055,9 +9172,10 @@
     background: transparent;
     color: var(--ds-neutral-800);
     font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
-    font-size: 14px;
+    font-stretch: 100%;
+    font-size: 12.5px;
     font-weight: 400;
+    letter-spacing: 0.01em;
     line-height: 1.2;
     cursor: pointer;
     display: inline-flex;
@@ -9072,8 +9190,8 @@
     color: var(--ds-neutral-900);
   }
   .cw-select-option.active {
-    background: var(--ds-neutral-200);
-    color: var(--ds-neutral-900);
+    background: #e2e8f0;
+    color: #1e293b;
   }
   .cw-select-option .ph {
     font-size: 15px;
@@ -9226,7 +9344,7 @@
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 13px;
-    color: #94a3b8;
+    color: #aeb8c4;
     font-weight: 400;
     white-space: nowrap;
   }
@@ -10145,41 +10263,23 @@
   <div class="studio-tabs">
     <select class="studio-mode-select" id="studioModeSelect" onchange="switchMode(this.value)">
       <optgroup label="Instagram">
-        <option value="post" selected>Instagram — Post</option>
-        <option value="instagram-flat-post">Instagram Flat — Post</option>
+        <option value="instagram-flat-post">Instagram Flat I — Post</option>
         <option value="instagram-flat-ii-post">Instagram Flat II — Post</option>
-        <option value="sinal-post">Sinal — Post</option>
-        <option value="sinal-carousel">Sinal — Carrossel</option>
-        <option value="carousel">Instagram — Carrossel</option>
-        <option value="funcionalidades-post">Funcionalidades — Post</option>
-        <option value="funcionalidades-carousel">Funcionalidades — Carrossel</option>
         <option value="instagram-ads-post">Instagram Ads I — Post</option>
         <option value="instagram-ads-ii-post">Instagram Ads II — Post</option>
         <option value="instagram-ads-carousel">Instagram Ads I — Carrossel</option>
         <option value="instagram-ads-ii-carousel">Instagram Ads II — Carrossel</option>
-        <option value="logo-cropware-post">Logo Cropware</option>
       </optgroup>
       <optgroup label="LinkedIn">
-        <option value="linkedin-post">LinkedIn — Post</option>
-        <option value="linkedin-carousel">LinkedIn — Carrossel</option>
+        <option value="linkedin-editorial-post">LinkedIn — Editorial I</option>
+        <option value="linkedin-editorial-ii-post">LinkedIn — Editorial II</option>
       </optgroup>
-      <optgroup label="LinkedIn Pessoal">
-        <option value="linkedin-pessoal-post">LinkedIn Pessoal — Post</option>
-        <option value="linkedin-pessoal-carousel">LinkedIn Pessoal — Carrossel</option>
-      </optgroup>
-      <optgroup label="Notícia">
-        <option value="news-post">Notícia — Post</option>
-        <option value="tendencia-carrossel">Tendência — Carrossel</option>
-        <option value="opiniao-carrossel">Opinião — Carrossel</option>
-      </optgroup>
-      <optgroup label="Clima">
-        <option value="previsao-carrossel">Previsão — Carrossel</option>
-      </optgroup>
-      <optgroup label="Boletim">
+      <optgroup label="Editorial">
         <option value="boletim-agro-carrossel">Boletim do Agro — Diário</option>
       </optgroup>
       <optgroup label="Apresentação">
         <option value="presentation">Apresentação</option>
+        <option value="logo-cropware-post">Logo Cropware</option>
       </optgroup>
       <optgroup label="Motion">
         <option value="motion-reel">Motion — Reel</option>
@@ -10246,15 +10346,6 @@
       </div>
     </div>
 
-    <!-- Copiar / Colar estilo -->
-    <div class="pc-style-clipboard" id="pcStyleClipboard">
-      <button type="button" class="pc-style-clip-btn" id="pcCopyStyleBtn" title="Copiar formatação visual deste post">
-        <i class="ph ph-copy"></i> Copiar estilo
-      </button>
-      <button type="button" class="pc-style-clip-btn pc-style-clip-paste" id="pcPasteStyleBtn" title="Colar formatação copiada" style="display:none">
-        <i class="ph ph-clipboard-text"></i> Colar estilo
-      </button>
-    </div>
 
     <div class="pc-group" id="pcGroupText" data-group="text">
       <button type="button" class="pc-group-header">
@@ -10757,7 +10848,7 @@
           </div>
         </div>
         <div class="pc-sub" id="pcSubOverlayColor">
-          <div class="pc-label">Cor do Overlay</div>
+          <div class="pc-label" id="pcOverlayColorLabel">Cor do Overlay</div>
           <button class="pc-color-btn" id="pcOverlayColorBtn" type="button" data-target="overlay">
             <span class="pc-color-btn-swatch" id="pcOverlayColorBtnSwatch"></span>
             <span class="pc-color-btn-label" id="pcOverlayColorBtnLabel">Selecionar cor</span>
@@ -10801,7 +10892,7 @@
             <span class="pc-label">Intensidade da Textura</span>
             <span class="pc-value-pill" id="pcSignalTextureIntensityValue">55%</span>
           </div>
-          <input type="range" class="pc-range" id="pcSignalTextureIntensity" min="0" max="100" step="5" value="55" data-value-label="pcSignalTextureIntensityValue" data-value-unit="%">
+          <input type="range" class="pc-range" id="pcSignalTextureIntensity" min="0" max="50" step="1" value="20" data-value-label="pcSignalTextureIntensityValue" data-value-unit="%">
         </div>
         <div class="pc-sub" id="pcSubSignalTextureInvert">
           <div class="pc-vis-row">
@@ -11190,7 +11281,11 @@
         </div>
         <div class="pc-sub" id="pcSubReelOverlayColor">
           <div class="pc-label">Cor do Overlay</div>
-          <input type="color" class="mr-color-input" id="mrReelOverlayColor" value="#143F2C">
+          <button class="pc-color-btn" id="mrReelOverlayColorBtn" type="button">
+            <span class="pc-color-btn-swatch" id="mrReelOverlayColorSwatch"></span>
+            <span class="pc-color-btn-label" id="mrReelOverlayColorLabel">Selecionar cor</span>
+            <i class="ph ph-caret-down pc-color-btn-chevron"></i>
+          </button>
         </div>
         <div class="pc-sub pc-offset-field" id="pcSubReelOverlayOpacity">
           <div class="pc-label-row">
@@ -11198,6 +11293,15 @@
             <span class="pc-value-pill" id="mrReelOverlayOpacityValue">55%</span>
           </div>
           <input type="range" class="pc-range" id="mrReelOverlayOpacity" min="0" max="100" step="5" value="55">
+        </div>
+        <div class="pc-sub" id="pcSubReelOverlayDirection">
+          <div class="pc-label">Direção</div>
+          <select class="pc-select" id="mrReelOverlayDirection">
+            <option value="top">Topo</option>
+            <option value="bottom">Base</option>
+            <option value="radial">Radial</option>
+            <option value="full">Uniforme</option>
+          </select>
         </div>
         <div class="pc-sub" id="pcSubReelTextureEnabled">
           <div class="pc-vis-row">
@@ -11217,6 +11321,29 @@
             <span class="pc-value-pill" id="mrReelTextureIntensityValue">8%</span>
           </div>
           <input type="range" class="pc-range" id="mrReelTextureIntensity" min="0" max="40" step="1" value="8">
+        </div>
+        <div class="pc-sub" id="pcSubReelTextureBlend">
+          <div class="pc-label">Mistura</div>
+          <select class="pc-select" id="mrReelTextureBlend">
+            <option value="overlay">Sobrepor</option>
+            <option value="multiply">Multiplicar</option>
+            <option value="screen">Clarear (Adição)</option>
+            <option value="soft-light">Luz Suave</option>
+            <option value="hard-light">Luz Forte</option>
+            <option value="darken">Escurecer</option>
+            <option value="lighten">Iluminar</option>
+            <option value="difference">Diferença</option>
+            <option value="exclusion">Exclusão</option>
+            <option value="normal">Normal</option>
+          </select>
+        </div>
+        <div class="pc-sub" id="pcSubReelTextureInvert">
+          <div class="pc-vis-row">
+            <button type="button" class="pc-vis-btn" id="mrReelTextureInvert">
+              <i class="ph ph-circle-half"></i><span>Inverter Cores</span>
+              <span class="pc-vis-switch"></span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -11386,6 +11513,14 @@ const linkedinCarouselLegends = [];
 let linkedinCurrentCarousel = 0;
 let linkedinCurrentSlide = 0;
 
+// LinkedIn Editorial state (releitura de notícia no estilo Cropware — visual news-editorial)
+const linkedinEditorialPosts = [];
+const linkedinEditorialLegends = [];
+let linkedinEditorialCurrentPost = 0;
+const linkedinEditorialIIPosts = [];
+const linkedinEditorialIILegends = [];
+let linkedinEditorialIICurrentPost = 0;
+
 // LinkedIn Pessoal state
 const linkedinPessoalPosts = [];
 const linkedinPessoalLegends = [];
@@ -11413,8 +11548,17 @@ function getPlatform() {
   if (activeMode === 'instagram-flat-ii-post') return 'instagram-flat-ii';
   if (activeMode === 'sinal-post' || activeMode === 'sinal-carousel') return 'sinal';
   if (activeMode === 'instagram-ads-post' || activeMode === 'instagram-ads-carousel' || activeMode === 'instagram-ads-ii-post' || activeMode === 'instagram-ads-ii-carousel') return 'instagram-ads';
+  if (isLinkedinEditorialMode(activeMode)) return 'linkedin-editorial';
   if (activeMode.startsWith('linkedin-pessoal')) return 'linkedin-pessoal';
   return activeMode.startsWith('linkedin') ? 'linkedin' : 'instagram';
+}
+// LinkedIn Editorial I e II compartilham render/geração/controles; diferem só no "balde" de estado.
+function isLinkedinEditorialType(t) {
+  return t === 'linkedin-editorial-post' || t === 'linkedin-editorial-ii-post';
+}
+function isLinkedinEditorialMode(m) {
+  m = m || activeMode;
+  return m === 'linkedin-editorial-post' || m === 'linkedin-editorial-ii-post';
 }
 function isNewsMode(mode) {
   const m = mode || activeMode;
@@ -11534,6 +11678,7 @@ function getPlatformDisplayName(platform) {
   if (platform === 'instagram-flat-ii') return 'Instagram Flat II';
   if (platform === 'sinal') return 'Sinal';
   if (platform === 'logo-cropware') return 'Logo Cropware';
+  if (platform === 'linkedin-editorial') return 'LinkedIn Editorial';
   if (platform === 'linkedin-pessoal') return 'LinkedIn Pessoal';
   if (platform === 'linkedin') return 'LinkedIn';
   if (platform === 'presentation') return 'Apresentacao';
@@ -11715,6 +11860,8 @@ function getModeItems() {
     case 'instagram-ads-ii-carousel': return instagramAdsIICarousels;
     case 'linkedin-post':             return linkedinPosts;
     case 'linkedin-carousel':         return linkedinCarousels;
+    case 'linkedin-editorial-post':   return linkedinEditorialPosts;
+    case 'linkedin-editorial-ii-post': return linkedinEditorialIIPosts;
     case 'linkedin-pessoal-post':     return linkedinPessoalPosts;
     case 'linkedin-pessoal-carousel': return linkedinPessoalCarousels;
     case 'presentation':              return presentations;
@@ -11743,6 +11890,8 @@ function getModeLegends() {
     case 'instagram-ads-ii-carousel': return instagramAdsIICarouselLegends;
     case 'linkedin-post':             return linkedinLegends;
     case 'linkedin-carousel':         return linkedinCarouselLegends;
+    case 'linkedin-editorial-post':   return linkedinEditorialLegends;
+    case 'linkedin-editorial-ii-post': return linkedinEditorialIILegends;
     case 'linkedin-pessoal-post':     return linkedinPessoalLegends;
     case 'linkedin-pessoal-carousel': return linkedinPessoalCarouselLegends;
     case 'presentation':              return presentationLegends;
@@ -11771,6 +11920,8 @@ function getModeCurrentIdx() {
     case 'instagram-ads-ii-carousel': return instagramAdsIICurrentCarousel;
     case 'linkedin-post':             return linkedinCurrentPost;
     case 'linkedin-carousel':         return linkedinCurrentCarousel;
+    case 'linkedin-editorial-post':   return linkedinEditorialCurrentPost;
+    case 'linkedin-editorial-ii-post': return linkedinEditorialIICurrentPost;
     case 'linkedin-pessoal-post':     return linkedinPessoalCurrentPost;
     case 'linkedin-pessoal-carousel': return linkedinPessoalCurrentCarousel;
     case 'presentation':              return currentPresentation;
@@ -11799,6 +11950,8 @@ function setModeCurrentIdx(idx) {
     case 'instagram-ads-ii-carousel': instagramAdsIICurrentCarousel = idx; break;
     case 'linkedin-post':             linkedinCurrentPost = idx; break;
     case 'linkedin-carousel':         linkedinCurrentCarousel = idx; break;
+    case 'linkedin-editorial-post':   linkedinEditorialCurrentPost = idx; break;
+    case 'linkedin-editorial-ii-post': linkedinEditorialIICurrentPost = idx; break;
     case 'linkedin-pessoal-post':     linkedinPessoalCurrentPost = idx; break;
     case 'linkedin-pessoal-carousel': linkedinPessoalCurrentCarousel = idx; break;
     case 'presentation':              currentPresentation = idx; break;
@@ -11835,6 +11988,54 @@ function setCurrentSlide(idx) {
   else currentSlide = idx;
 }
 
+// Logo Cropware: sempre 3 posts fixos pré-criados (sem geração, sem delete).
+// Chamado ao entrar no modo e no boot. Não recria se já existem.
+function ensureLogoCropwareDefaults() {
+  if (activeMode !== 'logo-cropware-post') return;
+  const defaults = [
+    { theme: 'Logo I' },
+    { theme: 'Logo II' },
+  ];
+  const missing = defaults.length - logoCropwarePosts.length;
+  if (missing <= 0) return;
+  const ts = Date.now();
+  defaults.slice(logoCropwarePosts.length).forEach((d, i) => {
+    const postData = {
+      id:       `logo-cropware-gen-${ts + i}`,
+      bg:       `bg-logo-cropware-${ts + i}`,
+      slideId:  `slide-logo-cropware-${ts + i}`,
+      title:    d.theme,
+      sub:      'Logo Cropware',
+      filename: `cropware_logo_${ts + i}.png`,
+      createdAt: ts + i,
+      isGenerated: true,
+      type: 'logo-cropware-post',
+      style: 'logo-cropware',
+      format: 'square',
+      bgImage: '',
+      theme: d.theme,
+      tone: 'casual',
+      imagePrompt: '',
+      logoCropwareBgColor: '#10b981',
+      logoCropwareIcon: 'cropware',
+      logoCropwareIconColor: '#f5f5f5',
+      logoCropwareIconScale: 0.85,
+      glassOpacity: 15,
+      glassBlur: 22,
+      signalPhotoTexture: 'assets/ads-textures/morros-claros-2.webp',
+      signalPhotoTextureIntensity: 25,
+      signalPhotoTextureInvert: true,
+      signalPhotoTextureBlendMode: 'soft-light',
+      hookHTML: '', complementHTML: '', bullets: [],
+    };
+    renderGeneratedPost(postData, '');
+  });
+  saveSession();
+  buildSidebar();
+  buildDots();
+  goTo(0);
+}
+
 function switchMode(mode) {
   if (mode === activeMode) return;
   activeMode = mode;
@@ -11855,6 +12056,7 @@ function switchMode(mode) {
   // Rebuild sidebar and UI for the active mode
   buildSidebar();
   buildDots();
+  ensureLogoCropwareDefaults();
 
   const items = getModeItems();
   if (items.length > 0) {
@@ -11912,17 +12114,17 @@ const STUDIO_MODE_GROUPS = [
   {
     id: 'instagram',
     label: 'Instagram',
-    modes: ['post', 'instagram-flat-post', 'instagram-flat-ii-post', 'sinal-post', 'sinal-carousel', 'carousel', 'funcionalidades-post', 'funcionalidades-carousel', 'instagram-ads-post', 'instagram-ads-ii-post', 'instagram-ads-carousel', 'instagram-ads-ii-carousel']
+    modes: ['instagram-flat-post', 'instagram-flat-ii-post', 'instagram-ads-post', 'instagram-ads-ii-post', 'instagram-ads-carousel', 'instagram-ads-ii-carousel']
   },
   {
     id: 'linkedin',
     label: 'LinkedIn',
-    modes: ['linkedin-post', 'linkedin-carousel', 'linkedin-pessoal-post', 'linkedin-pessoal-carousel']
+    modes: ['linkedin-editorial-post', 'linkedin-editorial-ii-post']
   },
   {
     id: 'editorial',
     label: 'Editorial',
-    modes: ['news-post', 'tendencia-carrossel', 'opiniao-carrossel', 'previsao-carrossel', 'boletim-agro-carrossel']
+    modes: ['boletim-agro-carrossel']
   },
   {
     id: 'motion',
@@ -12276,12 +12478,8 @@ function buildSidebar() {
     modeWrap.className = 'aside-mode-wrap';
     modeWrap.appendChild(modeSelect);
     modeWrap.insertAdjacentHTML('beforeend', `
-      <div class="studio-mode-field">
-        <div class="studio-mode-field-label">Categoria</div>
-      </div>
-      <div class="studio-mode-field">
-        <div class="studio-mode-field-label">Tipo de post</div>
-      </div>
+      <div class="studio-mode-field"></div>
+      <div class="studio-mode-field"></div>
     `);
     modeWrap.children[1].appendChild(createStudioModeCategorySelect());
     modeWrap.children[2].appendChild(createStudioModeTypeSelect());
@@ -12306,7 +12504,7 @@ function buildSidebar() {
       info.style.cursor = 'pointer';
       info.style.minWidth = '0';
       const tsLabel = formatPostTimestamp(ts);
-      const tsHtml = tsLabel ? `<div class="thumb-time">${tsLabel}</div>` : '';
+      const tsHtml = (tsLabel && !isLogoCropwareMode()) ? `<div class="thumb-time">${tsLabel}</div>` : '';
       // R28: títulos exibidos em Title Case (preposições PT-BR minúsculas).
       const rawTitle = p.title || p.theme || 'Sem título';
       const titleCased = toPtBrTitleCase(rawTitle);
@@ -12368,10 +12566,10 @@ function buildSidebar() {
       <button class="actions-menu-btn" type="button" onclick="closeActionsMenu(); openConfig()" title="Configurar Estilo">
         <i class="ph ph-sliders-horizontal"></i>Estilo
       </button>`}
-      <button class="actions-menu-btn" type="button" onclick="closeActionsMenu(); openGenerator()" title="${genLabelText || genLabel}">
+      <button class="actions-menu-btn" type="button" onclick="closeActionsMenu(); openGenerator()" title="${genLabelText || genLabel}" ${isLogoCropwareMode() ? 'style="display:none"' : ''}>
         <i class="ph ph-plus"></i>Novo
       </button>
-      <div class="actions-menu-divider"></div>
+      ${!isPresentation || isMotionReelMode() ? '<div class="actions-menu-divider"></div>' : ''}
       <button class="actions-menu-btn" type="button" onclick="closeActionsMenu(); openLegendDialog()" ${isPresentation ? 'style="display:none"' : ''}>
         <i class="ph ph-chat-text"></i>${getSidePanelLabel()}
       </button>
@@ -12381,12 +12579,19 @@ function buildSidebar() {
       <button class="actions-menu-btn" id="downloadPdfBtn" type="button" onclick="closeActionsMenu(); downloadLinkedInCarouselPDF()" ${isNewsCarousel && items.length > 0 ? '' : 'style="display:none"'}>
         <i class="ph ph-file-pdf"></i>Baixar PDF
       </button>
-      <div class="actions-menu-divider"></div>
+      ${items.length > 0 && !isPresentation ? '<div class="actions-menu-divider"></div>' : ''}
       <button class="actions-menu-btn" type="button" onclick="closeActionsMenu(); openRegenActions()" ${items.length > 0 && !isPresentation ? '' : 'style="display:none"'}>
         <i class="ph ph-magic-wand"></i>Regerar
       </button>
       <button class="actions-menu-btn" id="pcResetBtn" type="button" onclick="closeActionsMenu(); resetPostStyle()" title="Volta as configurações visuais ao padrão (não altera texto nem imagem)" ${items.length > 0 ? '' : 'style="display:none"'}>
         <i class="ph ph-arrow-clockwise"></i>Reiniciar
+      </button>
+      ${items.length > 0 && !isPresentation ? '<div class="actions-menu-divider"></div>' : ''}
+      <button class="actions-menu-btn" id="pcCopyStyleBtn" type="button" onclick="closeActionsMenu(); copyPostStyle()" title="Copiar formatação visual deste post" ${items.length > 0 && !isPresentation ? '' : 'style="display:none"'}>
+        <i class="ph ph-copy"></i>Copiar Estilo
+      </button>
+      <button class="actions-menu-btn" id="pcPasteStyleBtn" type="button" onclick="closeActionsMenu(); pastePostStyle()" title="Colar formatação copiada" ${_clipboardStyle && items.length > 0 && !isPresentation ? '' : 'style="display:none"'}>
+        <i class="ph ph-clipboard-text"></i>Colar Estilo
       </button>
     </div>
   `);
@@ -13269,6 +13474,14 @@ const _saveSessionCore = async function() {
     .map((c, i) => ({ post: c, legend: linkedinCarouselLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
+  const generatedLinkedinEditorialPosts = linkedinEditorialPosts
+    .map((p, i) => ({ post: p, legend: linkedinEditorialLegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
+  const generatedLinkedinEditorialIIPosts = linkedinEditorialIIPosts
+    .map((p, i) => ({ post: p, legend: linkedinEditorialIILegends[i] || '' }))
+    .filter(x => x.post && x.post.isGenerated);
+
   const generatedLinkedinPessoalPosts = linkedinPessoalPosts
     .map((p, i) => ({ post: p, legend: linkedinPessoalLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
@@ -13281,7 +13494,7 @@ const _saveSessionCore = async function() {
     .map((p, i) => ({ post: p, legend: presentationLegends[i] || '' }))
     .filter(x => x.post && x.post.isGenerated);
 
-  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedInstagramAdsIIPosts, ...generatedInstagramAdsIICarousels, ...generatedInstagramFlatPosts, ...generatedInstagramFlatIIPosts, ...generatedSinalPosts, ...generatedSinalCarousels, ...generatedFeaturePosts, ...generatedFeatureCarousels, ...generatedLogoCropwarePosts, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedOpinionCarousels, ...generatedWeatherCarousels, ...generatedBoletimAgroCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
+  const allRows = [...generated, ...generatedCarousels, ...generatedInstagramAdsPosts, ...generatedInstagramAdsCarousels, ...generatedInstagramAdsIIPosts, ...generatedInstagramAdsIICarousels, ...generatedInstagramFlatPosts, ...generatedInstagramFlatIIPosts, ...generatedSinalPosts, ...generatedSinalCarousels, ...generatedFeaturePosts, ...generatedFeatureCarousels, ...generatedLogoCropwarePosts, ...generatedNewsPosts, ...generatedNewsCarousels, ...generatedOpinionCarousels, ...generatedWeatherCarousels, ...generatedBoletimAgroCarousels, ...generatedLinkedinPosts, ...generatedLinkedinCarousels, ...generatedLinkedinEditorialPosts, ...generatedLinkedinEditorialIIPosts, ...generatedLinkedinPessoalPosts, ...generatedLinkedinPessoalCarousels, ...generatedPresentations];
   if (!allRows.length) return;
   const sid = getSessionId();
   const now = new Date().toISOString();
@@ -13452,7 +13665,7 @@ function isClassic2AllowedMode(mode = activeMode) {
 }
 
 function isNewsPostType(post) {
-  return !!(post && post.type === 'news-post');
+  return !!(post && (post.type === 'news-post' || isLinkedinEditorialType(post.type)));
 }
 
 function isNewsCarouselSlideType(post) {
@@ -13809,7 +14022,7 @@ function renderGeneratedPost(postData, legendText) {
   // News-post sempre fixa no modelo "news-editorial" e ganha defaults próprios.
   // Reaproveita os campos do revista (revistaBlockColor, revistaPhotoPct, etc) para os ajustes
   // de fundo, com defaults distintos: bloco escuro, logo top-right, site bottom-right.
-  if (postData.type === 'news-post') {
+  if (postData.type === 'news-post' || isLinkedinEditorialType(postData.type)) {
     postData.style = 'news-editorial';
     if (!postData.kicker)    postData.kicker    = 'AGRO';
     if (!postData.manchete)  postData.manchete  = '';
@@ -13826,6 +14039,33 @@ function renderGeneratedPost(postData, legendText) {
       postData.sitePos     = 'br';
       postData.logoEnabled = false;
       postData._newsDefaultsApplied = true;
+    }
+    // LinkedIn Editorial full-bleed: overlay + textura de foto no mesmo esquema do Ads I.
+    if (isLinkedinEditorialType(postData.type)) {
+      // Overlay: defaults uma única vez; depois o usuário manda nos controles.
+      if (!postData._liEditDefaultsApplied) {
+        postData.overlayColor     = '#0d2410';
+        postData.overlayOpacity   = 68;
+        postData.overlayDirection = 'bottom';
+        postData._liEditDefaultsApplied = true;
+      }
+      // Site: chamada pra editoria Radar (site futuro), fonte menor. Setado uma vez.
+      if (!postData._liEditSiteApplied) {
+        postData.siteText  = 'saiba mais em cropware.com.br/radar';
+        postData.siteScale = 0.62;
+        postData._liEditSiteApplied = true;
+      }
+      // Migração: troca o link antigo (tendencias) pelo novo (radar) nos posts já existentes.
+      if (postData.siteText === 'saiba mais em cropware.com.br/tendencias') {
+        postData.siteText = 'saiba mais em cropware.com.br/radar';
+      }
+      // Textura: SEMPRE do conjunto ads-textures (igual Ads I). Migra texturas antigas (topográficas) uma vez.
+      if (postData.signalPhotoTexture == null || !/ads-textures\//.test(postData.signalPhotoTexture)) {
+        postData.signalPhotoTexture = 'assets/ads-textures/linhas-claras-3.webp';
+        if (postData.signalPhotoTextureIntensity == null) postData.signalPhotoTextureIntensity = 80;
+        if (!postData.signalPhotoTextureBlendMode)         postData.signalPhotoTextureBlendMode = 'overlay';
+        if (postData.signalPhotoTextureInvert == null)     postData.signalPhotoTextureInvert    = true;
+      }
     }
     if (postData.kickerScale    == null) postData.kickerScale       = 1;
     if (postData.manchetteScale == null) postData.manchetteScale    = 1;
@@ -13848,9 +14088,34 @@ function renderGeneratedPost(postData, legendText) {
   if ((!postData.style || isClassicStyle(postData.style)) && !(postData.style === 'flat' ? postData._flatInitialized : postData._classicInitialized)) {
     if (!postData.accent || postData.accent.toLowerCase() === '#7ab87e') postData.accent = '#6ac58f';
     if (postData.style === 'flat') {
+      // Flat I: cor de fundo Gray 700 sólida por padrão (sem gradiente)
+      if (postData.type === 'instagram-flat-post' && !postData._flatIInitialized) {
+        postData.overlayColor     = '#374151';
+        postData.bgImage          = '';
+        postData._flatIInitialized = true;
+      }
       postData._flatInitialized = true;
     } else {
       postData._classicInitialized = true;
+    }
+  }
+  // Flat I: o overlay funciona como cor de fundo — sempre ligado, uniforme e opaco.
+  // Aplicado a cada render (não só na init) para cobrir posts salvos com overlay antigo desligado.
+  if (postData.type === 'instagram-flat-post' && postData.style === 'flat') {
+    // Cor de fundo: sempre uniforme/opaca (não tem toggle). Cor permanece editável.
+    if (!postData.overlayColor || postData.overlayColor === 'transparent') postData.overlayColor = '#374151';
+    postData.overlayOpacity   = 100;
+    postData.overlayDirection = 'full';
+    // Textura: defaults uma vez só (conjunto ads-textures, ligada). Respeita o usuário desligar depois.
+    if (!postData._flatITextureInit) {
+      // Migra textura antiga (01-16 ou default base) para o pool novo; se desligada (undefined), também religa na 1ª vez.
+      if (postData.signalPhotoTexture == null || !/ads-textures\//.test(postData.signalPhotoTexture)) {
+        postData.signalPhotoTexture = 'assets/ads-textures/linhas-claras-3.webp';
+      }
+      postData.signalPhotoTextureIntensity = 40;
+      postData.signalPhotoTextureBlendMode = 'overlay';
+      postData.signalPhotoTextureInvert    = false;
+      postData._flatITextureInit = true;
     }
   }
   // Highlights (signal) — accent verde claro, overlay sem cor, logo desativado, intensity 100.
@@ -13950,8 +14215,10 @@ function renderGeneratedPost(postData, legendText) {
   const isSinal = postData.type === 'sinal-post';
   const isLinkedinPessoal = postData.type === 'linkedin-pessoal-post';
   const isLinkedin = postData.type === 'linkedin-post';
-  const targetPosts = isInstagramAdsII ? instagramAdsIIPosts : isInstagramAds ? instagramAdsPosts : isInstagramFlat ? instagramFlatPosts : isInstagramFlatII ? instagramFlatIIPosts : isFeaturePost ? featurePosts : isLogoCropware ? logoCropwarePosts : isNews ? newsPosts : isSinal ? sinalPosts : isLinkedinPessoal ? linkedinPessoalPosts : isLinkedin ? linkedinPosts : posts;
-  const targetLegends = isInstagramAdsII ? instagramAdsIILegends : isInstagramAds ? instagramAdsLegends : isInstagramFlat ? instagramFlatLegends : isInstagramFlatII ? instagramFlatIILegends : isFeaturePost ? featureLegends : isLogoCropware ? logoCropwareLegends : isNews ? newsLegends : isSinal ? sinalLegends : isLinkedinPessoal ? linkedinPessoalLegends : isLinkedin ? linkedinLegends : legends;
+  const isLinkedinEditorial = isLinkedinEditorialType(postData.type);
+  const isLinkedinEditorialII = postData.type === 'linkedin-editorial-ii-post';
+  const targetPosts = isInstagramAdsII ? instagramAdsIIPosts : isInstagramAds ? instagramAdsPosts : isInstagramFlat ? instagramFlatPosts : isInstagramFlatII ? instagramFlatIIPosts : isFeaturePost ? featurePosts : isLogoCropware ? logoCropwarePosts : isNews ? newsPosts : isSinal ? sinalPosts : isLinkedinEditorial ? (isLinkedinEditorialII ? linkedinEditorialIIPosts : linkedinEditorialPosts) : isLinkedinPessoal ? linkedinPessoalPosts : isLinkedin ? linkedinPosts : posts;
+  const targetLegends = isInstagramAdsII ? instagramAdsIILegends : isInstagramAds ? instagramAdsLegends : isInstagramFlat ? instagramFlatLegends : isInstagramFlatII ? instagramFlatIILegends : isFeaturePost ? featureLegends : isLogoCropware ? logoCropwareLegends : isNews ? newsLegends : isSinal ? sinalLegends : isLinkedinEditorial ? (isLinkedinEditorialII ? linkedinEditorialIILegends : linkedinEditorialLegends) : isLinkedinPessoal ? linkedinPessoalLegends : isLinkedin ? linkedinLegends : legends;
 
   targetPosts.push(postData);
   targetLegends.push(normalizePanelText(legendText || '', postData.type));
@@ -14804,6 +15071,28 @@ function renderNewsEditorialStyle(postData) {
   const photoPos  = postData.revistaPhotoPos == null ? 50 : postData.revistaPhotoPos;
   const layout    = postData.revistaLayout || 'top';
   const bgPos     = (layout === 'left' || layout === 'right') ? `${photoPos}% center` : `center ${photoPos}%`;
+
+  // LinkedIn Editorial — variante full-bleed: imagem inteira + overlay + textura, texto por cima.
+  // Sem bloco verde, sem kicker/datalinha — só chamada (hook curto) + manchete.
+  if (isLinkedinEditorialType(postData.type)) {
+    const chamada    = postData.chamada || '';
+    // Overlay + textura de foto: mesma mecânica do Instagram Ads I (overlayColor/Opacity/Direction + signalPhotoTexture)
+    const overlayStyle = buildPostOverlayStyle(postData.overlayColor || '#0d2410', postData.overlayOpacity == null ? 68 : postData.overlayOpacity, postData.overlayDirection || 'bottom');
+    return `
+    <div class="news-edit-photo li-edit-photo" style="background-image:url('${imgSrc}');background-position:${bgPos};">
+      ${renderPhotoTextureOverlay(postData)}
+      <div class="li-edit-overlay" style="${overlayStyle}"></div>
+      <div class="li-edit-textblock text-${textMode}">
+        ${chamada ? `<div class="li-edit-chamada" contenteditable="true" spellcheck="false">${escapeHTML(chamada)}</div>` : ''}
+        <div class="news-edit-manchete li-edit-manchete" contenteditable="true" spellcheck="false">${escapeHTML(manchete)}</div>
+      </div>
+    </div>
+    ${postData.logoEnabled !== false ? '<img class="news-edit-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
+    ${renderSiteText(postData)}
+    <div class="brand-strip"></div>
+    `;
+  }
+
   // Carrossel de tendência: slideRole determina o conteúdo do bloco editorial.
   // Sem slideRole (post-notícia single) → comportamento original.
   const role = postData.slideRole || 'cover';
@@ -15822,7 +16111,7 @@ function applyPostVariant(postEl, postData) {
   postEl.dataset.layout  = layout;
   postEl.dataset.logoPos = logoPos;
   postEl.dataset.weatherChart = shouldRenderWeatherChart(postData) ? 'true' : 'false';
-  postEl.dataset.newsContext = postData.type === 'news-carousel-slide' ? 'carousel' : (postData.type === 'news-post' ? 'single' : '');
+  postEl.dataset.newsContext = postData.type === 'news-carousel-slide' ? 'carousel' : ((postData.type === 'news-post' || isLinkedinEditorialType(postData.type)) ? 'single' : '');
   postEl.dataset.brand    = postData.brandMode || 'light';
   postEl.dataset.siteMode = postData.siteMode || 'light';
   // Cor customizada do site — override que ignora siteMode
@@ -16054,7 +16343,7 @@ function syncLogoCropwareIconButton(post) {
   const preview = document.getElementById('pcLogoCropwareIconPreview');
   const label = document.getElementById('pcLogoCropwareIconLabel');
   if (preview) preview.innerHTML = renderIconMarkup(iconName);
-  if (label) label.textContent = isCropwareIconName(iconName) ? 'cropware' : iconName;
+  if (label) label.textContent = isCropwareIconName(iconName) ? 'Cropware' : toPtBrTitleCase(iconName.replace(/_/g, ' '));
 }
 
 function getActiveLegend() {
@@ -16087,6 +16376,14 @@ function updatePostControls(idx) {
   ensureFlatBulletCardDefaults(post);
   const STYLES_LIST = ['classic','flat','flat-wave','classic-2','dashboard','revista','news-editorial','moldura','signal','logo-cropware','mockup','sinal'];
   STYLES_LIST.forEach(s => panel.classList.toggle(`style-${s}`, post.style === s));
+  // Editorial reusa o RENDER do news-editorial, mas NÃO os controles de bloco.
+  // Troca a classe do painel pra não herdar os force-shows do .style-news-editorial.
+  if (isLinkedinEditorialType(post.type)) {
+    panel.classList.remove('style-news-editorial');
+    panel.classList.add('style-li-editorial');
+  } else {
+    panel.classList.remove('style-li-editorial');
+  }
   const FORMATS_LIST = ['feed','story','square','presentation'];
   FORMATS_LIST.forEach(f => panel.classList.toggle(`format-${f}`, post.format === f));
 
@@ -16346,28 +16643,35 @@ function updatePostControls(idx) {
   const isMockup = currentStyle === 'mockup';
   const usesOverlay = isClassicStyle(currentStyle) || isFlatWave || currentStyle === 'moldura' || isDash || isRevista || isSplit || isColuna || isSpotlight || isSignal || isMockup;
   const usesBackgroundImage = !isLogoCropware;
-  setSubVisible('pcSubOverlayEnabled',     usesOverlay);
-  setSubVisible('pcSubOverlayColor',       usesOverlay);
-  setSubVisible('pcSubOverlayOpacity',     usesOverlay);
-  setSubVisible('pcSubOverlayDirection',   usesOverlay);
+  // LinkedIn Editorial (style news-editorial mas type próprio): libera overlay como no Ads I.
+  const isLiEditorial = isLinkedinEditorialType(post.type);
+  // Flat I: o "Overlay" vira seletor de cor de fundo — sempre ligado, só a cor visível.
+  const isFlatI = post.type === 'instagram-flat-post';
+  setSubVisible('pcSubOverlayEnabled',     (usesOverlay || isLiEditorial) && !isFlatI);
+  setSubVisible('pcSubOverlayColor',       usesOverlay || isLiEditorial);
+  setSubVisible('pcSubOverlayOpacity',     (usesOverlay || isLiEditorial) && !isFlatI);
+  setSubVisible('pcSubOverlayDirection',   (usesOverlay || isLiEditorial) && !isFlatI);
+  const _overlayColorLabel = document.getElementById('pcOverlayColorLabel');
+  if (_overlayColorLabel) _overlayColorLabel.textContent = isFlatI ? 'Cor de fundo' : 'Cor do Overlay';
   setSubVisible('pcSubImageEnabled',       usesBackgroundImage);
   setSubVisible('pcSubBgImage',            usesBackgroundImage);
   setSubVisible('pcSubDashCardColor',      isDash || isClassic2 || isFlatWave);
   setSubVisible('pcSubDashCardOpacity',    isDash || isClassic2 || isFlatWave);
   setSubVisible('pcSubDashCardBlur',       isDash || isClassic2 || isFlatWave);
-  const revistaLikeStyle = currentStyle === 'revista' || currentStyle === 'news-editorial';
+  // Editorial NÃO usa os controles de bloco (revista/news) — só imagem/overlay/textura como o Ads I.
+  const revistaLikeStyle = (currentStyle === 'revista' || currentStyle === 'news-editorial') && !isLiEditorial;
   setSubVisible('pcSubRevistaBlockColor',  revistaLikeStyle);
   setSubVisible('pcSubRevistaPair',        revistaLikeStyle);
   setSubVisible('pcSubRevistaPhotoPct',    revistaLikeStyle);
   setSubVisible('pcSubRevistaLayout',      revistaLikeStyle);
   setSubVisible('pcSubRevistaPhotoPos',    revistaLikeStyle);
   setSubVisible('pcSubRevistaShadow',      currentStyle === 'revista');
-  setSubVisible('pcSubNewsTexture',        currentStyle === 'news-editorial');
+  setSubVisible('pcSubNewsTexture',        currentStyle === 'news-editorial' && !isLiEditorial);
   // Botão "Aplicar a todos" só aparece em modo carrossel (qualquer tipo) com 2+ slides
   setSubVisible('pcSubApplyToAll',         isCarouselMode() && _activeCarouselHasMultipleSlides());
   setSubVisible('pcSubApplyPhotoTextureToAll', isCarouselMode() && _activeCarouselHasMultipleSlides());
   // Sincroniza grid de textura ativa com o slide atual
-  if (currentStyle === 'news-editorial') {
+  if (currentStyle === 'news-editorial' && !isLiEditorial) {
     syncNewsTextureGrid(post);
   }
   syncSignalTextureGrid(post);
@@ -16398,7 +16702,7 @@ function updatePostControls(idx) {
   setSubVisible('pcSubSignalCardBlur',     showSignalCardControls);
   setSubVisible('pcSubSignalIconColor',    showSignalCardControls && !isFlatWave);
   setSubVisible('pcSubSignalIconOpacity',  showSignalCardControls && !isFlatWave);
-  setSubVisible('pcSubBlockTextMode',      currentStyle === 'revista' || currentStyle === 'news-editorial' || (!isPresMode && (currentStyle === 'split' || currentStyle === 'coluna' || currentStyle === 'moldura')));
+  setSubVisible('pcSubBlockTextMode',      !isLiEditorial && (currentStyle === 'revista' || currentStyle === 'news-editorial' || (!isPresMode && (currentStyle === 'split' || currentStyle === 'coluna' || currentStyle === 'moldura'))));
   // Limpa qualquer inline style residual nos subs do Fundo (CSS declarativo via .style-X cuida da visibilidade)
   ['pcSubDashCardColor','pcSubDashCardOpacity','pcSubDashCardBlur','pcSubDashPresScale','pcSubDashPresPosition',
    'pcSubRevistaBlockColor','pcSubRevistaPair','pcSubRevistaPhotoPct','pcSubRevistaLayout','pcSubRevistaPhotoPos','pcSubRevistaShadow',
@@ -16486,7 +16790,10 @@ function updatePostControls(idx) {
   const syncPercentControl = (inputId, labelId, value) => {
     const v = Math.round(value * 100);
     const input = document.getElementById(inputId);
-    if (input) input.value = String(v);
+    if (input) {
+      input.value = String(v);
+      input.dispatchEvent(new Event('input')); // sincroniza o stepper visual
+    }
     const label = document.getElementById(labelId);
     if (label) label.textContent = v + '%';
   };
@@ -16822,6 +17129,18 @@ function isControlBaseVisible(el) {
 }
 
 function isStyleSectionAvailable(id) {
+  const _ap = getActivePost();
+  if (_ap && isLinkedinEditorialType(_ap.type) &&
+      ['pcSectionLogo', 'pcSectionSite', 'pcSectionDetail', 'pcSectionBlock'].includes(id)) {
+    return false; // editorial full-bleed: sem logo/site/detalhe/bloco nos controles
+  }
+  if (_ap && _ap.type === 'logo-cropware-post' && id === 'pcSectionBlock') {
+    return false; // logo cropware: sem Bloco no seletor de seção
+  }
+  if (_ap && _ap.type === 'instagram-flat-post' &&
+      ['pcGroupBullets', 'pcSectionLogo', 'pcSectionSite', 'pcSectionDetail', 'pcSectionBlock'].includes(id)) {
+    return false; // flat I: só Texto e Imagem (=Fundo)
+  }
   if (id === 'pcSectionSite') {
     const ap = getActivePost();
     if (ap && ap.type === 'instagram-ads-post') return false; // ads I: site é fixo
@@ -16870,6 +17189,11 @@ function updateStyleSectionPicker() {
   if (!panel || !select) return;
 
   panel.classList.add('pc-section-mode');
+
+  // Rename "Imagem" → "Fundo" no Flat I
+  const imagemOpt = select.querySelector('option[value="pcSectionImage"]');
+  const ap = getActivePost();
+  if (imagemOpt) imagemOpt.textContent = (ap && ap.type === 'instagram-flat-post') ? 'Fundo' : 'Imagem';
 
   const options = Array.from(select.options);
   options.forEach(opt => {
@@ -16932,8 +17256,8 @@ function copyPostStyle() {
   const copyBtn = document.getElementById('pcCopyStyleBtn');
   if (copyBtn) {
     const orig = copyBtn.innerHTML;
-    copyBtn.innerHTML = '<i class="ph ph-check"></i> Copiado!';
-    copyBtn.style.color = '#16a34a';
+    copyBtn.innerHTML = 'Copiado';
+    copyBtn.style.color = '#64748b';
     setTimeout(() => { copyBtn.innerHTML = orig; copyBtn.style.color = ''; }, 1500);
   }
 }
@@ -17007,6 +17331,9 @@ function applyOverlayInline(postEl, post) {
   const postOverlayStyle = buildPostOverlayStyle(post.overlayColor, post.overlayOpacity, post.overlayDirection);
   const overlay = postEl.querySelector('.post-overlay');
   if (overlay) overlay.setAttribute('style', postOverlayStyle);
+  // Sincroniza overlay do LinkedIn Editorial full-bleed (gradient inset, igual .post-overlay)
+  const liEditOverlay = postEl.querySelector('.li-edit-overlay');
+  if (liEditOverlay) liEditOverlay.setAttribute('style', postOverlayStyle);
   // Sincroniza overlay da revista (dentro de .revista-photo)
   const revistaOverlay = postEl.querySelector('.revista-overlay');
   if (revistaOverlay) {
@@ -17173,6 +17500,10 @@ function openColorDropdown(target, anchorEl) {
   if (target === 'mrSceneOverlay') {
     // R26: motion-reel — lê do draft de cena, não do post ativo.
     currentColor = (typeof _mrSceneDraft !== 'undefined' && _mrSceneDraft) ? _mrSceneDraft.overlayColor : null;
+  } else if (target === 'mrReelOverlay') {
+    // Coluna de Ajustes do Reel — lê do cfg.adjust (fundo compartilhado).
+    const cfg = getActiveMotionReelConfig();
+    currentColor = (cfg && cfg.adjust) ? cfg.adjust.overlayColor : '#143F2C';
   } else {
     const post = getActivePost();
     currentColor = post ? (
@@ -17254,6 +17585,16 @@ function applyColorChoice(color, targetOverride) {
       _mrSceneDraft.overlayColor = color === 'transparent' ? null : color;
       if (typeof _syncMrSceneOverlayColor === 'function') _syncMrSceneOverlayColor(_mrSceneDraft);
       if (typeof _refreshMrSceneEditPreview === 'function') _refreshMrSceneEditPreview();
+    }
+    return;
+  }
+  if (target === 'mrReelOverlay') {
+    // Coluna de Ajustes do Reel — escreve no cfg.adjust (fundo compartilhado).
+    const cfg = getActiveMotionReelConfig();
+    if (cfg) {
+      cfg.adjust = cfg.adjust || mrReadAdjustState(cfg);
+      cfg.adjust.overlayColor = (color === 'transparent') ? '#143F2C' : color;
+      if (typeof applyMrReelAdjust === 'function') applyMrReelAdjust();
     }
     return;
   }
@@ -17639,26 +17980,107 @@ function bindStepperButtons() {
 }
 
 function setupRangeResetButtons(scope) {
+  // mantido como no-op para compatibilidade — a conversão é feita por convertRangesToSteppers()
+}
+
+function convertRangesToSteppers(scope) {
   const root = scope || document;
-  root.querySelectorAll('.pc-range[data-value-label]').forEach(input => {
-    const field = input.closest('.pc-offset-field');
-    const labelRow = field ? field.querySelector('.pc-label-row') : null;
-    if (!labelRow || labelRow.querySelector(`[data-range-reset="${input.id}"]`)) return;
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'pc-range-reset';
-    btn.dataset.rangeReset = input.id;
-    btn.title = 'Voltar ao padrão';
-    btn.setAttribute('aria-label', 'Voltar ao padrão');
-    btn.innerHTML = '<i class="ph ph-arrow-counter-clockwise"></i>Redefinir';
-    labelRow.appendChild(btn);
-    paintPostRangeFill(input);
+  root.querySelectorAll('.pc-range[data-value-label]').forEach(range => {
+    const field = range.closest('.pc-offset-field');
+    if (!field || field.dataset.stepperConverted) return;
+    field.dataset.stepperConverted = 'true';
+
+    const labelRow = field.querySelector('.pc-label-row');
+    if (!labelRow) return;
+
+    const unit = range.dataset.valueUnit || '';
+    const defaultVal = Number(range.getAttribute('value') || 0);
+    const rangeStep = Number(range.step) || 1;
+    const rangeMin = range.min !== '' ? Number(range.min) : -Infinity;
+    const rangeMax = range.max !== '' ? Number(range.max) : Infinity;
+
+    // Stepper [− | val | +]
+    const stepper = document.createElement('div');
+    stepper.className = 'pc-inline-stepper';
+
+    const dec = document.createElement('button');
+    dec.type = 'button'; dec.className = 'pc-inline-stepper-btn'; dec.textContent = '−';
+    dec.setAttribute('aria-label', 'Diminuir'); dec.tabIndex = -1;
+
+    const valEl = document.createElement('span');
+    valEl.className = 'pc-inline-stepper-val';
+
+    const inc = document.createElement('button');
+    inc.type = 'button'; inc.className = 'pc-inline-stepper-btn'; inc.textContent = '+';
+    inc.setAttribute('aria-label', 'Aumentar'); inc.tabIndex = -1;
+
+    stepper.appendChild(dec);
+    stepper.appendChild(valEl);
+    stepper.appendChild(inc);
+
+    const resetBtn = document.createElement('button');
+    resetBtn.type = 'button';
+    resetBtn.className = 'pc-inline-reset';
+    resetBtn.title = 'Redefinir';
+    resetBtn.innerHTML = '<i class="ph ph-arrows-counter-clockwise" style="font-size:16px;color:var(--ds-neutral-500)"></i>';
+
+    // Tudo dentro do card do stepper: [−]│[val]│[+]│[↺]
+    stepper.appendChild(resetBtn);
+    const insertBefore = range.closest('.pc-offset-field') === field ? range : null;
+    if (insertBefore) field.insertBefore(stepper, insertBefore);
+    else field.appendChild(stepper);
+
+    const syncDisplay = () => {
+      valEl.textContent = range.value + unit;
+      // Também sincroniza o pill original (handlers existentes ainda podem usá-lo)
+      const pill = document.getElementById(range.dataset.valueLabel);
+      if (pill) pill.textContent = range.value + unit;
+    };
+
+    const doStep = (dir) => {
+      const cur = Number(range.value);
+      const next = Math.max(rangeMin, Math.min(rangeMax, cur + dir * rangeStep));
+      if (next === cur) return;
+      range.value = String(next);
+      range.dispatchEvent(new Event('input', { bubbles: true }));
+      range.dispatchEvent(new Event('change', { bubbles: true }));
+      syncDisplay();
+    };
+
+    // Auto-repeat ao segurar
+    let holdTimer = null, repeatTimer = null;
+    const stopRepeat = () => {
+      if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+      if (repeatTimer) { clearInterval(repeatTimer); repeatTimer = null; }
+    };
+    [dec, inc].forEach(btn => {
+      const dir = btn === dec ? -1 : 1;
+      btn.addEventListener('mousedown', e => {
+        e.preventDefault();
+        doStep(dir);
+        holdTimer = setTimeout(() => { repeatTimer = setInterval(() => doStep(dir), 50); }, 350);
+      });
+      ['mouseup', 'mouseleave', 'touchend', 'touchcancel'].forEach(ev =>
+        btn.addEventListener(ev, stopRepeat));
+    });
+
+    resetBtn.addEventListener('click', () => {
+      range.value = String(defaultVal);
+      range.dispatchEvent(new Event('input', { bubbles: true }));
+      range.dispatchEvent(new Event('change', { bubbles: true }));
+      syncDisplay();
+    });
+
+    // Sync quando o range muda de fora (ex: updatePostControls, syncPercentControl)
+    range.addEventListener('input', syncDisplay);
+
+    syncDisplay();
   });
 }
 
 function initPostControls() {
   wrapStepperInputs(document);
-  setupRangeResetButtons(document);
+  convertRangesToSteppers(document);
   paintAllPostRangeFills(document);
   bindStepperButtons();
 
@@ -17914,6 +18336,8 @@ function initPostControls() {
       if (_panel) {
         const _STYLES = ['classic','flat','classic-2','dashboard','revista','news-editorial','moldura','signal','logo-cropware','mockup','sinal'];
         _STYLES.forEach(s => _panel.classList.toggle(`style-${s}`, post.style === s));
+        if (isLinkedinEditorialType(post.type)) { _panel.classList.remove('style-news-editorial'); _panel.classList.add('style-li-editorial'); }
+        else { _panel.classList.remove('style-li-editorial'); }
       }
       // Limpa qualquer inline display que possa ter ficado de ajustes anteriores nos subs do Fundo
       const _legacyBgSubs = ['pcSubDashCardColor','pcSubDashCardOpacity','pcSubDashCardBlur','pcSubDashPresScale','pcSubDashPresPosition','pcSubRevistaBlockColor','pcSubRevistaPair','pcSubRevistaPhotoPct','pcSubRevistaLayout','pcSubRevistaPhotoPos','pcSubRevistaShadow','pcSubSplitBlockColor','pcSubSplitPair','pcSubSplitPhotoPct','pcSubSplitLayout','pcSubSplitPhotoPos','pcSubSplitShadow','pcSubColunaBlockColor','pcSubColunaSide','pcSubColunaPair','pcSubColunaPhotoPct','pcSubColunaPhotoPos','pcSubColunaShadow','pcSubFrameColor','pcSubGlassOpacity','pcSubGlassBlur','pcSubSpotlightPanelSize','pcSubSpotlightAnchor','pcSubSpotlightBlur','pcSubSpotlightContrast','pcSubBlockTextMode','pcSubSignalCardColor','pcSubSignalCardOpacity','pcSubSignalCardBlur','pcSubSignalIconColor','pcSubSignalIconOpacity','pcSubSignalCardHeight','pcSubImageEnabled','pcSubBgImage','pcSubOverlayEnabled','pcSubSignalTexture','pcSubSignalTextureIntensity','pcSubSignalTextureInvert','pcSubSignalTextureBlend','pcSubApplyPhotoTextureToAll'];
@@ -18185,8 +18609,8 @@ function initPostControls() {
       if (isEnabled) {
         delete post.signalPhotoTexture;
       } else {
-        // Reabilita com a última textura escolhida (se existir) ou a primeira.
-        post.signalPhotoTexture = post._lastSignalPhotoTexture || SIGNAL_CARD_TEXTURES[0];
+        // Reabilita com a última textura escolhida (se existir) ou a primeira do pool ativo.
+        post.signalPhotoTexture = post._lastSignalPhotoTexture || getActiveTexturePool()[0];
       }
       // Guarda a última pra reabilitar mantendo a escolha.
       if (post.signalPhotoTexture) post._lastSignalPhotoTexture = post.signalPhotoTexture;
@@ -18202,18 +18626,27 @@ function initPostControls() {
   const intensityInput = document.getElementById('pcSignalTextureIntensity');
   if (intensityInput && intensityInput.dataset.wired !== 'true') {
     intensityInput.dataset.wired = 'true';
-    const apply = () => {
+    const apply = (save) => {
       const post = getActivePost();
       if (!post || !post.isGenerated) return;
       const v = Number(intensityInput.value);
       post.signalPhotoTextureIntensity = v;
       const valueLabel = document.getElementById('pcSignalTextureIntensityValue');
       if (valueLabel) valueLabel.textContent = v + '%';
+      paintPostRangeFill(intensityInput);
       const postEl = document.getElementById(post.id);
-      if (postEl) applyPostVariant(postEl, post);
+      if (postEl) {
+        // CSS custom property no post element — operação de compositor puro, sem layout, sem piscar.
+        postEl.style.setProperty('--spt-opacity', v / 100);
+      }
+      if (save) {
+        // Reconstrói só ao soltar o slider (para persistir qualquer outro efeito visual).
+        if (postEl) applyPostVariant(postEl, post);
+        saveSession();
+      }
     };
-    intensityInput.addEventListener('input', apply);
-    intensityInput.addEventListener('change', () => { apply(); saveSession(); });
+    intensityInput.addEventListener('input', () => apply(false));
+    intensityInput.addEventListener('change', () => apply(true));
   }
   const invertBtn = document.getElementById('pcSignalTextureInvertBtn');
   if (invertBtn && invertBtn.dataset.vis !== 'signalTextureInvert' && invertBtn.dataset.wired !== 'true') {
@@ -18393,11 +18826,7 @@ function initPostControls() {
   wirePctField('pcSpotlightBlur',     'spotlightBlur',     0, 60);
   wirePctField('pcSignalIconOpacity', 'signalIconOpacity', 0, 100);
 
-  // Copiar / Colar estilo
-  const copyStyleBtn  = document.getElementById('pcCopyStyleBtn');
-  const pasteStyleBtn = document.getElementById('pcPasteStyleBtn');
-  if (copyStyleBtn)  copyStyleBtn.addEventListener('click',  copyPostStyle);
-  if (pasteStyleBtn) pasteStyleBtn.addEventListener('click', pastePostStyle);
+  // Copiar / Colar estilo — agora vivem no menu Ações (onclick inline em buildSidebar)
   // Botão do color picker (revista block) — abre dropdown
   const revistaBlockBtn = document.getElementById('pcRevistaBlockColorBtn');
   if (revistaBlockBtn) {
@@ -19225,7 +19654,7 @@ function _resetPostStyleSingle(post) {
     });
   }
   // Textura padrão por tipo: news-post → 04, carrossel/tendência → 01.
-  if (post.type === 'news-post') {
+  if (post.type === 'news-post' || isLinkedinEditorialType(post.type)) {
     post.newsTexture = 'assets/04-texture.webp';
   } else if (isNewsCarouselSlide) {
     post.newsTexture = 'assets/01-texture.webp';
@@ -19754,9 +20183,9 @@ const ADS_TEXTURE_LABELS = {
   'assets/ads-textures/morros-escuros-2.webp': 'Morros escuros 2',
   'assets/ads-textures/morros-escuros-3.webp': 'Morros escuros 3',
 };
-// Pool ativo do picker: Ads usam o conjunto proprio; demais usam o padrao.
+// Pool ativo do picker: Ads, LinkedIn Editorial, Logo Cropware e Flat I usam o conjunto de ads-textures; demais usam o padrao.
 function getActiveTexturePool() {
-  return isInstagramAdsMode() ? ADS_TEXTURES : SIGNAL_CARD_TEXTURES;
+  return (isInstagramAdsMode() || isLinkedinEditorialMode(activeMode) || isLogoCropwareMode() || isInstagramFlatMode()) ? ADS_TEXTURES : SIGNAL_CARD_TEXTURES;
 }
 function getTextureOptionLabel(url, idx) {
   return ADS_TEXTURE_LABELS[url] || getSignalTextureLabel(url, idx);
@@ -19895,7 +20324,7 @@ function syncSignalTextureDropdown(post) {
     swatch.style.backgroundImage = active ? `url('${active}')` : '';
   }
   if (value) {
-    value.textContent = active ? getSignalTextureLabel(active) : 'Sem textura';
+    value.textContent = active ? getTextureOptionLabel(active) : 'Sem textura';
   }
 }
 
@@ -19905,7 +20334,7 @@ function syncSignalTextureDropdown(post) {
 function rebuildSignalTextureGrid() {
   const grid = document.getElementById('pcSignalTextureGrid');
   if (!grid) return;
-  const key = isInstagramAdsMode() ? 'ads' : 'signal';
+  const key = (isInstagramAdsMode() || isLinkedinEditorialMode(activeMode) || isLogoCropwareMode() || isInstagramFlatMode()) ? 'ads' : 'signal';
   if (grid.dataset.pool === key) return;
   grid.dataset.pool = key;
   grid.querySelectorAll('.ds-dropdown__option[data-url]').forEach(o => o.remove());
@@ -20596,7 +21025,7 @@ async function bootStudio() {
   try {
     const savedMode = localStorage.getItem('cropware-active-mode');
     const validModes = ['post','instagram-flat-post','instagram-flat-ii-post','sinal-post','sinal-carousel','carousel','funcionalidades-post','funcionalidades-carousel','logo-cropware-post','previsao-carrossel','news-post','tendencia-carrossel','opiniao-carrossel','boletim-agro-carrossel','instagram-ads-post','instagram-ads-carousel','instagram-ads-ii-post','instagram-ads-ii-carousel',
-                        'linkedin-post','linkedin-carousel','linkedin-pessoal-post','linkedin-pessoal-carousel',
+                        'linkedin-post','linkedin-carousel','linkedin-editorial-post','linkedin-editorial-ii-post','linkedin-pessoal-post','linkedin-pessoal-carousel',
                         'presentation','motion-reel'];
     if (savedMode && validModes.includes(savedMode) && savedMode !== activeMode) {
       switchMode(savedMode);
@@ -20605,6 +21034,7 @@ async function bootStudio() {
 
   buildSidebar();
   buildDots();
+  ensureLogoCropwareDefaults();
   const items = getModeItems();
   if (items.length > 0) {
     // No boot, abre o post mais recente (maior createdAt). Posts antigos sem createdAt
@@ -20777,6 +21207,7 @@ function shouldUseHtmlToImageExport(postData) {
   const style = normalizePostStyle(rawStyle);
   if (isInstagramFlatTypeAny(postData.type)) return true;
   if (isInstagramAdsTypeAny(postData.type)) return true;
+  if (isLinkedinEditorialType(postData.type)) return true; // glass do chip da chamada
   if (postData.type === 'sinal-post' || postData.type === 'sinal-carousel-slide') return true;
   if (['dashboard', 'moldura', 'signal'].includes(style)) return true;
   if (['classic-2', 'spotlight', 'sidelight'].includes(rawStyle)) return true;
@@ -20805,6 +21236,13 @@ function stabilizeHtmlToImageClone(rootEl, postData, blurredUrl, postW, postH) {
   if (postData && isInstagramAdsTypeAny(postData.type)) {
     stabilizeAdsCardsForHtmlToImage(rootEl);
   }
+  // LinkedIn Editorial: achata o glass do chip da chamada (mesma técnica do .ads-insight-card)
+  rootEl.querySelectorAll('.li-edit-chamada').forEach(el => {
+    const bg = getComputedStyle(el).backgroundColor || 'rgba(106,197,143,0.20)';
+    el.style.setProperty('background', bg, 'important');
+    el.style.setProperty('backdrop-filter', 'none', 'important');
+    el.style.setProperty('-webkit-backdrop-filter', 'none', 'important');
+  });
 }
 
 async function capturePostWithHtmlToImage(postEl, postData, postW, postH, scale, logoDims, blurredUrl = null) {
@@ -21523,6 +21961,11 @@ function copyInstagramAdsAll() {
 let genImageBase64 = null;
 let genImageMime = 'image/jpeg';
 let selectedNewsPauta = null;
+// Pauta escolhida no seletor de 5 notícias do LinkedIn Editorial (já aprofundada).
+// Quando setada, generatePost pula a busca e usa direto.
+let editorialPickedPauta = null;
+// Candidatos do último "Buscar notícias" do LinkedIn Editorial (5 manchetes leves).
+let editorialNewsCandidates = [];
 
 // Chips de orientação rápida da imagem — cada um adiciona uma linha ao
 // extraDirection do prompt da imagem quando ativo.
@@ -21627,6 +22070,7 @@ function openGenerator() {
   const isWeather = isWeatherMode();
   const isOpinion = isOpinionCarouselMode();
   const isMotionReel = isMotionReelMode();
+  const isEditorial = isLinkedinEditorialMode(activeMode);
   document.getElementById('genModal').classList.add('open');
   wireGenChipsOnce();
   resetGenChips();
@@ -21652,6 +22096,7 @@ function openGenerator() {
   else if (isOpinion && headerSpan) headerSpan.textContent = 'Carrossel de Opinião';
   else if (isNews && isCarousel && headerSpan) headerSpan.textContent = 'Carrossel de Tendência';
   else if (isNews && headerSpan) headerSpan.textContent = 'Post Notícia';
+  if (isEditorial && headerSpan) headerSpan.textContent = 'LinkedIn — Gerar Editorial ' + (activeMode === 'linkedin-editorial-ii-post' ? 'II' : 'I');
   const genBtn = document.getElementById('genBtn');
   if (genBtn) genBtn.textContent = isCarousel ? 'Gerar Carrossel' : 'Gerar Post';
   if (genBtn && isMotionReel) genBtn.textContent = 'Gerar Reel';
@@ -21667,6 +22112,7 @@ function openGenerator() {
   if (genBtn && isOpinion) genBtn.textContent = 'Gerar Carrossel de Opinião';
   else if (genBtn && isNews && isCarousel) genBtn.textContent = 'Gerar Carrossel de Tendência';
   else if (genBtn && isNews) genBtn.textContent = 'Gerar Notícia';
+  if (genBtn && isEditorial) genBtn.textContent = 'Gerar Editorial';
   const themeLabel = document.getElementById('genThemeLabel');
   const themeInput = document.getElementById('genTheme');
   if (themeLabel) {
@@ -21679,9 +22125,12 @@ function openGenerator() {
     else if (isOpinion) themeLabel.textContent = 'Tema da análise';
     else if (isNews && isCarousel) themeLabel.textContent = 'Tema da tendência';
     else if (isNews) themeLabel.textContent = 'Tema da notícia';
+    else if (isEditorial) themeLabel.textContent = 'Tema / notícia para a releitura';
     else themeLabel.textContent = 'Tema / Contexto do Post';
   }
-  if (themeInput) themeInput.placeholder = isWeather
+  if (themeInput) themeInput.placeholder = isEditorial
+    ? 'Ex: rastreabilidade do boi para a UE, preço da soja em MT, crédito rural na safra... (ou deixe vazio e use Buscar notícias)'
+    : isWeather
     ? 'Ex: Rio Verde, GO; Triângulo Mineiro; Sudoeste Goiano; Goiás; MT; MS...'
     : isMotionReel
     ? 'Ex: milho safrinha, NDVI em soja, previsão climática para tomada de decisão...'
@@ -21734,12 +22183,20 @@ function openGenerator() {
   }
   const newsGroup = document.getElementById('genNewsGroup');
   if (newsGroup) newsGroup.style.display = isNews ? '' : 'none';
-  // Links de referência só pros modos news (single + carrossel)
+  // Links de referência pros modos news (single + carrossel) e LinkedIn Editorial
   const linksGroup = document.getElementById('genLinksGroup');
-  if (linksGroup) linksGroup.style.display = isNews ? '' : 'none';
-  if (isNews) {
+  if (linksGroup) linksGroup.style.display = (isNews || isEditorial) ? '' : 'none';
+  if (isNews || isEditorial) {
     wireGenLinksOnce();
     resetGenLinks();
+  }
+  // Seletor de notícias — exclusivo do LinkedIn Editorial
+  const editorialSearchGroup = document.getElementById('genEditorialSearchGroup');
+  if (editorialSearchGroup) editorialSearchGroup.style.display = isEditorial ? '' : 'none';
+  if (isEditorial) {
+    wireEditorialSearchOnce();
+    resetNewsPautas();
+    renderEditorialNewsCandidates();
   }
   const adsObjectiveGroup = document.getElementById('genAdsObjectiveGroup');
   const adsAudienceGroup = document.getElementById('genAdsAudienceGroup');
@@ -21757,6 +22214,8 @@ function closeGenerator() {
 
 function resetNewsPautas() {
   selectedNewsPauta = null;
+  editorialPickedPauta = null;
+  editorialNewsCandidates = [];
 }
 
 // Parseia URLs do textarea de links de referência (suporta uma por linha,
@@ -21928,6 +22387,141 @@ Pesquise agora via Google Search. Integre múltiplas fontes recentes (${isOpinio
     contexto: (parsed.contexto || '').toString().trim(),
     fontes,
   };
+}
+
+// ── LinkedIn Editorial — seletor de 5 notícias ───────────────
+// Varredura leve: devolve até 5 pautas candidatas (manchete + categoria + resumo + fontes),
+// sem aprofundar. O aprofundamento roda só na que o usuário escolher (selectEditorialCandidate).
+async function listNewsCandidates(topic, referenceLinks) {
+  const links = Array.isArray(referenceLinks) ? referenceLinks.filter(Boolean).slice(0, 5) : [];
+  const today = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: 'long', year: 'numeric' });
+  const linksBlock = links.length ? `\n\nLINKS DE REFERÊNCIA (ponto de partida da busca): ${links.join(' , ')}` : '';
+  const themeLine = topic
+    ? `Foco temático pedido pelo usuário: ${topic}.`
+    : 'Sem foco específico — traga as pautas mais relevantes do agronegócio brasileiro neste momento.';
+  const systemPrompt = `Você é editor de pauta da Cropware News. Faça UMA varredura via Google Search e devolva as 5 notícias MAIS RELEVANTES e RECENTES do agronegócio brasileiro${topic ? ' relacionadas ao foco pedido' : ''}.
+
+REGRAS:
+- Use Google Search agora. Janela: últimos 7 dias (hoje é ${today}), priorizando as últimas 72h.
+- Fontes preferenciais: Globo Rural, Canal Rural, Notícias Agrícolas, Agrolink, AgFeed, Reuters, Valor Econômico, CONAB, USDA, MAPA, CEPEA, ANEC, ABIOVE, Aprosoja.
+- 5 pautas DISTINTAS (não repita a mesma notícia com palavras diferentes). Sem clickbait.
+- Cada pauta: manchete factual (máx 90 caracteres), categoria (kicker MAIÚSCULO de 1-2 palavras: MERCADO, CLIMA, SAFRA, EXPORTAÇÃO, POLÍTICA AGRO, PECUÁRIA, TECNOLOGIA, CÂMBIO, LOGÍSTICA, BIOLÓGICOS), data curta (DD/MM), resumo de 1 frase (máx 160 caracteres) e 1 a 3 URLs de fonte.
+
+FORMATO DE SAÍDA — APENAS um array JSON válido, sem markdown, sem texto fora do array:
+[
+  {"kicker":"MERCADO","manchete":"...","data":"DD/MM","resumo":"...","fontes":["url1","url2"]}
+]`;
+  const userPrompt = `${themeLine}${linksBlock}\n\nPesquise agora via Google Search e devolva as 5 melhores pautas no formato JSON (array puro).`;
+
+  const resp = await fetchGeminiWithRetry(
+    `${SUPABASE_URL}/functions/v1/gemini`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON}` },
+      body: JSON.stringify({
+        model: 'gemini-2.5-flash',
+        body: {
+          contents: [{ parts: [{ text: userPrompt }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          tools: [{ google_search: {} }],
+          generationConfig: { temperature: 0.4 }
+        }
+      })
+    },
+    'Busca de notícias'
+  );
+
+  const data = await resp.json();
+  const parts = data.candidates?.[0]?.content?.parts || [];
+  const raw = parts.map(p => p.text).filter(Boolean).join('\n').trim();
+  const match = raw.match(/\[[\s\S]*\]/);
+  if (!match) throw new Error('Busca não retornou lista de notícias.');
+  let arr;
+  try { arr = JSON.parse(match[0]); }
+  catch (e) { throw new Error('Busca: JSON inválido — ' + e.message); }
+  if (!Array.isArray(arr)) throw new Error('Busca: formato inesperado.');
+  return arr
+    .map(c => ({
+      kicker:   (c.kicker || 'AGRO').toString().toUpperCase().slice(0, 24).trim(),
+      manchete: (c.manchete || '').toString().trim(),
+      data:     (c.data || '').toString().trim(),
+      resumo:   (c.resumo || '').toString().trim(),
+      fontes:   Array.isArray(c.fontes) ? c.fontes.map(u => (u || '').toString().trim()).filter(Boolean).slice(0, 3) : [],
+    }))
+    .filter(c => c.manchete)
+    .slice(0, 5);
+}
+
+function wireEditorialSearchOnce() {
+  const btn = document.getElementById('genEditorialSearchBtn');
+  if (!btn || btn._wired) return;
+  btn._wired = true;
+  btn.addEventListener('click', runEditorialNewsSearch);
+}
+
+async function runEditorialNewsSearch() {
+  const btn = document.getElementById('genEditorialSearchBtn');
+  const statusEl = document.getElementById('genEditorialSearchStatus');
+  const theme = (document.getElementById('genTheme').value || '').trim();
+  const refLinks = parseReferenceLinks(getGenLinkValues().join('\n'));
+  if (btn) btn.disabled = true;
+  if (statusEl) statusEl.textContent = 'Varrendo notícias recentes do agro...';
+  try {
+    editorialNewsCandidates = await listNewsCandidates(theme, refLinks);
+    editorialPickedPauta = null;
+    if (statusEl) statusEl.textContent = editorialNewsCandidates.length
+      ? 'Escolha a notícia para a releitura:'
+      : 'Nenhuma notícia encontrada. Tente outro tema.';
+    renderEditorialNewsCandidates();
+  } catch (e) {
+    console.error('listNewsCandidates failed:', e);
+    if (statusEl) statusEl.textContent = 'Erro na busca: ' + (e.message || e);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function renderEditorialNewsCandidates() {
+  const wrap = document.getElementById('genEditorialCandidates');
+  if (!wrap) return;
+  if (!editorialNewsCandidates.length) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = editorialNewsCandidates.map((c, i) => {
+    const selected = editorialPickedPauta && editorialPickedPauta._candidateIdx === i;
+    const meta = [c.kicker, c.data].filter(Boolean)
+      .map(t => `<span class="news-card-pill">${escapeHTML(t)}</span>`).join('');
+    return `<div class="news-card${selected ? ' selected' : ''}" data-idx="${i}">
+      <div class="news-card-title">${escapeHTML(c.manchete || '')}</div>
+      <div class="news-card-meta">${meta}</div>
+      ${c.resumo ? `<div class="news-card-insight">${escapeHTML(c.resumo)}</div>` : ''}
+      <button type="button" class="news-card-action" onclick="selectEditorialCandidate(${i})">${selected ? '✓ Selecionada' : 'Usar esta'}</button>
+    </div>`;
+  }).join('');
+}
+
+async function selectEditorialCandidate(idx) {
+  const c = editorialNewsCandidates[idx];
+  if (!c) return;
+  const statusEl = document.getElementById('genEditorialSearchStatus');
+  const wrap = document.getElementById('genEditorialCandidates');
+  if (wrap) wrap.querySelectorAll('.news-card-action').forEach(b => { b.disabled = true; });
+  if (statusEl) statusEl.textContent = 'Aprofundando a notícia escolhida (cruzando fontes)...';
+  try {
+    const pauta = await searchAndConsolidateNews(c.manchete, 12, c.fontes, 'opinion');
+    if (!pauta.manchete || !pauta.fatos.length) {
+      if (statusEl) statusEl.textContent = 'Não consegui aprofundar essa notícia. Tente outra.';
+      return;
+    }
+    pauta._candidateIdx = idx;
+    if (!pauta.kicker && c.kicker) pauta.kicker = c.kicker;
+    editorialPickedPauta = pauta;
+    if (statusEl) statusEl.textContent = 'Notícia pronta — clique em "Gerar Editorial".';
+    renderEditorialNewsCandidates();
+  } catch (e) {
+    console.error('selectEditorialCandidate failed:', e);
+    if (statusEl) statusEl.textContent = 'Erro: ' + (e.message || e);
+  } finally {
+    if (wrap) wrap.querySelectorAll('.news-card-action').forEach(b => { b.disabled = false; });
+  }
 }
 
 // ── PRESENTATION BACKGROUNDS GENERATOR ────────────────────
@@ -22964,6 +23558,71 @@ Responda APENAS em JSON válido, sem markdown:
 }`;
 }
 
+// LinkedIn Editorial — funde o melhor dos 3 editoriais (Notícia + Tendência + Opinião):
+// fato preservado da pauta + leitura de mercado + tese de posicionamento, em uma releitura
+// ampla com a voz B2B da Cropware. Mesma forma de JSON do Post Notícia (kicker/manchete/dataLinha
+// alimentam a imagem news-editorial), mas a LEGEND é o texto longo estilo coluna de LinkedIn.
+function buildLinkedInEditorialSystemPrompt(tone) {
+  const toneDirectives = {
+    casual:      'TOM: editorial profissional acessível, sem formalismo excessivo, credibilidade B2B.',
+    tecnico:     'TOM: editorial técnico, vocabulário real do agro, leitura de mercado precisa, sem inventar números.',
+    inspirador:  'TOM: editorial com visão estratégica de setor, leitura de oportunidade, sem hype.',
+    provocativo: 'TOM: editorial com tese afiada que desafia o senso comum do agro, fundamentada, sem clickbait.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
+  const todayDataLinha = formatBrazilDateShort();
+
+  return `Você é editor-chefe da redação editorial da Cropware no LinkedIn. Sua função é pegar UMA pauta consolidada (que já vem com manchete, lide, fatos preservados, contexto e fontes) e escrever um POST EDITORIAL de LinkedIn: uma releitura de notícia recente do agro, com a cara e a autoridade da Cropware. É a fusão de três formatos: a precisão factual de uma NOTÍCIA, a leitura de mercado de uma análise de TENDÊNCIA e a tese de uma coluna de OPINIÃO.
+
+REGRA ABSOLUTA: NUNCA invente fato, número, percentual, nome, data ou citação. Use APENAS o que vem na pauta entregue. Se faltar dado, escreva sem ele — não preencha vazios com suposição.
+
+REGRA DE PRESERVAÇÃO DOS FATOS (CRÍTICO):
+- A pauta traz um array de FATOS (datas, valores, percentuais, nomes, citações). Use pelo menos 2 desses fatos LITERALMENTE na legenda. NÃO arredonde, NÃO parafraseie a ponto de perder a precisão.
+- Valores monetários (R$ X,XX/saca), percentuais (+X,X%), volumes (X mi t), datas (DD/MM/YYYY) e nomes próprios (empresas, órgãos, autoridades) aparecem EXATAMENTE como na pauta.
+- Uma legenda editorial sem nenhum dado concreto está ERRADA.
+
+A IMAGEM do post leva APENAS dois elementos textuais sobre a foto (sem bloco, sem categoria, sem data):
+
+1. CHAMADA — um gancho editorial curtíssimo de 2 a 4 palavras (máx ~26 caracteres), em MAIÚSCULAS, SEM ponto final, sem emoji, sem aspas. É a "manchetinha" que provoca a leitura, no estilo de uma coluna de jornal. NÃO repita a manchete — ela COMPLEMENTA. Exemplos: "SAFRA RECORDE CONFIRMADA", "NAS CONTAS DA CONAB", "BOI TRAVADO NA EUROPA", "DÓLAR PRESSIONA A SOJA".
+
+2. MANCHETE — 1 frase, máx 14 palavras, máx 90 caracteres. Termina com ponto final. Sem clickbait, sem CAPS LOCK, sem ironia, sem aspas, sem reticências, sem emoji. Carrega o fato mais importante. Pode ter um toque de leitura editorial, mas continua factual.
+
+A LEGENDA é o coração do post — uma RELEITURA AMPLA escrita em parágrafos curtos (estilo coluna de LinkedIn que respira):
+- Estrutura sugerida: (a) abertura forte de 1-2 frases que situa o fato/tensão; (b) 1-2 parágrafos com os fatos preservados da pauta (datas, valores, nomes) costurados em narrativa, não em lista; (c) a LEITURA DE MERCADO — o que isso muda na prática para quem opera no campo, qual a tendência que os dados apontam; (d) fecho com TESE editorial — um posicionamento claro sobre o que observar a seguir.
+- Tamanho: 150 a 260 palavras. Vários parágrafos curtos (2-4 frases cada), separados por linha em branco. Pode usar 1 ou 2 emojis sóbrios no máximo (opcional), no estilo editorial de LinkedIn — nunca poluir.
+- Não use primeira pessoa autobiográfica ("eu acho", "na minha experiência").
+- PROIBIDO terminar com pergunta retórica ("o que vocês acham?", "concordam?"), CTA genérico ("comenta aí") ou venda dura do produto.
+- Linguagem real do agro brasileiro (saca, safra, plantio, contratos, prêmio, basis, embarque, comercialização, manejo, rastreabilidade, defensivos, biológicos, exportação, etc) quando o tema permite.
+
+ÂNGULO CROPWARE (CONDICIONAL):
+- Inclua leitura ligada a desenvolvimento de mercado, geração de demanda, inteligência de campo, validação técnica, dados que sustentam decisão comercial — APENAS quando houver ligação NATURAL e ÓBVIA com a pauta. NÃO force.
+- Quando incluir, use forma editorial, NÃO publicitária: "Para quem constrói mercado no campo, a leitura é...", "Na operação de quem desenvolve mercado, o sinal aponta para...". Não trate "Cropware" como produto à venda no corpo do texto.
+
+HASHTAGS:
+- 3 a 5 hashtags profissionais em linha separada após a legenda. Misture 1-2 de atualidade/setor (#agronegocio, #agro, #agronews) + 2-3 temáticas da pauta (#soja, #pecuaria, #exportacao, etc). Sem capitalização criativa. NÃO use #cropware nem #cropwarenews.
+
+${toneBlock}
+${buildDesignContext('linkedin')}
+
+IMAGE_PROMPT (descrição em inglês para gerar a foto editorial 4:5):
+- Photojournalistic editorial premium image, contexto agrícola FACTUALMENTE conectado à pauta (soja → cena de soja na fase certa; pecuária → gado/pasto realista; exportação → porto/logística; política → cena institucional sutil; clima → cena climática real; tecnologia → tecnologia agrícola realista).
+- No text, logos, brands, headlines, watermarks, numbers anywhere in the image.
+- Clean composition, negative space at the bottom third (for the editorial block overlay).
+- Magnum/Reuters/Bloomberg aesthetic — NOT Apple-corporate, NOT generic stock.
+- Natural lighting, 50mm feel, cinematic depth of field. NO artificial dark gradients or overlays.
+
+Responda APENAS em JSON válido, sem markdown:
+{
+  "chamada":     "GANCHO CURTO 2-4 PALAVRAS",
+  "kicker":      "PECUÁRIA",
+  "manchete":    "Frase única, máx 14 palavras, com ponto final.",
+  "title":       "título curto para sidebar (máx 60 caracteres)",
+  "legend":      "releitura ampla em parágrafos curtos separados por linha em branco: abertura → fatos preservados → leitura de mercado → tese de fecho. 150-260 palavras.",
+  "hashtags":    "#tag1 #tag2 #tag3",
+  "imagePrompt": "photojournalistic editorial image prompt in english, no text, 4:5 composition with negative space at bottom"
+}`;
+}
+
 // Retorna o system prompt com diretiva de tom injetada (fase 5).
 function buildSystemPrompt(tone) {
   const toneDirectives = {
@@ -23149,9 +23808,9 @@ function buildInstagramFlatSystemPrompt(tone) {
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.casual;
 
-  return `Voce e copywriter da Cropware criando um post INSTAGRAM FLAT.
+  return `Voce e copywriter da Cropware criando um post INSTAGRAM FLAT I.
 
-Este formato e minimalista: pouco texto, leitura rapida, visual limpo. Nao gere imagem de fundo. O app vai usar um modelo flat fixo.
+Este formato e minimalista: UM UNICO TEXTO de destaque, leitura rapida, visual limpo. Sem imagem de fundo.
 
 REGRA ABSOLUTA:
 - Nunca invente numeros, percentuais, estatisticas, prazos ou promessas quantitativas.
@@ -23161,17 +23820,20 @@ ${buildCropwarePositioningContext('instagram')}
 
 ESTRUTURA DO TEXTO:
 
-HOOK:
-- Maximo 5 a 7 palavras.
-- Uma frase curta, forte e concreta.
-- Sem <em>, sem <strong>, sem quebra de linha.
+HOOK (unico texto de destaque):
+- Maximo 10 a 12 palavras no total (2 linhas curtas na arte).
+- Objetivo e direto, na pegada do Instagram Ads: frase que comunica um beneficio claro ou uma dor real.
+- Sem divisao hook/complement: e UMA frase continua, sem quebra de linha, sem <em>, sem <strong>.
 - Nao terminar com dois pontos.
+- Exemplos de tom: "Visitas que viram inteligência de mercado.", "Menos planilha, mais decisão de campo.", "Seu histórico técnico organizado de verdade."
 
-COMPLEMENT:
-- Maximo 5 a 7 palavras.
-- Deve ser continuidade natural do hook, como segunda metade da ideia.
-- Mesmo ritmo do hook: curto, direto, visual.
+COMPLEMENT (texto de apoio em Space Mono uppercase):
+- 5 a 8 palavras, objetivo e complementar ao hook.
+- Complementa ou expande o hook com um beneficio concreto ou consequencia pratica.
 - Sem <em>, sem <strong>, sem quebra de linha.
+- Sem pontuacao final.
+- Exemplos: "organizado por talhao e cliente", "dados de campo em um so lugar", "historico que sustenta a decisao"
+- O app vai exibir em Space Mono uppercase automaticamente — escreva em minusculo normal.
 
 CORPO / BULLETS:
 - Exatamente 3 bullets.
@@ -23319,6 +23981,8 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
     ? buildLinkedInPessoalSystemPrompt(tone)
     : platform === 'linkedin'
     ? buildLinkedInSystemPrompt(tone)
+    : platform === 'linkedin-editorial'
+    ? buildLinkedInEditorialSystemPrompt(tone)
     : platform === 'news'
     ? buildNewsPostSystemPrompt(tone)
     : platform === 'features'
@@ -23330,7 +23994,7 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
     : platform === 'sinal'
     ? buildSinalPostSystemPrompt()
     : buildSystemPrompt(tone);
-  const platformLabel = platform === 'linkedin-pessoal' ? 'LinkedIn' : platform === 'linkedin' ? 'LinkedIn' : platform === 'news' ? 'Post Notícia' : platform === 'instagram-flat' ? 'Instagram Flat' : platform === 'instagram-flat-ii' ? 'Instagram Flat II' : platform === 'sinal' ? 'Sinal' : platform === 'features' ? 'Instagram' : 'Instagram';
+  const platformLabel = platform === 'linkedin-pessoal' ? 'LinkedIn' : platform === 'linkedin' ? 'LinkedIn' : platform === 'linkedin-editorial' ? 'LinkedIn' : platform === 'news' ? 'Post Notícia' : platform === 'instagram-flat' ? 'Instagram Flat' : platform === 'instagram-flat-ii' ? 'Instagram Flat II' : platform === 'sinal' ? 'Sinal' : platform === 'features' ? 'Instagram' : 'Instagram';
   const brandLabel = platform === 'linkedin-pessoal' ? '' : ' da Cropware';
   const directionSuffix = extraDirection && extraDirection.trim()
     ? `\n\nDireção adicional do usuário: ${extraDirection.trim()}`
@@ -23342,16 +24006,20 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
   const newsSuffix = newsContext
     ? `\n\nPAUTA CONSOLIDADA (use APENAS estes fatos — NÃO invente, NÃO arredonde, NÃO parafraseie a ponto de perder precisão):\nKicker sugerido: ${newsContext.kicker || ''}\nManchete sugerida: ${newsContext.manchete || ''}\nLead jornalístico: ${newsContext.lead || ''}\nFatos preservados (use pelo menos 2 LITERALMENTE na legenda):\n${(newsContext.fatos || []).map((f, i) => `  ${i + 1}. ${f}`).join('\n') || '  (nenhum fato disponível)'}\nContexto: ${newsContext.contexto || ''}\nFontes consultadas: ${(newsContext.fontes || []).join(', ') || 'não informadas'}`
     : '';
+  const usesNewsPauta = platform === 'news' || platform === 'linkedin-editorial';
+  const editorialTask = platform === 'linkedin-editorial'
+    ? 'transforme a pauta abaixo em um post editorial para LinkedIn — manchete enxuta para a imagem + releitura ampla da notícia com a cara da Cropware na legenda'
+    : 'transforme a pauta abaixo em manchete editorial Cropware News';
   const userParts = userImageBase64
     ? [
         { inlineData: { mimeType: userImageMime || 'image/jpeg', data: userImageBase64 } },
-        { text: platform === 'news'
-          ? `Analise esta imagem agrícola e transforme a pauta abaixo em manchete editorial Cropware News. Use os FATOS preservados literalmente. Não invente.\n\nTema buscado pelo usuário: ${theme}${newsSuffix}${directionSuffix}`
+        { text: usesNewsPauta
+          ? `Analise esta imagem agrícola e ${editorialTask}. Use os FATOS preservados literalmente. Não invente.\n\nTema buscado pelo usuário: ${theme}${newsSuffix}${directionSuffix}`
           : `Analise esta imagem agrícola e crie um post para ${platformLabel}${brandLabel} sobre:\n\n${theme}${directionSuffix}${naturalHookSuffix}` }
       ]
     : [
-        { text: platform === 'news'
-          ? `Transforme a pauta abaixo em manchete editorial Cropware News. Use os FATOS preservados literalmente. Não invente nada além da pauta.\n\nTema buscado pelo usuário: ${theme}${newsSuffix}${directionSuffix}`
+        { text: usesNewsPauta
+          ? `${editorialTask.charAt(0).toUpperCase() + editorialTask.slice(1)}. Use os FATOS preservados literalmente. Não invente nada além da pauta.\n\nTema buscado pelo usuário: ${theme}${newsSuffix}${directionSuffix}`
           : `Crie um post para ${platformLabel}${brandLabel} sobre o seguinte tema:\n\n${theme}${directionSuffix}${naturalHookSuffix}` }
       ];
 
@@ -23490,6 +24158,8 @@ async function generatePost() {
   const isSinal   = platform === 'sinal';
   const isLogoCropware = platform === 'logo-cropware';
   const isNews    = platform === 'news';
+  const isEditorial = platform === 'linkedin-editorial';
+  const isNewsLike = isNews || isEditorial; // ambos rodam busca de notícia + visual news-editorial
   const isFeature = platform === 'features';
   const cfg       = getActiveDesignConfig();
   const tone      = cfg.tone || 'casual';
@@ -23500,8 +24170,8 @@ async function generatePost() {
     audience:  ((document.getElementById('genAdsAudience') || {}).value || '').trim(),
     cta:       (document.getElementById('genAdsCTA') || {}).value || 'Saiba mais',
   } : null;
-  // Links de referência (só fazem sentido em news mode)
-  const refLinks = isNews ? parseReferenceLinks(getGenLinkValues().join('\n')) : [];
+  // Links de referência (fazem sentido em news mode e no LinkedIn Editorial)
+  const refLinks = isNewsLike ? parseReferenceLinks(getGenLinkValues().join('\n')) : [];
   const selectedFeature = isFeature ? getSelectedFeatureForGeneration() : null;
   const featureContext = selectedFeature ? formatFeaturePromptContext(selectedFeature, theme) : null;
 
@@ -23514,8 +24184,10 @@ async function generatePost() {
     setGenStatus('Descreva qual destaque ou uso do logo você quer gerar.', 'error');
     return;
   }
-  if (!isFeature && !isLogoCropware && !theme && !(isNews && refLinks.length)) {
-    setGenStatus(isNews ? 'Descreva o tema ou cole pelo menos 1 link de referência.' : 'Descreva o tema do post.', 'error');
+  // Editorial pode gerar a partir de uma notícia escolhida no seletor (sem tema digitado).
+  const hasPickedPauta = isEditorial && editorialPickedPauta && editorialPickedPauta.manchete;
+  if (!isFeature && !isLogoCropware && !theme && !(isNewsLike && refLinks.length) && !hasPickedPauta) {
+    setGenStatus(isNewsLike ? 'Descreva o tema, cole um link ou escolha uma notícia na busca.' : 'Descreva o tema do post.', 'error');
     return;
   }
 
@@ -23595,31 +24267,40 @@ async function generatePost() {
       return;
     }
 
-    // News: passo 0 — varre e consolida múltiplas fontes em UMA pauta densa antes de gerar
+    // News/Editorial: passo 0 — varre e consolida múltiplas fontes em UMA pauta densa antes de gerar
     let newsContextForGen = null;
-    if (isNews) {
-      setGenStatus('<i class="ph ph-radar sz-16" style="margin-right:6px"></i>Passo 1/3 — Varrendo notícias do agro nas últimas 72h...', '');
-      try {
-        newsContextForGen = await searchAndConsolidateNews(theme, undefined, refLinks);
-      } catch (searchErr) {
-        console.error('searchAndConsolidateNews failed:', searchErr);
-        setGenStatus('Erro na pesquisa: ' + (searchErr.message || searchErr), 'error');
-        btn.disabled = false;
-        btn.textContent = 'Gerar';
-        return;
+    if (isNewsLike) {
+      // Editorial com notícia já escolhida no seletor: pula a busca, usa a pauta aprofundada.
+      if (isEditorial && hasPickedPauta) {
+        newsContextForGen = editorialPickedPauta;
+        selectedNewsPauta = newsContextForGen;
+        if (!theme && newsContextForGen.manchete) theme = newsContextForGen.manchete;
+        setGenStatus('<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 1/2 — Escrevendo releitura editorial...', '');
+      } else {
+        const searchMode = isEditorial ? 'opinion' : 'news'; // editorial usa janela/leitura analítica
+        setGenStatus('<i class="ph ph-radar sz-16" style="margin-right:6px"></i>Passo 1/3 — Varrendo notícias do agro...', '');
+        try {
+          newsContextForGen = await searchAndConsolidateNews(theme, undefined, refLinks, searchMode);
+        } catch (searchErr) {
+          console.error('searchAndConsolidateNews failed:', searchErr);
+          setGenStatus('Erro na pesquisa: ' + (searchErr.message || searchErr), 'error');
+          btn.disabled = false;
+          btn.textContent = 'Gerar';
+          return;
+        }
+        if (!newsContextForGen.manchete || !newsContextForGen.fatos.length) {
+          setGenStatus('Não encontrei notícia confiável sobre esse tema. Tente outro termo ou amplie.', 'warn');
+          btn.disabled = false;
+          btn.textContent = 'Gerar';
+          return;
+        }
+        selectedNewsPauta = newsContextForGen;
+        // Se o usuário só passou links, deriva o tema da manchete consolidada pra alimentar o resto do fluxo.
+        if (!theme && newsContextForGen && newsContextForGen.manchete) {
+          theme = newsContextForGen.manchete;
+        }
+        setGenStatus('<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 2/3 — Gemini escrevendo a releitura...', '');
       }
-      if (!newsContextForGen.manchete || !newsContextForGen.fatos.length) {
-        setGenStatus('Não encontrei notícia confiável sobre esse tema nas últimas 72h. Tente outro termo ou amplie.', 'warn');
-        btn.disabled = false;
-        btn.textContent = 'Gerar';
-        return;
-      }
-      selectedNewsPauta = newsContextForGen;
-      // Se o usuário só passou links, deriva o tema da manchete consolidada pra alimentar o resto do fluxo.
-      if (!theme && newsContextForGen && newsContextForGen.manchete) {
-        theme = newsContextForGen.manchete;
-      }
-      setGenStatus('<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo 2/3 — Gemini escrevendo manchete editorial...', '');
     }
 
     // Passo 1: Gemini texto (prompt varia por plataforma)
@@ -23630,7 +24311,7 @@ async function generatePost() {
     let finalImgMime   = isFlat ? null : genImageMime;
 
     if (needImage) {
-      const imgStepLabel = isNews ? 'Passo 3/3 — Nano Banana gerando foto editorial...' : 'Passo 2/2 — Nano Banana gerando imagem...';
+      const imgStepLabel = isNewsLike ? 'Nano Banana gerando foto editorial...' : 'Passo 2/2 — Nano Banana gerando imagem...';
       setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>${imgStepLabel}`, '');
       const imageTopic = isFeature && selectedFeature ? `${selectedFeature.name} ${theme}`.trim() : theme;
       const imgPrompt = parsed.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${imageTopic}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
@@ -23661,9 +24342,9 @@ async function generatePost() {
       id:       `post-gen-${timestamp}`,
       bg:       `bg-gen-${timestamp}`,
       slideId:  `slide-gen-${timestamp}`,
-      title:    parsed.title || (isAds ? 'Anuncio gerado' : isNews ? 'Post Notícia gerado' : isFeature ? selectedFeature.name : 'Post gerado'),
-      sub:      isAds ? 'Instagram Ads' : isNews ? 'Post Notícia' : isFeature ? 'Funcionalidade' : 'Gerado por IA',
-      filename: isAds ? `cropware_ad_${timestamp}.jpg` : isNews ? `cropware_noticia_${timestamp}.jpg` : isFeature ? `cropware_funcionalidade_${timestamp}.jpg` : `cropware_gerado_${timestamp}.jpg`,
+      title:    parsed.title || (isAds ? 'Anuncio gerado' : isEditorial ? 'LinkedIn Editorial gerado' : isNews ? 'Post Notícia gerado' : isFeature ? selectedFeature.name : 'Post gerado'),
+      sub:      isAds ? 'Instagram Ads' : isEditorial ? ('LinkedIn Editorial ' + (activeMode === 'linkedin-editorial-ii-post' ? 'II' : 'I')) : isNews ? 'Post Notícia' : isFeature ? 'Funcionalidade' : 'Gerado por IA',
+      filename: isAds ? `cropware_ad_${timestamp}.jpg` : isEditorial ? `cropware_linkedin_editorial_${timestamp}.jpg` : isNews ? `cropware_noticia_${timestamp}.jpg` : isFeature ? `cropware_funcionalidade_${timestamp}.jpg` : `cropware_gerado_${timestamp}.jpg`,
       createdAt:      timestamp,
       isGenerated:    true,
       bgImage:        `data:${finalImgMime};base64,${finalImgBase64}`,
@@ -23760,6 +24441,19 @@ async function generatePost() {
       delete postData.complementHTML;
       postData.bullets = [];
     }
+    else if (platform === 'linkedin-editorial') {
+      postData.type = activeMode === 'linkedin-editorial-ii-post' ? 'linkedin-editorial-ii-post' : 'linkedin-editorial-post';
+      postData.style = 'news-editorial';
+      postData.newsPauta = selectedNewsPauta ? { ...selectedNewsPauta } : null;
+      postData.chamada   = (parsed.chamada  || '').toString().toUpperCase().replace(/[.]+$/, '').slice(0, 40).trim();
+      postData.kicker    = (parsed.kicker    || (selectedNewsPauta && selectedNewsPauta.kicker) || 'AGRO').toString().toUpperCase().slice(0, 24).trim();
+      postData.manchete  = (parsed.manchete  || '').toString().trim();
+      postData.dataLinha = formatBrazilDateShort();
+      // Variante full-bleed: a imagem não usa hook/complement/bullets/bloco
+      delete postData.hookHTML;
+      delete postData.complementHTML;
+      postData.bullets = [];
+    }
     else if (platform === 'linkedin') postData.type = 'linkedin-post';
     else if (platform === 'linkedin-pessoal') postData.type = 'linkedin-pessoal-post';
     applyInstagramAdsFields(postData, parsed, adContext);
@@ -23779,7 +24473,7 @@ async function generatePost() {
       if (adsObjectiveEl) adsObjectiveEl.value = 'trafego';
       const adsCTAEl = document.getElementById('genAdsCTA');
       if (adsCTAEl) adsCTAEl.value = 'Saiba mais';
-      if (isNews) resetNewsPautas();
+      if (isNewsLike) { resetNewsPautas(); renderEditorialNewsCandidates(); }
       document.getElementById('genPreview').style.display = 'none';
       document.getElementById('genPreview').src = '';
       const inner = document.querySelector('.gen-dropzone-inner');
@@ -23787,14 +24481,14 @@ async function generatePost() {
       genImageBase64 = null;
       genImageMime = null;
       btn.disabled = false;
-      btn.innerHTML = `<i class="ph ph-sparkle sz-18"></i>${isLogoCropware ? 'Gerar Logo' : isAds ? 'Gerar Anuncio' : isNews ? 'Gerar Post Notícia' : 'Gerar Post'}`;
+      btn.innerHTML = `<i class="ph ph-sparkle sz-18"></i>${isLogoCropware ? 'Gerar Logo' : isAds ? 'Gerar Anuncio' : isEditorial ? 'Gerar Editorial' : isNews ? 'Gerar Post Notícia' : 'Gerar Post'}`;
       setGenStatus('', '');
     }, 600);
 
   } catch(e) {
     setGenStatus('<i class="ph ph-warning-octagon sz-18" style="margin-right:6px"></i>Erro: ' + e.message, 'error');
     btn.disabled = false;
-    btn.innerHTML = `<i class="ph ph-sparkle sz-18"></i>${isLogoCropware ? 'Gerar Logo' : isAds ? 'Gerar Anuncio' : isNews ? 'Gerar Post Notícia' : 'Gerar Post'}`;
+    btn.innerHTML = `<i class="ph ph-sparkle sz-18"></i>${isLogoCropware ? 'Gerar Logo' : isAds ? 'Gerar Anuncio' : isEditorial ? 'Gerar Editorial' : isNews ? 'Gerar Post Notícia' : 'Gerar Post'}`;
   }
 }
 
@@ -27363,11 +28057,18 @@ async function regenerateText() {
       : null;
     const feature = platform === 'features' ? getFeatureById(post.featureId) : null;
     const featureContext = feature ? formatFeaturePromptContext(feature, post.theme || '') : null;
-    const parsed = await callGeminiText(post.theme || post.title || '', post.tone || 'casual', null, null, direction, platform, { adContext, featureContext });
+    const usesPauta = platform === 'news' || platform === 'linkedin-editorial';
+    const newsContext = usesPauta ? (post.newsPauta || null) : null;
+    const themeForRegen = usesPauta && post.newsPauta && post.newsPauta.manchete ? post.newsPauta.manchete : (post.theme || post.title || '');
+    const parsed = await callGeminiText(themeForRegen, post.tone || 'casual', null, null, direction, platform, { adContext, featureContext, newsContext });
     pushUndoSnapshot(post, {
       kind: 'text',
       hookHTML:       post.hookHTML,
       complementHTML: post.complementHTML,
+      chamada:        post.chamada,
+      kicker:         post.kicker,
+      manchete:       post.manchete,
+      dataLinha:      post.dataLinha,
       title:          post.title,
       imagePrompt:    post.imagePrompt,
       legend:         getActiveLegend(),
@@ -27377,6 +28078,14 @@ async function regenerateText() {
       supportTextQuick: post.supportTextQuick,
       supportTextLong: post.supportTextLong,
     });
+    if (usesPauta) {
+      // Visual news-editorial: regeração atualiza kicker/manchete/datalinha e a legenda (releitura).
+      if (parsed.kicker)   post.kicker   = parsed.kicker.toString().toUpperCase().slice(0, 24).trim();
+      if (parsed.manchete) post.manchete = parsed.manchete.toString().trim();
+      if (parsed.chamada && isLinkedinEditorialType(post.type)) post.chamada = parsed.chamada.toString().toUpperCase().replace(/[.]+$/, '').slice(0, 40).trim();
+      if (/^\d{1,2}\.[a-zA-Zçãéá]{3}$/i.test(parsed.dataLinha || '')) post.dataLinha = parsed.dataLinha;
+      setActiveLegend(normalizePanelText(buildPanelTextFromParsed(parsed, platform), post.type));
+    }
     post.hookHTML       = (parsed.hook       || '').replace(/\n/g, '<br>');
     post.complementHTML = (parsed.complement || '').replace(/\n/g, '<br>');
     post.naturalHook    = usesNaturalHookPlatform(platform);
@@ -27439,11 +28148,12 @@ async function regenerateLegend() {
     const adContext = platform === 'instagram-ads'
       ? { objective: post.adObjective, audience: post.adAudience, cta: post.adPreferredCTA || post.adCTA }
       : null;
-    // News-post: passa a pauta consolidada salva pra que o prompt tenha os fatos preservados
-    const newsContext = platform === 'news' ? (post.newsPauta || null) : null;
+    // News-post / LinkedIn Editorial: passa a pauta consolidada salva pra que o prompt tenha os fatos preservados
+    const usesPauta = platform === 'news' || platform === 'linkedin-editorial';
+    const newsContext = usesPauta ? (post.newsPauta || null) : null;
     const feature = platform === 'features' ? getFeatureById(post.featureId) : null;
     const featureContext = feature ? formatFeaturePromptContext(feature, post.theme || '') : null;
-    const themeForRegen = platform === 'news' && post.newsPauta && post.newsPauta.manchete
+    const themeForRegen = usesPauta && post.newsPauta && post.newsPauta.manchete
       ? post.newsPauta.manchete
       : (post.theme || post.title || '');
     const parsed = await callGeminiText(themeForRegen, post.tone || 'casual', null, null, direction, platform, { adContext, newsContext, featureContext });
@@ -27927,23 +28637,12 @@ function _mrIsFlatTheme() {
 }
 
 function _syncMrSceneBgGroup(scene) {
+  // R28h: ajustes de imagem/overlay POR CENA desativados — agora são geridos
+  // globalmente pela coluna de Ajustes do Reel. Mantém os grupos ocultos.
   const group = document.getElementById('mrSceneBgGroup');
   const overlayGroup = document.getElementById('mrSceneOverlayGroup');
-  if (!group) return;
-  const hasBg = scene && window.MR_SCENE_TYPES_WITH_BG && window.MR_SCENE_TYPES_WITH_BG.has(scene.type);
-  group.style.display = hasBg ? '' : 'none';
-  if (overlayGroup) overlayGroup.style.display = hasBg ? '' : 'none';
-  if (!hasBg) return;
-  _syncMrSceneBgBlur(scene);
-  _syncMrSceneBgOverlay(scene);
-  _syncMrSceneOverlayColor(scene);
-  // Desabilita controles em temas flat (sem imagem/overlay).
-  const flat = _mrIsFlatTheme();
-  const opacity = flat ? 0.4 : 1;
-  const pe = flat ? 'none' : '';
-  group.style.opacity = opacity;
-  group.style.pointerEvents = pe;
-  if (overlayGroup) { overlayGroup.style.opacity = opacity; overlayGroup.style.pointerEvents = pe; }
+  if (group) group.style.display = 'none';
+  if (overlayGroup) overlayGroup.style.display = 'none';
 }
 
 // R26 — Atualiza o swatch + label do color picker do overlay com a cor
@@ -28134,23 +28833,11 @@ const MR_TEXTURE_OPACITY_DEFAULT = 0.08;
 const MR_TEXTURE_INVERT_DEFAULT = true;
 
 function _syncMrSceneTextureGroup(scene) {
+  // R28h: ajustes de textura POR CENA desativados — geridos pela coluna.
   const group = document.getElementById('mrSceneTextureGroup');
   const adjustGroup = document.getElementById('mrSceneTextureAdjustGroup');
-  if (!group) return;
-  const hasTex = scene && window.MR_SCENE_TYPES_WITH_TEXTURE && window.MR_SCENE_TYPES_WITH_TEXTURE.has(scene.type);
-  group.style.display = hasTex ? '' : 'none';
-  if (adjustGroup) adjustGroup.style.display = hasTex ? '' : 'none';
-  if (!hasTex) return;
-  _buildMrSceneTextureGrid(scene);
-  _syncMrSceneTextureIntensity(scene);
-  _syncMrSceneTextureInvert(scene);
-  // Desabilita controles em temas flat (sem textura).
-  const flat = _mrIsFlatTheme();
-  const opacity = flat ? 0.4 : 1;
-  const pe = flat ? 'none' : '';
-  group.style.opacity = opacity;
-  group.style.pointerEvents = pe;
-  if (adjustGroup) { adjustGroup.style.opacity = opacity; adjustGroup.style.pointerEvents = pe; }
+  if (group) group.style.display = 'none';
+  if (adjustGroup) adjustGroup.style.display = 'none';
 }
 
 function _textureLabelFor(url) {
@@ -28776,15 +29463,17 @@ function mrReelEditableScenes(cfg) {
 // Lê o estado atual (cfg.adjust ou, na ausência, a 1ª cena editável).
 function mrReadAdjustState(cfg) {
   if (cfg && cfg.adjust) return cfg.adjust;
-  const first = mrReelEditableScenes(cfg)[0] || {};
   return {
-    image: first.bgImage || '',
-    overlayEnabled: (first.bgOverlayOpacity == null ? 0.55 : Number(first.bgOverlayOpacity)) > 0,
-    overlayColor: first.overlayColor || '#143F2C',
-    overlayOpacity: first.bgOverlayOpacity == null ? 0.55 : Number(first.bgOverlayOpacity),
-    textureEnabled: !!first.bgTexture,
-    texturePath: first.bgTexture || MR_REEL_TEXTURES[0].path,
-    textureIntensity: first.bgTextureOpacity == null ? 0.08 : Number(first.bgTextureOpacity),
+    image: '',
+    overlayEnabled: true,
+    overlayColor: '#143F2C',
+    overlayOpacity: 0.55,
+    overlayDirection: 'full',
+    textureEnabled: false,
+    texturePath: MR_REEL_TEXTURES[0].path,
+    textureIntensity: 0.08,
+    textureBlend: 'overlay',
+    textureInvert: false,
   };
 }
 
@@ -28804,12 +29493,15 @@ function mrSyncAdjustControls(adj) {
   const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   setActive('mrReelOverlayToggle', adj.overlayEnabled);
   setActive('mrReelTextureToggle', adj.textureEnabled);
-  setVal('mrReelOverlayColor', adj.overlayColor || '#143F2C');
+  setColorBtnSwatch(document.getElementById('mrReelOverlayColorSwatch'), document.getElementById('mrReelOverlayColorLabel'), adj.overlayColor || '#143F2C');
   setVal('mrReelOverlayOpacity', Math.round((adj.overlayOpacity ?? 0.55) * 100));
   setTxt('mrReelOverlayOpacityValue', Math.round((adj.overlayOpacity ?? 0.55) * 100) + '%');
+  setVal('mrReelOverlayDirection', adj.overlayDirection || 'full');
   setVal('mrReelTexture', adj.texturePath || MR_REEL_TEXTURES[0].path);
   setVal('mrReelTextureIntensity', Math.round((adj.textureIntensity ?? 0.08) * 100));
   setTxt('mrReelTextureIntensityValue', Math.round((adj.textureIntensity ?? 0.08) * 100) + '%');
+  setVal('mrReelTextureBlend', adj.textureBlend || 'overlay');
+  setActive('mrReelTextureInvert', adj.textureInvert);
   const st = document.getElementById('mrReelImageStatus');
   if (st) st.textContent = adj.image ? 'Imagem aplicada a todas as cenas.' : 'Nenhuma imagem (cenas usam o fundo padrão).';
 }
@@ -28820,21 +29512,17 @@ function applyMrReelAdjust() {
   if (!cfg) return;
   const overlayEnabled = !!document.getElementById('mrReelOverlayToggle')?.classList.contains('active');
   const textureEnabled = !!document.getElementById('mrReelTextureToggle')?.classList.contains('active');
-  const overlayColor = document.getElementById('mrReelOverlayColor')?.value || '#143F2C';
+  const overlayColor = (cfg.adjust && cfg.adjust.overlayColor) || '#143F2C';
   const overlayOpacity = (Number(document.getElementById('mrReelOverlayOpacity')?.value) || 0) / 100;
+  const overlayDirection = document.getElementById('mrReelOverlayDirection')?.value || 'full';
   const texturePath = document.getElementById('mrReelTexture')?.value || MR_REEL_TEXTURES[0].path;
   const textureIntensity = (Number(document.getElementById('mrReelTextureIntensity')?.value) || 0) / 100;
+  const textureBlend = document.getElementById('mrReelTextureBlend')?.value || 'overlay';
+  const textureInvert = !!document.getElementById('mrReelTextureInvert')?.classList.contains('active');
   const image = (cfg.adjust && cfg.adjust.image) || '';
 
-  cfg.adjust = { image, overlayEnabled, overlayColor, overlayOpacity, textureEnabled, texturePath, textureIntensity };
-
-  mrReelEditableScenes(cfg).forEach(scene => {
-    scene.bgImage = image || '';
-    scene.overlayColor = overlayColor;
-    scene.bgOverlayOpacity = overlayEnabled ? overlayOpacity : 0;
-    scene.bgTexture = textureEnabled ? texturePath : '';
-    scene.bgTextureOpacity = textureIntensity;
-  });
+  // Fonte ÚNICA do fundo compartilhado (slides 2–8). ReelSceneBg lê daqui.
+  cfg.adjust = { image, overlayEnabled, overlayColor, overlayOpacity, overlayDirection, textureEnabled, texturePath, textureIntensity, textureBlend, textureInvert };
 
   if (reel && reel.config) reel.config = cfg;
   saveMotionReelsToLocal();
@@ -28867,8 +29555,10 @@ async function mrUploadReelImage(file) {
 function setupReelAdjustPanel(cfg) {
   if (!cfg) return;
   mrFillTextureSelect();
-  cfg.adjust = cfg.adjust || mrReadAdjustState(cfg);
-  mrSyncAdjustControls(cfg.adjust);
+  // NÃO persiste cfg.adjust só por abrir — senão o fundo compartilhado ativaria
+  // vazio e sumiria com as fotos das cenas. Só sincroniza a UI; o cfg.adjust é
+  // criado quando o usuário mexe num controle (applyMrReelAdjust / upload).
+  mrSyncAdjustControls(mrReadAdjustState(cfg));
 
   if (_mrAdjustWired) return;
   _mrAdjustWired = true;
@@ -28879,11 +29569,16 @@ function setupReelAdjustPanel(cfg) {
   };
   onToggle('mrReelOverlayToggle');
   onToggle('mrReelTextureToggle');
+  onToggle('mrReelTextureInvert');
 
-  ['mrReelOverlayColor', 'mrReelOverlayOpacity', 'mrReelTexture', 'mrReelTextureIntensity'].forEach(id => {
+  ['mrReelOverlayOpacity', 'mrReelOverlayDirection', 'mrReelTextureIntensity', 'mrReelTextureBlend'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', applyMrReelAdjust);
   });
+
+  // Cor do overlay — reusa o dropdown nomeado do Ads (target 'mrReelOverlay').
+  const colorBtn = document.getElementById('mrReelOverlayColorBtn');
+  if (colorBtn) colorBtn.addEventListener('click', () => openColorDropdown('mrReelOverlay', colorBtn));
 
   const fileInput = document.getElementById('mrReelImageFile');
   const imgBtn = document.getElementById('mrReelImageBtn');
@@ -30921,10 +31616,9 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
       <div class="mr-edit-controls">
       <!-- R26/R28: Tema + Textura na mesma linha — grid 2 colunas × 2 linhas
            (label e dropdown ficam em rows próprias = alinhamento garantido). -->
-      <div class="gen-group" style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;column-gap:12px;row-gap:6px;align-items:start">
-        <label style="margin:0;grid-column:1;grid-row:1">Tema Visual</label>
-        <label style="margin:0;grid-column:2;grid-row:1">Textura</label>
-        <div style="min-width:0;grid-column:1;grid-row:2">
+      <div class="gen-group">
+        <label style="margin:0">Tema Visual</label>
+        <div style="min-width:0;margin-top:6px">
           <div class="ds-dropdown" id="mrThemeDropdown">
             <button type="button" class="ds-dropdown__trigger" onclick="toggleDsDropdown('mrThemeDropdown', event)" aria-haspopup="listbox">
               <span class="ds-dropdown__swatch mr-theme-preview--escuro" id="mrThemeDropdownSwatch"></span>
@@ -30955,20 +31649,9 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
             </div>
           </div>
         </div>
-        <div id="mrSceneTextureGroup" style="min-width:0;grid-column:2;grid-row:2">
-          <div class="ds-dropdown" id="mrTextureDropdown">
-            <button type="button" class="ds-dropdown__trigger" onclick="toggleDsDropdown('mrTextureDropdown', event)" aria-haspopup="listbox">
-              <span class="ds-dropdown__swatch ds-dropdown__swatch--texture" id="mrTextureDropdownSwatch"></span>
-              <span class="ds-dropdown__value" id="mrTextureDropdownValue">Textura 01</span>
-              <i class="ph ph-caret-down ds-dropdown__chevron"></i>
-            </button>
-            <div class="ds-dropdown__menu" id="mrSceneTextureGrid" role="listbox">
-              <!-- options injetadas via _buildMrSceneTextureGrid -->
-            </div>
-          </div>
-        </div>
       </div>
-      <!-- R26: ajustes de textura (intensidade + inverter) em group próprio -->
+      <!-- R28h: ajustes de textura/overlay/imagem POR CENA removidos — agora
+           são geridos globalmente pela coluna de Ajustes do Reel. -->
       <div class="gen-group" id="mrSceneTextureAdjustGroup" style="display:none">
         <label>Ajustes da Textura</label>
         <div class="ds-fineadjust">
@@ -31112,6 +31795,15 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
           </div>
         </div>
         <button type="button" class="gen-link-add" id="genLinkAddBtn">+ Adicionar URL</button>
+      </div>
+
+      <div class="gen-group" id="genEditorialSearchGroup" style="display:none">
+        <label>Buscar notícia <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;">(opcional — escolha uma das opções abaixo, ou gere direto do tema/links acima)</span></label>
+        <button type="button" class="news-search-btn" id="genEditorialSearchBtn">
+          <i class="ph ph-magnifying-glass"></i> Buscar notícias do agro
+        </button>
+        <div id="genEditorialSearchStatus" style="font-size:13px;color:#64748b;min-height:0;margin-top:6px;"></div>
+        <div id="genEditorialCandidates" class="news-cards" style="margin-top:8px;"></div>
       </div>
 
       <div class="gen-group" id="genImageGroup">
