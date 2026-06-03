@@ -62,8 +62,9 @@ export const MR_FONTS = {
   // R28: fonte uppercase display pra kickers, palavras gigantes (Keyword,
   // Quote verbs), tagline (EndCard, BrandIntro). Token semântico `caps`.
   // Histórico: Alumni Sans (R27) → Staatliches → JetBrains Mono → Unica One
-  // (R28e) → Alumni Sans (R28f, voltou — condensada, ampla régua de pesos).
-  caps:    '"Alumni Sans", "Inter Tight", system-ui, sans-serif',
+  // (R28e) → Alumni Sans (R28f) → Space Mono (R28g — mono uppercase, unifica
+  // com o token `mono` e o estúdio). Todos os usos de `caps` são fontWeight 400.
+  caps:    '"Space Mono", ui-monospace, monospace',
 };
 
 // Dimensões fixas do palco — Reels Instagram 9:16.

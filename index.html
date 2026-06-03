@@ -5352,6 +5352,17 @@
   #postControls.style-mockup #pcGroupMockupHeader { display: block !important; }
   /* Mockup esconde Bullets pq não usa */
   #postControls.style-mockup #pcGroupBullets { display: none !important; }
+  /* Motion Reel — coluna de ajustes gerais. Em mr-adjust-mode esconde tudo de
+     post e mostra só o grupo do reel. */
+  #pcGroupReel { display: none; }
+  #postControls.mr-adjust-mode #pcGroupStyle,
+  #postControls.mr-adjust-mode .pc-group:not(#pcGroupReel) { display: none !important; }
+  #postControls.mr-adjust-mode #pcGroupReel { display: block !important; }
+  .mr-adjust-image-row { display: flex; gap: 8px; }
+  .mr-adjust-image-row #mrReelImageBtn { flex: 1; }
+  .mr-adjust-image-row .mr-adjust-image-clear { flex: 0 0 auto; width: 40px; padding: 0; }
+  .mr-color-input { width: 100%; height: 38px; border: 1px solid var(--border); border-radius: 8px; background: transparent; cursor: pointer; padding: 3px; box-sizing: border-box; }
+  .mr-adjust-status { font-size: 11px; color: var(--muted, #8a93a0); margin-top: 6px; word-break: break-all; line-height: 1.3; }
   .pc-body {
     flex: 1;
     overflow-y: auto;
@@ -11143,6 +11154,69 @@
             <span class="pc-color-btn-label" id="pcMockupBarColorBtnLabel">Selecionar cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLUNA 2 (modo Motion Reel): ajustes GERAIS do reel — imagem, overlay,
+         textura. Aplica em todas as cenas editáveis (locked mantêm hardcoded).
+         Visibilidade controlada pela classe #postControls.mr-adjust-mode. -->
+    <div class="pc-group" id="pcGroupReel" data-group="reel">
+      <button type="button" class="pc-group-header">
+        <span class="pc-group-header-label">Ajustes do Reel</span>
+        <i class="ph ph-caret-down pc-group-header-chevron"></i>
+      </button>
+      <div class="pc-group-body">
+        <div class="pc-sub" id="pcSubReelImage">
+          <div class="pc-label">Imagem de Fundo</div>
+          <div class="mr-adjust-image-row">
+            <button type="button" class="pc-apply-all-btn" id="mrReelImageBtn">
+              <i class="ph ph-upload-simple"></i> Enviar imagem
+            </button>
+            <button type="button" class="pc-apply-all-btn mr-adjust-image-clear" id="mrReelImageClear" title="Remover imagem">
+              <i class="ph ph-x"></i>
+            </button>
+          </div>
+          <input type="file" id="mrReelImageFile" accept="image/*" hidden>
+          <div class="mr-adjust-status" id="mrReelImageStatus"></div>
+        </div>
+        <div class="pc-sub" id="pcSubReelOverlayEnabled">
+          <div class="pc-vis-row">
+            <button type="button" class="pc-vis-btn active" id="mrReelOverlayToggle">
+              <i class="ph ph-circles-three-plus"></i><span>Overlay</span>
+              <span class="pc-vis-switch"></span>
+            </button>
+          </div>
+        </div>
+        <div class="pc-sub" id="pcSubReelOverlayColor">
+          <div class="pc-label">Cor do Overlay</div>
+          <input type="color" class="mr-color-input" id="mrReelOverlayColor" value="#143F2C">
+        </div>
+        <div class="pc-sub pc-offset-field" id="pcSubReelOverlayOpacity">
+          <div class="pc-label-row">
+            <span class="pc-label">Opacidade do Overlay</span>
+            <span class="pc-value-pill" id="mrReelOverlayOpacityValue">55%</span>
+          </div>
+          <input type="range" class="pc-range" id="mrReelOverlayOpacity" min="0" max="100" step="5" value="55">
+        </div>
+        <div class="pc-sub" id="pcSubReelTextureEnabled">
+          <div class="pc-vis-row">
+            <button type="button" class="pc-vis-btn active" id="mrReelTextureToggle">
+              <i class="ph ph-image"></i><span>Textura</span>
+              <span class="pc-vis-switch"></span>
+            </button>
+          </div>
+        </div>
+        <div class="pc-sub" id="pcSubReelTexture">
+          <div class="pc-label">Textura</div>
+          <select class="pc-select" id="mrReelTexture"></select>
+        </div>
+        <div class="pc-sub pc-offset-field" id="pcSubReelTextureIntensity">
+          <div class="pc-label-row">
+            <span class="pc-label">Intensidade da Textura</span>
+            <span class="pc-value-pill" id="mrReelTextureIntensityValue">8%</span>
+          </div>
+          <input type="range" class="pc-range" id="mrReelTextureIntensity" min="0" max="40" step="1" value="8">
         </div>
       </div>
     </div>
@@ -28609,13 +28683,13 @@ function updateMotionReelVisibility() {
     if (postScaler) postScaler.style.display = 'none';
     if (slideNav) slideNav.style.display = 'none';
     if (legendOpenRow) legendOpenRow.style.display = 'none';
-    // Esconde a sidebar de controles de post (Formato/Modelo/Seção/Hook/etc).
-    // Motion Reel usa o dialog de edição de cena pra ajustes finos.
+    // COLUNA 2 vira a coluna de "Ajustes do Reel" (imagem/overlay/textura)
+    // quando há reel ativo; senão, fica escondida.
     const postCtrl = document.getElementById('postControls');
-    if (postCtrl) postCtrl.classList.remove('visible');
     const hasActiveReel = !!getActiveMotionReelConfig();
     const emptyEl = document.getElementById('emptyState');
     if (!hasActiveReel) {
+      if (postCtrl) { postCtrl.classList.remove('visible'); postCtrl.classList.remove('mr-adjust-mode'); }
       if (typeof window.unmountMotionReelPlayer === 'function') {
         window.unmountMotionReelPlayer();
       }
@@ -28629,6 +28703,8 @@ function updateMotionReelVisibility() {
       if (dlBtn) dlBtn.style.display = 'none';
       return;
     }
+    if (postCtrl) { postCtrl.classList.add('visible'); postCtrl.classList.add('mr-adjust-mode'); }
+    setupReelAdjustPanel(getActiveMotionReelConfig());
     if (emptyEl) {
       emptyEl.classList.remove('visible');
       emptyEl.setAttribute('aria-hidden', 'true');
@@ -28656,6 +28732,10 @@ function updateMotionReelVisibility() {
     const dlBtn = document.getElementById('downloadBtn');
     if (dlBtn) dlBtn.style.display = 'flex';
   } else {
+    // Saindo do modo reel: remove a classe da coluna de ajustes (o fluxo de
+    // post volta a controlar a visibilidade/conteúdo normalmente).
+    const postCtrl = document.getElementById('postControls');
+    if (postCtrl) postCtrl.classList.remove('mr-adjust-mode');
     if (typeof window.unmountMotionReelPlayer === 'function') {
       window.unmountMotionReelPlayer();
     }
@@ -28667,6 +28747,160 @@ function updateMotionReelVisibility() {
     if (slideNav) slideNav.style.display = '';
     if (legendOpenRow) legendOpenRow.style.display = '';
   }
+}
+
+// ── COLUNA DE AJUSTES GERAIS DO REEL (imagem / overlay / textura) ──────
+// Aplica em todas as cenas EDITÁVEIS (não-locked). As locked mantêm o
+// visual hardcoded. Persiste em cfg.adjust + nas props das cenas.
+const MR_REEL_TEXTURES = [
+  { path: 'new-textures/linhas claras (1).jpg',  label: 'Linhas claras 1' },
+  { path: 'new-textures/linhas claras (2).jpg',  label: 'Linhas claras 2' },
+  { path: 'new-textures/linhas claras (3).jpg',  label: 'Linhas claras 3' },
+  { path: 'new-textures/linhas-escuras (1).jpg', label: 'Linhas escuras 1' },
+  { path: 'new-textures/linhas-escuras (2).jpg', label: 'Linhas escuras 2' },
+  { path: 'new-textures/linhas-escuras (3).jpg', label: 'Linhas escuras 3' },
+  { path: 'new-textures/morros claros (1).jpg',  label: 'Morros claros 1' },
+  { path: 'new-textures/morros claros (2).jpg',  label: 'Morros claros 2' },
+  { path: 'new-textures/morros claros (3).jpg',  label: 'Morros claros 3' },
+  { path: 'new-textures/morros escuros (1).jpg', label: 'Morros escuros 1' },
+  { path: 'new-textures/morros escuros (2).jpg', label: 'Morros escuros 2' },
+  { path: 'new-textures/morros escuros (3).jpg', label: 'Morros escuros 3' },
+];
+
+let _mrAdjustWired = false;
+
+function mrReelEditableScenes(cfg) {
+  return (cfg && Array.isArray(cfg.scenes) ? cfg.scenes : []).filter(s => s && s.locked !== true);
+}
+
+// Lê o estado atual (cfg.adjust ou, na ausência, a 1ª cena editável).
+function mrReadAdjustState(cfg) {
+  if (cfg && cfg.adjust) return cfg.adjust;
+  const first = mrReelEditableScenes(cfg)[0] || {};
+  return {
+    image: first.bgImage || '',
+    overlayEnabled: (first.bgOverlayOpacity == null ? 0.55 : Number(first.bgOverlayOpacity)) > 0,
+    overlayColor: first.overlayColor || '#143F2C',
+    overlayOpacity: first.bgOverlayOpacity == null ? 0.55 : Number(first.bgOverlayOpacity),
+    textureEnabled: !!first.bgTexture,
+    texturePath: first.bgTexture || MR_REEL_TEXTURES[0].path,
+    textureIntensity: first.bgTextureOpacity == null ? 0.08 : Number(first.bgTextureOpacity),
+  };
+}
+
+function mrFillTextureSelect() {
+  const sel = document.getElementById('mrReelTexture');
+  if (!sel || sel.options.length) return;
+  MR_REEL_TEXTURES.forEach(t => {
+    const o = document.createElement('option');
+    o.value = t.path; o.textContent = t.label;
+    sel.appendChild(o);
+  });
+}
+
+function mrSyncAdjustControls(adj) {
+  const setActive = (id, on) => { const b = document.getElementById(id); if (b) b.classList.toggle('active', !!on); };
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+  const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setActive('mrReelOverlayToggle', adj.overlayEnabled);
+  setActive('mrReelTextureToggle', adj.textureEnabled);
+  setVal('mrReelOverlayColor', adj.overlayColor || '#143F2C');
+  setVal('mrReelOverlayOpacity', Math.round((adj.overlayOpacity ?? 0.55) * 100));
+  setTxt('mrReelOverlayOpacityValue', Math.round((adj.overlayOpacity ?? 0.55) * 100) + '%');
+  setVal('mrReelTexture', adj.texturePath || MR_REEL_TEXTURES[0].path);
+  setVal('mrReelTextureIntensity', Math.round((adj.textureIntensity ?? 0.08) * 100));
+  setTxt('mrReelTextureIntensityValue', Math.round((adj.textureIntensity ?? 0.08) * 100) + '%');
+  const st = document.getElementById('mrReelImageStatus');
+  if (st) st.textContent = adj.image ? 'Imagem aplicada a todas as cenas.' : 'Nenhuma imagem (cenas usam o fundo padrão).';
+}
+
+function applyMrReelAdjust() {
+  const reel = motionReels[currentMotionReel];
+  const cfg = getActiveMotionReelConfig();
+  if (!cfg) return;
+  const overlayEnabled = !!document.getElementById('mrReelOverlayToggle')?.classList.contains('active');
+  const textureEnabled = !!document.getElementById('mrReelTextureToggle')?.classList.contains('active');
+  const overlayColor = document.getElementById('mrReelOverlayColor')?.value || '#143F2C';
+  const overlayOpacity = (Number(document.getElementById('mrReelOverlayOpacity')?.value) || 0) / 100;
+  const texturePath = document.getElementById('mrReelTexture')?.value || MR_REEL_TEXTURES[0].path;
+  const textureIntensity = (Number(document.getElementById('mrReelTextureIntensity')?.value) || 0) / 100;
+  const image = (cfg.adjust && cfg.adjust.image) || '';
+
+  cfg.adjust = { image, overlayEnabled, overlayColor, overlayOpacity, textureEnabled, texturePath, textureIntensity };
+
+  mrReelEditableScenes(cfg).forEach(scene => {
+    scene.bgImage = image || '';
+    scene.overlayColor = overlayColor;
+    scene.bgOverlayOpacity = overlayEnabled ? overlayOpacity : 0;
+    scene.bgTexture = textureEnabled ? texturePath : '';
+    scene.bgTextureOpacity = textureIntensity;
+  });
+
+  if (reel && reel.config) reel.config = cfg;
+  saveMotionReelsToLocal();
+  if (typeof window.updateMotionReelStoryboard === 'function') window.updateMotionReelStoryboard(cfg);
+  mrSyncAdjustControls(cfg.adjust);
+}
+
+async function mrUploadReelImage(file) {
+  const cfg = getActiveMotionReelConfig();
+  if (!cfg || !file) return;
+  const st = document.getElementById('mrReelImageStatus');
+  if (st) st.textContent = 'Enviando imagem…';
+  try {
+    const dataUri = await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = () => reject(new Error('Falha ao ler o arquivo.'));
+      r.readAsDataURL(file);
+    });
+    const url = await uploadImageToR2(dataUri, { postId: `reel-${(cfg && cfg.id) || 'bg'}`, fieldPath: 'reel-bg' });
+    cfg.adjust = cfg.adjust || mrReadAdjustState(cfg);
+    cfg.adjust.image = url;
+    applyMrReelAdjust();
+  } catch (err) {
+    console.error('[MotionReel] upload de imagem falhou', err);
+    if (st) st.textContent = 'Erro ao enviar imagem.';
+  }
+}
+
+function setupReelAdjustPanel(cfg) {
+  if (!cfg) return;
+  mrFillTextureSelect();
+  cfg.adjust = cfg.adjust || mrReadAdjustState(cfg);
+  mrSyncAdjustControls(cfg.adjust);
+
+  if (_mrAdjustWired) return;
+  _mrAdjustWired = true;
+
+  const onToggle = (id) => {
+    const b = document.getElementById(id);
+    if (b) b.addEventListener('click', () => { b.classList.toggle('active'); applyMrReelAdjust(); });
+  };
+  onToggle('mrReelOverlayToggle');
+  onToggle('mrReelTextureToggle');
+
+  ['mrReelOverlayColor', 'mrReelOverlayOpacity', 'mrReelTexture', 'mrReelTextureIntensity'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', applyMrReelAdjust);
+  });
+
+  const fileInput = document.getElementById('mrReelImageFile');
+  const imgBtn = document.getElementById('mrReelImageBtn');
+  if (imgBtn && fileInput) imgBtn.addEventListener('click', () => fileInput.click());
+  if (fileInput) fileInput.addEventListener('change', (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (f) mrUploadReelImage(f);
+    e.target.value = '';
+  });
+  const clearBtn = document.getElementById('mrReelImageClear');
+  if (clearBtn) clearBtn.addEventListener('click', () => {
+    const cfg2 = getActiveMotionReelConfig();
+    if (!cfg2) return;
+    cfg2.adjust = cfg2.adjust || mrReadAdjustState(cfg2);
+    cfg2.adjust.image = '';
+    applyMrReelAdjust();
+  });
 }
 
 // Reescala junto com o resize da janela (só quando o modo está ativo).
@@ -29055,16 +29289,14 @@ VOICEOVER POR CENA (importante — leia tudo antes de gerar texto):
 
   CENAS QUE DEVEM FICAR SILENCIOSAS (NÃO inclua "voiceover" nelas):
     [03] keyword       — a palavra na tela fala por si, narrar é redundante
-    [04] chapter cap.2 — marker visual, deixa a transição respirar
-    [07] chapter cap.3 — idem
-    [09] whatsapp-chat — o mockup da conversa é o conteúdo; voz atrapalha
-    [10] quote         — as palavras na tela falam por si; narrar é redundante
+    [07] whatsapp-chat — o mockup da conversa é o conteúdo; voz atrapalha
+    [08] quote         — as palavras na tela falam por si; narrar é redundante
 
   CENAS COM VOICEOVER (OBRIGATÓRIO em TODAS as 7 listadas abaixo — não pule nenhuma):
-    [01] brand-intro · [02] headline · [05] feature-list · [06] scenario · [08] app-card · [11] lower-third · [12] end-card
-  Se você omitir voiceover de qualquer uma dessas 7 cenas (especialmente [11] lower-third e [12] end-card, que são o CTA final do reel), o resultado fica incompleto — o reel termina mudo justo no momento de conversão. NÃO esqueça.
+    [01] brand-intro · [02] headline · [04] feature-list · [05] scenario · [06] app-card · [09] lower-third · [10] end-card
+  Se você omitir voiceover de qualquer uma dessas 7 cenas (especialmente [09] lower-third e [10] end-card, que são o CTA final do reel), o resultado fica incompleto — o reel termina mudo justo no momento de conversão. NÃO esqueça.
 
-  CENAS COM VOICEOVER (7 das 12) — diretrizes ESPECÍFICAS por tipo:
+  CENAS COM VOICEOVER (7 das 10) — diretrizes ESPECÍFICAS por tipo:
 
   [01] brand-intro (6s, locked) — abertura institucional, tom acolhedor.
        FORMATO: "Conheça o Cropware. [breve qualificador, 4-6 palavras]."
@@ -29077,7 +29309,7 @@ VOICEOVER POR CENA (importante — leia tudo antes de gerar texto):
        Ex (visual="Veja sua lavoura como nunca antes"):
            "Veja cada talhão como nunca antes viu."
 
-  [05] feature-list (6s, custom) — enuncia as 3 features em UMA frase corrida,
+  [04] feature-list (6s, custom) — enuncia as 3 features em UMA frase corrida,
        SEM listar com "primeiro, segundo, terceiro". Use conjunções naturais.
        Limite: 13 palavras. Tom: confiante, consultivo. Fala da rotina CDM
        (DM/GD/promotor/RTV), não de "app pra produtor".
@@ -29087,7 +29319,7 @@ VOICEOVER POR CENA (importante — leia tudo antes de gerar texto):
          • "Valida em campo, consolida em dossiê e sustenta a venda."
          • "Organiza a rota, prioriza o cliente e abre a próxima oportunidade."
 
-  [06] scenario (6s, custom) — narra o momento de DM/GD que o slide pinta.
+  [05] scenario (6s, custom) — narra o momento de DM/GD que o slide pinta.
        Tom consultivo e pausado, NÃO contemplativo abstrato. Liga TEMA a uma
        decisão de mercado (cliente/região, área demonstrativa, validação,
        evidência, geração de demanda). Pode ser 1 frase longa ou 2 curtas
@@ -29099,7 +29331,7 @@ VOICEOVER POR CENA (importante — leia tudo antes de gerar texto):
          • "A área demonstrativa fala primeiro, e o parceiro fecha depois."
          • "O dado de campo vira a evidência que sustenta a próxima venda."
 
-  [08] app-card (6s, custom) — narra o BENEFÍCIO de mercado que o mockup ilustra.
+  [06] app-card (6s, custom) — narra o BENEFÍCIO de mercado que o mockup ilustra.
        Foca no impacto pra quem desenvolve mercado (DM/GD/promotor/RTV/consultor),
        não pro produtor. Evite jargão de feature; foca em decisão comercial-técnica.
        Limite: 13 palavras. Tom: direto, consultivo.
@@ -29111,12 +29343,12 @@ VOICEOVER POR CENA (importante — leia tudo antes de gerar texto):
          • "Evidência técnica direto no bolso, na hora da decisão comercial."
          • "Alerta na hora certa, agenda técnica reorganizada antes do impacto."
 
-  [11] lower-third (5s, locked) — CTA WhatsApp curta e convidativa.
+  [09] lower-third (5s, locked) — CTA WhatsApp curta e convidativa.
        FORMATO sugerido: "Fala com a gente. [convite, 4-5 palavras]."
        Limite: 10 palavras.
        Ex: "Fala com a gente. Tire suas dúvidas e conheça."
 
-  [12] end-card (5s, locked) — assinatura. Encerra com posicionamento curto, sem handle falado.
+  [10] end-card (5s, locked) — assinatura. Encerra com posicionamento curto, sem handle falado.
        Limite: 12 palavras.
        Posicionamento: o app é pra QUEM CONSTRÓI MERCADO no campo (RTV, promotor,
        CDM, gestor de carteira, consultor técnico) — NÃO é "app pro produtor",
@@ -29187,62 +29419,52 @@ TEMA VISUAL (R26, top-level + override por cena, opcional):
   Ex: { "duration": 60, "theme": "escuro", "scenes": [ ... ] }
   Ex (overlay): { ..., "scenes": [{ ..., "overlayColor": "#2A7B5A" }, ...] }
 
-ESTRUTURA OBRIGATÓRIA (R12 — formato 6+6, fixas + customizáveis):
-  Gere SEMPRE 12 cenas, sendo 5 FIXAS e 7 CUSTOMIZÁVEIS pelo tema.
-  Total: 60 segundos, ordem rígida.
+ESTRUTURA OBRIGATÓRIA (R28h — 10 cenas, fixas + customizáveis):
+  Gere SEMPRE 10 cenas, sendo 3 FIXAS e 7 CUSTOMIZÁVEIS pelo tema.
+  Total: 60 segundos, ordem rígida. (Os 2 capítulos foram removidos.)
 
-  Ordem das 12 cenas (com tempo aproximado e flag locked):
+  Ordem das 10 cenas (com tempo aproximado e flag locked):
     01  0-6s    brand-intro    LOCKED   "Conheça o Cropware"
-    02  6-10s   headline       custom   Headline editorial — frase-hook do tema
-    03  10-14s  keyword        custom   Adjetivo de impacto
-    04  14-18s  chapter        LOCKED   Cap. 04 · "No campo"
-    05  18-24s  feature-list   custom   3 features tema-específicas
-    06  24-30s  scenario       custom   Mini-cenário narrativo (situação real do produtor)
-    07  30-34s  chapter        LOCKED   Cap. 07 · "Em tempo real"
-    08  34-40s  app-card       custom   Mock app ilustrando feature
-    09  40-44s  whatsapp-chat  custom   Mockup conversa WhatsApp user × Cropware AI
-    10  44-50s  quote          custom   5 palavras-chave tema-específicas
-    11  50-55s  lower-third    LOCKED   "@cropware.app · Siga no Instagram"
-    12  55-60s  end-card       LOCKED   Logo + tagline + "Seguir"
+    02  6-11s   headline       custom   Headline editorial — frase-hook do tema
+    03  11-15s  keyword        custom   Adjetivo de impacto
+    04  15-22s  feature-list   custom   3 features tema-específicas
+    05  22-30s  scenario       custom   Mini-cenário narrativo (situação real do produtor)
+    06  30-37s  app-card       custom   Mock app ilustrando feature
+    07  37-43s  whatsapp-chat  custom   Mockup conversa WhatsApp user × Cropware AI
+    08  43-50s  quote          custom   5 palavras-chave tema-específicas
+    09  50-55s  lower-third    LOCKED   "@cropware.app · Siga no Instagram"
+    10  55-60s  end-card       LOCKED   Logo + tagline + "Seguir"
 
-  REGRA DURA: as 5 cenas LOCKED (01, 04, 07, 11, 12) são 100%
-    HARDCODED no código React (BrandIntro.jsx, Chapter.jsx,
-    LowerThird.jsx, EndCard.jsx). VOCÊ NÃO PRECISA E NÃO DEVE escrever
+  REGRA DURA: as 3 cenas LOCKED (01, 09, 10) são 100%
+    HARDCODED no código React (BrandIntro.jsx, LowerThird.jsx,
+    EndCard.jsx). VOCÊ NÃO PRECISA E NÃO DEVE escrever
     copy nem visual pra elas — só esqueleto mínimo:
 
   [01] brand-intro LOCKED:
        { "id": "intro", "type": "brand-intro", "locked": true,
          "transitionIn": { "type": "fade", "dur": 0.3, "easing": "out-expo" } }
 
-  [05] chapter LOCKED (Cap. 2 — "No campo, onde toda decisão começa"):
-       { "id": "chapter-1", "type": "chapter", "locked": true, "chapterNumber": 2,
-         "transitionIn": { "type": "light-leak", "dur": 1.0 } }
-
-  [07] chapter LOCKED (Cap. 3 — "Em tempo real, toda informação que o agro precisa"):
-       { "id": "chapter-2", "type": "chapter", "locked": true, "chapterNumber": 3,
-         "transitionIn": { "type": "cinematic-blur", "dur": 0.6 } }
-
-  [11] lower-third LOCKED:
+  [09] lower-third LOCKED:
        { "id": "lower-third-cta", "type": "lower-third", "locked": true,
          "transitionIn": { "type": "push-up", "dur": 0.45 } }
 
-  [12] end-card LOCKED:
+  [10] end-card LOCKED:
        { "id": "end", "type": "end-card", "locked": true,
          "transitionIn": { "type": "ring-tunnel", "dur": 0.7 } }
 
-  [10] quote CUSTOM:
+  [08] quote CUSTOM:
        { "id": "quote", "type": "quote", "locked": false,
          "words": ["NDVI", "Talhao", "Alertas", "Decisao", "Safra"],
          "transitionIn": { "type": "zoom-blur", "dur": 0.5, "easing": "out-quart",
            "sfx": "whoosh-fast-cinematic", "sfxOffset": 0.02, "sfxVolume": 0.08 } }
 
-       A cena 10 mantem o visual hardcoded de Quote.jsx, mas as palavras sao
+       A cena 08 mantem o visual hardcoded de Quote.jsx, mas as palavras sao
        livres e tema-especificas. Gere exatamente 5 palavras curtas.
 
   O sistema sobrescreve essas posições com o conteúdo Cropware ao validar
   o storyboard. Foque 100% nas 7 customizáveis.
 
-  Para as 7 CUSTOMIZÁVEIS (02, 03, 05, 06, 08, 09, 10) você ESCREVE copy
+  Para as 7 CUSTOMIZÁVEIS (02, 03, 04, 05, 06, 07, 08) você ESCREVE copy
   tema-específica. Mantenha "locked": false (ou omita) nelas.
   Em app-card, se o tema NÃO permitir uso natural, você
   ainda DEVE incluir a cena (ordem é rígida) — preencha com dados
@@ -29301,8 +29523,8 @@ EXEMPLO COMPLETO (storyboard minimal — pra você ver o formato esperado):
 }
 
 Note: o exemplo acima tem só 4 cenas pra ficar compacto. O seu output DEVE ter
-EXATAMENTE 12 cenas (formato 6+6 R12) em 60s. Voiceover apenas nas 7 cenas
-indicadas na seção VOICEOVER POR CENA — as outras 5 (keyword, ambos chapters,
+EXATAMENTE 10 cenas em 60s. Voiceover apenas nas 7 cenas
+indicadas na seção VOICEOVER POR CENA — as outras 3 (keyword,
 whatsapp-chat, quote) ficam SEM "voiceover" e o silêncio é intencional.
 ═══════════════════════════════════════════════════════════
 
@@ -29822,14 +30044,14 @@ function mrValidateStoryboard(parsed, targetDuration) {
     s.locked = s.locked === true;
     if (s.type === 'quote') s.locked = false;
   });
-  // R12/R18 enforcement: as 5 posições locked (01, 04, 07, 11, 12 = índices
-  // 0, 3, 6, 10, 11) DEVEM ter o conteúdo da identidade Cropware. A IA
-  // costuma esquecer campos (kicker, taglineLines, etc) — aqui sobrescrevemos
-  // com o default pra garantir consistência visual. Preserva só start/end.
+  // R28h enforcement: as 3 posições locked (01, 09, 10 = índices 0, 8, 9)
+  // DEVEM ter o conteúdo da identidade Cropware. (Os 2 capítulos foram
+  // removidos — agora são 10 cenas.) A IA costuma esquecer campos; aqui
+  // sobrescrevemos com o default pra garantir consistência. Preserva start/end.
   const lockedDefaults = (window.MOTION_REEL_DEFAULT_STORYBOARD && Array.isArray(window.MOTION_REEL_DEFAULT_STORYBOARD.scenes))
     ? window.MOTION_REEL_DEFAULT_STORYBOARD.scenes.filter(s => s.locked === true)
     : [];
-  const LOCKED_POSITIONS = [0, 3, 6, 10, 11];
+  const LOCKED_POSITIONS = [0, 8, 9];
   LOCKED_POSITIONS.forEach((pos, lockIdx) => {
     if (scenes[pos] && lockedDefaults[lockIdx]) {
       const orig = scenes[pos];
@@ -29982,6 +30204,12 @@ function _motionReelsStorageKey() {
 }
 function normalizeMotionReelConfig(cfg) {
   if (!cfg || !Array.isArray(cfg.scenes)) return cfg;
+  // R28h: as cenas de capítulo (interstícios "Cap. · ...") foram removidas do
+  // produto — agora são 10 cenas. Remove qualquer chapter de reels já salvos
+  // (idempotente). O conteúdo dos capítulos foi redistribuído em outras cenas.
+  if (cfg.scenes.some(s => s && s.type === 'chapter')) {
+    cfg.scenes = cfg.scenes.filter(s => s && s.type !== 'chapter');
+  }
   // R27: normaliza quebras de linha em campos string. Reels gerados antes do
   // fix podem ter "<br/>" cru salvos em scene.scenario, etc — corrigimos
   // toda vez que o reel é lido, fica idempotente.

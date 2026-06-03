@@ -91,19 +91,7 @@ export const MOTION_REEL_DEFAULT = {
       ],
       transitionIn: { type: 'push-up', dur: 0.5, easing: 'in-out-cubic' },
     },
-    // ─────────────── 05 CHAPTER-1 (FIXA — buffer silencioso) ───────────────
-    // Cena hardcoded em Chapter.jsx: imagem `conheca-produto-bg.webp`
-    // (drone aéreo de talhões) + Ken Burns + glass pane slate +
-    // "Capítulo 02 · No campo · Onde toda decisão começa.".
-    {
-      id: 'chapter-1', start: 20.0, end: 24.0, type: 'chapter',
-      locked: true,
-      chapterNumber: 2,
-      // light-leak é mantido como alias legado, mas renderiza como
-      // drift-fade discreto na engine pra nunca cair em magenta.
-      transitionIn: { type: 'light-leak', dur: 1.0 },
-    },
-    // ─────────────── 06 SCENARIO (custom) ───────────────
+    // ─────────────── SCENARIO (custom) ───────────────
     // Mini-cenário narrativo (ex: "É manhã. Você abre o Cropware..."). Visual
     // fixo em Scenario.jsx (imagem `conheca-campo-bg.webp` + glass slate).
     // IA preenche kicker + scenario por tema.
@@ -113,15 +101,7 @@ export const MOTION_REEL_DEFAULT = {
       scenario: 'É manhã. Você abre o Cropware.\nEm segundos sabe o que precisa fazer hoje.',
       transitionIn: { type: 'mask-circle', dur: 0.6, easing: 'in-out-expo' },
     },
-    // ─────────────── 07 CHAPTER-2 (FIXA) ───────────────
-    // Cena hardcoded em Chapter.jsx via CHAPTER_CONFIGS[3].
-    {
-      id: 'chapter-2', start: 30.0, end: 34.0, type: 'chapter',
-      locked: true,
-      chapterNumber: 3,
-      transitionIn: { type: 'cinematic-blur', dur: 0.6, easing: 'in-out-cubic' },
-    },
-    // ─────────────── 08 APP-CARD (custom) ───────────────
+    // ─────────────── APP-CARD (custom) ───────────────
     {
       id: 'app-1', start: 34.0, end: 40.0, type: 'app-card',
       kicker: 'NO SEU BOLSO',

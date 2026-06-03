@@ -131,11 +131,11 @@ export const FeatureList = ({ kicker, title, items = [], theme, bgImage, bgImage
             text={String(kicker).toUpperCase()}
             delay={0}
             dur={0.4}
-            fromEm={T.kickerLetterSpacingFrom ?? 0.02}
-            toEm={T.kickerLetterSpacingTo ?? 0.06}
+            fromEm={T.kickerLetterSpacingFrom ?? -0.04}
+            toEm={T.kickerLetterSpacingTo ?? -0.01}
             style={{
               fontFamily: MR_FONTS.caps,
-              fontSize: T.kickerFontSize || 72,
+              fontSize: T.kickerFontSize || 62,
               fontWeight: 400,
               lineHeight: 1.18,
               maxWidth: T.kickerMaxWidth || 760,

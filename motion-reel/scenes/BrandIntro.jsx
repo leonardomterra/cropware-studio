@@ -180,7 +180,7 @@ const KickerBlock = ({ kicker, delay = 0.25, color = MR_COLORS.white, accent = M
   });
   const breathPhase = Math.max(0, frame / fps - (underlineStart + 0.6));
   const breathSin = Math.sin(breathPhase * Math.PI / 1.4);
-  const letterSpacing = 0.06 + breathSin * 0.01;
+  const letterSpacing = 0.0 + breathSin * 0.01;
 
   return (
     <div style={{
@@ -195,7 +195,7 @@ const KickerBlock = ({ kicker, delay = 0.25, color = MR_COLORS.white, accent = M
     }}>
       <div style={{
         fontFamily: MR_FONTS.caps,
-        fontSize: 76,
+        fontSize: 68,
         fontWeight: 400,
         color,
         letterSpacing: `${letterSpacing.toFixed(3)}em`,

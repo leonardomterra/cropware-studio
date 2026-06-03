@@ -114,7 +114,7 @@ export const AppCard = ({
           text={kicker}
           delay={0}
           dur={0.5}
-          style={{ fontFamily: MR_FONTS.caps, fontSize: 72, fontWeight: 400, color: T.kickerColor || T.accent, textTransform: 'uppercase', lineHeight: 1.15, textAlign: 'center', maxWidth: 880, letterSpacing: '0.04em', ...(T.flat ? { textShadow: 'none' } : {}) }}
+          style={{ fontFamily: MR_FONTS.caps, fontSize: 62, fontWeight: 400, color: T.kickerColor || T.accent, textTransform: 'uppercase', lineHeight: 1.15, textAlign: 'center', maxWidth: 880, letterSpacing: '-0.03em', ...(T.flat ? { textShadow: 'none' } : {}) }}
           allowWrap
         />
       ) : null}

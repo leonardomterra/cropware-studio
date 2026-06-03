@@ -230,26 +230,51 @@ export const GlassCard = ({
   );
 };
 
+// IconInOut — wrapper pra um ícone/elemento FIXO com entrada (pop-in: fade +
+// scale com leve overshoot) e saída (fade + leve shrink) cronometrada pro fim
+// da cena. Recebe `durFrames` (duração total da Sequence) pra saber quando sair.
+export const IconInOut = ({
+  children,
+  durFrames,
+  inDelay = 0.15,
+  inDur = 0.5,
+  outDur = 0.5,
+  style,
+}) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const inP = interpolate(frame, [inDelay * fps, (inDelay + inDur) * fps], [0, 1], {
+    extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.outBack,
+  });
+  const outStart = Math.max((inDelay + inDur) * fps + 1, (durFrames || 0) - outDur * fps);
+  const outP = durFrames
+    ? interpolate(frame, [outStart, durFrames], [0, 1], {
+        extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.inOutCubic,
+      })
+    : 0;
+  const opacity = inP * (1 - outP);
+  const scale = (0.82 + 0.18 * inP) * (1 - 0.12 * outP);
+  return (
+    <div style={{
+      opacity,
+      transform: `scale(${scale.toFixed(4)})`,
+      transformOrigin: 'center',
+      ...style,
+    }}>
+      {children}
+    </div>
+  );
+};
+
 // SceneTextureBackdrop — overlay genérico de textura B&W com drift lento.
 // Recebe `src` (path da textura, geralmente do pool aleatório) e anima com
 // pan diagonal + respiração de escala. Discreto por default (opacity 0.18).
 // Reutilizado por várias cenas pra dar atmosfera sem competir com o conteúdo.
 export const SceneTextureBackdrop = ({ src, durSec, blend = 'screen', opacity = 0.22, invert = true, zIndex, zoomRange, driftRange }) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
   if (!src) return null;
-  const durFrames = Math.max(1, (durSec || 6) * fps);
-  const t = interpolate(frame, [0, durFrames], [0, 1], {
-    extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.inOutCubic,
-  });
-  const dxR = driftRange || [-20, 28];
-  const dyR = driftRange ? [-driftRange[1] * 0.6, driftRange[1] * 0.6] : [16, -18];
-  const zR = zoomRange || [1.18, 1.28];
-  const driftX = interpolate(t, [0, 1], dxR);
-  const driftY = interpolate(t, [0, 1], dyR);
-  const scale = interpolate(t, [0, 1], zR);
-  // Sem zIndex default — fica no fluxo natural do DOM (atrás do conteúdo que
-  // venha depois na hierarquia). Passar zIndex explícito só se precisar override.
+  // R28h: textura ESTÁTICA — sem Ken Burns/drift (padronização). Mantemos um leve
+  // scale 1.06 só pra garantir cover (sem bordas) e centralizada. zoomRange/driftRange
+  // ficam aceitos por compat, mas ignorados.
   const style = { pointerEvents: 'none', overflow: 'hidden' };
   if (zIndex != null) style.zIndex = zIndex;
   return (
@@ -258,7 +283,7 @@ export const SceneTextureBackdrop = ({ src, durSec, blend = 'screen', opacity = 
         backgroundImage: `url('${staticFile(src)}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        transform: `translate(${driftX.toFixed(2)}px, ${driftY.toFixed(2)}px) scale(${scale.toFixed(4)})`,
+        transform: 'scale(1.06)',
         transformOrigin: 'center',
         mixBlendMode: blend,
         opacity,

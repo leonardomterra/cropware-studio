@@ -5,7 +5,7 @@
 // passa chapterNumber (2 ou 3).
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, staticFile, spring } from 'remotion';
 import { MR_COLORS, MR_FONTS } from '../theme.js';
-import { CharReveal, FadeSlide, AccentBar, LottieAsset, StaticMotionIcon, GlassCard, EASE } from '../helpers.jsx';
+import { CharReveal, FadeSlide, AccentBar, LottieAsset, StaticMotionIcon, GlassCard, IconInOut, EASE } from '../helpers.jsx';
 
 // Configs hardcoded por capítulo — adiciona entradas conforme padronizamos
 // slides. Tudo da identidade Cropware fica aqui.
@@ -21,11 +21,9 @@ const CHAPTER_CONFIGS = {
   },
   3: {
     image: 'conheca-whatsapp-bg.webp',
-    // R27: wifi signal Lottie no topo (eco de "em tempo real" — sinal/conexão).
-    // Substituiu a icons-row antiga (5 phosphor) — sinal único mais focado.
-    // Tamanho menor que cap-2 (460→320) — o wifi tem composição mais densa
-    // e fica visualmente "pesado" em 460.
-    lottie: 'lottie/wifi-signal.json',
+    // R28h: ícone Phosphor fixo no topo (substituiu o wifi-signal Lottie), com
+    // entrada/saída via IconInOut. broadcast = transmissão/tempo real.
+    topIcon: 'ph:broadcast-fill',
     lottiePosition: 'top',
     lottieTint: 'var(--mr-greenBright)',
     lottieSize: 260,
@@ -33,6 +31,7 @@ const CHAPTER_CONFIGS = {
     title: 'Em tempo real',
     subtitle: 'toda informação\nque o agro precisa.',
     combinedPhrase: true,
+    glassPhrase: true, // slide 07: título Space Mono dentro de um glass plate
   },
 };
 
@@ -147,7 +146,20 @@ export const Chapter = ({ chapterNumber = 2, start, end, theme = {}, bgImage, bg
         fontFamily: MR_FONTS.display,
         textAlign: 'center',
       }}>
-        {cfg.lottiePosition === 'top' && cfg.lottie ? (
+        {cfg.lottiePosition === 'top' && cfg.topIcon ? (
+          <IconInOut
+            durFrames={durFrames}
+            inDelay={0.15}
+            style={{
+              marginBottom: cfg.lottieMarginBottom != null ? cfg.lottieMarginBottom : -80,
+              color: T.iconColor || cfg.lottieTint || accent,
+              filter: lottieShadow === 'none' ? 'none' : lottieShadow,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            <StaticMotionIcon icon={cfg.topIcon} size={cfg.lottieSize || 260} color="currentColor" />
+          </IconInOut>
+        ) : cfg.lottiePosition === 'top' && cfg.lottie ? (
           <LottieAsset
             src={cfg.lottie}
             size={cfg.lottieSize || 460}
@@ -183,23 +195,41 @@ export const Chapter = ({ chapterNumber = 2, start, end, theme = {}, bgImage, bg
             textShadow,
             transform: 'translateZ(0)',
           }}>
-            <div style={{
-              fontFamily: MR_FONTS.caps,
-              fontSize: 100,
-              fontWeight: 400,
-              lineHeight: 0.92,
-              letterSpacing: '-0.01em',
-              textTransform: 'uppercase',
-              color: fg,
-            }}>
-              <CharReveal
-                text={cfg.title}
-                delay={1.0}
-                dur={0.4}
-                stagger={0.03}
-                ty={24}
-              />
-            </div>
+            {(() => {
+              const titleEl = (
+                <div style={{
+                  fontFamily: MR_FONTS.caps,
+                  fontSize: 88,
+                  fontWeight: 400,
+                  lineHeight: 0.92,
+                  letterSpacing: '-0.05em',
+                  textTransform: 'uppercase',
+                  color: fg,
+                }}>
+                  <CharReveal
+                    text={cfg.title}
+                    delay={1.0}
+                    dur={0.4}
+                    stagger={0.03}
+                    ty={24}
+                  />
+                </div>
+              );
+              // R28h: no slide 07 o título Space Mono ganha um glass plate slate
+              // (plate aparece um pouco antes do CharReveal pra "receber" o texto).
+              return cfg.glassPhrase ? (
+                <GlassCard
+                  delay={0.85}
+                  dur={0.5}
+                  padding="18px 46px"
+                  borderRadius={24}
+                  tint={SLATE_TINT}
+                  style={{ alignSelf: 'center', width: 'fit-content', maxWidth: 940 }}
+                >
+                  {titleEl}
+                </GlassCard>
+              ) : titleEl;
+            })()}
             <div style={{
               fontFamily: MR_FONTS.grotesk,
               fontSize: 72,
@@ -346,17 +376,7 @@ const WAVY_LINES_DEFAULT = 'motion-reel/texture-pool/texture-pool-009.webp';
 
 const WavyLinesOverlay = ({ src, frame, fps, durFrames, invert, opacity = 1 }) => {
   const textureSrc = src || WAVY_LINES_DEFAULT;
-  const t = interpolate(frame, [0, durFrames], [0, 1], {
-    extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: EASE.inOutCubic,
-  });
-  // Pan diagonal + leve rotação ao longo da cena.
-  const panX = interpolate(t, [0, 1], [-70, 50]);
-  const panY = interpolate(t, [0, 1], [30, -40]);
-  const rot = interpolate(t, [0, 1], [-2, 2.4]);
-  const tSec = frame / fps;
-  const breath = 1 + Math.sin(tSec * 0.3) * 0.02;
-  const scale = 1.4 * breath;
-
+  // R28h: textura ESTÁTICA — sem pan/rotação/breath (padronização).
   return (
     <AbsoluteFill style={{
       opacity,
@@ -368,7 +388,7 @@ const WavyLinesOverlay = ({ src, frame, fps, durFrames, invert, opacity = 1 }) =
         backgroundImage: `url('${staticFile(textureSrc)}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        transform: `translate(${panX.toFixed(2)}px, ${panY.toFixed(2)}px) rotate(${rot.toFixed(3)}deg) scale(${scale.toFixed(4)})`,
+        transform: 'scale(1.3)',
         transformOrigin: 'center',
         // Imagem original é branca/preta. Sem invert: invertemos pra que as
         // linhas pretas virem brancas (e 'screen' deixe só elas visíveis).

@@ -140,7 +140,8 @@ export const Keyword = ({
         backgroundImage: `url('${staticFile(bgTexture || T.bgTexture || 'keyword-texture.webp')}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        transform: `scale(${interpolate(frame, [0, durFrames], [1.08, 1.22], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }).toFixed(4)}) translate(${interpolate(frame, [0, durFrames], [-12, 14], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }).toFixed(2)}px, ${interpolate(frame, [0, durFrames], [10, -18], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }).toFixed(2)}px) rotate(${interpolate(frame, [0, durFrames], [-1.2, 1.2], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }).toFixed(3)}deg)`,
+        // R28h: textura ESTÁTICA (sem Ken Burns) — padronização.
+        transform: 'scale(1.12)',
         transformOrigin: 'center',
         mixBlendMode: T.textureMode || 'multiply',
         filter: (bgTextureInvert !== false)
@@ -212,9 +213,9 @@ export const Keyword = ({
           padding: '36px 56px',
           border: `3px solid ${T.accent}`,
           borderRadius: 16,
-          background: T.flat ? 'transparent' : 'linear-gradient(160deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
-          backdropFilter: T.flat ? 'none' : 'blur(12px) saturate(140%)',
-          WebkitBackdropFilter: T.flat ? 'none' : 'blur(12px) saturate(140%)',
+          background: T.flat ? 'transparent' : 'linear-gradient(160deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.06) 55%, rgba(20,63,44,0.14) 100%)',
+          backdropFilter: T.flat ? 'none' : 'blur(18px) saturate(150%)',
+          WebkitBackdropFilter: T.flat ? 'none' : 'blur(18px) saturate(150%)',
           boxShadow: T.flat
             ? 'none'
             : `0 0 ${glowSize.toFixed(1)}px ${T.accent}${glowHex}, inset 0 1px 0 rgba(255,255,255,0.10)`,
@@ -241,10 +242,10 @@ export const Keyword = ({
             fontFamily: MR_FONTS.caps,
             // Tamanho adaptável ao nº de palavras: 1 palavra fica gigante (160);
             // frases curtas reduzem pra caber e quebram em 2 linhas balanceadas.
-            fontSize: _kwWordCount >= 4 ? 78 : _kwWordCount === 3 ? 96 : _kwWordCount === 2 ? 120 : 160,
+            fontSize: _kwWordCount >= 4 ? 70 : _kwWordCount === 3 ? 86 : _kwWordCount === 2 ? 108 : 144,
             fontWeight: 400,
             lineHeight: _kwWordCount >= 2 ? 1.02 : 0.92,
-            letterSpacing: '-0.01em',
+            letterSpacing: '-0.05em',
             textTransform: 'uppercase',
             textAlign: 'center',
             maxWidth: 920,
