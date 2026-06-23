@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cropware — Studio de Posts</title>
-<link rel="icon" type="image/png" href="icon.png">
+<link rel="icon" type="image/png" href="02-studio-favicon-png.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Mozilla+Text:wght@400;500;600;700&family=Mozilla+Headline:wght@200;300;400;500;600;700&family=Alumni+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Vend+Sans:wght@400..700&family=Sora:wght@400;500;600;700;800&family=Geist:wght@100..900&family=Pathway+Extreme:wdth,wght@75..125,400..700&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@fontsource-variable/hubot-sans/index.css" rel="stylesheet">
@@ -22,98 +22,89 @@
   /* ── LOGIN SCREEN ── */
   .login-screen {
     position: fixed; inset: 0;
-    background: var(--bg);
+    background: #ffffff;
     display: flex; align-items: center; justify-content: center;
     z-index: 9999;
   }
   .login-screen.hidden { display: none; }
   .login-card {
-    background: #fff;
-    border-radius: 10px;
-    padding: 48px 40px 28px;
-    width: 380px;
+    background: transparent;
+    padding: 0;
+    width: 320px;
     max-width: 90vw;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
     text-align: center;
   }
   .login-logo {
     display: block;
-    width: 160px;
-    height: 22px;
-    margin: 0 auto 14px;
-    background: #475569;
-    -webkit-mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
-    mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
-  }
-  .login-divider {
-    width: 132px;
-    height: 1px;
-    margin: 0 auto 12px;
-    background: linear-gradient(90deg, rgba(203,213,225,0), #94a3b8 50%, rgba(203,213,225,0));
+    width: 150px;
+    height: auto;
+    margin: 0 auto;
   }
   .login-title {
-    font-family: 'Alumni Sans', 'Inter', 'Inter Tight', sans-serif;
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
+    margin: 0 0 6px;
+  }
+  .login-byline {
+    font-family: var(--ds-font);
+    font-stretch: var(--ds-font-stretch);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #0f172a;
-    margin-bottom: 28px;
+    color: #a3a3a3;
+    margin: 0 0 28px;
   }
   .login-subtitle {
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
-    font-size: 14px; color: #64748b;
+    font-size: 14px; color: #737373;
     margin-bottom: 28px;
   }
   .login-input {
     width: 100%; padding: 12px 14px;
-    border: 1px solid #e2e8f0; border-radius: 6px;
+    border: 1px solid #e5e5e5; border-radius: 6px;
     font-size: 14px;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
-    outline: none; transition: border-color 0.2s;
+    color: #171717;
+    background: #ffffff;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
     margin-bottom: 14px;
   }
-  .login-input::placeholder { color: #94a3b8; }
+  .login-input::placeholder { color: #a3a3a3; }
   .login-input:focus {
-    border-color: #64748b;
+    border-color: #737373;
     background: #ffffff;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
   }
-  .login-btn {
-    width: 100%; padding: 12px;
-    background: var(--ds-color-primary); color: var(--ds-color-on-primary); border: none; border-radius: var(--ds-btn-radius);
-    font-size: 14px; font-weight: 400; cursor: pointer;
-    font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    transition: background 0.2s;
+  /* Neutraliza o tom azulado do autofill do navegador, mantendo a sombra interna */
+  .login-input:-webkit-autofill,
+  .login-input:-webkit-autofill:hover,
+  .login-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #171717;
+    -webkit-box-shadow: inset 0 0 0 100px #ffffff, inset 0 1px 2px rgba(0,0,0,0.06);
+    caret-color: #171717;
+    transition: background-color 9999s ease-in-out 0s;
   }
-  .login-btn:hover { background: var(--ds-color-primary-hover); }
-  .login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .login-manage-btn {
-    width: 100%;
-    padding: 12px;
+  /* Login — agora usa o sistema .ds-btn (primary/secondary). Aqui ficam só
+     altura e sombras específicas do login; ids garantem precedência sobre
+     .ds-btn sem precisar de !important. */
+  #loginBtn, #loginManageBtn {
+    height: 44px;
+    transition: var(--ds-btn-transition), box-shadow 180ms ease;
+  }
+  #loginBtn {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.16);
+  }
+  #loginBtn:hover:not(:disabled) {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.16), 0 4px 10px rgba(0,0,0,0.20);
+  }
+  #loginManageBtn {
     margin-top: 10px;
-    background: #fff;
-    color: #f8fafc;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
   }
-  .login-manage-btn:hover {
-    background: #334155;
-    border-color: #f1f5f9;
-    color: #334155;
+  #loginManageBtn:hover {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.10);
   }
   .login-msg {
     margin-top: 16px; font-size: 13px;
@@ -129,7 +120,7 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    background: #f1f5f9;
+    background: #f5f5f5;
     border-top: 1px solid var(--border);
     margin: 8px -12px -10px;
     padding: 12px;
@@ -137,7 +128,7 @@
   }
   .logout-email {
     font-size: 13px;
-    color: #f8fafc;
+    color: #fafafa;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     overflow: hidden;
@@ -172,12 +163,12 @@
     --green: #7AB87E;
     --green-dark: #5E9061;
     --green-soft: #97E29C;
-    --bg: #f1f5f9;
+    --bg: #f5f5f5;
     --surface: #ffffff;
     --border: rgba(0,0,0,0.08);
-    --field-focus-border: rgba(203, 213, 225, 0.96);
-    --text: #0f172a;
-    --muted: rgba(15,23,42,0.62);
+    --field-focus-border: rgba(212,212,212, 0.96);
+    --text: #171717;
+    --muted: rgba(23,23,23,0.62);
     /* R25/R28: legacy `--btn-*` reapontados pros tokens novos do design system.
        Permite que TODOS os botões existentes que herdam essas variáveis pulem
        direto pro padrão neutral + font 15/500 sem precisar refatorar cada rule. */
@@ -194,14 +185,14 @@
     --btn-mid-bg-hover: var(--ds-neutral-300);
     --btn-mid-text: var(--ds-neutral-700);
     --btn-light-bg: #fff;
-    --btn-light-bg-hover: #f1f5f9;
-    --btn-light-text: #0f172a;
-    --btn-light-border: #e2e8f0;
-    --btn-light-border-hover: #cbd5e1;
+    --btn-light-bg-hover: #f5f5f5;
+    --btn-light-text: #171717;
+    --btn-light-border: #e5e5e5;
+    --btn-light-border-hover: #d4d4d4;
     --btn-danger-bg: #fee2e2;
     --btn-danger-bg-hover: #fecaca;
     --btn-danger-text: #991b1b;
-    --side-panel-width: 256px;
+    --side-panel-width: 340px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -242,7 +233,7 @@
     flex-direction: column;
   }
   body :where(:not(#postScaler):not(#postScaler *)) {
-    font-stretch: 90%;
+    font-stretch: var(--ds-font-stretch);
     letter-spacing: var(--ds-letter-spacing);
   }
 
@@ -305,39 +296,18 @@
   }
   .app-logo {
     display: block;
-    width: 142px;
-    height: 20px;
-    background: #1e293b;
-    -webkit-mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
-    mask: url('logo-cropware-pb-final.svg') center / contain no-repeat;
-    flex-shrink: 0;
-  }
-  .app-studio-label {
-    font-family: 'Alumni Sans', 'Inter', 'Inter Tight', sans-serif;
-    font-size: 22px;
-    font-weight: 500;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ds-neutral-800);
-    line-height: 1;
-    flex-shrink: 0;
-    transform: scaleX(0.86);
-    transform-origin: left center;
-  }
-  .app-header-divider {
-    width: 1px;
-    height: 24px;
-    background: var(--ds-neutral-300);
+    width: auto;
+    height: 32px;
     flex-shrink: 0;
   }
   .app-user-email {
     padding: 0;
     border: none;
     background: none;
-    color: #64748b;
+    color: #737373;
     font-family: var(--ds-font);
     font-stretch: 100%;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.01em;
     letter-spacing: 0;
@@ -360,12 +330,12 @@
     gap: 6px;
     padding: 5px 10px;
     background: #ffffff;
-    color: #64748b;
+    color: #737373;
     border: 1px solid var(--ds-neutral-200);
     border-radius: 5px;
     font-family: var(--ds-font);
     font-stretch: 100%;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.01em;
     cursor: pointer;
@@ -374,13 +344,13 @@
   .app-logout-btn:hover {
     background: var(--ds-neutral-50);
     border-color: var(--ds-neutral-300);
-    color: #334155;
+    color: #404040;
   }
 
   /* ── SIDEBAR ── */
   aside {
     order: 1;
-    width: 256px;
+    width: var(--side-panel-width);
     flex-shrink: 0;
     background: var(--surface);
     /* sem border-right — corpo e header têm bordas próprias */
@@ -405,14 +375,14 @@
   .aside-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   .aside-empty {
     padding: 22px 16px;
-    color: #64748b;
+    color: #737373;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
   }
   .aside-empty-title {
     font-size: 14px;
     font-weight: 500;
-    color: #334155;
+    color: #404040;
     margin-bottom: 4px;
   }
   .aside-empty-sub {
@@ -450,7 +420,7 @@
     color: #fff;
     border-bottom: 1px solid rgba(255,255,255,0.08);
     border-right: 1px solid rgba(0,0,0,0.35);
-    background: #1e293b;
+    background: #262626;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     display: flex;
@@ -467,7 +437,7 @@
     padding: 0 16px;
     border-bottom: 1px solid rgba(255,255,255,0.08);
     border-right: 1px solid rgba(0,0,0,0.35);
-    background: #1e293b;
+    background: #262626;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     box-sizing: border-box;
@@ -492,11 +462,11 @@
 
   .thumb-item:hover { background: var(--ds-neutral-100); }
   .thumb-item.active {
-    background: #1e293b;
+    background: #f5f5f5;
   }
-  .thumb-item.active .thumb-title { color: #f1f5f9; }
+  .thumb-item.active .thumb-title { color: #262626; }
   .thumb-item.active .thumb-time {
-    color: #aeb8c4;
+    color: #a3a3a3;
   }
 
   .thumb-preview {
@@ -512,7 +482,7 @@
 
   .thumb-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
   .thumb-title {
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 400;
     color: var(--ds-neutral-900);
     font-family: var(--ds-font);
@@ -533,7 +503,7 @@
     align-self: flex-start;
     align-items: center;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 300;
     color: #aeb8c4;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
@@ -544,7 +514,7 @@
   .download-loading {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.55);
+    background: rgba(23,23,23, 0.55);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     z-index: 9999;
@@ -573,7 +543,7 @@
     font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     font-weight: 500;
-    color: var(--text, #0f172a);
+    color: var(--text, #171717);
     text-align: center;
     line-height: 1.4;
   }
@@ -581,7 +551,7 @@
     width: 100%;
     height: 8px;
     border-radius: 999px;
-    background: #e2e8f0;
+    background: #e5e5e5;
     overflow: hidden;
   }
   .download-loading-progress[hidden] { display: none; }
@@ -658,7 +628,7 @@
     font-weight: 500;
     color: #fff;
     border-bottom: 1px solid rgba(255,255,255,0.08);
-    background: #1e293b;
+    background: #262626;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     display: flex;
@@ -1084,10 +1054,42 @@
   .post[data-type="linkedin-editorial-post"] .post-site,
   .post[data-type="linkedin-editorial-ii-post"] .post-site {
     text-shadow: none;
-    font-size: calc(37px * var(--site-scale, 1));
+    font-size: calc(41px * var(--site-scale, 1));
     letter-spacing: -0.005em;
     transform: scaleX(0.95);
     transform-origin: right center;
+  }
+  /* Flat I: trava de marca no rodapé esquerdo — logo + divisor "|" + site */
+  .post[data-type="instagram-flat-post"][data-style="flat"] .flat-brand {
+    position: absolute;
+    bottom: calc(44px + var(--logo-offset-y, 0px));
+    left: calc(56px + var(--logo-offset-x, 0px));
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    z-index: 4;
+  }
+  .post[data-type="instagram-flat-post"][data-style="flat"] .flat-brand-logo {
+    width: calc(210px * var(--logo-scale, 1));
+    height: auto;
+    display: block;
+  }
+  .post[data-type="instagram-flat-post"][data-style="flat"] .flat-brand-divider {
+    font-family: 'Space Mono', monospace;
+    font-size: calc(30px * var(--site-scale, 1));
+    line-height: 1;
+    color: rgba(255,255,255,0.32);
+  }
+  .post[data-type="instagram-flat-post"][data-style="flat"] .flat-brand-site {
+    font-family: 'Space Mono', monospace;
+    font-size: calc(28px * var(--site-scale, 1));
+    font-weight: 400;
+    line-height: 1;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.70);
+    letter-spacing: 0.02em;
+    transform: scaleX(0.92);
+    transform-origin: left center;
   }
   .post-site[data-pos="tl"] { top: calc(56px + var(--site-offset-y, 0px)); left: calc(64px + var(--site-offset-x, 0px)); }
   .post-site[data-pos="tc"] { top: calc(56px + var(--site-offset-y, 0px)); left: 50%; transform: translateX(calc(-50% + var(--site-offset-x, 0px))); }
@@ -1468,6 +1470,11 @@
   }
 
   .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullets { display: none; }
+  /* Flat I: linhas (acima/abaixo do complemento) um pouco mais grossas e sólidas (sem transparência) */
+  .post[data-type="instagram-flat-post"][data-style="flat"] .separator-short {
+    height: 3px;
+    background: #7ab87e;
+  }
   /* Flat I: texto mais baixo e centralizado */
   .post[data-type="instagram-flat-post"][data-style="flat"] .content-top {
     top: 400px;
@@ -3975,16 +3982,17 @@
     display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
   }
   .ads-insight-logo {
-    width: 418px; height: 74px;
+    width: 460px; height: 74px;
     -webkit-mask: url('logo-cropware-pb-final.svg') left center / contain no-repeat;
     mask: url('logo-cropware-pb-final.svg') left center / contain no-repeat;
     background: #eef2f6;
   }
   .ads-brand-site {
     font-family: 'Space Mono', monospace;
-    font-size: 26px; font-weight: 400; line-height: 1;
+    font-size: 23px; font-weight: 400; line-height: 1;
     text-transform: uppercase; letter-spacing: -0.035em;
     color: rgba(255,255,255,0.72);
+    margin-left: -20px;
   }
   .ads-brand-site::before {
     content: '\2192';
@@ -4853,8 +4861,8 @@
     align-items: center;
     gap: 2px;
     padding: 4px;
-    background: #1e293b;
-    border: 1px solid #334155;
+    background: #262626;
+    border: 1px solid #404040;
     border-radius: 5px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.35);
     z-index: 9999;
@@ -4866,7 +4874,7 @@
   .text-toolbar-btn {
     background: none;
     border: none;
-    color: #cbd5e1;
+    color: #d4d4d4;
     font-size: 13px;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
@@ -4880,13 +4888,13 @@
     white-space: nowrap;
     transition: background 0.12s, color 0.12s;
   }
-  .text-toolbar-btn:hover { background: #334155; color: #f1f5f9; }
-  .text-toolbar-btn.active { background: #475569; color: #ffffff; }
+  .text-toolbar-btn:hover { background: #404040; color: #f5f5f5; }
+  .text-toolbar-btn.active { background: #525252; color: #ffffff; }
   .text-toolbar-btn .ph { font-size: 16px; }
   .text-toolbar-sep {
     width: 1px;
     height: 20px;
-    background: #334155;
+    background: #404040;
     margin: 0 2px;
   }
 
@@ -5392,7 +5400,7 @@
     filter: grayscale(1);
   }
   .pc-news-texture-thumb:hover { transform: scale(1.04); }
-  .pc-news-texture-thumb.active { border-color: #94a3b8; }
+  .pc-news-texture-thumb.active { border-color: #a3a3a3; }
 
 
   /* Split libera bloco + proporção/layout/sombra + cor do texto */
@@ -5477,13 +5485,13 @@
     justify-content: space-between;
     padding: 10px 12px;
     background: #fff;
-    color: #0f172a;
+    color: #171717;
     border: none;
     cursor: pointer;
     font-family: inherit;
     transition: background 120ms;
   }
-  .pc-group-header:hover { background: #f8fafc; }
+  .pc-group-header:hover { background: #fafafa; }
   .pc-group.open > .pc-group-header { border-bottom: 1px solid #eef2f7; }
   /* Espaço do header até o primeiro sub */
   #pcGroupSignature > .pc-group-body { padding-top: 8px; gap: 0; }
@@ -5500,24 +5508,24 @@
     width: 24px;
     height: 24px;
     border-radius: 5px;
-    color: #64748b;
+    color: #737373;
     cursor: pointer;
     transition: all 140ms;
   }
   .pc-group-header-toggle-all:hover {
-    background: #f8fafc;
-    color: #334155;
+    background: #fafafa;
+    color: #404040;
   }
   .pc-group-header-toggle-all .ph { font-size: 18px; }
   .pc-group-header-label {
     font-size: 14px;
     font-weight: 600;
-    color: #0f172a;
+    color: #171717;
     letter-spacing: 0;
   }
   .pc-group-header-chevron {
     font-size: 18px !important;
-    color: #64748b;
+    color: #737373;
     transition: transform 180ms;
   }
   .pc-group.open .pc-group-header-chevron {
@@ -5559,7 +5567,7 @@
   #postControls.style-li-editorial .pc-section-picker,
   #postControls.style-flat .pc-section-picker {
     border-top: none;
-    border-bottom: 1px solid rgba(226,232,240,0.6);
+    border-bottom: 1px solid rgba(229,229,229,0.6);
     padding-top: 0;
     padding-bottom: 10px;
   }
@@ -5585,7 +5593,7 @@
   .pc-section-picker {
     margin: 0 -28px 0 -14px;
     padding: 10px 28px 6px 14px;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid #e5e5e5;
     flex-shrink: 0;
   }
   .pc-style-clipboard {
@@ -5593,7 +5601,7 @@
     gap: 8px;
     padding: 10px 28px 6px 14px;
     margin: 0 -28px 0 -14px;
-    border-top: 1px solid #e2e8f0;
+    border-top: 1px solid #e5e5e5;
     flex-shrink: 0;
   }
   .pc-style-clip-btn {
@@ -5604,29 +5612,29 @@
     gap: 6px;
     padding: 8px 14px;
     border-radius: 5px;
-    border: 1px solid #e2e8f0;
-    background: #f8fafc;
-    color: #475569;
+    border: 1px solid #e5e5e5;
+    background: #fafafa;
+    color: #525252;
     font-family: var(--ds-font);
     font-stretch: 100%;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.01em;
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
   }
   .pc-style-clip-btn:hover {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
+    background: #f5f5f5;
+    border-color: #d4d4d4;
   }
   .pc-style-clip-btn.pc-style-clip-paste {
-    background: #334155;
-    border-color: #334155;
-    color: #f8fafc;
+    background: #404040;
+    border-color: #404040;
+    color: #fafafa;
   }
   .pc-style-clip-btn.pc-style-clip-paste:hover {
-    background: #1e293b;
-    border-color: #1e293b;
+    background: #262626;
+    border-color: #262626;
   }
   #postControls.logo-cropware-mode .pc-body {
     padding-top: 6px;
@@ -5648,9 +5656,9 @@
     margin: 4px 0 2px;
   }
   .pc-label {
-    font-size: 12.5px;
-    font-weight: 400;
-    color: #334155;
+    font-size: 13px;
+    font-weight: 300;
+    color: #404040;
     letter-spacing: 0;
   }
   .pc-style-grid {
@@ -5662,12 +5670,12 @@
     grid-column: 1 / -1;
     margin-top: 8px;
     padding-top: 8px;
-    border-top: 1px solid rgba(15, 23, 42, 0.08);
+    border-top: 1px solid rgba(23,23,23, 0.08);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #64748b;
+    color: #737373;
   }
   .pc-style-grid button {
     border: 1px solid var(--border);
@@ -5682,8 +5690,8 @@
     transition: all 140ms;
   }
   .pc-style-grid button:hover {
-    border-color: #64748b;
-    color: #475569;
+    border-color: #737373;
+    color: #525252;
   }
   .pc-style-grid button.active {
     background: var(--green);
@@ -5717,8 +5725,8 @@
   }
   .pc-logo-grid button .ph { font-size: 20px; }
   .pc-logo-grid button:hover {
-    border-color: #64748b;
-    color: #475569;
+    border-color: #737373;
+    color: #525252;
   }
   .pc-logo-grid button.active {
     background: var(--green);
@@ -5737,7 +5745,7 @@
   }
   .pc-sig-block + .pc-sig-block {
     margin: 12px -12px 0;
-    border-top: 1px solid #cbd5e1;
+    border-top: 1px solid #d4d4d4;
     padding: 12px 12px 0;
   }
   .pc-sig-label { display: none !important; }
@@ -5749,7 +5757,7 @@
     justify-content: space-between;
     gap: 8px;
     padding: 10px 12px;
-    background: #f1f5f9;
+    background: #f5f5f5;
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0;
@@ -5758,9 +5766,9 @@
     user-select: none;
     transition: background 140ms;
   }
-  .pc-sig-label:hover { background: #e2e8f0; }
+  .pc-sig-label:hover { background: #e5e5e5; }
   .pc-sig-block.open .pc-sig-label {
-    border-bottom: 1px solid #cbd5e1;
+    border-bottom: 1px solid #d4d4d4;
   }
   .pc-sig-label-left {
     display: flex;
@@ -5786,9 +5794,9 @@
   #postControls.presentation-mode .pc-sig-label { pointer-events: none; cursor: default; }
   #postControls.presentation-mode .pc-sig-chevron { display: none; }
   .pc-sig-reset {
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
-    color: #475569;
+    background: #f5f5f5;
+    border: 1px solid #d4d4d4;
+    color: #525252;
     font-family: inherit;
     font-size: 12px;
     padding: 4px 10px;
@@ -5800,9 +5808,9 @@
     gap: 4px;
   }
   .pc-sig-reset:hover {
-    background: #e2e8f0;
-    border-color: #f1f5f9;
-    color: #334155;
+    background: #e5e5e5;
+    border-color: #f5f5f5;
+    color: #404040;
   }
   .pc-sig-reset .ph { font-size: 14px; }
   /* Par de campos numéricos para deslocamento X/Y lado a lado */
@@ -5822,7 +5830,7 @@
     gap: 4px;
   }
   .pc-offset-field .pc-label {
-    font-size: 12.5px;
+    font-size: 13px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -5845,19 +5853,19 @@
     height: 24px;
     font-size: 12px;
     font-weight: 500;
-    color: #f8fafc;
+    color: #fafafa;
     font-variant-numeric: tabular-nums;
     line-height: 24px;
     padding: 0 8px;
     border: none;
     border-radius: 4px;
-    background: #475569;
+    background: #525252;
     text-align: center;
     box-sizing: border-box;
   }
   .pc-range {
     width: 100%;
-    accent-color: #475569;
+    accent-color: #525252;
     cursor: pointer;
   }
   .pc-nudge-control {
@@ -5871,8 +5879,8 @@
     height: 32px;
     border: none;
     border-radius: 4px;
-    background: #475569;
-    color: #f8fafc;
+    background: #525252;
+    color: #fafafa;
     font-family: inherit;
     font-size: 16px;
     cursor: pointer;
@@ -5882,14 +5890,14 @@
     transition: background 140ms, color 140ms;
   }
   .pc-nudge-btn:hover {
-    background: #334155;
+    background: #404040;
     color: #ffffff;
   }
   .pc-nudge-btn .ph { font-size: 16px; }
   .pc-nudge-reset {
     font-size: 15px;
-    background: #475569;
-    color: #f8fafc;
+    background: #525252;
+    color: #fafafa;
     border: none;
   }
   .pc-nudge-left { order: 1; }
@@ -5904,8 +5912,8 @@
   }
   .pc-segment-grid button {
     border: none;
-    background: #e2e8f0;
-    color: #475569;
+    background: #e5e5e5;
+    color: #525252;
     border-radius: 6px;
     min-height: 34px;
     font-family: inherit;
@@ -5919,11 +5927,11 @@
     transition: background 140ms, color 140ms;
   }
   .pc-segment-grid button:hover {
-    background: #cbd5e1;
-    color: #0f172a;
+    background: #d4d4d4;
+    color: #171717;
   }
   .pc-segment-grid button.active {
-    background: #475569;
+    background: #525252;
     color: #fff;
   }
   .pc-segment-grid button[hidden] {
@@ -5943,7 +5951,7 @@
     overflow: hidden;
     transition: border-color 140ms;
   }
-  .pc-stepper:focus-within { border-color: #64748b; }
+  .pc-stepper:focus-within { border-color: #737373; }
   .pc-stepper-btn {
     flex: 0 0 30px;
     border: none;
@@ -5961,8 +5969,8 @@
     user-select: none;
     transition: background-color 120ms;
   }
-  .pc-stepper-btn:hover { background: #f1f5f9; }
-  .pc-stepper-btn:active { background: #e2e8f0; }
+  .pc-stepper-btn:hover { background: #f5f5f5; }
+  .pc-stepper-btn:active { background: #e5e5e5; }
   .pc-stepper-btn[data-step="dec"] { border-right: 1px solid var(--border); }
   .pc-stepper-btn[data-step="inc"] { border-left: 1px solid var(--border); }
   .pc-stepper-btn:disabled { opacity: 0.35; cursor: not-allowed; background: transparent; }
@@ -6004,15 +6012,15 @@
     cursor: pointer;
     font-family: var(--ds-font);
     font-stretch: 100%;
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--text);
     transition: border-color 120ms, box-shadow 120ms;
   }
-  .pc-color-btn:hover { border-color: #64748b; }
+  .pc-color-btn:hover { border-color: #737373; }
   .pc-color-btn:focus-visible {
     outline: none;
-    border-color: #64748b;
-    box-shadow: 0 0 0 3px rgba(100,116,139,0.16);
+    border-color: #737373;
+    box-shadow: 0 0 0 3px rgba(115,115,115,0.16);
   }
   .pc-color-btn-swatch {
     width: 20px;
@@ -6026,7 +6034,7 @@
     text-align: left;
     font-family: var(--ds-font);
     font-stretch: 100%;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.01em;
     text-transform: none;
@@ -6040,12 +6048,12 @@
     width: 26px;
     height: 26px;
     border-radius: 5px;
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
+    background: #f5f5f5;
+    border: 1px solid #e5e5e5;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #334155;
+    color: #404040;
     flex-shrink: 0;
   }
   .pc-logo-icon-preview .ph {
@@ -6085,10 +6093,10 @@
     background-position: right 8px center;
     transition: border-color 120ms, box-shadow 120ms;
   }
-  .pc-select:hover { border-color: #cbd5e1; }
+  .pc-select:hover { border-color: #d4d4d4; }
   .pc-select:focus-visible {
     outline: none;
-    border-color: #94a3b8;
+    border-color: #a3a3a3;
     box-shadow: none;
   }
 
@@ -6099,7 +6107,7 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px;
-    box-shadow: 0 12px 32px rgba(15,23,42,0.18), 0 2px 8px rgba(15,23,42,0.08);
+    box-shadow: 0 12px 32px rgba(23,23,23,0.18), 0 2px 8px rgba(23,23,23,0.08);
     display: flex;
     flex-direction: column;
     gap: 9px;
@@ -6117,10 +6125,10 @@
   .pc-color-group-label {
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 300;
     letter-spacing: 0;
-    color: var(--ds-neutral-500, #737373);
+    color: #a3a3a3;
     text-transform: capitalize;
   }
   .pc-color-group-swatches {
@@ -6145,7 +6153,7 @@
     z-index: 2;
   }
   .pc-color-cell.active {
-    box-shadow: 0 0 0 2px white, 0 0 0 3px #0f172a;
+    box-shadow: 0 0 0 2px white, 0 0 0 3px #171717;
   }
   .pc-control-disabled {
     opacity: 0.42;
@@ -6162,7 +6170,7 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 10px 14px 10px 10px;
-    box-shadow: 0 12px 32px rgba(15,23,42,0.18), 0 2px 8px rgba(15,23,42,0.08);
+    box-shadow: 0 12px 32px rgba(23,23,23,0.18), 0 2px 8px rgba(23,23,23,0.08);
     display: grid;
     grid-template-columns: repeat(8, 34px);
     gap: 4px;
@@ -6175,7 +6183,7 @@
   .pc-icon-dropdown::-webkit-scrollbar { width: 8px; }
   .pc-icon-dropdown::-webkit-scrollbar-track { background: transparent; }
   .pc-icon-dropdown::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-  .pc-icon-dropdown::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  .pc-icon-dropdown::-webkit-scrollbar-thumb:hover { background: #a3a3a3; }
   .pc-icon-dropdown[hidden] { display: none; }
   .pc-icon-cell {
     width: 34px;
@@ -6192,8 +6200,8 @@
     transition: background 120ms, border-color 120ms;
   }
   .pc-icon-cell:hover {
-    background: #f1f5f9;
-    border-color: #64748b;
+    background: #f5f5f5;
+    border-color: #737373;
   }
   .pc-icon-cell.active {
     background: var(--green);
@@ -6220,17 +6228,17 @@
     gap: 10px;
     width: 100%;
     min-height: 34px;
-    padding: 8px 4px;
+    padding: 8px 0;
     border: 0;
     border-radius: 0;
     background: transparent;
     color: var(--ds-neutral-800, #262626);
     cursor: pointer;
     font-family: var(--ds-font);
-    font-stretch: var(--ds-font-stretch);
-    font-size: 14px;
-    font-weight: 400;
-    letter-spacing: 0;
+    font-stretch: 100%;
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.01em;
     line-height: 1.2;
     text-align: left;
     white-space: nowrap;
@@ -6259,10 +6267,10 @@
     width: 32px;
     height: 18px;
     border-radius: 999px;
-    background: var(--ds-neutral-200, #e5e5e5);
+    background: var(--ds-neutral-100, #f5f5f5);
     flex: 0 0 auto;
     transition: background 180ms ease, box-shadow 180ms ease;
-    box-shadow: inset 0 0 0 1px rgba(15,23,42,0.06);
+    box-shadow: inset 0 0 0 1px rgba(23,23,23,0.06);
   }
   .pc-vis-switch::after {
     content: '';
@@ -6273,11 +6281,11 @@
     height: 14px;
     border-radius: 50%;
     background: #fff;
-    box-shadow: 0 1px 3px rgba(15,23,42,0.22);
+    box-shadow: 0 1px 3px rgba(23,23,23,0.22);
     transition: left 180ms ease, background 180ms ease;
   }
   .pc-vis-btn.active .pc-vis-switch {
-    background: var(--ds-neutral-800, #262626);
+    background: var(--ds-neutral-600, #525252);
   }
   .pc-vis-btn.active .pc-vis-switch::after {
     left: 16px;
@@ -6338,14 +6346,14 @@
     border-radius: 4px;
     padding: 4px 5px 4px 4px;
   }
-  .pc-bullet-row:focus-within { border-color: #64748b; }
+  .pc-bullet-row:focus-within { border-color: #737373; }
   .pc-bullet-icon-btn {
     flex-shrink: 0;
     width: 28px;
     height: 28px;
     border-radius: 5px;
     border: 1px solid var(--border);
-    background: rgba(15,23,42,0.03);
+    background: rgba(23,23,23,0.03);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -6355,7 +6363,7 @@
     font-family: inherit;
     transition: all 140ms;
   }
-  .pc-bullet-icon-btn:hover { border-color: #64748b; color: #475569; }
+  .pc-bullet-icon-btn:hover { border-color: #737373; color: #525252; }
   .pc-bullet-icon-btn .ph { font-size: 16px; }
   .pc-bullet-text-input {
     flex: 1;
@@ -6391,7 +6399,7 @@
     gap: 5px;
     padding: 6px 9px;
     border: 1px dashed var(--border);
-    background: rgba(15,23,42,0.02);
+    background: rgba(23,23,23,0.02);
     border-radius: 4px;
     font-family: inherit;
     font-size: 13px;
@@ -6401,14 +6409,14 @@
     transition: all 140ms;
     justify-content: center;
   }
-  .pc-bullet-add:hover { border-color: #64748b; color: #475569; border-style: solid; }
+  .pc-bullet-add:hover { border-color: #737373; color: #525252; border-style: solid; }
   .pc-bullet-add:disabled { opacity: 0.4; cursor: not-allowed; }
   .pc-bullet-add .ph { font-size: 16px; }
 
   .pc-toggle {
     display: flex;
     gap: 3px;
-    background: rgba(15, 23, 42, 0.06);
+    background: rgba(23,23,23, 0.06);
     border-radius: 9px;
     padding: 3px;
   }
@@ -6434,7 +6442,7 @@
   .pc-toggle button.active {
     background: white;
     color: var(--text);
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+    box-shadow: 0 1px 3px rgba(23,23,23, 0.1);
   }
   .pc-regen {
     display: flex;
@@ -6442,12 +6450,12 @@
     gap: 6px;
   }
   .pc-regen-launch {
-    border: 1px solid #cbd5e1;
-    background: #f8fafc;
+    border: 1px solid #d4d4d4;
+    background: #fafafa;
     padding: 10px 12px;
     font-size: 14px;
     font-weight: 500;
-    color: #334155;
+    color: #404040;
     cursor: pointer;
     border-radius: 6px;
     font-family: inherit;
@@ -6460,9 +6468,9 @@
     gap: 8px;
   }
   .pc-regen-launch:hover {
-    background: #f1f5f9;
-    border-color: #94a3b8;
-    color: #0f172a;
+    background: #f5f5f5;
+    border-color: #a3a3a3;
+    color: #171717;
   }
   .pc-regen-dialog .gen-modal-box { width: 420px; }
   .pc-regen-dialog .gen-body { gap: 12px; }
@@ -6479,16 +6487,16 @@
   .pc-footer-actions .pc-regen-launch,
   .pc-footer-actions .pc-reset-btn {
     border: none;
-    background: #e2e8f0;
-    color: #475569;
+    background: #e5e5e5;
+    color: #525252;
     font-weight: 400;
     padding-top: 8px;
     padding-bottom: 8px;
   }
   .pc-footer-actions .pc-regen-launch:hover,
   .pc-footer-actions .pc-reset-btn:hover {
-    background: #cbd5e1;
-    color: #0f172a;
+    background: #d4d4d4;
+    color: #171717;
   }
   .pc-regen-row {
     display: flex;
@@ -6498,7 +6506,7 @@
   .pc-regen-btn {
     flex: 1;
     border: none;
-    background: #e2e8f0;
+    background: #e5e5e5;
     padding: 10px 12px;
     font-size: 14px;
     font-weight: 500;
@@ -6512,7 +6520,7 @@
     align-items: center;
     gap: 8px;
   }
-  .pc-regen-btn:hover:not(:disabled) { background: #cbd5e1; }
+  .pc-regen-btn:hover:not(:disabled) { background: #d4d4d4; }
   .pc-regen-btn:disabled { opacity: 0.55; cursor: wait; }
   .pc-regen-btn .ph { font-size: 16px; flex-shrink: 0; color: var(--muted); }
   /* Split: quando há regen desfazível, mostra mini-botão undo colado à direita */
@@ -6631,7 +6639,7 @@
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 11px;
-    color: #64748b;
+    color: #737373;
     letter-spacing: 0.04em;
     text-align: center;
     text-transform: uppercase;
@@ -6644,30 +6652,29 @@
     font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     line-height: 1.35;
-    color: #64748b;
+    color: #737373;
     letter-spacing: 0;
     text-transform: none;
   }
   #mrSceneEditPrompt:disabled {
-    color: #94a3b8 !important;
-    background: #f1f5f9 !important;
+    color: #a3a3a3 !important;
+    background: #f5f5f5 !important;
     cursor: not-allowed;
   }
 
   /* ────────────────────────────────────────────────────────────────
      DESIGN SYSTEM v1 (R25) — tokens globais + classes utilitárias.
      Aplicado por opt-in via .ds-btn nas refatorações graduais.
-     Fonte UI: Inter Tight (R28 — testou Geist, voltou pra Inter Tight).
+     Fonte UI: Mozilla Text (R29 — variable, humanista. Antes: Inter Tight).
      ──────────────────────────────────────────────────────────────── */
   :root {
-    --ds-font: 'Inter Tight', system-ui, sans-serif;
-    --ds-font-stretch: 90%;
+    --ds-font: 'Mozilla Text', system-ui, sans-serif;
+    --ds-font-stretch: 100%;
     --ds-font-size: 14px;
     --ds-font-weight: 500;
-    /* R28: letter-spacing levemente negativo. Inter Tight já é "tight" nativo
-       (espaçamento apertado built-in), mas -0.01em adiciona aquele aperto extra
-       que dá feel "tech moderno". Ajustável via token único. */
-    --ds-letter-spacing: -0.01em;
+    /* R29: Mozilla Text não é condensada como a Inter Tight, então o aperto
+       extra foi suavizado pra deixar a fonte respirar. Ajustável via token único. */
+    --ds-letter-spacing: 0;
 
     /* Paleta NEUTRAL (shadcn/tailwind) — R28: tema base oficial do Studio. */
     --ds-neutral-50:  #fafafa;
@@ -6695,6 +6702,14 @@
     --ds-color-secondary-border: var(--ds-neutral-200);
     --ds-color-secondary-border-hover: var(--ds-neutral-300);
     --ds-color-secondary-text: var(--ds-neutral-900);
+
+    --ds-color-ghost-text: var(--ds-neutral-700);
+    --ds-color-ghost-bg-hover: var(--ds-neutral-100);
+    --ds-color-ghost-text-hover: var(--ds-neutral-900);
+
+    --ds-color-danger: #dc2626;
+    --ds-color-danger-hover: #b91c1c;
+    --ds-color-on-danger: #ffffff;
 
     --ds-btn-h: 36px;
     --ds-btn-icon-size: 32px;
@@ -6760,6 +6775,73 @@
     padding: 0;
     flex-shrink: 0;
   }
+  /* Ghost — transparente, texto neutro; ações terciárias */
+  .ds-btn--ghost {
+    background: transparent;
+    border-color: transparent;
+    color: var(--ds-color-ghost-text);
+  }
+  .ds-btn--ghost:hover:not(:disabled) {
+    background: var(--ds-color-ghost-bg-hover);
+    color: var(--ds-color-ghost-text-hover);
+  }
+  /* Danger — ações destrutivas (excluir, remover) */
+  .ds-btn--danger {
+    background: var(--ds-color-danger);
+    border-color: var(--ds-color-danger);
+    color: var(--ds-color-on-danger);
+  }
+  .ds-btn--danger:hover:not(:disabled) {
+    background: var(--ds-color-danger-hover);
+    border-color: var(--ds-color-danger-hover);
+  }
+  /* Tamanhos — modificadores opcionais sobre qualquer variante */
+  .ds-btn--sm { height: 28px; padding: 0 10px; font-size: 13px; gap: 6px; }
+  .ds-btn--sm.ds-btn--icon { width: 28px; padding: 0; }
+  .ds-btn--lg { height: 44px; padding: 0 20px; font-size: 15px; }
+  .ds-btn--lg.ds-btn--icon { width: 44px; padding: 0; }
+  .ds-btn--block { width: 100%; }
+
+  /* ── /design — vitrine do design system (rota interna, sem login) ── */
+  .design-page { position: fixed; inset: 0; overflow-y: auto; background: var(--ds-neutral-50); z-index: 9998; }
+  .design-page-header {
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px 40px; border-bottom: 1px solid var(--ds-neutral-200);
+    background: #fff; position: sticky; top: 0; z-index: 1;
+  }
+  .design-logo img { height: 26px; display: block; }
+  .design-page-tag {
+    font-family: var(--ds-font); font-size: 13px; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--ds-neutral-500);
+    border-left: 1px solid var(--ds-neutral-300); padding-left: 16px;
+  }
+  .design-page-body { max-width: 920px; margin: 0 auto; padding: 40px 40px 80px; }
+  .design-section { margin-bottom: 44px; }
+  .design-section > h2 {
+    font-family: var(--ds-font); font-size: 13px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--ds-neutral-500);
+    margin: 0 0 4px;
+  }
+  .design-section > p {
+    font-family: var(--ds-font); font-size: 14px; color: var(--ds-neutral-500);
+    margin: 0 0 16px; max-width: 64ch;
+  }
+  .design-section code {
+    font-family: 'Space Mono', monospace; font-size: 12px;
+    background: var(--ds-neutral-100); padding: 1px 6px; border-radius: 4px; color: var(--ds-neutral-700);
+  }
+  .design-row {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+    padding: 18px 20px; background: #fff;
+    border: 1px solid var(--ds-neutral-200); border-radius: 10px;
+  }
+  .design-row + .design-row { margin-top: 12px; }
+  .design-row-label {
+    flex: 0 0 110px; font-family: var(--ds-font); font-size: 13px;
+    font-weight: 500; color: var(--ds-neutral-700);
+  }
+  .design-row.is-dark { background: var(--ds-neutral-900); border-color: var(--ds-neutral-800); }
+  .design-row.is-dark .design-row-label { color: var(--ds-neutral-300); }
   /* Mini button — altura menor, cinza claro, uppercase Pathway Extreme.
      Pra ações secundárias dentro de cards (Restaurar, Redefinir, Limpar, etc).
      Reutilizável: aplique class="ds-btn-mini" em qualquer botão. */
@@ -7135,7 +7217,7 @@
     cursor: pointer;
     font-family: var(--ds-font);
     font-stretch: 100%;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.01em;
     display: inline-flex;
@@ -7204,7 +7286,7 @@
     cursor: pointer;
     font-family: var(--ds-font);
     font-stretch: 100%;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.01em;
     display: flex;
@@ -7214,8 +7296,8 @@
     transition: background 120ms ease;
   }
   .ds-dropdown__option:hover { background: var(--ds-neutral-100); }
-  .ds-dropdown__option.active { background: #e2e8f0; color: #1e293b; }
-  .ds-dropdown__option.active:hover { background: #e2e8f0; }
+  .ds-dropdown__option.active { background: #e5e5e5; color: #262626; }
+  .ds-dropdown__option.active:hover { background: #e5e5e5; }
   .ds-dropdown__option-label {
     flex: 1 1 auto;
   }
@@ -7243,7 +7325,7 @@
     transition: var(--ds-btn-transition);
   }
   .ds-track-card:hover {
-    background: #f8fafc;
+    background: #fafafa;
     border-color: var(--ds-color-secondary-border-hover);
   }
   .ds-track-card--active {
@@ -7420,7 +7502,7 @@
     appearance: none;
     width: 100%;
     height: 4px;
-    background: rgba(15, 23, 42, 0.12);
+    background: rgba(23,23,23, 0.12);
     border-radius: 2px;
     outline: none;
     cursor: pointer;
@@ -7433,27 +7515,27 @@
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #475569;
+    background: #525252;
     border: none;
-    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.25);
+    box-shadow: 0 1px 4px rgba(23,23,23, 0.25);
     cursor: pointer;
   }
   .pc-range:hover::-webkit-slider-thumb,
   .pc-range:focus-visible::-webkit-slider-thumb {
-    background: #334155;
+    background: #404040;
   }
   .pc-range::-moz-range-thumb {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #475569;
+    background: #525252;
     border: none;
-    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.25);
+    box-shadow: 0 1px 4px rgba(23,23,23, 0.25);
     cursor: pointer;
   }
   .pc-range:hover::-moz-range-thumb,
   .pc-range:focus-visible::-moz-range-thumb {
-    background: #334155;
+    background: #404040;
   }
   .pc-label-row {
     display: flex;
@@ -7469,8 +7551,8 @@
     height: 24px;
     border: none;
     border-radius: 4px;
-    background: #475569;
-    color: #f8fafc;
+    background: #525252;
+    color: #fafafa;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -7478,7 +7560,7 @@
     transition: background 140ms, color 140ms;
   }
   .pc-range-reset:hover {
-    background: #334155;
+    background: #404040;
     color: #ffffff;
   }
   .pc-range-reset .ph {
@@ -7539,13 +7621,13 @@
   .pc-inline-stepper-val {
     flex: 1;
     min-width: 0;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 400;
     font-family: var(--ds-font);
     font-stretch: 100%;
     font-variant-numeric: tabular-nums;
     letter-spacing: 0;
-    color: #334155;
+    color: #404040;
     text-align: center;
     display: flex;
     align-items: center;
@@ -7560,7 +7642,7 @@
     font-weight: 400;
     letter-spacing: 0;
     text-transform: none;
-    color: #334155;
+    color: #404040;
   }
   #postControls .pc-range-label-outside {
     gap: 7px;
@@ -7605,7 +7687,7 @@
     transition: border-color 140ms;
     box-sizing: border-box;
   }
-  .pc-text-input:focus { border-color: #64748b; }
+  .pc-text-input:focus { border-color: #737373; }
   .pc-apply-all-btn {
     width: 100%;
     border: none;
@@ -7623,11 +7705,11 @@
     justify-content: center;
     transition: background 140ms;
   }
-  .pc-apply-all-btn:hover { background: #1e293b; }
-  .pc-apply-all-btn:disabled { background: #64748b; opacity: 1; cursor: default; }
+  .pc-apply-all-btn:hover { background: #262626; }
+  .pc-apply-all-btn:disabled { background: #737373; opacity: 1; cursor: default; }
   .pc-upload-btn {
     border: 1px solid var(--border);
-    background: rgba(15, 23, 42, 0.02);
+    background: rgba(23,23,23, 0.02);
     padding: 8px 10px;
     font-size: 13px;
     font-weight: 500;
@@ -7642,9 +7724,9 @@
     transition: all 140ms;
   }
   .pc-upload-btn:hover {
-    border-color: #64748b;
-    color: #475569;
-    background: #f8fafc;
+    border-color: #737373;
+    color: #525252;
+    background: #fafafa;
   }
   .pc-regen-prompt {
     width: 100%;
@@ -7661,8 +7743,8 @@
     transition: border-color 140ms;
     box-sizing: border-box;
   }
-  .pc-regen-prompt:focus { border-color: #64748b; }
-  .pc-regen-prompt::placeholder { color: #94a3b8; }
+  .pc-regen-prompt:focus { border-color: #737373; }
+  .pc-regen-prompt::placeholder { color: #a3a3a3; }
   .pc-undo-btn {
     border: 1px solid var(--border);
     background: white;
@@ -7689,11 +7771,11 @@
   }
   .pc-reset-btn {
     border: 1px solid var(--border);
-    background: #f1f5f9;
+    background: #f5f5f5;
     padding: 10px 14px;
     font-size: 14px;
     font-weight: 500;
-    color: #475569;
+    color: #525252;
     cursor: pointer;
     border-radius: 6px;
     font-family: inherit;
@@ -7706,9 +7788,9 @@
     gap: 8px;
   }
   .pc-reset-btn:hover {
-    background: #e2e8f0;
+    background: #e5e5e5;
     color: var(--text);
-    border-color: #94a3b8;
+    border-color: #a3a3a3;
   }
   .pc-reset-btn .ph { font-size: 18px; }
   /* ── BOTTOM BAR ── */
@@ -7801,7 +7883,7 @@
   }
   .legend-open-btn {
     border: none;
-    background: #e2e8f0;
+    background: #e5e5e5;
     color: var(--ds-text-muted);
     border-radius: var(--ds-btn-radius);
     height: var(--ds-btn-h);
@@ -7819,21 +7901,21 @@
     width: 100%;
   }
   .legend-open-btn:hover {
-    background: #cbd5e1;
-    color: #0f172a;
+    background: #d4d4d4;
+    color: #171717;
   }
   .legend-open-row .btn-download {
     width: 100%;
     padding: 8px 14px;
-    background: #e2e8f0;
-    color: #475569;
+    background: #e5e5e5;
+    color: #525252;
     font-size: 13px;
     font-weight: 400;
     border-radius: 6px;
   }
   .legend-open-row .btn-download:hover {
-    background: #cbd5e1;
-    color: #0f172a;
+    background: #d4d4d4;
+    color: #171717;
   }
   .legend-modal .gen-modal-box { width: 640px; }
   .legend-regen-badge {
@@ -7877,8 +7959,8 @@
   .regen-loading-spinner {
     width: 36px;
     height: 36px;
-    border: 3px solid #e2e8f0;
-    border-top-color: #334155;
+    border: 3px solid #e5e5e5;
+    border-top-color: #404040;
     border-radius: 50%;
     animation: regenSpin 0.85s linear infinite;
   }
@@ -7887,7 +7969,7 @@
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 14px;
-    color: #334155;
+    color: #404040;
     text-align: center;
   }
   .legend-modal .gen-body {
@@ -7918,12 +8000,12 @@
     transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
   }
   .legend-field:hover {
-    background: #f8fafc;
+    background: #fafafa;
   }
   .legend-field:focus-within {
-    border-color: #94a3b8;
-    background: #f8fafc;
-    box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.18);
+    border-color: #a3a3a3;
+    background: #fafafa;
+    box-shadow: 0 0 0 2px rgba(163,163,163, 0.18);
   }
   .legend-title-text,
   .legend-text {
@@ -7959,7 +8041,7 @@
     gap: 6px;
     min-height: 34px;
     background: transparent;
-    color: #64748b;
+    color: #737373;
     border: 0;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
@@ -7976,7 +8058,7 @@
     border-bottom: 1px solid transparent;
     transition: border-color 0.15s;
   }
-  .legend-title-copy:hover { background: transparent; color: #334155; }
+  .legend-title-copy:hover { background: transparent; color: #404040; }
   .legend-title-copy:hover span { border-bottom-color: currentColor; }
   .legend-title-copy.copied { color: var(--green); background: transparent; }
   .legend-copy-row {
@@ -7994,7 +8076,7 @@
   .legend-label {
     font-size: 12px;
     font-weight: 500;
-    color: #0f172a;
+    color: #171717;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     letter-spacing: 0;
@@ -8009,8 +8091,8 @@
     align-items: center;
     gap: 6px;
     background: #fff;
-    border: 1px solid #cbd5e1;
-    color: #64748b;
+    border: 1px solid #d4d4d4;
+    color: #737373;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 12px;
@@ -8021,7 +8103,7 @@
     transition: all 0.15s;
     letter-spacing: 0.2px;
   }
-  .copy-btn:hover { color: #334155; border-color: #94a3b8; background: #f8fafc; }
+  .copy-btn:hover { color: #404040; border-color: #a3a3a3; background: #fafafa; }
   .copy-btn.copied { color: var(--green); border-color: var(--green); }
 
 
@@ -8049,7 +8131,7 @@
   .legend-ads-label {
     font-size: 12px;
     font-weight: 500;
-    color: #334155;
+    color: #404040;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
   }
@@ -8070,7 +8152,7 @@
 
   .hashtag {
     background: rgba(74,162,118,0.12);
-    color: #475569;
+    color: #525252;
     font-size: 11px;
     font-weight: 500;
     padding: 4px 10px;
@@ -8232,8 +8314,8 @@
     gap: 8px;
   }
   .btn-cfg:hover {
-    background: #cbd5e1;
-    color: #0f172a;
+    background: #d4d4d4;
+    color: #171717;
   }
   .btn-download {
     width: 100%;
@@ -8254,7 +8336,7 @@
     justify-content: center;
     gap: 7px;
   }
-  .btn-download:hover { background: #020617; }
+  .btn-download:hover { background: #0a0a0a; }
   .btn-download:disabled { opacity: 0.5; cursor: wait; }
 
   /* ── GENERATOR MODAL ── */
@@ -8276,7 +8358,7 @@
     overflow-y: auto;
     box-shadow: 0 32px 80px rgba(0,0,0,0.22);
     scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 transparent;
+    scrollbar-color: #d4d4d4 transparent;
   }
   .gen-modal-box::-webkit-scrollbar {
     width: 8px;
@@ -8286,13 +8368,13 @@
     margin: 18px 0;
   }
   .gen-modal-box::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: #d4d4d4;
     border-radius: 5px;
     border: 2px solid #fff;
     background-clip: padding-box;
   }
   .gen-modal-box::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: #a3a3a3;
     border: 2px solid #fff;
     background-clip: padding-box;
   }
@@ -8352,17 +8434,17 @@
     font-weight: 400;
     letter-spacing: 0;
     text-transform: none;
-    color: #334155;
+    color: #404040;
   }
   .gen-group input, .gen-group textarea, .gen-group select {
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 14px;
     padding: 10px 14px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #e5e5e5;
     border-radius: var(--ds-btn-radius);
-    color: #0f172a;
-    background: #f8fafc;
+    color: #171717;
+    background: #fafafa;
     outline: none;
     transition: border-color 0.15s, background 0.15s;
     resize: none;
@@ -8376,7 +8458,7 @@
     padding-right: 36px;
   }
   .gen-group input:focus, .gen-group textarea:focus, .gen-group select:focus {
-    border-color: #94a3b8;
+    border-color: #a3a3a3;
     background: #fff;
   }
   .gen-group small {
@@ -8434,7 +8516,7 @@
     padding: 2px 0;
     background: transparent;
     border: none;
-    color: #475569;
+    color: #525252;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 13px;
@@ -8442,7 +8524,7 @@
     transition: color 140ms;
   }
   .gen-link-add:hover {
-    color: #0f172a;
+    color: #171717;
     text-decoration: underline;
   }
   .gen-link-add:disabled {
@@ -8458,16 +8540,16 @@
     padding: 7px 12px;
     border: none;
     border-radius: 6px;
-    background: #e2e8f0;
-    color: #475569;
+    background: #e5e5e5;
+    color: #525252;
     cursor: pointer;
     transition: background 140ms, color 140ms;
     text-align: center;
     white-space: nowrap;
   }
-  .gen-chip:hover { background: #cbd5e1; color: #0f172a; }
+  .gen-chip:hover { background: #d4d4d4; color: #171717; }
   .gen-chip.active {
-    background: #1e293b;
+    background: #262626;
     color: #fff;
   }
   .news-tools {
@@ -8506,7 +8588,7 @@
     padding-right: 2px;
   }
   .news-card {
-    border: 1px solid #e2e8f0;
+    border: 1px solid #e5e5e5;
     border-radius: 8px;
     background: #fff;
     padding: 12px;
@@ -8525,7 +8607,7 @@
   .news-card-title {
     font-size: 14px;
     font-weight: 600;
-    color: #0f172a;
+    color: #171717;
     line-height: 1.25;
   }
   .news-card-meta {
@@ -8533,32 +8615,32 @@
     flex-wrap: wrap;
     gap: 6px;
     font-size: 11px;
-    color: #64748b;
+    color: #737373;
   }
   .news-card-pill {
-    border: 1px solid #e2e8f0;
+    border: 1px solid #e5e5e5;
     border-radius: 999px;
     padding: 3px 8px;
-    background: #f8fafc;
+    background: #fafafa;
   }
   .news-card-insight {
     font-size: 13px;
     line-height: 1.38;
-    color: #475569;
+    color: #525252;
   }
   .news-card-action {
     justify-self: start;
     border: none;
     border-radius: 7px;
-    background: #e2e8f0;
-    color: #334155;
+    background: #e5e5e5;
+    color: #404040;
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     padding: 7px 10px;
     cursor: pointer;
   }
-  .news-card-action:hover { background: #cbd5e1; color: #0f172a; }
+  .news-card-action:hover { background: #d4d4d4; color: #171717; }
   .news-empty {
     font-size: 13px;
     color: #aeb8c4;
@@ -8567,24 +8649,24 @@
   }
   .news-info {
     font-size: 13px;
-    color: #475569;
+    color: #525252;
     line-height: 1.45;
     padding: 12px 14px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: #fafafa;
+    border: 1px solid #e5e5e5;
     border-radius: 8px;
   }
   .gen-dropzone {
-    border: 1px solid #e2e8f0;
+    border: 1px solid #e5e5e5;
     border-radius: 4px;
-    background: #f8fafc;
+    background: #fafafa;
     cursor: pointer;
     transition: background 0.15s;
     overflow: hidden;
     position: relative;
     min-height: 80px;
   }
-  .gen-dropzone:hover { background: #f1f5f9; }
+  .gen-dropzone:hover { background: #f5f5f5; }
   .gen-dropzone-inner {
     padding: 26px;
     text-align: center;
@@ -8613,13 +8695,13 @@
     height: 140px;
     object-fit: cover;
     border-radius: 9px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #e5e5e5;
   }
   .gen-status {
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 13px;
-    color: #64748b;
+    color: #737373;
     min-height: 18px;
     line-height: 1.4;
   }
@@ -8632,16 +8714,18 @@
   }
   /* Botões de ação dos dialogs (Cancelar / Gerar) — dividem largura igualmente,
      altura padrão do .btn da página, primário em slate sem ícone. */
-  .gen-actions .btn {
+  .gen-actions .btn,
+  .gen-actions .ds-btn {
     flex: 1;
     justify-content: center;
   }
-  .gen-actions .btn-primary {
-    background: var(--ds-color-primary);
-    color: var(--ds-color-on-primary);
+  /* genBtn migrado pra .ds-btn--primary; preserva o disabled cinza-cheio (não
+     opacity) usado durante "Aprofundando a notícia…". */
+  .gen-actions .ds-btn--primary:disabled {
+    background: var(--ds-color-primary-disabled);
+    border-color: var(--ds-color-primary-disabled);
+    opacity: 1;
   }
-  .gen-actions .btn-primary:hover { background: var(--ds-color-primary-hover); }
-  .gen-actions .btn-primary:disabled { background: var(--ds-color-primary-disabled); opacity: 1; }
   /* Toast de erro de persistência (Supabase / localStorage) */
   .persist-toast {
     position: fixed;
@@ -8762,7 +8846,7 @@
   .btn-actions-menu-trigger {
     font-stretch: 100%;
     font-weight: 400;
-    font-size: 12.5px;
+    font-size: 13px;
     letter-spacing: 0.01em;
   }
 
@@ -8859,7 +8943,7 @@
   .pc-upload-btn:hover {
     background: var(--btn-light-bg-hover);
     border-color: var(--btn-light-border-hover);
-    color: #334155;
+    color: #404040;
   }
 
   .cw-btn--danger {
@@ -8877,18 +8961,18 @@
     height: auto;
     padding: 5px 10px;
     background: #ffffff;
-    color: #64748b;
+    color: #737373;
     border: 1px solid var(--ds-neutral-200);
     border-radius: 5px;
     font-stretch: 100%;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.01em;
   }
   .app-logout-btn:hover {
     background: var(--ds-neutral-50);
     border-color: var(--ds-neutral-300);
-    color: #334155;
+    color: #404040;
   }
 
   .pc-segment-grid button.active {
@@ -8954,7 +9038,7 @@
     outline: none;
     transition: border-color 0.15s;
   }
-  .studio-mode-select:focus { border-color: #f1f5f9; }
+  .studio-mode-select:focus { border-color: #f5f5f5; }
   .studio-mode-select optgroup { font-weight: 600; color: var(--text); }
   .studio-mode-select option { font-weight: 400; color: var(--text); }
   .studio-mode-select {
@@ -8974,7 +9058,7 @@
     color: var(--ds-neutral-900);
     font-family: var(--ds-font);
     font-stretch: 100%;
-    font-size: var(--ds-font-size);
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.01em;
     line-height: 1.2;
@@ -9041,7 +9125,7 @@
     color: var(--ds-neutral-900);
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
-    font-size: var(--ds-font-size);
+    font-size: 13px;
     font-weight: var(--ds-font-weight);
     line-height: 1.2;
     cursor: pointer;
@@ -9104,7 +9188,7 @@
   #studioModeTypeSelect + .cw-select-picker .cw-select-trigger {
     background: #fff;
     font-stretch: 100%;
-    font-size: 12.5px;
+    font-size: 13px;
     letter-spacing: 0.01em;
   }
   #studioModeCategorySelect + .cw-select-picker .cw-select-trigger:hover,
@@ -9116,7 +9200,7 @@
   /* Coluna de ajustes: selects em 12,5px e fundo branco (inclusive hover/aberto) */
   #postControls .cw-select-trigger {
     background: #fff;
-    font-size: 12.5px;
+    font-size: 13px;
   }
   #postControls .cw-select-trigger:hover,
   #postControls .cw-select-picker.open .cw-select-trigger {
@@ -9173,7 +9257,7 @@
     color: var(--ds-neutral-800);
     font-family: var(--ds-font);
     font-stretch: 100%;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 400;
     letter-spacing: 0.01em;
     line-height: 1.2;
@@ -9190,8 +9274,8 @@
     color: var(--ds-neutral-900);
   }
   .cw-select-option.active {
-    background: #e2e8f0;
-    color: #1e293b;
+    background: #e5e5e5;
+    color: #262626;
   }
   .cw-select-option .ph {
     font-size: 15px;
@@ -9206,13 +9290,13 @@
     appearance: none !important;
     -webkit-appearance: none !important;
     padding: 8px 34px 8px 11px !important;
-    border: 1px solid rgba(203, 213, 225, 0.82) !important;
+    border: 1px solid rgba(212,212,212, 0.82) !important;
     border-radius: 4px !important;
     background-color: #fff !important;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") !important;
     background-repeat: no-repeat !important;
     background-position: right 10px center !important;
-    color: #0f172a !important;
+    color: #171717 !important;
     font-family: var(--ds-font) !important;
     font-stretch: var(--ds-font-stretch) !important;
     font-size: 14px !important;
@@ -9224,7 +9308,7 @@
     transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
   }
   body select:hover {
-    border-color: rgba(148, 163, 184, 0.78) !important;
+    border-color: rgba(163,163,163, 0.78) !important;
     background-color: #fdfefe !important;
   }
   body select:focus,
@@ -9234,11 +9318,11 @@
     background-color: #fff !important;
   }
   body select optgroup {
-    color: #0f172a;
+    color: #171717;
     font-weight: 500;
   }
   body select option {
-    color: #0f172a;
+    color: #171717;
     font-weight: 300;
   }
   body :where(input, textarea, select, .pc-text-input, .pc-regen-prompt, .login-input):focus,
@@ -9262,7 +9346,7 @@
     gap: 8px;
     width: 100%;
     padding: 10px 12px;
-    background: #e2e8f0;
+    background: #e5e5e5;
     border-top: 1px solid var(--border);
     flex-shrink: 0;
     box-sizing: border-box;
@@ -9272,12 +9356,12 @@
   .slide-nav-sep {
     width: 1px;
     height: 22px;
-    background: #cbd5e1;
+    background: #d4d4d4;
     margin: 0 2px;
     flex-shrink: 0;
   }
   .slide-nav-btn {
-    background: #cbd5e1;
+    background: #d4d4d4;
     border: none;
     border-radius: 6px;
     width: 36px;
@@ -9286,13 +9370,13 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #334155;
+    color: #404040;
     font-size: 18px;
     transition: background 0.15s, color 0.15s;
   }
   .slide-nav-btn:hover:not(:disabled) {
     background: #bfccd9;
-    color: #0f172a;
+    color: #171717;
   }
   .slide-nav-btn:disabled { opacity: 0.4; cursor: default; }
   /* Botão "Mover" com texto + seta — largura automática, gap entre ícone/texto */
@@ -9316,28 +9400,28 @@
     width: 18px;
     height: 4px;
     border-radius: 999px;
-    background: #94a3b8;
+    background: #a3a3a3;
     cursor: pointer;
     transition: background 0.15s, width 0.15s;
   }
-  .slide-nav-dot:hover { background: #64748b; }
+  .slide-nav-dot:hover { background: #737373; }
   .slide-nav-dot.active {
     width: 28px;
-    background: #334155;
+    background: #404040;
   }
   .slide-nav-label {
     font-family: var(--ds-font);
     font-stretch: var(--ds-font-stretch);
     font-size: 13px;
     font-weight: 500;
-    color: #64748b;
+    color: #737373;
     margin: 0;
     min-width: 0;
     text-align: center;
   }
   .slide-nav.disabled { opacity: 0.45; pointer-events: none; }
-  .slide-nav-reorder { color: #94a3b8; }
-  .slide-nav-add { color: #94a3b8; }
+  .slide-nav-reorder { color: #a3a3a3; }
+  .slide-nav-add { color: #a3a3a3; }
 
   /* ── CAROUSEL BADGE (sidebar) ── */
   .thumb-badge {
@@ -9379,16 +9463,8 @@
       flex-shrink: 0;
     }
     .app-logo {
-      width: 118px;
-      height: 18px;
-    }
-    /* STUDIO em versão compacta no mobile (em vez de esconder) */
-    .app-studio-label {
-      font-size: 14px;
-      letter-spacing: 0.10em;
-    }
-    .app-header-divider {
-      height: 18px;
+      width: auto;
+      height: 26px;
     }
     /* Email ocupa muito espaço — esconde no mobile */
     .app-user-email { display: none; }
@@ -9437,7 +9513,7 @@
       gap: 10px;
     }
     #sidebarAside .thumb-item.active {
-      border-left-color: #475569;
+      border-left-color: #525252;
       border-bottom-color: transparent;
     }
     #sidebarAside .thumb-info { width: auto; flex: 1; min-width: 0; }
@@ -10226,16 +10302,15 @@
 <!-- LOGIN SCREEN -->
 <div id="loginScreen" class="login-screen">
   <div class="login-card">
-    <span class="login-logo" role="img" aria-label="Cropware"></span>
-    <div class="login-divider" aria-hidden="true"></div>
-    <h1 class="login-title">Studio</h1>
+    <h1 class="login-title"><img class="login-logo" src="02-studio-logo-svg.svg" alt="Cropware Studio"></h1>
+    <p class="login-byline">by CROPWARE</p>
     <form id="loginForm" onsubmit="handleLogin(event)">
       <input type="email" id="loginEmail" class="login-input" placeholder="Email" required autocomplete="email">
       <input type="password" id="loginPassword" class="login-input" placeholder="Senha" required autocomplete="current-password">
-      <button type="submit" class="login-btn" id="loginBtn">
+      <button type="submit" class="ds-btn ds-btn--primary ds-btn--block" id="loginBtn">
         <i class="ph ph-sign-in sz-18"></i>Entrar
       </button>
-      <button type="button" class="login-manage-btn" id="loginManageBtn">
+      <button type="button" class="ds-btn ds-btn--secondary ds-btn--block" id="loginManageBtn">
         <i class="ph ph-gear-six sz-18"></i>Gestão
       </button>
     </form>
@@ -10243,13 +10318,104 @@
   </div>
 </div>
 
+<!-- DESIGN SYSTEM — rota /design (vitrine de botões; ativada sem login) -->
+<div id="designPage" class="design-page" style="display:none">
+  <header class="design-page-header">
+    <span class="design-logo"><img src="/02-studio-logo-svg.svg" alt="Cropware Studio"></span>
+    <span class="design-page-tag">Design System · Botões</span>
+  </header>
+  <div class="design-page-body">
+
+    <section class="design-section">
+      <h2>Variantes</h2>
+      <p>Sistema único <code>.ds-btn</code> + modificador. Passe o mouse para ver o estado <em>hover</em>; o último de cada linha está <em>disabled</em>.</p>
+      <div class="design-row">
+        <span class="design-row-label">Primary</span>
+        <button class="ds-btn ds-btn--primary">Gerar Editorial</button>
+        <button class="ds-btn ds-btn--primary"><i class="ph ph-sparkle"></i>Com Ícone</button>
+        <button class="ds-btn ds-btn--primary" disabled>Desabilitado</button>
+      </div>
+      <div class="design-row">
+        <span class="design-row-label">Secondary</span>
+        <button class="ds-btn ds-btn--secondary">Cancelar</button>
+        <button class="ds-btn ds-btn--secondary"><i class="ph ph-gear-six"></i>Gestão</button>
+        <button class="ds-btn ds-btn--secondary" disabled>Desabilitado</button>
+      </div>
+      <div class="design-row">
+        <span class="design-row-label">Ghost</span>
+        <button class="ds-btn ds-btn--ghost">Redefinir</button>
+        <button class="ds-btn ds-btn--ghost"><i class="ph ph-arrow-clockwise"></i>Resetar</button>
+        <button class="ds-btn ds-btn--ghost" disabled>Desabilitado</button>
+      </div>
+      <div class="design-row">
+        <span class="design-row-label">Danger</span>
+        <button class="ds-btn ds-btn--danger">Excluir</button>
+        <button class="ds-btn ds-btn--danger"><i class="ph ph-trash"></i>Remover</button>
+        <button class="ds-btn ds-btn--danger" disabled>Desabilitado</button>
+      </div>
+    </section>
+
+    <section class="design-section">
+      <h2>Tamanhos</h2>
+      <p>Modificadores <code>--sm</code> / padrão / <code>--lg</code>, combináveis com qualquer variante.</p>
+      <div class="design-row">
+        <span class="design-row-label">Primary</span>
+        <button class="ds-btn ds-btn--primary ds-btn--sm">Pequeno</button>
+        <button class="ds-btn ds-btn--primary">Padrão</button>
+        <button class="ds-btn ds-btn--primary ds-btn--lg">Grande</button>
+      </div>
+    </section>
+
+    <section class="design-section">
+      <h2>Ícone</h2>
+      <p>Quadrado, só ícone — <code>--icon</code> (+ tamanho opcional).</p>
+      <div class="design-row">
+        <span class="design-row-label">Icon</span>
+        <button class="ds-btn ds-btn--secondary ds-btn--icon ds-btn--sm" aria-label="Adicionar"><i class="ph ph-plus"></i></button>
+        <button class="ds-btn ds-btn--secondary ds-btn--icon" aria-label="Adicionar"><i class="ph ph-plus"></i></button>
+        <button class="ds-btn ds-btn--primary ds-btn--icon ds-btn--lg" aria-label="Adicionar"><i class="ph ph-plus"></i></button>
+      </div>
+    </section>
+
+    <section class="design-section">
+      <h2>Toggle / Segmento</h2>
+      <p>Item selecionado usa <code>--toggle-active</code>; os demais ficam <code>--secondary</code>.</p>
+      <div class="design-row">
+        <span class="design-row-label">Segmento</span>
+        <button class="ds-btn ds-btn--toggle-active">Claro</button>
+        <button class="ds-btn ds-btn--secondary">Escuro</button>
+      </div>
+    </section>
+
+    <section class="design-section">
+      <h2>Mini</h2>
+      <p>Ações miúdas dentro de cards — <code>.ds-btn-mini</code>.</p>
+      <div class="design-row">
+        <span class="design-row-label">Mini</span>
+        <button class="ds-btn-mini">Restaurar</button>
+        <button class="ds-btn-mini">Limpar</button>
+      </div>
+    </section>
+
+    <section class="design-section">
+      <h2>Em fundo escuro</h2>
+      <p>Primary e secondary sobre superfície escura (toolbars, overlays).</p>
+      <div class="design-row is-dark">
+        <span class="design-row-label">Sobre dark</span>
+        <button class="ds-btn ds-btn--primary">Primary</button>
+        <button class="ds-btn ds-btn--secondary">Secondary</button>
+        <button class="ds-btn ds-btn--ghost" style="color:var(--ds-neutral-300)">Ghost</button>
+      </div>
+    </section>
+
+  </div>
+</div>
+
 <!-- MAIN -->
 <main style="display:none">
   <div class="app-header">
     <div class="app-header-left">
-      <span class="app-logo" role="img" aria-label="Cropware"></span>
-      <span class="app-header-divider" aria-hidden="true"></span>
-      <span class="app-studio-label">STUDIO</span>
+      <img class="app-logo" src="02-studio-logo-svg.svg" alt="Cropware Studio">
     </div>
     <div class="app-header-right">
       <span class="app-user-email" id="userEmail"></span>
@@ -10370,7 +10536,7 @@
           <div class="pc-label">Cor de Destaque</div>
           <button class="pc-color-btn" id="pcColorBtn" type="button" data-target="accent">
             <span class="pc-color-btn-swatch" id="pcColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcColorBtnLabel">Selecionar cor</span>
+            <span class="pc-color-btn-label" id="pcColorBtnLabel">Selecionar Cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -10397,7 +10563,7 @@
           </div>
         </div>
         <div class="pc-sub" id="pcSubTextScalesReset" style="display:none">
-          <button class="pc-reset-btn" id="pcTextScalesResetBtn" title="Restaurar escalas padrão do modelo"><i class="ph ph-arrow-clockwise"></i>Resetar escalas</button>
+          <button class="pc-reset-btn" id="pcTextScalesResetBtn" title="Restaurar escalas padrão do modelo"><i class="ph ph-arrow-clockwise"></i>Resetar Escalas</button>
         </div>
         <div class="pc-sub" id="pcSubTextPosition">
           <div class="pc-label" id="pcTextPositionLabel">Posição do Texto</div>
@@ -10478,7 +10644,7 @@
           <div class="pc-label">Tonalização dos Cards</div>
           <button class="pc-color-btn" id="pcSignalCardColorBtn" type="button" data-target="signalCard">
             <span class="pc-color-btn-swatch" id="pcSignalCardColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcSignalCardColorBtnLabel">Selecionar cor</span>
+            <span class="pc-color-btn-label" id="pcSignalCardColorBtnLabel">Selecionar Cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -10500,7 +10666,7 @@
           <div class="pc-label">Tonalização dos Ícones</div>
           <button class="pc-color-btn" id="pcSignalIconColorBtn" type="button" data-target="signalIcon">
             <span class="pc-color-btn-swatch" id="pcSignalIconColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcSignalIconColorBtnLabel">Selecionar cor</span>
+            <span class="pc-color-btn-label" id="pcSignalIconColorBtnLabel">Selecionar Cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -10524,7 +10690,7 @@
           <div class="pc-label">Cor do Fundo</div>
           <button class="pc-color-btn" id="pcLogoCropwareBgColorBtn" type="button" data-target="logoCropwareBg">
             <span class="pc-color-btn-swatch" id="pcLogoCropwareBgColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcLogoCropwareBgColorBtnLabel">Selecionar cor</span>
+            <span class="pc-color-btn-label" id="pcLogoCropwareBgColorBtnLabel">Selecionar Cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -10540,7 +10706,7 @@
           <div class="pc-label">Cor do Ícone</div>
           <button class="pc-color-btn" id="pcLogoCropwareIconColorBtn" type="button" data-target="logoCropwareIcon">
             <span class="pc-color-btn-swatch" id="pcLogoCropwareIconColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcLogoCropwareIconColorBtnLabel">Selecionar cor</span>
+            <span class="pc-color-btn-label" id="pcLogoCropwareIconColorBtnLabel">Selecionar Cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -10851,7 +11017,7 @@
           <div class="pc-label" id="pcOverlayColorLabel">Cor do Overlay</div>
           <button class="pc-color-btn" id="pcOverlayColorBtn" type="button" data-target="overlay">
             <span class="pc-color-btn-swatch" id="pcOverlayColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcOverlayColorBtnLabel">Selecionar cor</span>
+            <span class="pc-color-btn-label" id="pcOverlayColorBtnLabel">Selecionar Cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -10928,7 +11094,7 @@
           <div class="pc-label">Tonalização do Card</div>
           <button class="pc-color-btn" id="pcDashCardColorBtn" type="button" data-target="dashCard">
             <span class="pc-color-btn-swatch" id="pcDashCardColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcDashCardColorBtnLabel">Selecionar cor</span>
+            <span class="pc-color-btn-label" id="pcDashCardColorBtnLabel">Selecionar Cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -10975,7 +11141,7 @@
           <div class="pc-label">Cor do Bloco</div>
           <button class="pc-color-btn" id="pcRevistaBlockColorBtn" type="button" data-target="revistaBlock">
             <span class="pc-color-btn-swatch" id="pcRevistaBlockColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcRevistaBlockColorBtnLabel">Selecionar cor</span>
+            <span class="pc-color-btn-label" id="pcRevistaBlockColorBtnLabel">Selecionar Cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -11016,7 +11182,7 @@
           <div class="pc-label">Cor do Bloco</div>
           <button class="pc-color-btn" id="pcSplitBlockColorBtn" type="button" data-target="splitBlock">
             <span class="pc-color-btn-swatch" id="pcSplitBlockColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcSplitBlockColorBtnLabel">Selecionar cor</span>
+            <span class="pc-color-btn-label" id="pcSplitBlockColorBtnLabel">Selecionar Cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -11051,7 +11217,7 @@
           <div class="pc-label">Cor do Bloco</div>
           <button class="pc-color-btn" id="pcColunaBlockColorBtn" type="button" data-target="columnBlock">
             <span class="pc-color-btn-swatch" id="pcColunaBlockColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcColunaBlockColorBtnLabel">Selecionar cor</span>
+            <span class="pc-color-btn-label" id="pcColunaBlockColorBtnLabel">Selecionar Cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -11084,7 +11250,7 @@
           <div class="pc-label">Cor do Vidro</div>
           <button class="pc-color-btn" id="pcFrameColorBtn" type="button" data-target="frameColor">
             <span class="pc-color-btn-swatch" id="pcFrameColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcFrameColorBtnLabel">Selecionar cor</span>
+            <span class="pc-color-btn-label" id="pcFrameColorBtnLabel">Selecionar Cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -11242,7 +11408,7 @@
           <div class="pc-label">Cor do Cabeçalho</div>
           <button class="pc-color-btn" id="pcMockupBarColorBtn" type="button" data-target="mockupBar">
             <span class="pc-color-btn-swatch" id="pcMockupBarColorBtnSwatch"></span>
-            <span class="pc-color-btn-label" id="pcMockupBarColorBtnLabel">Selecionar cor</span>
+            <span class="pc-color-btn-label" id="pcMockupBarColorBtnLabel">Selecionar Cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -11262,7 +11428,7 @@
           <div class="pc-label">Imagem de Fundo</div>
           <div class="mr-adjust-image-row">
             <button type="button" class="pc-apply-all-btn" id="mrReelImageBtn">
-              <i class="ph ph-upload-simple"></i> Enviar imagem
+              <i class="ph ph-upload-simple"></i> Enviar Imagem
             </button>
             <button type="button" class="pc-apply-all-btn mr-adjust-image-clear" id="mrReelImageClear" title="Remover imagem">
               <i class="ph ph-x"></i>
@@ -11283,7 +11449,7 @@
           <div class="pc-label">Cor do Overlay</div>
           <button class="pc-color-btn" id="mrReelOverlayColorBtn" type="button">
             <span class="pc-color-btn-swatch" id="mrReelOverlayColorSwatch"></span>
-            <span class="pc-color-btn-label" id="mrReelOverlayColorLabel">Selecionar cor</span>
+            <span class="pc-color-btn-label" id="mrReelOverlayColorLabel">Selecionar Cor</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
         </div>
@@ -11434,6 +11600,8 @@ let current = 0;
 // ── MODE & MULTI-PLATFORM STATE ─────────────────────────────
 // Modes: 'post' | 'carousel' | 'news-post' | 'instagram-ads-post' | 'linkedin-post' | 'linkedin-carousel' | 'linkedin-pessoal-post' | 'linkedin-pessoal-carousel'
 let activeMode = 'post';
+// Plataforma ativa do ecossistema (Cropware, gerentia.app, …) — eixo acima de Categoria→Tipo.
+let activePlatform = (() => { try { return localStorage.getItem('studio_active_platform') || 'cropware'; } catch (_) { return 'cropware'; } })();
 
 // Instagram state
 let carousels = [];
@@ -12058,31 +12226,8 @@ function switchMode(mode) {
   buildDots();
   ensureLogoCropwareDefaults();
 
-  const items = getModeItems();
-  if (items.length > 0) {
-    // Ao trocar de modo, abre o post mais recente desse modo (mesma lógica do boot).
-    let newestIdx = 0;
-    let newestTs = -Infinity;
-    items.forEach((p, i) => {
-      const ts = getPostCreatedAt(p);
-      if (ts > newestTs) { newestTs = ts; newestIdx = i; }
-    });
-    if (isCarouselMode()) {
-      setModeCurrentIdx(newestIdx);
-      currentSlide = 0;
-      featureCurrentSlide = 0;
-      sinalCurrentSlide = 0;
-      weatherCarouselCurrentSlide = 0;
-      linkedinCurrentSlide = 0;
-      linkedinPessoalCurrentSlide = 0;
-      goTo(newestIdx);
-    } else {
-      setModeCurrentIdx(newestIdx);
-      goTo(newestIdx);
-    }
-  } else {
-    updateEmptyStateVisibility();
-  }
+  // Ao trocar de modo, abre o post mais recente da PLATAFORMA ATIVA nesse modo.
+  selectNewestOrEmptyForActivePlatform();
   updateSlideNav();
   updateCanvasHeader();
   scalePost();
@@ -12138,6 +12283,45 @@ const STUDIO_MODE_GROUPS = [
   }
 ];
 
+// Plataformas do ecossistema. Por ora, gerentia.app duplica os grupos do Cropware
+// (mesma estrutura Categoria→Tipo); o polimento por plataforma vem depois.
+const STUDIO_PLATFORMS = [
+  { id: 'cropware', label: 'Cropware',     groups: STUDIO_MODE_GROUPS },
+  { id: 'gerentia', label: 'gerentia.app', groups: STUDIO_MODE_GROUPS },
+];
+function getActivePlatform() {
+  return STUDIO_PLATFORMS.find(p => p.id === activePlatform) || STUDIO_PLATFORMS[0];
+}
+// Plataforma de um post (posts antigos sem o campo contam como 'cropware').
+function postPlatform(p) { return (p && p.platform) || 'cropware'; }
+function getActivePlatformItemCount() {
+  return getModeItems().filter(p => postPlatform(p) === activePlatform).length;
+}
+// Índice (no array completo do modo) do post mais recente da plataforma ativa; -1 se não houver.
+function newestPlatformIdx(items) {
+  let best = -1, bestTs = -Infinity;
+  (items || getModeItems()).forEach((p, i) => {
+    if (postPlatform(p) !== activePlatform) return;
+    const ts = getPostCreatedAt(p);
+    if (ts > bestTs) { bestTs = ts; best = i; }
+  });
+  return best;
+}
+// Seleciona o post mais recente da plataforma ativa no modo atual, ou mostra estado vazio.
+function selectNewestOrEmptyForActivePlatform() {
+  const idx = newestPlatformIdx(getModeItems());
+  if (idx >= 0) {
+    if (isCarouselMode()) {
+      currentSlide = 0; featureCurrentSlide = 0; sinalCurrentSlide = 0;
+      weatherCarouselCurrentSlide = 0; linkedinCurrentSlide = 0; linkedinPessoalCurrentSlide = 0;
+    }
+    setModeCurrentIdx(idx);
+    goTo(idx);
+  } else {
+    updateEmptyStateVisibility();
+  }
+}
+
 function getStudioModeGroupForMode(mode) {
   return STUDIO_MODE_GROUPS.find(group => group.modes.includes(mode)) || STUDIO_MODE_GROUPS[0];
 }
@@ -12172,9 +12356,41 @@ function createStudioModeTypeSelect() {
   return select;
 }
 
+function createStudioModePlatformSelect() {
+  const select = document.createElement('select');
+  select.className = 'pc-select';
+  select.id = 'studioModePlatformSelect';
+  STUDIO_PLATFORMS.forEach(pf => {
+    const option = document.createElement('option');
+    option.value = pf.id;
+    option.textContent = pf.label;
+    select.appendChild(option);
+  });
+  select.value = activePlatform;
+  select.addEventListener('change', () => switchPlatform(select.value));
+  return select;
+}
+
+function switchPlatform(id) {
+  const pf = STUDIO_PLATFORMS.find(p => p.id === id) || STUDIO_PLATFORMS[0];
+  if (pf.id === activePlatform) return;
+  activePlatform = pf.id;
+  try { localStorage.setItem('studio_active_platform', activePlatform); } catch (_) {}
+  buildSidebar();
+  selectNewestOrEmptyForActivePlatform();
+  updateSlideNav();
+  updateCanvasHeader();
+  scalePost();
+}
+
 function syncStudioModeSelectors(mode) {
   const active = mode || activeMode;
   const group = getStudioModeGroupForMode(active);
+  const platformSelect = document.getElementById('studioModePlatformSelect');
+  if (platformSelect) {
+    platformSelect.value = activePlatform;
+    if (platformSelect.dataset.cwSelectEnhanced === 'true') refreshCustomSelect(platformSelect);
+  }
   const categorySelect = document.getElementById('studioModeCategorySelect');
   const typeSelect = document.getElementById('studioModeTypeSelect');
   if (categorySelect) categorySelect.value = group.id;
@@ -12480,20 +12696,24 @@ function buildSidebar() {
     modeWrap.insertAdjacentHTML('beforeend', `
       <div class="studio-mode-field"></div>
       <div class="studio-mode-field"></div>
+      <div class="studio-mode-field"></div>
     `);
-    modeWrap.children[1].appendChild(createStudioModeCategorySelect());
-    modeWrap.children[2].appendChild(createStudioModeTypeSelect());
+    modeWrap.children[1].appendChild(createStudioModePlatformSelect());
+    modeWrap.children[2].appendChild(createStudioModeCategorySelect());
+    modeWrap.children[3].appendChild(createStudioModeTypeSelect());
     aside.insertBefore(modeWrap, asideList);
     syncStudioModeSelectors(activeMode);
     enhanceCustomSelects(modeWrap);
   }
 
-  if (items.length > 0) {
-    // Renderiza do mais recente para o mais antigo. Ordena por createdAt desc, mas
-    // preserva o índice original `i` (usado por goTo / deletePost).
-    const ordered = items
-      .map((p, i) => ({ p, i, ts: getPostCreatedAt(p) }))
-      .sort((a, b) => b.ts - a.ts);
+  // Renderiza do mais recente para o mais antigo. Ordena por createdAt desc, mas
+  // preserva o índice original `i` (usado por goTo / deletePost) e filtra pela
+  // plataforma ativa (cada plataforma tem seus próprios posts).
+  const ordered = items
+    .map((p, i) => ({ p, i, ts: getPostCreatedAt(p) }))
+    .filter(x => postPlatform(x.p) === activePlatform)
+    .sort((a, b) => b.ts - a.ts);
+  if (ordered.length > 0) {
     ordered.forEach(({ p, i, ts }) => {
       const item = document.createElement('div');
       item.className = 'thumb-item' + (i === currentIdx ? ' active' : '');
@@ -12677,11 +12897,10 @@ function buildDots() {
 // Atualiza a UI quando a lista do modo atual está vazia.
 // Chamado sempre que a lista de posts muda (delete, load, generate).
 function updateEmptyStateVisibility() {
-  const items = getModeItems();
   const legendLabel = document.querySelector('.legend-label');
   if (legendLabel) legendLabel.textContent = getSidePanelLabel();
   updateCanvasHeader();
-  const empty = items.length === 0;
+  const empty = getActivePlatformItemCount() === 0;
   const emptyEl = document.getElementById('emptyState');
   const scaler  = document.getElementById('postScaler');
   if (emptyEl) {
@@ -12733,7 +12952,9 @@ function deletePost(idx) {
   legendsArr.splice(idx, 1);
   buildSidebar();
   buildDots();
-  if (items.length === 0) {
+  // Re-seleciona o post mais recente da plataforma ativa (ou estado vazio) —
+  // evita cair num post de outra plataforma após o delete.
+  if (newestPlatformIdx(items) < 0) {
     setModeCurrentIdx(0);
     if (isMotionReelItem && typeof window.unmountMotionReelPlayer === 'function') {
       window.unmountMotionReelPlayer();
@@ -12741,7 +12962,7 @@ function deletePost(idx) {
     updateEmptyStateVisibility();
     if (isMotionReelItem) updateMotionReelVisibility();
   } else {
-    goTo(Math.min(idx, items.length - 1));
+    selectNewestOrEmptyForActivePlatform();
     if (isMotionReelItem) updateMotionReelVisibility();
   }
   if (isMotionReelItem) saveMotionReelsToLocal();
@@ -13561,6 +13782,8 @@ async function loadSession() {
     if (data && data.length) {
       data.forEach(row => {
         const postData = row.post_data;
+        // Posts já existentes (sem o campo) pertencem ao Cropware.
+        if (postData && !postData.platform) postData.platform = 'cropware';
         if (postData && postData.id) {
           _savedPostR2Keys.set(postData.id, collectR2ObjectKeys(postData));
         }
@@ -13593,6 +13816,7 @@ async function loadSession() {
     const session = JSON.parse(raw);
     if (!session || !Array.isArray(session.posts)) return;
     session.posts.forEach((postData, i) => {
+      if (postData && !postData.platform) postData.platform = 'cropware';
       renderGeneratedPost(postData, (session.legends && session.legends[i]) || '');
     });
   } catch(e2) { console.error('loadSession legacy fallback error:', e2); }
@@ -13957,6 +14181,8 @@ function applyWeatherForecastVisualDefaults(postData, { force = false, chartType
 // Constrói o DOM de um post gerado e o adiciona a posts[]/legends[].
 // Usado tanto por generatePost() (novo post) quanto loadSession() (rehidratação).
 function renderGeneratedPost(postData, legendText) {
+  // Plataforma: posts novos nascem na plataforma ativa (loadSession já tagueia os existentes).
+  if (!postData.platform) postData.platform = activePlatform;
   // Default values para posts novos/antigos sem essas props
   // Migra accents antigos (#4aa276, #3b9f73) pro novo brand #7AB87E
   if (!postData.accent || ['#4aa276', '#3b9f73', '#7ab87e'].includes(postData.accent.toLowerCase())) {
@@ -14045,9 +14271,17 @@ function renderGeneratedPost(postData, legendText) {
       // Overlay: defaults uma única vez; depois o usuário manda nos controles.
       if (!postData._liEditDefaultsApplied) {
         postData.overlayColor     = '#0d2410';
-        postData.overlayOpacity   = 68;
+        postData.overlayOpacity   = 50;
         postData.overlayDirection = 'bottom';
         postData._liEditDefaultsApplied = true;
+      }
+      // R30: migra editoriais antigos com o overlay pesado (68%) pro novo default
+      // mais leve, uma única vez — sem tocar em quem já customizou.
+      if (!postData._liEditOverlayV2) {
+        if (postData.overlayColor === '#0d2410' && postData.overlayOpacity === 68) {
+          postData.overlayOpacity = 50;
+        }
+        postData._liEditOverlayV2 = true;
       }
       // Site: chamada pra editoria Radar (site futuro), fonte menor. Setado uma vez.
       if (!postData._liEditSiteApplied) {
@@ -14116,6 +14350,13 @@ function renderGeneratedPost(postData, legendText) {
       postData.signalPhotoTextureBlendMode = 'overlay';
       postData.signalPhotoTextureInvert    = false;
       postData._flatITextureInit = true;
+    }
+    // Site: default próprio do Flat I — uma vez só; respeita customização do usuário.
+    if (!postData._flatISiteInit) {
+      if (!postData.siteText || postData.siteText === 'cropware.app') {
+        postData.siteText = 'saiba mais em cropware.com.br/conheça';
+      }
+      postData._flatISiteInit = true;
     }
   }
   // Highlights (signal) — accent verde claro, overlay sem cor, logo desativado, intensity 100.
@@ -14242,6 +14483,7 @@ function renderGeneratedPost(postData, legendText) {
 
 // Constrói o DOM de um carrossel (múltiplos slides) e adiciona a carousels[]/carouselLegends[].
 function renderGeneratedCarousel(carouselData, legendText) {
+  if (!carouselData.platform) carouselData.platform = activePlatform;
   // Migração: closing slides do carrossel notícia que herdaram "FECHAMENTO" pegam o kicker do cover.
   if (carouselData.type === 'news-carousel-post' && Array.isArray(carouselData.slides)) {
     const cover = carouselData.slides.find(s => s.slideRole === 'cover');
@@ -14407,6 +14649,7 @@ function renderGeneratedCarousel(carouselData, legendText) {
 // ── RENDER PRESENTATION ────────────────────────────────────
 function renderGeneratedPresentation(presentationData, legendText) {
   if (!presentationData || !presentationData.slides) return;
+  if (!presentationData.platform) presentationData.platform = activePlatform;
 
   presentationData.slides.forEach((slideData, i) => {
     // Defaults — modelo visual sem texto (logo + site + layout)
@@ -14531,7 +14774,7 @@ function normalizeHexColorValue(color) {
 
 function getColorChoiceLabel(color) {
   const normalized = normalizeHexColorValue(color);
-  if (!normalized || normalized === 'transparent' || normalized === 'none') return 'Selecionar cor';
+  if (!normalized || normalized === 'transparent' || normalized === 'none') return 'Selecionar Cor';
   const match = COLOR_CHOICE_INDEX.get(normalized);
   return match ? `${match.familyLabel} ${match.shade}` : 'Personalizada';
 }
@@ -14575,7 +14818,7 @@ function setColorBtnSwatch(swEl, lbEl, color) {
       swEl.style.display = 'inline-flex';
       swEl.style.alignItems = 'center';
       swEl.style.justifyContent = 'center';
-      swEl.innerHTML = '<i class="ph ph-prohibit" style="color:#94a3b8;font-size:14px;line-height:1"></i>';
+      swEl.innerHTML = '<i class="ph ph-prohibit" style="color:#a3a3a3;font-size:14px;line-height:1"></i>';
     } else {
       swEl.style.background = color;
       swEl.innerHTML = '';
@@ -14748,6 +14991,7 @@ function renderClassicStyle(postData) {
   const sep  = `<div class="separator-short"></div>`;
   // Flat II: texto único sem complement — hookHTML já contém a chamada completa.
   const isFlatII = postData.type === 'instagram-flat-ii-post';
+  const isInstagramFlatI = postData.type === 'instagram-flat-post';
   const hookEl = showHook
     ? `<div class="hook" contenteditable="true" spellcheck="false">${hookHTML}</div>`
     : '';
@@ -14810,42 +15054,177 @@ function renderClassicStyle(postData) {
     ${postData.type === 'instagram-ads-post' ? renderAdsSkeletonMockup(postData) : ''}
     ${postData.type === 'instagram-ads-post' ? renderAdsInsight(postData) : ''}
     ${postData.type === 'instagram-ads-post' ? renderAdsFlow() : ''}
-    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
-    ${renderSiteText(postData)}
+    ${isInstagramFlatI ? renderFlatBrandRow(postData)
+      : (postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : '')}
+    ${isInstagramFlatI ? '' : renderSiteText(postData)}
     ${renderAppStoreBadge(postData)}
     ${bottomDetail}
   `;
+}
+
+// Flat I: trava de marca no rodapé esquerdo — logo + divisor "|" + site.
+function renderFlatBrandRow(postData) {
+  const showLogo = postData.logoEnabled !== false;
+  const showSite = postData.siteEnabled !== false;
+  if (!showLogo && !showSite) return '';
+  const logoEl = showLogo ? `<img class="flat-brand-logo" src="logo-cropware-pb-final.svg" alt="Cropware">` : '';
+  const siteEl = showSite ? `<span class="flat-brand-site">${escapeHTML(postData.siteText || 'cropware.app')}</span>` : '';
+  const divEl  = (showLogo && showSite) ? `<span class="flat-brand-divider" aria-hidden="true">|</span>` : '';
+  return `<div class="flat-brand">${logoEl}${divEl}${siteEl}</div>`;
 }
 
 // Repertorio de funcionalidades do mockup do Ads I. Cada funcao tem:
 //  screen(): bloco skeleton (abstrato) que aparece na TELA do celular
 //  zoom():   janelinha detalhada (numeros/icones reais-ish) que SALTA sobre a funcao
 // A IA escolhe o par (mockupFns) e qual vai no zoom (mockupZoom) conforme o tema.
+// ── Templates de janelinha (zoom) ────────────────────────────────────
+// Cada funcionalidade tem `variants` (conjuntos de valores) e renderiza via
+// um template parametrizado pela variante `v`. Assim a MESMA funcionalidade
+// aparece com números diferentes entre posts (seed por post.id no render).
+const _amkBars = (arr) => (arr || [44,60,52,78,92,70]).map((h,i,a) => `<span style="height:${h}%;${i===a.length-2?'background:var(--post-accent);':''}"></span>`).join('');
+const _amkZChart = (c, label, v) => `<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">${label}</span><span class="amk-zoom-badge">${v.badge||''}</span></div><div class="amk-zoom-value">${v.value}<span>${v.unit||''}</span></div><div class="amk-zoom-chart">${_amkBars(v.bars)}</div></div>`;
+const _amkZGauge = (c, label, v) => { const lw=[42,34,48]; const rows=(v.rows||[82,64,90]).map((w,i,a)=>`<div class="amk-zr"><span class="amk-bar" style="width:${lw[i]||40}%;height:9px;"></span><span class="amk-gauge"><i style="width:${w}%;${i===a.length-1?'background:var(--post-accent);':''}"></i></span></div>`).join(''); return `<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">${label}</span><span class="amk-zoom-badge">${v.badge||''}</span></div><div class="amk-zoom-value">${v.value}<span>${v.unit||''}</span></div><div class="amk-zoom-rows">${rows}</div></div>`; };
+const _amkZFore = (c, label, v) => `<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">${label}</span><i class="ph-fill ${v.icon||'ph-cloud-sun'} amk-zoom-ico"></i></div><div class="amk-zoom-value">${v.value}<span>${v.unit||''}</span></div><div class="amk-zoom-fore">${(v.fore||['ph-sun','ph-cloud-sun','ph-cloud-rain']).map(ic=>`<div><i class="ph-fill ${ic}"></i><span class="amk-bar"></span></div>`).join('')}</div></div>`;
+const _amkZEvents = (c, label, v) => `<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">${label}</span><span class="amk-zoom-badge">${v.badge||'Hoje'}</span></div><div class="amk-zoom-events">${(v.times||['08:00','11:30','15:00']).map((t,i)=>`<div class="amk-ev"><span class="amk-ev-time">${t}</span><span class="amk-ev-bar" style="${i===1?'background:var(--post-accent);opacity:.22;':''}"></span></div>`).join('')}</div></div>`;
+const _amkZTasks = (c, label, v) => { const done=v.done!=null?v.done:2; return `<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">${label}</span><span class="amk-zoom-badge">${v.badge||''}</span></div><div class="amk-zoom-tasks">${[70,55,62].map((w,i)=>`<div class="amk-task"><span class="amk-check"${i<done?' style="background:var(--post-accent);"':''}>${i<done?'<i class="ph-fill ph-check"></i>':''}</span><span class="amk-bar" style="width:${w}%;height:9px;"></span></div>`).join('')}</div></div>`; };
+// Skeletons (tela do celular) genéricos reaproveitáveis por ícone.
+const _amkScrChart = (ic) => `<div class="amk-fn"><div class="amk-fn-h"><i class="ph-fill ${ic} amk-fn-ic"></i><span class="amk-bar amk-bar-s"></span></div><div class="amk-fn-chart"><span style="height:40%;"></span><span style="height:64%;"></span><span style="height:50%;"></span><span style="height:86%;background:var(--post-accent);"></span><span style="height:58%;"></span></div></div>`;
+const _amkScrGauge = (ic) => `<div class="amk-fn"><div class="amk-fn-h"><i class="ph-fill ${ic} amk-fn-ic"></i><span class="amk-bar amk-bar-s"></span></div><div class="amk-zr"><span class="amk-bar" style="width:36%;height:9px;"></span><span class="amk-gauge"><i style="width:82%;background:var(--post-accent);"></i></span></div><div class="amk-zr"><span class="amk-bar" style="width:30%;height:9px;"></span><span class="amk-gauge"><i style="width:60%;"></i></span></div><div class="amk-zr"><span class="amk-bar" style="width:42%;height:9px;"></span><span class="amk-gauge"><i style="width:90%;"></i></span></div></div>`;
+
+// Repertorio de funcionalidades do mockup do Ads I. screen()=skeleton na tela;
+// zoom(c,v)=janelinha detalhada (usa a variante v). variants=conjuntos de valores.
 const ADS_MOCKUP_FUNCTIONS = {
   graph: {
     label: 'Produtividade',
     screen: () => `<div class="amk-fn"><div class="amk-fn-h"><i class="ph-fill ph-chart-bar amk-fn-ic"></i><span class="amk-bar amk-bar-s"></span></div><div class="amk-fn-chart"><span style="height:40%;"></span><span style="height:64%;"></span><span style="height:50%;"></span><span style="height:86%;background:var(--post-accent);"></span><span style="height:58%;"></span></div></div>`,
-    zoom: (c, cap) =>`<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">Produtividade</span><span class="amk-zoom-badge">&#9650; 14%</span></div><div class="amk-zoom-value">72<span>sc/ha</span></div><div class="amk-zoom-chart"><span style="height:44%;"></span><span style="height:60%;"></span><span style="height:52%;"></span><span style="height:78%;"></span><span style="height:92%;background:var(--post-accent);"></span><span style="height:70%;"></span></div></div>`,
+    zoom: (c, v) => _amkZChart(c, 'Produtividade', v),
+    variants: [
+      { value: '72', unit: 'sc/ha', badge: '▲ 14%', bars: [44,60,52,78,92,70] },
+      { value: '58', unit: 'sc/ha', badge: '▲ 9%',  bars: [50,58,66,72,88,62] },
+      { value: '81', unit: 'sc/ha', badge: '▲ 18%', bars: [40,56,64,74,96,68] },
+      { value: '64', unit: 'sc/ha', badge: '▲ 11%', bars: [46,54,60,70,90,66] },
+    ],
   },
   evaluation: {
     label: 'Avaliação',
     screen: () => `<div class="amk-fn"><div class="amk-fn-h"><i class="ph-fill ph-star amk-fn-ic"></i><span class="amk-bar amk-bar-s"></span></div><div class="amk-zr"><span class="amk-bar" style="width:36%;height:9px;"></span><span class="amk-gauge"><i style="width:82%;background:var(--post-accent);"></i></span></div><div class="amk-zr"><span class="amk-bar" style="width:30%;height:9px;"></span><span class="amk-gauge"><i style="width:60%;"></i></span></div><div class="amk-zr"><span class="amk-bar" style="width:42%;height:9px;"></span><span class="amk-gauge"><i style="width:90%;"></i></span></div></div>`,
-    zoom: (c, cap) =>`<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">Avaliação</span><span class="amk-zoom-badge">Nota</span></div><div class="amk-zoom-value">8,7<span>/10</span></div><div class="amk-zoom-rows"><div class="amk-zr"><span class="amk-bar" style="width:42%;height:9px;"></span><span class="amk-gauge"><i style="width:82%;"></i></span></div><div class="amk-zr"><span class="amk-bar" style="width:34%;height:9px;"></span><span class="amk-gauge"><i style="width:64%;"></i></span></div><div class="amk-zr"><span class="amk-bar" style="width:48%;height:9px;"></span><span class="amk-gauge"><i style="width:90%;background:var(--post-accent);"></i></span></div></div></div>`,
+    zoom: (c, v) => _amkZGauge(c, 'Avaliação', v),
+    variants: [
+      { value: '8,7', unit: '/10', badge: 'Nota', rows: [82,64,90] },
+      { value: '9,2', unit: '/10', badge: 'Nota', rows: [88,76,94] },
+      { value: '7,9', unit: '/10', badge: 'Nota', rows: [74,60,84] },
+      { value: '8,4', unit: '/10', badge: 'Nota', rows: [80,68,88] },
+    ],
   },
   weather: {
     label: 'Clima',
     screen: () => `<div class="amk-fn"><div class="amk-fn-h"><i class="ph-fill ph-cloud-sun amk-fn-ic"></i><span class="amk-bar amk-bar-s"></span></div><div class="amk-fn-fore"><div><i class="ph-fill ph-sun"></i><span class="amk-bar"></span></div><div><i class="ph-fill ph-cloud-sun"></i><span class="amk-bar"></span></div><div><i class="ph-fill ph-cloud-rain"></i><span class="amk-bar"></span></div><div><i class="ph-fill ph-cloud"></i><span class="amk-bar"></span></div></div></div>`,
-    zoom: (c, cap) =>`<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">Clima</span><i class="ph-fill ph-cloud-sun amk-zoom-ico"></i></div><div class="amk-zoom-value">29<span>°C</span></div><div class="amk-zoom-fore"><div><i class="ph-fill ph-sun"></i><span class="amk-bar"></span></div><div><i class="ph-fill ph-cloud-sun"></i><span class="amk-bar"></span></div><div><i class="ph-fill ph-cloud-rain"></i><span class="amk-bar"></span></div></div></div>`,
+    zoom: (c, v) => _amkZFore(c, 'Clima', v),
+    variants: [
+      { value: '29', unit: '°C', icon: 'ph-cloud-sun', fore: ['ph-sun','ph-cloud-sun','ph-cloud-rain'] },
+      { value: '24', unit: '°C', icon: 'ph-cloud-rain', fore: ['ph-cloud-sun','ph-cloud-rain','ph-cloud'] },
+      { value: '31', unit: '°C', icon: 'ph-sun', fore: ['ph-sun','ph-sun','ph-cloud-sun'] },
+      { value: '27', unit: '°C', icon: 'ph-cloud', fore: ['ph-cloud-sun','ph-cloud','ph-cloud-rain'] },
+    ],
   },
   agenda: {
     label: 'Agenda',
     screen: () => `<div class="amk-fn"><div class="amk-fn-h"><i class="ph-fill ph-calendar-dots amk-fn-ic"></i><span class="amk-bar amk-bar-s"></span></div><div class="amk-fn-week"><span></span><span></span><span class="on"></span><span></span><span></span></div><div class="amk-fn-row"><span class="amk-bar" style="width:28%;height:9px;"></span><span class="amk-bar" style="width:48%;height:9px;"></span></div></div>`,
-    zoom: (c, cap) =>`<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">Agenda</span><span class="amk-zoom-badge">Hoje</span></div><div class="amk-zoom-events"><div class="amk-ev"><span class="amk-ev-time">08:00</span><span class="amk-ev-bar"></span></div><div class="amk-ev"><span class="amk-ev-time">11:30</span><span class="amk-ev-bar" style="background:var(--post-accent);opacity:.22;"></span></div><div class="amk-ev"><span class="amk-ev-time">15:00</span><span class="amk-ev-bar"></span></div></div></div>`,
+    zoom: (c, v) => _amkZEvents(c, 'Agenda', v),
+    variants: [
+      { badge: 'Hoje', times: ['08:00','11:30','15:00'] },
+      { badge: 'Hoje', times: ['07:30','10:00','14:30'] },
+      { badge: 'Hoje', times: ['09:00','13:00','16:30'] },
+      { badge: 'Amanhã', times: ['08:15','12:00','17:00'] },
+    ],
   },
   activity: {
     label: 'Atividade',
     screen: () => `<div class="amk-fn"><div class="amk-fn-h"><i class="ph-fill ph-check-circle amk-fn-ic"></i><span class="amk-bar amk-bar-s"></span></div><div class="amk-fn-row"><span class="amk-ckbox on"><i class="ph-fill ph-check"></i></span><span class="amk-bar" style="width:64%;height:9px;"></span></div><div class="amk-fn-row"><span class="amk-ckbox on"><i class="ph-fill ph-check"></i></span><span class="amk-bar" style="width:52%;height:9px;"></span></div><div class="amk-fn-row"><span class="amk-ckbox"></span><span class="amk-bar" style="width:58%;height:9px;"></span></div></div>`,
-    zoom: (c, cap) =>`<div class="amk-zoom ${c}"><div class="amk-zoom-head"><span class="amk-zoom-eyebrow">Atividade</span><span class="amk-zoom-badge">3/4</span></div><div class="amk-zoom-tasks"><div class="amk-task"><span class="amk-check" style="background:var(--post-accent);"><i class="ph-fill ph-check"></i></span><span class="amk-bar" style="width:70%;height:9px;"></span></div><div class="amk-task"><span class="amk-check" style="background:var(--post-accent);"><i class="ph-fill ph-check"></i></span><span class="amk-bar" style="width:55%;height:9px;"></span></div><div class="amk-task"><span class="amk-check"></span><span class="amk-bar" style="width:62%;height:9px;"></span></div></div></div>`,
+    zoom: (c, v) => _amkZTasks(c, 'Atividade', v),
+    variants: [
+      { badge: '3/4', done: 2 },
+      { badge: '5/6', done: 3 },
+      { badge: '2/3', done: 1 },
+      { badge: '4/5', done: 3 },
+    ],
+  },
+  ndvi: {
+    label: 'NDVI',
+    screen: () => _amkScrChart('ph-leaf'),
+    zoom: (c, v) => _amkZChart(c, 'Vigor (NDVI)', v),
+    variants: [
+      { value: '0,78', unit: '', badge: 'Vigor', bars: [52,60,68,74,86,72] },
+      { value: '0,82', unit: '', badge: 'Vigor', bars: [56,64,70,78,90,76] },
+      { value: '0,71', unit: '', badge: 'Vigor', bars: [48,56,62,70,82,66] },
+      { value: '0,85', unit: '', badge: 'Vigor', bars: [60,68,74,80,92,78] },
+    ],
+  },
+  moisture: {
+    label: 'Umidade',
+    screen: () => _amkScrGauge('ph-drop'),
+    zoom: (c, v) => _amkZGauge(c, 'Umidade do solo', v),
+    variants: [
+      { value: '62', unit: '%', badge: 'Solo', rows: [62,48,71] },
+      { value: '48', unit: '%', badge: 'Solo', rows: [48,40,55] },
+      { value: '71', unit: '%', badge: 'Solo', rows: [71,60,78] },
+      { value: '55', unit: '%', badge: 'Solo', rows: [55,46,64] },
+    ],
+  },
+  rainfall: {
+    label: 'Chuva',
+    screen: () => _amkScrChart('ph-cloud-rain'),
+    zoom: (c, v) => _amkZChart(c, 'Chuva', v),
+    variants: [
+      { value: '18', unit: 'mm', badge: '48h', bars: [20,35,50,42,28,15] },
+      { value: '42', unit: 'mm', badge: '48h', bars: [30,55,70,60,48,38] },
+      { value: '7',  unit: 'mm', badge: '48h', bars: [10,18,25,20,14,8] },
+      { value: '24', unit: 'mm', badge: '7 dias', bars: [16,28,40,34,22,12] },
+    ],
+  },
+  area: {
+    label: 'Área',
+    screen: () => _amkScrChart('ph-map-trifold'),
+    zoom: (c, v) => _amkZChart(c, 'Área monitorada', v),
+    variants: [
+      { value: '1.240', unit: 'ha', badge: '▲ 8%', bars: [40,52,60,72,84,68] },
+      { value: '860',   unit: 'ha', badge: '▲ 5%', bars: [36,48,56,66,78,62] },
+      { value: '2.100', unit: 'ha', badge: '▲ 12%', bars: [44,58,66,76,90,72] },
+      { value: '540',   unit: 'ha', badge: '▲ 3%', bars: [30,42,50,60,72,56] },
+    ],
+  },
+  stand: {
+    label: 'Estande',
+    screen: () => _amkScrGauge('ph-plant'),
+    zoom: (c, v) => _amkZGauge(c, 'Estande', v),
+    variants: [
+      { value: '312', unit: 'mil/ha', badge: 'Meta', rows: [88,72,94] },
+      { value: '286', unit: 'mil/ha', badge: 'Meta', rows: [80,66,86] },
+      { value: '298', unit: 'mil/ha', badge: 'Meta', rows: [84,70,90] },
+      { value: '274', unit: 'mil/ha', badge: 'Meta', rows: [76,62,82] },
+    ],
+  },
+  alerts: {
+    label: 'Alertas',
+    screen: () => _amkScrGauge('ph-warning'),
+    zoom: (c, v) => _amkZTasks(c, 'Alertas', v),
+    variants: [
+      { badge: '3 novos', done: 0 },
+      { badge: '1 novo',  done: 0 },
+      { badge: '2 novos', done: 0 },
+      { badge: '5 novos', done: 0 },
+    ],
+  },
+  visits: {
+    label: 'Visitas',
+    screen: () => _amkScrChart('ph-map-pin'),
+    zoom: (c, v) => _amkZChart(c, 'Visitas', v),
+    variants: [
+      { value: '12', unit: 'sem', badge: '▲ 4', bars: [40,52,48,66,80,72] },
+      { value: '8',  unit: 'sem', badge: '▲ 2', bars: [34,46,42,58,72,64] },
+      { value: '15', unit: 'sem', badge: '▲ 6', bars: [44,56,52,70,86,76] },
+      { value: '6',  unit: 'sem', badge: '▲ 1', bars: [28,40,38,52,66,58] },
+    ],
   },
 };
 const ADS_MOCKUP_FN_KEYS = Object.keys(ADS_MOCKUP_FUNCTIONS);
@@ -14856,6 +15235,13 @@ const ADS_MOCKUP_DEFAULT_CAPS = {
   weather: 'Sem chuva por 48h',
   agenda: 'Rota do dia pronta',
   activity: '75% concluído',
+  ndvi: 'Vigor estável',
+  moisture: 'Solo na faixa ideal',
+  rainfall: 'Chuva acumulada',
+  area: 'Cobertura crescente',
+  stand: 'Estande na meta',
+  alerts: 'Pendências do dia',
+  visits: 'Rota cumprida',
 };
 
 // Insight (frase de efeito, 1 linha) num card glassmorphism + logo, canto inferior esquerdo.
@@ -14864,7 +15250,7 @@ function renderAdsInsight(postData) {
     <div class="ads-insight-card">Desenvolvimento de mercado, com inteligência de campo</div>
     <div class="ads-brand">
       <div class="ads-insight-logo"></div>
-      <div class="ads-brand-site">Saiba mais em cropware.app</div>
+      <div class="ads-brand-site">Saiba mais em cropware.com.br/conheça</div>
     </div>`;
 }
 
@@ -14880,11 +15266,35 @@ function renderAdsFlow() {
 
 // Mockup do Ads I: celular de frente, tela = skeleton de 2 funcoes (mockupFns),
 // + janelinha zoom (mockupZoom) detalhada saltando sobre uma delas.
+// PRNG seeded por string (FNV-1a hash + mulberry32). Mesmo post.id → mesma
+// sequência (estável no post), mas posts diferentes → janelinhas diferentes.
+function _amkSeed(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function _amkRng(seed) {
+  let s = seed >>> 0;
+  return () => { s = (s + 0x6D2B79F5) >>> 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+
 function renderAdsSkeletonMockup(postData) {
-  const fns = (Array.isArray(postData.mockupFns) ? postData.mockupFns.filter(k => ADS_MOCKUP_FUNCTIONS[k]) : []);
-  const pair = fns.length === 2 ? fns : ['graph', 'evaluation'];
+  const rng = _amkRng(_amkSeed(String(postData.id || '') + '|' + (postData.mockupSeed || '')));
+  const pick = (arr) => arr[Math.floor(rng() * arr.length)];
+  // Par de funcionalidades: respeita mockupFns (2 válidas) se a IA setou; senão
+  // sorteia 2 DISTINTAS do pool — sem mais cair sempre em graph+evaluation.
+  let pair = (Array.isArray(postData.mockupFns) ? postData.mockupFns.filter(k => ADS_MOCKUP_FUNCTIONS[k]) : []);
+  if (pair.length !== 2 || pair[0] === pair[1]) {
+    const keys = ADS_MOCKUP_FN_KEYS.slice();
+    const a = keys.splice(Math.floor(rng() * keys.length), 1)[0];
+    const b = keys.splice(Math.floor(rng() * keys.length), 1)[0];
+    pair = [a, b];
+  }
   const f1 = ADS_MOCKUP_FUNCTIONS[pair[0]];
   const f2 = ADS_MOCKUP_FUNCTIONS[pair[1]];
+  // Variação de valores: sorteia uma variante por janelinha (seed por post).
+  const v1 = pick(f1.variants || [{}]);
+  const v2 = pick(f2.variants || [{}]);
   return `
     <div class="ads-mockup">
       <div class="ads-mockup-phone">
@@ -14895,8 +15305,8 @@ function renderAdsSkeletonMockup(postData) {
           ${f2.screen()}
         </div>
       </div>
-      ${f1.zoom('amk-zoom-1')}
-      ${f2.zoom('amk-zoom-2')}
+      ${f1.zoom('amk-zoom-1', v1)}
+      ${f2.zoom('amk-zoom-2', v2)}
     </div>`;
 }
 
@@ -17257,7 +17667,7 @@ function copyPostStyle() {
   if (copyBtn) {
     const orig = copyBtn.innerHTML;
     copyBtn.innerHTML = 'Copiado';
-    copyBtn.style.color = '#64748b';
+    copyBtn.style.color = '#737373';
     setTimeout(() => { copyBtn.innerHTML = orig; copyBtn.style.color = ''; }, 1500);
   }
 }
@@ -18722,7 +19132,7 @@ function initPostControls() {
       post.siteText = siteTextInput.value;
       const postEl = document.getElementById(post.id);
       if (postEl) {
-        const siteEl = postEl.querySelector('.post-site');
+        const siteEl = postEl.querySelector('.post-site, .flat-brand-site');
         if (siteEl) siteEl.textContent = post.siteText;
       }
     });
@@ -19602,6 +20012,23 @@ function _resetPostStyleSingle(post) {
     post.sitePos     = 'br';
     post.logoPos     = 'br';
     post.logoEnabled = false;
+    // LinkedIn Editorial: restaura o MODELO do estilo (não os genéricos do reset).
+    // Overlay verde/base, site "radar", textura ads — e limpa as flags pra a
+    // normalização (renderGeneratedPost) manter esses defaults.
+    if (isLinkedinEditorialType(post.type)) {
+      post.overlayColor     = '#0d2410';
+      post.overlayOpacity   = 50;
+      post.overlayDirection = 'bottom';
+      post.siteText         = 'saiba mais em cropware.com.br/radar';
+      post.siteScale        = 0.62;
+      post.signalPhotoTexture          = 'assets/ads-textures/linhas-claras-3.webp';
+      post.signalPhotoTextureIntensity = 80;
+      post.signalPhotoTextureBlendMode = 'overlay';
+      post.signalPhotoTextureInvert    = true;
+      delete post._liEditDefaultsApplied;
+      delete post._liEditSiteApplied;
+      delete post._liEditOverlayV2;
+    }
   }
   // Classic (modelo padrão / feed) — accent verde brand.
   if (isClassicStyle(post.style) || !post.style) {
@@ -20954,6 +21381,13 @@ function inlineLogosForCapture(rootEl, doc, dims) {
 }
 
 window.addEventListener('load', async () => {
+  // ── Rota /design — vitrine do design system (sem login/auth) ──
+  if (location.pathname.replace(/\/+$/, '') === '/design') {
+    document.getElementById('loginScreen')?.classList.add('hidden');
+    const mainEl = document.querySelector('main'); if (mainEl) mainEl.style.display = 'none';
+    const dp = document.getElementById('designPage'); if (dp) dp.style.display = 'block';
+    return;
+  }
   // ── Auth check ──
   let session = null;
   try {
@@ -21035,21 +21469,8 @@ async function bootStudio() {
   buildSidebar();
   buildDots();
   ensureLogoCropwareDefaults();
-  const items = getModeItems();
-  if (items.length > 0) {
-    // No boot, abre o post mais recente (maior createdAt). Posts antigos sem createdAt
-    // caem no fallback do helper (timestamp extraído do id) e ainda assim ordenam corretamente.
-    let newestIdx = 0;
-    let newestTs = -Infinity;
-    items.forEach((p, i) => {
-      const ts = getPostCreatedAt(p);
-      if (ts > newestTs) { newestTs = ts; newestIdx = i; }
-    });
-    setModeCurrentIdx(newestIdx);
-    goTo(newestIdx);
-  } else {
-    updateEmptyStateVisibility();
-  }
+  // No boot, abre o post mais recente da PLATAFORMA ATIVA no modo atual (ou estado vazio).
+  selectNewestOrEmptyForActivePlatform();
   updateSlideNav();
   scalePost();
 }
@@ -21827,7 +22248,7 @@ function updateLegend(idx) {
     btn.classList.remove('copied');
   });
   const copyAdsAllBtn = document.getElementById('copyAdsAllBtn');
-  if (copyAdsAllBtn) copyAdsAllBtn.innerHTML = '<i class="ph ph-copy sz-16"></i><span>Copiar tudo</span>';
+  if (copyAdsAllBtn) copyAdsAllBtn.innerHTML = '<i class="ph ph-copy sz-16"></i><span>Copiar Tudo</span>';
   // Painel de título de carrossel — só aparece em modos LinkedIn (tradicional/pessoal) e Tendência.
   const titlePanel = document.getElementById('legendTitlePanel');
   const titleText  = document.getElementById('legendTitleText');
@@ -21951,7 +22372,7 @@ function copyInstagramAdsAll() {
   navigator.clipboard.writeText(full).then(() => {
     setLegendCopyButtonCopied(
       document.getElementById('copyAdsAllBtn'),
-      '<i class="ph ph-copy sz-16"></i><span>Copiar tudo</span>'
+      '<i class="ph ph-copy sz-16"></i><span>Copiar Tudo</span>'
     );
   });
 }
@@ -22462,9 +22883,12 @@ function wireEditorialSearchOnce() {
 async function runEditorialNewsSearch() {
   const btn = document.getElementById('genEditorialSearchBtn');
   const statusEl = document.getElementById('genEditorialSearchStatus');
+  const genBtn = document.getElementById('genBtn');
   const theme = (document.getElementById('genTheme').value || '').trim();
   const refLinks = parseReferenceLinks(getGenLinkValues().join('\n'));
   if (btn) btn.disabled = true;
+  // Bloqueia "Gerar Editorial" enquanto busca as notícias
+  if (genBtn) genBtn.disabled = true;
   if (statusEl) statusEl.textContent = 'Varrendo notícias recentes do agro...';
   try {
     editorialNewsCandidates = await listNewsCandidates(theme, refLinks);
@@ -22478,6 +22902,7 @@ async function runEditorialNewsSearch() {
     if (statusEl) statusEl.textContent = 'Erro na busca: ' + (e.message || e);
   } finally {
     if (btn) btn.disabled = false;
+    if (genBtn) genBtn.disabled = false;
   }
 }
 
@@ -22503,7 +22928,10 @@ async function selectEditorialCandidate(idx) {
   if (!c) return;
   const statusEl = document.getElementById('genEditorialSearchStatus');
   const wrap = document.getElementById('genEditorialCandidates');
+  const genBtn = document.getElementById('genBtn');
   if (wrap) wrap.querySelectorAll('.news-card-action').forEach(b => { b.disabled = true; });
+  // Bloqueia "Gerar Editorial" enquanto aprofunda a notícia (cruzando fontes)
+  if (genBtn) genBtn.disabled = true;
   if (statusEl) statusEl.textContent = 'Aprofundando a notícia escolhida (cruzando fontes)...';
   try {
     const pauta = await searchAndConsolidateNews(c.manchete, 12, c.fontes, 'opinion');
@@ -22521,6 +22949,7 @@ async function selectEditorialCandidate(idx) {
     if (statusEl) statusEl.textContent = 'Erro: ' + (e.message || e);
   } finally {
     if (wrap) wrap.querySelectorAll('.news-card-action').forEach(b => { b.disabled = false; });
+    if (genBtn) genBtn.disabled = false;
   }
 }
 
@@ -22644,7 +23073,7 @@ async function generatePresBackgrounds() {
 
   try {
     setPresBgStatus('<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Gerando imagem 16:9...', '');
-    const imgPrompt = `Ultra-realistic editorial landscape 16:9 photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text, no watermarks.`;
+    const imgPrompt = `Ultra-realistic editorial landscape 16:9 photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, gentle, natural depth of field (foreground and subject sharp), natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text, no watermarks.`;
     const [img, suggestedTitle] = await Promise.all([
       callGeminiImage(imgPrompt, direction || null, '16:9'),
       suggestPresentationTitle(theme)
@@ -23303,8 +23732,8 @@ ${buildDesignContext('instagram')}
 MOCKUP (escolha conforme o TEMA/dor do anuncio):
 - O criativo tem um mockup de celular cuja tela mostra 2 funcionalidades do app + 1 "zoom" detalhado sobre uma delas.
 - Escolha as 2 funcionalidades mais coerentes com o tema e qual vai no zoom.
-- Use EXATAMENTE estas chaves: graph (produtividade/grafico), evaluation (avaliacao/nota), weather (clima/previsao), agenda (calendario/eventos), activity (atividade/tarefas).
-- Retorne "mockupFns" (array com 2 chaves distintas) e "mockupZoom" (uma das 2 chaves).
+- Use EXATAMENTE estas chaves: graph (produtividade/grafico), evaluation (avaliacao/nota), weather (clima/previsao), agenda (calendario/eventos), activity (atividade/tarefas), ndvi (vigor/NDVI), moisture (umidade do solo), rainfall (chuva acumulada), area (area monitorada em ha), stand (estande de plantas), alerts (alertas/pendencias), visits (visitas tecnicas).
+- Retorne "mockupFns" (array com 2 chaves distintas) e "mockupZoom" (uma das 2 chaves). Varie as escolhas conforme o tema — NAO use sempre graph+evaluation.
 - Para CADA funcionalidade escolhida, escreva um INSIGHT curtissimo (ate ~5 palavras) sobre o que aquele dado revela na pratica — uma observacao concreta, de analista (ex: "Talhao 7 puxou a media", "Vigor caiu em 2 areas", "Janela seca pra aplicar", "Falta 1 visita pra fechar"). NAO use slogan nem frase publicitaria. Retorne em "mockupCaps" (objeto com as 2 chaves escolhidas).
 
 INSIGHT (frase de efeito, 1 linha curtissima):
@@ -23331,9 +23760,9 @@ Responda APENAS em JSON valido:
   "angle": "angulo criativo resumido",
   "offer": "proposta de valor resumida",
   "creativeNotes": "observacao criativa curta",
-  "mockupFns": ["graph", "evaluation"],
-  "mockupZoom": "graph",
-  "mockupCaps": { "graph": "Talhao 7 puxou a media", "evaluation": "Vigor caiu em 2 areas" },
+  "mockupFns": ["ndvi", "visits"],
+  "mockupZoom": "ndvi",
+  "mockupCaps": { "ndvi": "Vigor caiu em 2 areas", "visits": "Falta 1 visita pra fechar" },
   "insight": "Menos achismo, mais evidencia",
   "imagePrompt": "photorealistic image prompt in english"
 }`;
@@ -23543,7 +23972,7 @@ IMAGE_PROMPT (descrição em inglês para gerar a foto editorial 4:5):
 - No text, logos, brands, headlines, watermarks, numbers anywhere in the image.
 - Clean composition, negative space at the bottom third (for the editorial block overlay).
 - Magnum/Reuters/Bloomberg aesthetic — NOT Apple-corporate, NOT generic stock.
-- Natural lighting, 50mm feel, cinematic depth of field.
+- Natural lighting, 50mm feel, gentle, natural depth of field (foreground and subject sharp).
 - NO artificial dark gradients, dark bands or overlays.
 
 Responda APENAS em JSON válido, sem markdown:
@@ -23609,7 +24038,7 @@ IMAGE_PROMPT (descrição em inglês para gerar a foto editorial 4:5):
 - No text, logos, brands, headlines, watermarks, numbers anywhere in the image.
 - Clean composition, negative space at the bottom third (for the editorial block overlay).
 - Magnum/Reuters/Bloomberg aesthetic — NOT Apple-corporate, NOT generic stock.
-- Natural lighting, 50mm feel, cinematic depth of field. NO artificial dark gradients or overlays.
+- Natural lighting, 50mm feel, gentle, natural depth of field (foreground and subject sharp). NO artificial dark gradients or overlays.
 
 Responda APENAS em JSON válido, sem markdown:
 {
@@ -23695,7 +24124,7 @@ LEGEND (legenda do Instagram):
 ${toneBlock}
 ${buildDesignContext()}
 IMAGE_PROMPT: descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
-- Estilo: fotografia documental/editorial profissional, estética Fujifilm, 50mm, profundidade de campo cinematográfica
+- Estilo: fotografia documental/editorial profissional, estética Fujifilm, 50mm, profundidade de campo sutil e natural (primeiro plano e sujeito nítidos)
 - Contexto brasileiro: lavouras bem manejadas (soja, milho, algodão), fazendas organizadas, agrônomos com boa postura e vestimenta neutra
 - Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
 - Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
@@ -24093,7 +24522,7 @@ async function callGeminiImage(imagePrompt, extraDirection, aspectRatio) {
     'Agronomic accuracy (CRITICAL): crops must match their real harvest stage. Combines/harvesters only appear on MATURE, DRY, SENESCED crops — never on green/vegetative fields. Soybean at harvest: dry brown-to-golden pods, fallen leaves, dry stems (never green leaves or green pods with a combine). Corn at harvest: dry brown stalks, dry husks, mature yellow kernels (never green corn with a combine). Wheat at harvest: uniform golden-yellow ears. Cotton at harvest: brown dry plants with open white bolls. Green/vegetative fields (lush leaves, flowering) are only for scouting, spraying, fertilizing, irrigation, monitoring — NOT harvesting. Match the visible crop stage to the scene activity.',
     'Characters (when present): Brazilian appearance with regional diversity, professional agronomist look, neutral clean clothing (gray, soft green, beige), NO logos or brands, confident and focused expression. Vary between men/women, young (25-30) and senior (40-55).',
     'Color palette: natural greens with emphasis on #44AA7B tones, balanced with whites and soft grays. No oversaturation, no neon greens.',
-    'Lighting: golden hour preferred, soft diffuse light, subtle warm glow. Add subtle lens flare and cinematic depth of field (background slightly blurred). No exaggerated HDR, no fake lighting.',
+    'Lighting: golden hour preferred, soft diffuse light, subtle warm glow. Add subtle lens flare and gentle, natural depth of field (foreground and subject sharp, only the far background slightly soft). No exaggerated HDR, no fake lighting.',
     'Composition: professional documentary/editorial photography style, Fujifilm aesthetic, 50mm lens feel. Use crop row lines as leading lines, natural perspective, clear subject focus, negative space for text overlay.',
   ];
   const avoid = (getActiveDesignConfig().avoid || '').trim();
@@ -24257,7 +24686,7 @@ async function generatePost() {
         document.getElementById('genPreview').style.display = 'none';
         document.getElementById('genPreview').src = '';
         const inner = document.querySelector('.gen-dropzone-inner');
-        if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
+        if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
         genImageBase64 = null;
         genImageMime = null;
         btn.disabled = false;
@@ -24314,7 +24743,7 @@ async function generatePost() {
       const imgStepLabel = isNewsLike ? 'Nano Banana gerando foto editorial...' : 'Passo 2/2 — Nano Banana gerando imagem...';
       setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>${imgStepLabel}`, '');
       const imageTopic = isFeature && selectedFeature ? `${selectedFeature.name} ${theme}`.trim() : theme;
-      const imgPrompt = parsed.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${imageTopic}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
+      const imgPrompt = parsed.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${imageTopic}. Golden hour lighting, subtle lens flare, gentle, natural depth of field (foreground and subject sharp), natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
       const chipDirectives = getActiveChipDirectives().join(' ');
       const img = await callGeminiImage(imgPrompt, chipDirectives);
       finalImgBase64 = img.base64;
@@ -24363,11 +24792,13 @@ async function generatePost() {
     if (platform === 'instagram-ads') postData.type = (activeMode === 'instagram-ads-ii-post') ? 'instagram-ads-ii-post' : 'instagram-ads-post';
     if (postData.type === 'instagram-ads-post') {
       const _fns = Array.isArray(parsed.mockupFns) ? parsed.mockupFns.filter(k => ADS_MOCKUP_FUNCTIONS[k]) : [];
-      postData.mockupFns = (_fns.length === 2 && _fns[0] !== _fns[1]) ? _fns : ['graph', 'evaluation'];
-      postData.mockupZoom = (ADS_MOCKUP_FUNCTIONS[parsed.mockupZoom] && postData.mockupFns.includes(parsed.mockupZoom)) ? parsed.mockupZoom : postData.mockupFns[0];
+      // Par válido da IA é respeitado; senão deixa null → o render sorteia
+      // (seed por post.id). Evita cair sempre em graph+evaluation.
+      postData.mockupFns = (_fns.length === 2 && _fns[0] !== _fns[1]) ? _fns : null;
+      postData.mockupZoom = (postData.mockupFns && ADS_MOCKUP_FUNCTIONS[parsed.mockupZoom] && postData.mockupFns.includes(parsed.mockupZoom)) ? parsed.mockupZoom : (postData.mockupFns ? postData.mockupFns[0] : null);
       const _caps = (parsed.mockupCaps && typeof parsed.mockupCaps === 'object') ? parsed.mockupCaps : {};
       postData.mockupCaps = {};
-      postData.mockupFns.forEach(k => { const v = (_caps[k] || '').toString().trim(); if (v) postData.mockupCaps[k] = v.slice(0, 42); });
+      (postData.mockupFns || []).forEach(k => { const v = (_caps[k] || '').toString().trim(); if (v) postData.mockupCaps[k] = v.slice(0, 42); });
       postData.adInsight = (parsed.insight || '').trim();
     }
     else if (platform === 'instagram-flat' || platform === 'instagram-flat-ii') {
@@ -24477,7 +24908,7 @@ async function generatePost() {
       document.getElementById('genPreview').style.display = 'none';
       document.getElementById('genPreview').src = '';
       const inner = document.querySelector('.gen-dropzone-inner');
-      if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
+      if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
       genImageBase64 = null;
       genImageMime = null;
       btn.disabled = false;
@@ -24550,7 +24981,7 @@ ${toneBlock}
 ${buildDesignContext()}
 
 IMAGE_PROMPT (um por slide): descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
-- Estilo: fotografia documental/editorial profissional, estética Fujifilm, 50mm, profundidade de campo cinematográfica
+- Estilo: fotografia documental/editorial profissional, estética Fujifilm, 50mm, profundidade de campo sutil e natural (primeiro plano e sujeito nítidos)
 - Contexto brasileiro: lavouras bem manejadas (soja, milho, algodão), fazendas organizadas, agrônomos com boa postura e vestimenta neutra
 - Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
 - Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
@@ -24796,7 +25227,7 @@ LEGEND (legenda do LinkedIn):
 ${toneBlock}
 ${buildDesignContext('linkedin')}
 IMAGE_PROMPT: descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
-- Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo cinematográfica
+- Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo sutil e natural (primeiro plano e sujeito nítidos)
 - Contexto brasileiro de escala: lavouras bem manejadas, fazendas organizadas, tecnologia e maquinário moderno, agrônomos com boa postura e vestimenta neutra
 - Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
 - Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
@@ -24880,7 +25311,7 @@ ${toneBlock}
 ${buildDesignContext('linkedin')}
 
 IMAGE_PROMPT (um por slide): descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
-- Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo cinematográfica
+- Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo sutil e natural (primeiro plano e sujeito nítidos)
 - Contexto brasileiro de escala: lavouras bem manejadas, fazendas organizadas, tecnologia e maquinário moderno, agrônomos com boa postura e vestimenta neutra
 - Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
 - Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
@@ -24995,7 +25426,7 @@ LEGEND (legenda do LinkedIn):
 ${toneBlock}
 ${buildDesignContext('linkedin')}
 IMAGE_PROMPT: descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
-- Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo cinematográfica
+- Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo sutil e natural (primeiro plano e sujeito nítidos)
 - Contexto brasileiro de escala: lavouras bem manejadas, fazendas organizadas, tecnologia e maquinário moderno, agrônomos com boa postura e vestimenta neutra
 - Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
 - Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
@@ -25098,7 +25529,7 @@ ${toneBlock}
 ${buildDesignContext('linkedin')}
 
 IMAGE_PROMPT (um por slide): descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
-- Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo cinematográfica
+- Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo sutil e natural (primeiro plano e sujeito nítidos)
 - Contexto brasileiro de escala: lavouras bem manejadas, fazendas organizadas, tecnologia e maquinário moderno
 - Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
 - Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves
@@ -26259,7 +26690,7 @@ ${toneBlock}
 ${buildDesignContext()}
 
 IMAGE_PROMPT: descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
-- Estilo: fotografia documental/editorial, Fujifilm, 50mm, profundidade de campo cinematográfica
+- Estilo: fotografia documental/editorial, Fujifilm, 50mm, profundidade de campo sutil e natural (primeiro plano e sujeito nítidos)
 - Contexto brasileiro: lavouras bem manejadas, agrônomos com boa postura e vestimenta neutra
 - Iluminação: golden hour, lens flare sutil, glow natural
 - Paleta: tons verdes naturais (#44AA7B), brancos e cinzas suaves
@@ -26370,7 +26801,7 @@ async function confirmInsertSlide() {
     const slideText = await callGeminiInsertSlideText(theme, tone, context, platform);
 
     statusEl.textContent = 'Gerando imagem com IA...';
-    const imgPrompt = slideText.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
+    const imgPrompt = slideText.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, gentle, natural depth of field (foreground and subject sharp), natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
     const img = await callGeminiImage(imgPrompt);
 
     const timestamp = Date.now();
@@ -26552,7 +26983,7 @@ async function generateCarousel() {
       if (needImage) {
         setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo ${i + 2}/${totalSteps} — Gerando imagem ${i + 1}/${slides.length}...`, '');
         const imageTopic = isFeature && selectedFeature ? `${selectedFeature.name} ${theme}`.trim() : theme;
-        const imgPrompt = s.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${imageTopic}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
+        const imgPrompt = s.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${imageTopic}. Golden hour lighting, subtle lens flare, gentle, natural depth of field (foreground and subject sharp), natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
         const img = await callGeminiImage(imgPrompt, getActiveChipDirectives().join(' '));
         imgBase64 = img.base64;
         imgMime = img.mime;
@@ -26643,7 +27074,7 @@ async function generateCarousel() {
       document.getElementById('genPreview').style.display = 'none';
       document.getElementById('genPreview').src = '';
       const inner = document.querySelector('.gen-dropzone-inner');
-      if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
+      if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
       genImageBase64 = null;
       btn.disabled = false;
       btn.innerHTML = '<i class="ph ph-sparkle sz-18"></i>Gerar Carrossel';
@@ -26820,7 +27251,7 @@ async function generateWeatherCarousel() {
       document.getElementById('genPreview').style.display = 'none';
       document.getElementById('genPreview').src = '';
       const inner = document.querySelector('.gen-dropzone-inner');
-      if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
+      if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
       genImageBase64 = null;
       btn.disabled = false;
       btn.innerHTML = '<i class="ph ph-sparkle sz-18"></i>Gerar Previsão';
@@ -26910,7 +27341,7 @@ async function generateNewsCarousel() {
 
       if (needImage) {
         setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo ${i + 3}/${totalSteps} — Gerando imagem ${i + 1}/${slides.length}...`, '');
-        const imgPrompt = s.imagePrompt || `Photojournalistic editorial image of Brazilian agriculture related to: ${theme}. Soft natural lighting, muted greens, cinematic depth of field, no text or logos.`;
+        const imgPrompt = s.imagePrompt || `Photojournalistic editorial image of Brazilian agriculture related to: ${theme}. Soft natural lighting, muted greens, gentle, natural depth of field (foreground and subject sharp), no text or logos.`;
         const img = await callGeminiImage(imgPrompt, combinedDirective);
         imgBase64 = img.base64;
         imgMime = img.mime;
@@ -27007,7 +27438,7 @@ async function generateNewsCarousel() {
       // reset form
       document.getElementById('genTheme').value = '';
       const inner = document.querySelector('.gen-dropzone-inner');
-      if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
+      if (inner) inner.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Arraste ou clique para usar foto própria`;
       genImageBase64 = null;
       btn.disabled = false;
       btn.textContent = isOpinion ? 'Gerar Carrossel de Opinião' : 'Gerar Carrossel de Tendência';
@@ -28114,7 +28545,7 @@ async function regenerateImage() {
   const direction = await promptForDirection('Regerar Imagem', true);
   if (direction === null) return;
   // Prompt base = o original da geração (ou reconstruído do tema)
-  const basePrompt = post.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${post.theme || ''}. Golden hour lighting, subtle lens flare, cinematic depth of field, natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
+  const basePrompt = post.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${post.theme || ''}. Golden hour lighting, subtle lens flare, gentle, natural depth of field (foreground and subject sharp), natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
   // Direção do usuário complementa o prompt original (não substitui)
   const imagePrompt = direction
     ? `${basePrompt}\n\nAdditional direction (keep everything else the same): ${direction}`
@@ -28659,7 +29090,7 @@ function _syncMrSceneOverlayColor(scene) {
   } else {
     swatch.style.background = 'repeating-linear-gradient(45deg, #e5e5e5 0 4px, #fafafa 4px 8px)';
     swatch.style.opacity = '0.7';
-    label.textContent = 'Padrão do tema';
+    label.textContent = 'Padrão do Tema';
   }
 }
 window._syncMrSceneOverlayColor = _syncMrSceneOverlayColor;
@@ -31562,7 +31993,7 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
       <div class="legend-panel" id="legendAdsPanel" style="display:none">
         <div class="legend-ads-fields" id="legendAdsFields"></div>
         <div class="legend-copy-row">
-          <button type="button" class="legend-title-copy" id="copyAdsAllBtn" onclick="copyInstagramAdsAll()" title="Copiar copy completa"><i class="ph ph-copy sz-16"></i><span>Copiar tudo</span></button>
+          <button type="button" class="legend-title-copy" id="copyAdsAllBtn" onclick="copyInstagramAdsAll()" title="Copiar copy completa"><i class="ph ph-copy sz-16"></i><span>Copiar Tudo</span></button>
         </div>
       </div>
       <div class="legend-panel" id="legendMainPanel">
@@ -31683,7 +32114,7 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center">
           <button type="button" class="pc-color-btn" onclick="openColorDropdown('mrSceneOverlay', this)" style="height:36px">
             <span class="pc-color-btn-swatch" id="mrOverlayColorSwatch" style="background:#1A1B1A"></span>
-            <span class="pc-color-btn-label" id="mrOverlayColorLabel">Padrão do tema</span>
+            <span class="pc-color-btn-label" id="mrOverlayColorLabel">Padrão do Tema</span>
             <i class="ph ph-caret-down pc-color-btn-chevron"></i>
           </button>
           <button type="button" id="mrSceneSwapBg" class="ds-btn ds-btn--secondary" onclick="swapMotionReelSceneBg()" title="Sortear nova imagem do pool">
@@ -31741,7 +32172,7 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
           </button>
         </div>
       </div>
-      <div id="mrSceneEditStatus" style="font-size:13px;color:#64748b;min-height:18px;"></div>
+      <div id="mrSceneEditStatus" style="font-size:13px;color:#737373;min-height:18px;"></div>
       </div><!-- /.mr-edit-controls -->
       <div class="mr-edit-preview">
         <div id="mrSceneEditPreviewMount" class="mr-edit-preview-mount"></div>
@@ -31767,7 +32198,7 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
     <div class="gen-body">
       <div class="gen-group" id="genFeatureGroup" style="display:none">
         <label>Funcionalidade</label>
-        <select id="genFeatureSelect" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:14px;font-family:'Inter Tight',sans-serif;"></select>
+        <select id="genFeatureSelect" style="width:100%;padding:8px 10px;border:1px solid #e5e5e5;border-radius:6px;font-size:14px;font-family:'Mozilla Text',sans-serif;"></select>
       </div>
 
       <div class="gen-group">
@@ -31782,12 +32213,12 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
       </div>
 
       <div class="gen-group" id="genWeatherContextGroup" style="display:none">
-        <label>Contexto agrícola <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;">(opcional)</span></label>
+        <label>Contexto agrícola <span style="color:#a3a3a3;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;">(opcional)</span></label>
         <textarea id="genWeatherContext" rows="2" placeholder="Ex: soja em fase vegetativa, planejamento de visitas, semana de campo, acompanhamento de áreas..."></textarea>
       </div>
 
       <div class="gen-group" id="genLinksGroup" style="display:none">
-        <label>Links de referência <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;">(opcional)</span></label>
+        <label>Links de referência <span style="color:#a3a3a3;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;">(opcional)</span></label>
         <div class="gen-links-list" id="genLinksList">
           <div class="gen-link-row">
             <input type="url" class="gen-link-input" placeholder="https://exemplo.com/noticia" />
@@ -31798,19 +32229,18 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
       </div>
 
       <div class="gen-group" id="genEditorialSearchGroup" style="display:none">
-        <label>Buscar notícia <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;">(opcional — escolha uma das opções abaixo, ou gere direto do tema/links acima)</span></label>
-        <button type="button" class="news-search-btn" id="genEditorialSearchBtn">
-          <i class="ph ph-magnifying-glass"></i> Buscar notícias do agro
+        <button type="button" class="ds-btn ds-btn--primary ds-btn--block" id="genEditorialSearchBtn">
+          <i class="ph ph-magnifying-glass"></i> Buscar Notícia
         </button>
-        <div id="genEditorialSearchStatus" style="font-size:13px;color:#64748b;min-height:0;margin-top:6px;"></div>
+        <div id="genEditorialSearchStatus" style="font-size:13px;color:#737373;min-height:0;margin-top:6px;"></div>
         <div id="genEditorialCandidates" class="news-cards" style="margin-top:8px;"></div>
       </div>
 
       <div class="gen-group" id="genImageGroup">
-        <label>Imagem de Fundo <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;">(opcional — IA gera se não enviar)</span></label>
+        <label>Imagem de Fundo <span style="color:#a3a3a3;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;">(opcional — IA gera se não enviar)</span></label>
         <div class="gen-dropzone" id="genDropzone">
           <div class="gen-dropzone-inner">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a3a3a3" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             Arraste ou clique para usar foto própria
           </div>
           <input type="file" class="gen-file-input" id="genImageInput" accept="image/*" />
@@ -31820,7 +32250,7 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
 
       <div class="gen-group" id="genAdsObjectiveGroup" style="display:none">
         <label>Objetivo do Anuncio</label>
-        <select id="genAdsObjective" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:14px;font-family:'Inter Tight',sans-serif;">
+        <select id="genAdsObjective" style="width:100%;padding:8px 10px;border:1px solid #e5e5e5;border-radius:6px;font-size:14px;font-family:'Mozilla Text',sans-serif;">
           <option value="trafego" selected>Gerar trafego</option>
           <option value="leads">Captar leads</option>
           <option value="reconhecimento">Reconhecimento</option>
@@ -31835,7 +32265,7 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
 
       <div class="gen-group" id="genAdsCTAGroup" style="display:none">
         <label>CTA Preferido</label>
-        <select id="genAdsCTA" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:14px;font-family:'Inter Tight',sans-serif;">
+        <select id="genAdsCTA" style="width:100%;padding:8px 10px;border:1px solid #e5e5e5;border-radius:6px;font-size:14px;font-family:'Mozilla Text',sans-serif;">
           <option value="Saiba mais" selected>Saiba mais</option>
           <option value="Ver como funciona">Ver como funciona</option>
           <option value="Falar com especialista">Falar com especialista</option>
@@ -31845,7 +32275,7 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
 
       <div class="gen-group" id="genSlideCountGroup" style="display:none">
         <label>Número de Slides</label>
-        <select id="genSlideCount" style="width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:14px;font-family:'Inter Tight',sans-serif;">
+        <select id="genSlideCount" style="width:100%;padding:8px 10px;border:1px solid #e5e5e5;border-radius:6px;font-size:14px;font-family:'Mozilla Text',sans-serif;">
           <option value="3">3 slides</option>
           <option value="4" selected>4 slides</option>
           <option value="5">5 slides</option>
@@ -31855,8 +32285,8 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
 
       <div class="gen-status" id="genStatus"></div>
       <div class="gen-actions">
-        <button class="btn btn-ghost" onclick="closeGenerator()">Cancelar</button>
-        <button class="btn btn-primary" id="genBtn" onclick="handleGenerate()">Gerar Post</button>
+        <button class="ds-btn ds-btn--secondary" onclick="closeGenerator()">Cancelar</button>
+        <button class="ds-btn ds-btn--primary" id="genBtn" onclick="handleGenerate()">Gerar Post</button>
       </div>
     </div>
   </div>
@@ -31871,13 +32301,13 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
     </div>
     <div class="gen-body">
       <div class="gen-group">
-        <label>Direção do novo slide <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;">(opcional — IA decide se vazio)</span></label>
+        <label>Direção do novo slide <span style="color:#a3a3a3;font-weight:400;text-transform:none;letter-spacing:0;font-size:14px;">(opcional — IA decide se vazio)</span></label>
         <textarea id="insertSlideDirection" rows="2" placeholder="Ex: falar sobre redução de custos, mostrar resultado de campo..."></textarea>
       </div>
       <div class="gen-status" id="insertSlideStatus"></div>
       <div class="gen-actions">
-        <button class="btn btn-ghost" onclick="closeInsertSlideModal()">Cancelar</button>
-        <button class="btn btn-primary" id="insertSlideBtn" onclick="confirmInsertSlide()">Gerar Slide</button>
+        <button class="ds-btn ds-btn--secondary" onclick="closeInsertSlideModal()">Cancelar</button>
+        <button class="ds-btn ds-btn--primary" id="insertSlideBtn" onclick="confirmInsertSlide()">Gerar Slide</button>
       </div>
     </div>
   </div>
@@ -31901,8 +32331,8 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
       </div>
       <div class="gen-status" id="presBgStatus"></div>
       <div class="gen-actions">
-        <button class="btn btn-ghost" onclick="closePresBgGenerator()">Cancelar</button>
-        <button class="btn btn-primary" id="presBgBtn" onclick="generatePresBackgrounds()">
+        <button class="ds-btn ds-btn--secondary" onclick="closePresBgGenerator()">Cancelar</button>
+        <button class="ds-btn ds-btn--primary" id="presBgBtn" onclick="generatePresBackgrounds()">
           Gerar Slide
         </button>
       </div>
@@ -31955,8 +32385,8 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
         </div>
       </div>
       <div class="gen-actions">
-        <button type="button" class="btn btn-ghost" onclick="closeRegenDir()">Cancelar</button>
-        <button type="button" class="btn btn-primary" id="regenDirConfirm">Regerar</button>
+        <button type="button" class="ds-btn ds-btn--secondary" onclick="closeRegenDir()">Cancelar</button>
+        <button type="button" class="ds-btn ds-btn--primary" id="regenDirConfirm">Regerar</button>
       </div>
     </div>
   </div>
@@ -32008,14 +32438,14 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
       </div>
 
       <div class="gen-group">
-        <label>Evitar <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
+        <label>Evitar <span style="color:#a3a3a3;font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
         <textarea id="cfgAvoid" rows="3" placeholder="Ex: não usar emojis além de 👇; evitar clichês como 'o segredo do sucesso'; não citar marcas concorrentes"></textarea>
       </div>
 
       <div class="gen-status" id="cfgStatus"></div>
       <div class="gen-actions">
-        <button class="btn btn-ghost" onclick="closeConfig()">Cancelar</button>
-        <button class="btn btn-primary" id="cfgSaveBtn" onclick="saveConfig()">Salvar</button>
+        <button class="ds-btn ds-btn--secondary" onclick="closeConfig()">Cancelar</button>
+        <button class="ds-btn ds-btn--primary" id="cfgSaveBtn" onclick="saveConfig()">Salvar</button>
       </div>
     </div>
   </div>
