@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>studio</title>
-<link rel="icon" type="image/png" href="02-studio-favicon-png.png">
+<link rel="icon" type="image/svg+xml" href="favicon-studio-svg.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Mozilla+Text:wght@400;500;600;700&family=Mozilla+Headline:wght@200;300;400;500;600;700&family=Alumni+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Vend+Sans:wght@400..700&family=Sora:wght@400;500;600;700;800&family=Geist:wght@100..900&family=Pathway+Extreme:wdth,wght@75..125,400..700&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@fontsource-variable/hubot-sans/index.css" rel="stylesheet">
@@ -23782,6 +23782,13 @@ function buildPositioningContext(channel) {
     : buildCropwarePositioningContext(channel);
 }
 
+// Descritores de marca p/ injetar nos prompts conforme a plataforma ativa.
+// (o posicionamento completo vem do buildPositioningContext; estes cobrem as
+// mencoes diretas ao nome/produto que ficavam hardcoded como "Cropware".)
+function pbNome() { return activePlatform === 'gerentia' ? 'Gerentia' : 'Cropware'; }
+function pbDa()   { return activePlatform === 'gerentia' ? 'do Gerentia' : 'da Cropware'; }
+function pbDesc() { return activePlatform === 'gerentia' ? 'app de gestao financeira pessoal e de pequenos negocios pelo WhatsApp' : 'plataforma para quem constroi mercado no campo'; }
+
 // Fallback de imagePrompt (quando o LLM nao devolve um) por plataforma.
 function defaultThemeImagePrompt(theme) {
   if (activePlatform === 'gerentia') {
@@ -24259,9 +24266,9 @@ function buildSystemPrompt(tone) {
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.casual;
 
-  return `Você é um copywriter especialista na marca Cropware (plataforma para quem constroi mercado no campo).
+  return `Você é um copywriter especialista na marca ${pbNome()} (${pbDesc()}).
 
-REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais da Cropware. Use apenas benefícios qualitativos e conceituais. Qualquer número inventado é desinformação e prejudica a marca.
+REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais ${pbDa()}. Use apenas benefícios qualitativos e conceituais. Qualquer número inventado é desinformação e prejudica a marca.
 
 ${buildPositioningContext('instagram')}
 
@@ -24269,7 +24276,7 @@ Crie posts para Instagram seguindo exatamente este padrão visual:
 
 HOOK (texto grande, impactante):
 - 1 OU 2 linhas no total (prefira 2; use 1 só quando a frase já fechar sozinha e for forte)
-- A última parte OBRIGATORIAMENTE envolvida em <em>...</em> (fica verde) — é o REMATE que comunica o benefício do Cropware (decisão, clareza, antecipação, controle, histórico, eficiência)
+- A última parte OBRIGATORIAMENTE envolvida em <em>...</em> (fica verde) — é o REMATE que comunica o benefício ${pbDa()} (decisão, clareza, antecipação, controle, histórico, eficiência)
 - O hook inteiro é UMA frase afirmativa, lida de cima pra baixo como continuação natural — a quebra de linha é ritmo visual, não separa ideias
 - CAPITALIZAÇÃO: só a PRIMEIRA palavra do hook começa com maiúscula. A segunda linha (continuação da frase) começa com MINÚSCULA, a menos que seja nome próprio. Isso vale INCLUSIVE para a parte dentro do <em>
 - PONTUAÇÃO NATURAL (OBRIGATÓRIA): a frase PRECISA ter a pontuação que o português natural exigiria — vírgula de respiro, vírgula antes do remate, travessão para aposto/contraste, reticências, dois-pontos. Um hook sem NENHUMA pontuação, só com quebra de linha, está ERRADO. A quebra de <br> NÃO substitui vírgula
@@ -24355,10 +24362,10 @@ function buildFeaturePostSystemPrompt(tone) {
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
 
-  return `Você é copywriter da Cropware criando conteúdo de FUNCIONALIDADES do app.
+  return `Você é copywriter ${pbDa()} criando conteúdo de FUNCIONALIDADES do app.
 
 OBJETIVO:
-- Mostrar uma funcionalidade específica do Cropware aplicada na prática.
+- Mostrar uma funcionalidade específica ${pbDa()} aplicada na prática.
 - O post deve parecer uma peça editorial/produto com uso real, não uma propaganda genérica.
 - Use o contexto da funcionalidade selecionada e, se houver, conecte ao tema/cultura informado pelo usuário.
 
@@ -24434,13 +24441,13 @@ function buildInstagramFlatSystemPrompt(tone) {
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.casual;
 
-  return `Voce e copywriter da Cropware criando um post INSTAGRAM FLAT I.
+  return `Voce e copywriter ${pbDa()} criando um post INSTAGRAM FLAT I.
 
 Este formato e minimalista: UM UNICO TEXTO de destaque, leitura rapida, visual limpo. Sem imagem de fundo.
 
 REGRA ABSOLUTA:
 - Nunca invente numeros, percentuais, estatisticas, prazos ou promessas quantitativas.
-- Use o contexto real do app Cropware, mas escreva de forma muito resumida.
+- Use o contexto real do app ${pbNome()}, mas escreva de forma muito resumida.
 
 ${buildPositioningContext('instagram')}
 
@@ -24507,13 +24514,13 @@ function buildInstagramFlatIISystemPrompt(tone) {
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
 
-  return `Voce e copywriter da Cropware criando um post INSTAGRAM FLAT II.
+  return `Voce e copywriter ${pbDa()} criando um post INSTAGRAM FLAT II.
 
 Este formato tem UMA UNICA CHAMADA — sem divisao hook/complement. O texto substitui os dois e deve funcionar como headline editorial tecnico-comercial, apresentando o conteudo que os bullets vao detalhar.
 
 REGRA ABSOLUTA:
 - Nunca invente numeros, percentuais, estatisticas, prazos ou promessas quantitativas.
-- Use o contexto real do app Cropware e do agrônomo de campo.
+- Use o contexto real do app ${pbNome()} e ${activePlatform === 'gerentia' ? 'da rotina financeira de quem usa' : 'do agrônomo de campo'}.
 
 ${buildPositioningContext('instagram')}
 
@@ -24621,7 +24628,7 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
     ? buildSinalPostSystemPrompt()
     : buildSystemPrompt(tone);
   const platformLabel = platform === 'linkedin-pessoal' ? 'LinkedIn' : platform === 'linkedin' ? 'LinkedIn' : platform === 'linkedin-editorial' ? 'LinkedIn' : platform === 'news' ? 'Post Notícia' : platform === 'instagram-flat' ? 'Instagram Flat' : platform === 'instagram-flat-ii' ? 'Instagram Flat II' : platform === 'sinal' ? 'Sinal' : platform === 'features' ? 'Instagram' : 'Instagram';
-  const brandLabel = platform === 'linkedin-pessoal' ? '' : ' da Cropware';
+  const brandLabel = platform === 'linkedin-pessoal' ? '' : (activePlatform === 'gerentia' ? ' do Gerentia' : ' da Cropware');
   const directionSuffix = extraDirection && extraDirection.trim()
     ? `\n\nDireção adicional do usuário: ${extraDirection.trim()}`
     : '';
@@ -24672,10 +24679,10 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
     userPartsResolved = userImageBase64
       ? [
           { inlineData: { mimeType: userImageMime || 'image/jpeg', data: userImageBase64 } },
-          { text: `Analise esta imagem agrícola e crie um post de funcionalidade para Instagram da Cropware.${featureBlock}${directionSuffix}${naturalHookSuffix}` }
+          { text: `Analise esta imagem agrícola e crie um post de funcionalidade para Instagram ${pbDa()}.${featureBlock}${directionSuffix}${naturalHookSuffix}` }
         ]
       : [
-          { text: `Crie um post de funcionalidade para Instagram da Cropware.${featureBlock}${directionSuffix}${naturalHookSuffix}` }
+          { text: `Crie um post de funcionalidade para Instagram ${pbDa()}.${featureBlock}${directionSuffix}${naturalHookSuffix}` }
         ];
   }
 
@@ -25132,9 +25139,9 @@ function buildCarouselSystemPrompt(tone, slideCount) {
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.casual;
 
-  return `Você é um copywriter especialista na marca Cropware (plataforma para quem constroi mercado no campo).
+  return `Você é um copywriter especialista na marca ${pbNome()} (${pbDesc()}).
 
-REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais da Cropware. Use apenas benefícios qualitativos e conceituais.
+REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais ${pbDa()}. Use apenas benefícios qualitativos e conceituais.
 
 ${buildPositioningContext('instagramCarousel')}
 
@@ -25143,7 +25150,7 @@ Crie um CARROSSEL para Instagram com ${slideCount} slides seguindo exatamente es
 ESTRUTURA DO CARROSSEL:
 - Slide 1 (CAPA): hook forte e impactante que atrai o swipe. Frase curta e provocativa.
 - Slides do meio (DESENVOLVIMENTO): cada slide aprofunda um aspecto do tema, entregando valor progressivo.
-- Último slide (CTA/CONCLUSÃO): fecha com insight final e reforça a marca Cropware.
+- Último slide (CTA/CONCLUSÃO): fecha com insight final e reforça a marca ${pbNome()}.
 - Todos os slides devem ter coerência visual e narrativa.
 
 PARA CADA SLIDE:
@@ -25218,10 +25225,10 @@ function buildFeatureCarouselSystemPrompt(tone, slideCount) {
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
 
-  return `Você é copywriter da Cropware criando um CARROSSEL DE FUNCIONALIDADE do app.
+  return `Você é copywriter ${pbDa()} criando um CARROSSEL DE FUNCIONALIDADE do app.
 
 OBJETIVO:
-- Explicar uma funcionalidade específica do Cropware na prática, em ${slideCount} slides.
+- Explicar uma funcionalidade específica ${pbDa()} na prática, em ${slideCount} slides.
 - Conectar a funcionalidade ao tema/cultura informado quando existir.
 - Mostrar fluxo operacional real: problema de campo → ação dentro do app → evidência organizada → decisão/uso comercial.
 
@@ -25302,8 +25309,9 @@ function buildInstagramAdsCarouselSystemPrompt(tone, slideCount) {
     provocativo: 'TOM: forte e direto, com tese clara e beneficio concreto.',
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.casual;
+  const _isGerC = activePlatform === 'gerentia';
 
-  return `Voce e um copywriter e estrategista de performance para Meta Ads da Cropware.
+  return `Voce e um copywriter e estrategista de performance para Meta Ads ${pbDa()}.
 
 REGRA ABSOLUTA: NUNCA invente numeros, porcentagens, estatisticas ou dados quantitativos.
 
@@ -25313,8 +25321,8 @@ ${buildPositioningContext('instagramAdsCarousel')}
 
 ESTRUTURA DO CARROSSEL (DOR -> SOLUCAO -> CTA):
 - Slide 1 (CAPA): a DOR principal e concreta que para o scroll (gargalo real de quem desenvolve mercado no campo). Frase curta.
-- Slides do meio: desdobram a dor (rotina desorganizada, evidencia perdida, dificuldade de provar resultado) e ja apontam a virada; o ultimo do meio apresenta a Cropware como SOLUCAO objetiva, com o ganho pratico.
-- Ultimo slide (CTA): convite leve a conhecer a Cropware ("Saiba mais"), com reforco de marca. Nao e venda dura.
+- Slides do meio: desdobram a dor (${_isGerC ? 'gastos sem controle, dinheiro sem rastro, planilha abandonada' : 'rotina desorganizada, evidencia perdida, dificuldade de provar resultado'}) e ja apontam a virada; o ultimo do meio apresenta ${pbNome()} como SOLUCAO objetiva, com o ganho pratico.
+- Ultimo slide (CTA): convite leve a ${_isGerC ? 'experimentar o Gerentia ("Comece com uma foto")' : 'conhecer a Cropware ("Saiba mais")'}, com reforco de marca. Nao e venda dura.
 
 PARA CADA SLIDE (APENAS 2 BLOCOS DE TEXTO):
 HOOK (bloco principal, texto corrido):
@@ -26007,7 +26015,7 @@ async function callGeminiCarouselText(theme, tone, slideCount, userImageBase64, 
     ? buildFeatureCarouselSystemPrompt(tone, slideCount)
     : buildCarouselSystemPrompt(tone, slideCount);
   const platformLabel = (platform === 'linkedin' || platform === 'linkedin-pessoal') ? 'LinkedIn' : 'Instagram';
-  const brandLabel = platform === 'linkedin-pessoal' ? '' : ' da Cropware';
+  const brandLabel = platform === 'linkedin-pessoal' ? '' : (activePlatform === 'gerentia' ? ' do Gerentia' : ' da Cropware');
   const adContextSuffix = platform === 'instagram-ads' && adsContext
     ? `\n\nObjetivo da campanha: ${adsContext.objective || 'trafego'}\nPublico: ${adsContext.audience || 'profissionais de campo, DMs, GDs, promotores e assistentes tecnicos'}\nCTA preferido: ${adsContext.cta || 'Saiba mais'}`
     : '';
@@ -26853,9 +26861,9 @@ function buildInsertSlideSystemPrompt(tone) {
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.casual;
 
-  return `Você é um copywriter especialista na marca Cropware (plataforma para quem constroi mercado no campo).
+  return `Você é um copywriter especialista na marca ${pbNome()} (${pbDesc()}).
 
-REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais da Cropware. Use apenas benefícios qualitativos e conceituais.
+REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais ${pbDa()}. Use apenas benefícios qualitativos e conceituais.
 
 ${buildPositioningContext('instagramCarousel')}
 
@@ -26910,7 +26918,7 @@ Responda APENAS em JSON válido:
 async function callGeminiInsertSlideText(theme, tone, contextInfo, platform) {
   const systemPrompt = buildInsertSlideSystemPrompt(tone);
   const platformLabel = (platform === 'linkedin' || platform === 'linkedin-pessoal') ? 'LinkedIn' : 'Instagram';
-  const brandLabel = platform === 'linkedin-pessoal' ? '' : ' da Cropware';
+  const brandLabel = platform === 'linkedin-pessoal' ? '' : (activePlatform === 'gerentia' ? ' do Gerentia' : ' da Cropware');
   const naturalHookSuffix = usesNaturalHookPlatform(platform) ? buildNaturalHookDirection() : '';
   const userText = `Crie UM slide complementar para ${platformLabel}${brandLabel} sobre: ${theme}
 
