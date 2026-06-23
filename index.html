@@ -1102,11 +1102,14 @@
     text-shadow: none;
   }
 
-  /* Brand mode: controle claro/escuro da LOGO */
-  .post[data-brand="light"] img[src*="logo-cropware"] {
+  /* Brand mode: controle claro/escuro da LOGO (cropware ou gerentia — o brightness(0)
+     zera a cor nativa, entao o invert tinge qualquer logo igual). */
+  .post[data-brand="light"] img[src*="logo-cropware"],
+  .post[data-brand="light"] img[src*="logo-gerentia"] {
     filter: brightness(0) invert(1) !important;
   }
-  .post[data-brand="dark"] img[src*="logo-cropware"] {
+  .post[data-brand="dark"] img[src*="logo-cropware"],
+  .post[data-brand="dark"] img[src*="logo-gerentia"] {
     filter: brightness(0) invert(0.3) !important;
     opacity: 1 !important;
   }
@@ -11056,9 +11059,9 @@
         <div class="pc-sub pc-offset-field" id="pcSubSignalTextureIntensity">
           <div class="pc-label-row">
             <span class="pc-label">Intensidade da Textura</span>
-            <span class="pc-value-pill" id="pcSignalTextureIntensityValue">55%</span>
+            <span class="pc-value-pill" id="pcSignalTextureIntensityValue">50%</span>
           </div>
-          <input type="range" class="pc-range" id="pcSignalTextureIntensity" min="0" max="50" step="1" value="20" data-value-label="pcSignalTextureIntensityValue" data-value-unit="%">
+          <input type="range" class="pc-range" id="pcSignalTextureIntensity" min="0" max="100" step="1" value="50" data-value-label="pcSignalTextureIntensityValue" data-value-unit="%">
         </div>
         <div class="pc-sub" id="pcSubSignalTextureInvert">
           <div class="pc-vis-row">
@@ -12291,6 +12294,17 @@ const STUDIO_PLATFORMS = [
 ];
 function getActivePlatform() {
   return STUDIO_PLATFORMS.find(p => p.id === activePlatform) || STUDIO_PLATFORMS[0];
+}
+// Marca dos POSTS por plataforma do post (logo/nome/site). Usa post.platform —
+// nao activePlatform — pra um post Cropware renderizado sob gerentia nao trocar de marca.
+function brandLogoSrc(p) { return ((p && p.platform) === 'gerentia') ? 'logo-gerentia-full.svg' : 'logo-cropware-pb-final.svg'; }
+function brandLogoAlt(p) { return ((p && p.platform) === 'gerentia') ? 'Gerentia' : 'Cropware'; }
+function brandSiteText(p) { return ((p && p.platform) === 'gerentia') ? 'gerentia.app' : 'cropware.app'; }
+// Texto de site a EXIBIR: post do gerentia nunca mostra dominio do Cropware (mesmo herdado de default).
+function displaySiteText(p) {
+  let s = (p && p.siteText) || brandSiteText(p);
+  if (p && p.platform === 'gerentia' && /cropware/i.test(s)) s = brandSiteText(p);
+  return s;
 }
 // Plataforma de um post (posts antigos sem o campo contam como 'cropware').
 function postPlatform(p) { return (p && p.platform) || 'cropware'; }
@@ -14913,7 +14927,7 @@ function getLogoClass(logoPos) {
 
 function renderSiteText(postData) {
   if (postData.siteEnabled === false) return '';
-  const text = escapeHTML(postData.siteText || 'cropware.app');
+  const text = escapeHTML(displaySiteText(postData));
   const pos  = postData.sitePos || 'bl';
   return `<div class="post-site" data-pos="${pos}">${text}</div>`;
 }
@@ -15055,7 +15069,7 @@ function renderClassicStyle(postData) {
     ${postData.type === 'instagram-ads-post' ? renderAdsInsight(postData) : ''}
     ${postData.type === 'instagram-ads-post' ? renderAdsFlow() : ''}
     ${isInstagramFlatI ? renderFlatBrandRow(postData)
-      : (postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : '')}
+      : (postData.logoEnabled !== false ? `<img class="${logoClass}" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : '')}
     ${isInstagramFlatI ? '' : renderSiteText(postData)}
     ${renderAppStoreBadge(postData)}
     ${bottomDetail}
@@ -15067,8 +15081,8 @@ function renderFlatBrandRow(postData) {
   const showLogo = postData.logoEnabled !== false;
   const showSite = postData.siteEnabled !== false;
   if (!showLogo && !showSite) return '';
-  const logoEl = showLogo ? `<img class="flat-brand-logo" src="logo-cropware-pb-final.svg" alt="Cropware">` : '';
-  const siteEl = showSite ? `<span class="flat-brand-site">${escapeHTML(postData.siteText || 'cropware.app')}</span>` : '';
+  const logoEl = showLogo ? `<img class="flat-brand-logo" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : '';
+  const siteEl = showSite ? `<span class="flat-brand-site">${escapeHTML(displaySiteText(postData))}</span>` : '';
   const divEl  = (showLogo && showSite) ? `<span class="flat-brand-divider" aria-hidden="true">|</span>` : '';
   return `<div class="flat-brand">${logoEl}${divEl}${siteEl}</div>`;
 }
@@ -15228,6 +15242,108 @@ const ADS_MOCKUP_FUNCTIONS = {
   },
 };
 const ADS_MOCKUP_FN_KEYS = Object.keys(ADS_MOCKUP_FUNCTIONS);
+
+// Telas do app do GERENTIA (financeiro) — reaproveita os mesmos helpers de skeleton/zoom,
+// só troca rótulos/valores pro contexto de gestão financeira. Usado quando platform === 'gerentia'.
+const GERENTIA_MOCKUP_FUNCTIONS = {
+  balance: {
+    label: 'Saldo',
+    screen: () => _amkScrChart('ph-wallet'),
+    zoom: (c, v) => _amkZChart(c, 'Saldo do mês', v),
+    variants: [
+      { value: 'R$ 8.420',  unit: '', badge: '▲ 12%', bars: [44,60,52,78,92,70] },
+      { value: 'R$ 5.180',  unit: '', badge: '▲ 7%',  bars: [50,58,66,72,88,62] },
+      { value: 'R$ 12.640', unit: '', badge: '▲ 18%', bars: [40,56,64,74,96,68] },
+      { value: 'R$ 3.920',  unit: '', badge: '▲ 5%',  bars: [46,54,60,70,90,66] },
+    ],
+  },
+  income: {
+    label: 'Receitas',
+    screen: () => _amkScrChart('ph-trend-up'),
+    zoom: (c, v) => _amkZChart(c, 'Receitas', v),
+    variants: [
+      { value: 'R$ 11.680', unit: '', badge: '▲ 9%',  bars: [40,52,60,72,84,78] },
+      { value: 'R$ 7.240',  unit: '', badge: '▲ 6%',  bars: [44,54,62,70,80,74] },
+      { value: 'R$ 16.300', unit: '', badge: '▲ 14%', bars: [38,50,60,74,88,82] },
+      { value: 'R$ 4.560',  unit: '', badge: '▲ 4%',  bars: [42,50,58,66,76,70] },
+    ],
+  },
+  expenses: {
+    label: 'Despesas',
+    screen: () => _amkScrChart('ph-trend-down'),
+    zoom: (c, v) => _amkZChart(c, 'Despesas', v),
+    variants: [
+      { value: 'R$ 3.260', unit: '', badge: '▼ 8%',  bars: [64,56,50,44,36,30] },
+      { value: 'R$ 1.840', unit: '', badge: '▼ 5%',  bars: [58,52,46,40,34,28] },
+      { value: 'R$ 5.110', unit: '', badge: '▲ 6%',  bars: [40,48,54,62,70,78] },
+      { value: 'R$ 920',   unit: '', badge: '▼ 12%', bars: [60,50,42,34,28,22] },
+    ],
+  },
+  categories: {
+    label: 'Categorias',
+    screen: () => _amkScrGauge('ph-chart-pie-slice'),
+    zoom: (c, v) => _amkZGauge(c, 'Por categoria', v),
+    variants: [
+      { value: '38', unit: '%', badge: 'Fixas',   rows: [82,58,40] },
+      { value: '45', unit: '%', badge: 'Casa',    rows: [88,64,46] },
+      { value: '29', unit: '%', badge: 'Mercado', rows: [74,52,36] },
+      { value: '52', unit: '%', badge: 'Pessoal', rows: [90,70,50] },
+    ],
+  },
+  costcenter: {
+    label: 'Centro de Custo',
+    screen: () => _amkScrGauge('ph-buildings'),
+    zoom: (c, v) => _amkZGauge(c, 'Centro de Custo', v),
+    variants: [
+      { value: 'R$ 2,1k', unit: '', badge: 'Loja',    rows: [86,62,44] },
+      { value: 'R$ 1,4k', unit: '', badge: 'Casa',    rows: [78,56,40] },
+      { value: 'R$ 3,6k', unit: '', badge: 'Veículo', rows: [90,68,48] },
+      { value: 'R$ 980',  unit: '', badge: 'Pessoal', rows: [70,50,34] },
+    ],
+  },
+  launches: {
+    label: 'Lançamentos',
+    screen: () => _amkScrGauge('ph-receipt'),
+    zoom: (c, v) => _amkZTasks(c, 'Lançamentos', v),
+    variants: [
+      { badge: '3 hoje', done: 2 },
+      { badge: '5 hoje', done: 3 },
+      { badge: '2 hoje', done: 1 },
+      { badge: '4 hoje', done: 3 },
+    ],
+  },
+  dueDates: {
+    label: 'Vencimentos',
+    screen: () => _amkScrChart('ph-calendar-check'),
+    zoom: (c, v) => _amkZEvents(c, 'Vencimentos', v),
+    variants: [
+      { badge: 'Set',  times: ['Dia 5','Dia 12','Dia 20'] },
+      { badge: 'Out',  times: ['Dia 3','Dia 10','Dia 25'] },
+      { badge: 'Semana', times: ['Seg','Qua','Sex'] },
+      { badge: 'Hoje', times: ['Luz','Água','Net'] },
+    ],
+  },
+  report: {
+    label: 'Relatório',
+    screen: () => _amkScrChart('ph-chart-line-up'),
+    zoom: (c, v) => _amkZChart(c, 'Relatório', v),
+    variants: [
+      { value: 'R$ 9,2k', unit: '', badge: 'Mês', bars: [40,54,62,70,84,76] },
+      { value: 'R$ 6,8k', unit: '', badge: 'Mês', bars: [44,52,60,68,78,72] },
+      { value: 'R$ 14k',  unit: '', badge: 'Tri', bars: [38,50,60,72,86,80] },
+      { value: 'R$ 3,5k', unit: '', badge: 'Sem', bars: [42,50,58,66,76,70] },
+    ],
+  },
+};
+const GERENTIA_MOCKUP_FN_KEYS = Object.keys(GERENTIA_MOCKUP_FUNCTIONS);
+const GERENTIA_MOCKUP_DEFAULT_CAPS = {
+  balance: 'Saldo em dia', income: 'Entradas do mês', expenses: 'Gastos sob controle',
+  categories: 'Para onde foi', costcenter: 'Por centro de custo', launches: 'Lançado por foto',
+  dueDates: 'Nada vence esquecido', report: 'Relatório pronto',
+};
+// Seletor por plataforma — usado no render e na validação da resposta da IA.
+function adsMockupFns(platform)     { return platform === 'gerentia' ? GERENTIA_MOCKUP_FUNCTIONS : ADS_MOCKUP_FUNCTIONS; }
+function adsMockupDefaultCaps(platform) { return platform === 'gerentia' ? GERENTIA_MOCKUP_DEFAULT_CAPS : ADS_MOCKUP_DEFAULT_CAPS; }
 // Fallback de caption (insight) por funcao, caso a IA nao gere mockupCaps.
 const ADS_MOCKUP_DEFAULT_CAPS = {
   graph: 'Tendência de alta',
@@ -15246,11 +15362,17 @@ const ADS_MOCKUP_DEFAULT_CAPS = {
 
 // Insight (frase de efeito, 1 linha) num card glassmorphism + logo, canto inferior esquerdo.
 function renderAdsInsight(postData) {
+  const ger = postData.platform === 'gerentia';
+  const tagline = ger ? 'Suas finanças organizadas, direto do WhatsApp' : 'Desenvolvimento de mercado, com inteligência de campo';
+  // .ads-insight-logo usa CSS mask (pintado pela background-color clara). Pro gerentia,
+  // sobrescreve o mask pro logo dele — herda o mesmo tingimento branco automaticamente.
+  const logoStyle = ger ? ' style="-webkit-mask-image:url(logo-gerentia-full.svg);mask-image:url(logo-gerentia-full.svg)"' : '';
+  const site = ger ? 'Comece em gerentia.app' : 'Saiba mais em cropware.com.br/conheça';
   return `
-    <div class="ads-insight-card">Desenvolvimento de mercado, com inteligência de campo</div>
+    <div class="ads-insight-card">${tagline}</div>
     <div class="ads-brand">
-      <div class="ads-insight-logo"></div>
-      <div class="ads-brand-site">Saiba mais em cropware.com.br/conheça</div>
+      <div class="ads-insight-logo"${logoStyle}></div>
+      <div class="ads-brand-site">${site}</div>
     </div>`;
 }
 
@@ -15283,15 +15405,16 @@ function renderAdsSkeletonMockup(postData) {
   const pick = (arr) => arr[Math.floor(rng() * arr.length)];
   // Par de funcionalidades: respeita mockupFns (2 válidas) se a IA setou; senão
   // sorteia 2 DISTINTAS do pool — sem mais cair sempre em graph+evaluation.
-  let pair = (Array.isArray(postData.mockupFns) ? postData.mockupFns.filter(k => ADS_MOCKUP_FUNCTIONS[k]) : []);
+  const FNS = adsMockupFns(postData.platform);
+  let pair = (Array.isArray(postData.mockupFns) ? postData.mockupFns.filter(k => FNS[k]) : []);
   if (pair.length !== 2 || pair[0] === pair[1]) {
-    const keys = ADS_MOCKUP_FN_KEYS.slice();
+    const keys = Object.keys(FNS);
     const a = keys.splice(Math.floor(rng() * keys.length), 1)[0];
     const b = keys.splice(Math.floor(rng() * keys.length), 1)[0];
     pair = [a, b];
   }
-  const f1 = ADS_MOCKUP_FUNCTIONS[pair[0]];
-  const f2 = ADS_MOCKUP_FUNCTIONS[pair[1]];
+  const f1 = FNS[pair[0]];
+  const f2 = FNS[pair[1]];
   // Variação de valores: sorteia uma variante por janelinha (seed por post).
   const v1 = pick(f1.variants || [{}]);
   const v2 = pick(f2.variants || [{}]);
@@ -15334,7 +15457,7 @@ function renderDashboardStyle(postData) {
       <div class="dash-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
       <div class="dash-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
     </div>
-    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
+    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : ''}
     ${renderSiteText(postData)}
     ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
@@ -15461,7 +15584,7 @@ function renderRevistaStyle(postData) {
       <div class="revista-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
       <div class="revista-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
     </div>
-    ${postData.logoEnabled !== false ? '<img class="revista-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
+    ${postData.logoEnabled !== false ? `<img class="revista-logo" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : ''}
     ${renderSiteText(postData)}
     ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
@@ -15497,7 +15620,7 @@ function renderNewsEditorialStyle(postData) {
         <div class="news-edit-manchete li-edit-manchete" contenteditable="true" spellcheck="false">${escapeHTML(manchete)}</div>
       </div>
     </div>
-    ${postData.logoEnabled !== false ? '<img class="news-edit-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
+    ${postData.logoEnabled !== false ? `<img class="news-edit-logo" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : ''}
     ${renderSiteText(postData)}
     <div class="brand-strip"></div>
     `;
@@ -15559,7 +15682,7 @@ function renderNewsEditorialStyle(postData) {
       <div class="news-edit-divider"></div>
       ${blockBody}
     </div>
-    ${postData.logoEnabled !== false ? '<img class="news-edit-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
+    ${postData.logoEnabled !== false ? `<img class="news-edit-logo" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : ''}
     ${renderSiteText(postData)}
     ${renderAppStoreBadge(postData)}
     ${role === 'closing' ? `<div class="news-edit-closing-signature">${postData.editorialFlavor === 'opinion' ? 'Cropware Análise' : 'Cropware Tendências'}</div>` : ''}
@@ -15587,7 +15710,7 @@ function renderSplitStyle(postData) {
     <div class="split-block text-${textMode}" style="background:${blockBg};">
       <div class="split-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
       <div class="split-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
-      ${postData.logoEnabled !== false ? '<img class="split-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
+      ${postData.logoEnabled !== false ? `<img class="split-logo" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : ''}
     </div>
     ${renderSiteText(postData)}
     ${renderAppStoreBadge(postData)}
@@ -15612,7 +15735,7 @@ function renderColunaStyle(postData) {
     </div>
     <div class="post-accent-bar"></div>
     <div class="coluna-block text-${textMode}" style="background:${blockBg};">
-      ${postData.logoEnabled !== false ? '<img class="coluna-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
+      ${postData.logoEnabled !== false ? `<img class="coluna-logo" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : ''}
       <div class="coluna-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>
       <div class="coluna-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>
     </div>
@@ -16148,7 +16271,7 @@ function renderFlatWaveStyle(postData) {
       <div class="post-accent-bar"></div>
       ${bulletsEl}
     </div>
-    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
+    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : ''}
     ${renderSiteText(postData)}
     ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
@@ -16242,7 +16365,7 @@ function renderMolduraStyle(postData) {
       ${(!boletimRole && postData.cotacoesSource) ? `<div class="moldura-cotacoes-source" contenteditable="true" spellcheck="false" data-boletim-field="cotacoesSource">${escapeHTML(_normalizeBoletimSource(postData.cotacoesSource))}</div>` : ''}
       <div class="moldura-glass-line"></div>
     </div>
-    ${postData.logoEnabled !== false ? '<img class="moldura-logo" src="logo-cropware-pb-final.svg" alt="Cropware">' : ''}
+    ${postData.logoEnabled !== false ? `<img class="moldura-logo" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : ''}
     ${renderSiteText(postData)}
     ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
@@ -16281,7 +16404,7 @@ function renderSpotlightStyle(postData) {
       ${showHook ? `<div class="spotlight-hook hook" contenteditable="true" spellcheck="false">${hookHTML}</div>` : ''}
       ${showComplement ? `<div class="spotlight-complement complement" contenteditable="true" spellcheck="false">${complementHTML}</div>` : ''}
     </div>
-    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
+    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : ''}
     ${renderSiteText(postData)}
     ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
@@ -16342,7 +16465,7 @@ function renderSignalStyle(postData) {
       ${cardsHTML}
       ${supportTextHTML}
     </div>
-    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
+    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : ''}
     ${renderSiteText(postData)}
     ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
@@ -16419,7 +16542,7 @@ function renderMockupStyle(postData) {
       <div class="mockup-device">${deviceHTML}</div>
       ${textHTML}
     </div>
-    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="logo-cropware-pb-final.svg" alt="Cropware">` : ''}
+    ${postData.logoEnabled !== false ? `<img class="${logoClass}" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : ''}
     ${renderSiteText(postData)}
     ${renderAppStoreBadge(postData)}
     <div class="brand-strip"></div>
@@ -16816,7 +16939,7 @@ function updatePostControls(idx) {
   const logoScale        = post.logoScale       == null ? 1 : post.logoScale;
   const siteScale        = post.siteScale       == null ? 1 : post.siteScale;
   const sitePos          = post.sitePos         || 'bl';
-  const siteText         = post.siteText        || 'cropware.app';
+  const siteText         = displaySiteText(post);
   const logoOffsetX      = post.logoOffsetX     == null ? 0 : post.logoOffsetX;
   const logoOffsetY      = post.logoOffsetY     == null ? 0 : post.logoOffsetY;
   const siteOffsetX      = post.siteOffsetX     == null ? 0 : post.siteOffsetX;
@@ -23210,6 +23333,9 @@ async function persistDesignConfig() {
 }
 
 function buildDesignContext(platform) {
+  // gerentia: a voz e o publico ja vem do posicionamento do gerentia; NAO injeta a
+  // diretriz de marca/publico do Cropware (config do Supabase) pra nao puxar a copy de volta.
+  if (activePlatform === 'gerentia') return '';
   const p = platform || getPlatform();
   const cfg = (p === 'linkedin' || p === 'linkedin-pessoal' || p === 'presentation') ? designConfigLinkedin : designConfigInstagram;
   const parts = [];
@@ -23599,6 +23725,71 @@ function buildCropwarePositioningContext(channel) {
   return `${shared}\n\n${contexts[channel] || ''}`;
 }
 
+// Posicionamento do gerentia.app (plataforma 'gerentia'). Marca completamente
+// diferente da Cropware: gestao financeira por foto no WhatsApp + IA.
+function buildGerentiaPositioningContext(channel) {
+  const shared = `POSICIONAMENTO DO GERENTIA:
+- O Gerentia transforma uma foto no WhatsApp na gestao financeira organizada da pessoa — sem planilha, sem digitar, sem pasta de notas.
+- Categoria: gestao financeira pessoal e profissional por WhatsApp + IA.
+- Publico: o gestor individual generico — autonomo, profissional liberal, pequeno negocio sem financeiro, gestao pessoal seria. O agro e um NICHO de prova, NAO o publico.
+- Promessa central (toda peca volta a ela): "Zero planilha. Uma foto no WhatsApp."
+- Como funciona: a pessoa manda uma foto do recibo (ou audio/texto) no WhatsApp; a IA le, extrai valor, data, fornecedor e categoria, e devolve para confirmar; em segundos o lancamento esta no app — categorizado, anexado e somado no dashboard.
+- Fale de BENEFICIO, nunca de tecnologia. PROIBIDO vender "OCR", "visao computacional", "IA/LLM", "modelo treinado". Diga o que ela faz por voce: "le o recibo", "preenche o lancamento", "avisa do vencimento".
+- O que NAO somos: ERP/sistema contabil (nao emite NF, nao fecha balanco); app de banco/open finance (nao puxa extrato); planilha com cara de app; software de nicho unico.
+- Terminologia: lancamento (nao "transacao"), receita, despesa, recibo/nota, anexo, Centro de Custo, categoria, fatura, recorrencia, vencimento, relatorio/exportacao. Marca: "Gerentia" e "assistente do Gerentia" (NUNCA "Diretor IA" nem dar sub-marca ao bot).
+- Temas (cada peca puxa UM com clareza): captura sem esforco (a foto e o produto); fim da planilha e da pasta de notas; clareza, nao so registro ("quanto gastei com X?" respondido na hora); tudo num lugar que voce ja usa (WhatsApp para lancar, app para ver); controle de quem decide sozinho; confianca e privacidade (conta individual, sem puxar banco).
+- Nicho agro so como prova quando o canal pedir ("saiba o custo por hectare sem planilha") — caso de entrada, jamais o teto da marca.
+- REGRAS DE TEXTO na saida: separador travessao "—" (NUNCA "·" nem "-" como separador de frase); sem CAIXA ALTA em texto corrido; Title Case em titulos e CTAs, sentence case em descricoes/legendas; portugues sempre acentuado; SEM emoji em peca publica.
+- Respeite o tema informado pelo usuario; o Gerentia entra como solucao coerente, nunca como encaixe artificial.`;
+
+  const contexts = {
+    instagram: `DIRECIONAMENTO DO CANAL — INSTAGRAM:
+- Topo/meio de funil: mostre o GESTO (foto do recibo no WhatsApp) e o RESULTADO (o lancamento pronto, o dashboard somando) — nao a lista de funcionalidades.
+- Puxe uma dor reconhecivel (a nota que sumiu, "quanto gastei mesmo?", a planilha abandonada) e entregue a virada com a promessa central.
+- Tom direto, pratico e proximo. Frases curtas, verbo na frente.`,
+    instagramCarousel: `DIRECIONAMENTO DO CANAL — INSTAGRAM CARROSSEL:
+- Educativo e sequencial. Estrutura: hook (dor concreta) -> por que planilha/nota solta falha -> a virada (foto no WhatsApp) -> o ganho (clareza, vencimentos no radar, custo por categoria) -> CTA leve.
+- Uma ideia por slide. Tom didatico e pratico, sem encher de texto.`,
+    instagramAds: `DIRECIONAMENTO DO CANAL — INSTAGRAM ADS:
+- Objetivo: atrair para EXPERIMENTAR o Gerentia (trial de 14 dias). ESTRUTURA OBRIGATORIA: DOR -> SOLUCAO -> CTA.
+  - DOR (hook): um gargalo concreto da vida financeira (nota perdida, planilha que ninguem mantem, "nao sei quanto gastei com X", boleto esquecido).
+  - SOLUCAO: a foto no WhatsApp virando lancamento organizado, sem digitar.
+  - CTA: "Comece com uma foto — 14 dias gratis."
+- Linguagem comercial, objetiva e crivel. Frases curtas. ZERO formula publicitaria ("transforme", "revolucione", "o futuro das financas") e ZERO venda de tecnologia.`,
+    instagramAdsCarousel: `DIRECIONAMENTO DO CANAL — INSTAGRAM ADS CARROSSEL:
+- Progressao DOR -> SOLUCAO -> CTA nos slides: capa = a dor que para o scroll; meio = desdobra a dor (planilha, notas soltas, sem clareza); penultimo = o Gerentia resolvendo com a foto no WhatsApp; ultimo = CTA "Comece com uma foto — 14 dias gratis".
+- Uma ideia objetiva por slide. Crivel, sem formula publicitaria.`,
+    linkedin: `DIRECIONAMENTO DO CANAL — LINKEDIN (nao prioritario do Gerentia; manter promessa e voz):
+- Tom consultivo e pratico para autonomos, profissionais liberais e donos de pequeno negocio: organizar a vida financeira sem planilha, com clareza para decidir.
+- O Gerentia aparece como a forma mais simples de registrar (foto no WhatsApp) e enxergar (dashboard). Sem jargao, sem vender tecnologia.`,
+    linkedinCarousel: `DIRECIONAMENTO DO CANAL — LINKEDIN CARROSSEL:
+- Educativo e pratico sobre organizar financas sem planilha. Estrutura: tese -> dor (controle espalhado) -> impacto (decidir no escuro) -> a virada (capturar sem esforco) -> clareza e fechamento com o Gerentia.
+- Tom profissional, direto e util.`,
+    linkedinPessoal: `DIRECIONAMENTO DO CANAL — LINKEDIN PESSOAL:
+- Voz editorial e consultiva (pouco autobiografica) sobre organizacao financeira, habitos e clareza para quem gere o proprio dinheiro.
+- A relacao com o Gerentia entra sutil (capturar sem esforco, transformar recibo em decisao), sem "Conheca o Gerentia" nem "Teste agora".`,
+    linkedinPessoalCarousel: `DIRECIONAMENTO DO CANAL — LINKEDIN PESSOAL CARROSSEL:
+- Reflexivo e pratico sobre dinheiro, organizacao e clareza, conduzido pelo tema. A relacao com o Gerentia aparece so como analogia sutil (recibo -> lancamento, dado -> decisao). Evite primeira pessoa e propaganda direta.`,
+  };
+
+  return `${shared}\n\n${contexts[channel] || ''}`;
+}
+
+// Dispatcher por plataforma ativa do ecossistema.
+function buildPositioningContext(channel) {
+  return activePlatform === 'gerentia'
+    ? buildGerentiaPositioningContext(channel)
+    : buildCropwarePositioningContext(channel);
+}
+
+// Fallback de imagePrompt (quando o LLM nao devolve um) por plataforma.
+function defaultThemeImagePrompt(theme) {
+  if (activePlatform === 'gerentia') {
+    return `Ultra-realistic lifestyle photograph of everyday personal or small-business financial management related to: ${theme}. A real person organizing receipts or checking finances on a smartphone in an everyday setting (home office, small shop, desk, cafe). Soft natural indoor light, neutral modern palette, clear subject focus, gentle natural depth of field (foreground and subject sharp), generous negative space, Fujifilm 50mm style. No text, no charts or UI, no watermarks.`;
+  }
+  return `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, gentle, natural depth of field (foreground and subject sharp), natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
+}
+
 const REVISTA_BLOCK_DEFAULT = '#2B452D';
 
 function buildSinalPostSystemPrompt() {
@@ -23684,21 +23875,27 @@ function buildInstagramAdsSystemPrompt(tone) {
   };
   const toneBlock = toneDirectives[tone] || toneDirectives.casual;
 
-  return `Voce e um copywriter e estrategista de performance para Meta Ads da Cropware.
+  const _isGer = activePlatform === 'gerentia';
+  const brandDe   = _isGer ? 'do Gerentia' : 'da Cropware';
+  const adsAud    = _isGer ? 'publico de gestao financeira pessoal e de pequenos negocios' : 'publico tecnico-comercial do agro';
+  const adsGoal   = _isGer ? 'atrair a pessoa para EXPERIMENTAR o Gerentia (trial de 14 dias)' : 'atrair o profissional para CONHECER a Cropware (descoberta)';
+  const adsCtaEx  = _isGer ? '"Comece com uma foto — 14 dias gratis" / "Saiba mais"' : '"Saiba mais" / "Conheca a Cropware"';
+
+  return `Voce e um copywriter e estrategista de performance para Meta Ads ${brandDe}.
 
 REGRA ABSOLUTA: NUNCA invente numeros, porcentagens, estatisticas ou dados quantitativos.
 
 Seu trabalho e criar um criativo estatico para Instagram Ads com linguagem de anuncio, nao de post organico.
-O anuncio precisa ser claro, objetivo, orientado a clique e crivel para publico tecnico-comercial do agro.
-O FIM do anuncio e atrair o profissional para CONHECER a Cropware (descoberta), nao venda dura.
+O anuncio precisa ser claro, objetivo, orientado a clique e crivel para ${adsAud}.
+O FIM do anuncio e ${adsGoal}, nao venda dura.
 
 ESTRUTURA OBRIGATORIA DO DISCURSO: DOR -> SOLUCAO -> CTA, em APENAS 2 blocos de texto + CTA.
 - HOOK (bloco 1) = a DOR + a virada, em texto corrido.
-- COMPLEMENT (bloco 2) = a SOLUCAO / os ganhos concretos da Cropware, em texto corrido.
-- CTA = convite leve a conhecer ("Saiba mais" / "Conheca a Cropware").
+- COMPLEMENT (bloco 2) = a SOLUCAO / os ganhos concretos ${brandDe}, em texto corrido.
+- CTA = convite leve (${adsCtaEx}).
 Seja objetivo: frases curtas, zero rodeio, zero formula publicitaria ("transforme", "revolucione", "potencialize", "o futuro do agro").
 
-${buildCropwarePositioningContext('instagramAds')}
+${buildPositioningContext('instagramAds')}
 
 PARTE VISUAL DO CRIATIVO (APENAS 2 BLOCOS DE TEXTO):
 
@@ -23709,7 +23906,7 @@ HOOK (bloco principal, texto corrido):
 - Termina com ponto final. Leitura imediata, sem formula publicitaria.
 
 COMPLEMENT (bloco de apoio, texto corrido):
-- Resume em texto corrido os ganhos concretos da Cropware. 1 a 2 frases curtas, ~26 palavras.
+- Resume em texto corrido os ganhos concretos ${brandDe}. 1 a 2 frases curtas, ~26 palavras.
 - Destaque 1 ou 2 palavras-chave (as mais relevantes) com <strong>...</strong>. NENHUMA outra tag, sem bullets/lista.
 - Nao repita literalmente o hook. Termina com ponto final.
 
@@ -23719,7 +23916,7 @@ COPY DO ANUNCIO:
 - primaryText: 1-3 frases curtas para o texto principal do anuncio
 - headline: titulo curto e direto para o card/link
 - description: apoio curto para o link
-- cta: CTA leve de descoberta (ex: "Saiba mais", "Conheca a Cropware"); nunca venda dura nem CTA generico de post social
+- cta: CTA leve de descoberta (ex: "Saiba mais"); nunca venda dura nem CTA generico de post social
 - angle: resumo do angulo criativo em uma frase curta
 - offer: proposta de valor resumida
 - creativeNotes: orientacao curta sobre a intencao da peca
@@ -23732,9 +23929,9 @@ ${buildDesignContext('instagram')}
 MOCKUP (escolha conforme o TEMA/dor do anuncio):
 - O criativo tem um mockup de celular cuja tela mostra 2 funcionalidades do app + 1 "zoom" detalhado sobre uma delas.
 - Escolha as 2 funcionalidades mais coerentes com o tema e qual vai no zoom.
-- Use EXATAMENTE estas chaves: graph (produtividade/grafico), evaluation (avaliacao/nota), weather (clima/previsao), agenda (calendario/eventos), activity (atividade/tarefas), ndvi (vigor/NDVI), moisture (umidade do solo), rainfall (chuva acumulada), area (area monitorada em ha), stand (estande de plantas), alerts (alertas/pendencias), visits (visitas tecnicas).
-- Retorne "mockupFns" (array com 2 chaves distintas) e "mockupZoom" (uma das 2 chaves). Varie as escolhas conforme o tema — NAO use sempre graph+evaluation.
-- Para CADA funcionalidade escolhida, escreva um INSIGHT curtissimo (ate ~5 palavras) sobre o que aquele dado revela na pratica — uma observacao concreta, de analista (ex: "Talhao 7 puxou a media", "Vigor caiu em 2 areas", "Janela seca pra aplicar", "Falta 1 visita pra fechar"). NAO use slogan nem frase publicitaria. Retorne em "mockupCaps" (objeto com as 2 chaves escolhidas).
+- Use EXATAMENTE estas chaves: ${_isGer ? 'balance (saldo do mes), income (receitas/entradas), expenses (despesas/gastos), categories (gastos por categoria), costcenter (centro de custo), launches (lancamentos do dia), dueDates (vencimentos/contas a pagar), report (relatorio do mes).' : 'graph (produtividade/grafico), evaluation (avaliacao/nota), weather (clima/previsao), agenda (calendario/eventos), activity (atividade/tarefas), ndvi (vigor/NDVI), moisture (umidade do solo), rainfall (chuva acumulada), area (area monitorada em ha), stand (estande de plantas), alerts (alertas/pendencias), visits (visitas tecnicas).'}
+- Retorne "mockupFns" (array com 2 chaves distintas) e "mockupZoom" (uma das 2 chaves). Varie as escolhas conforme o tema — NAO use sempre ${_isGer ? 'balance+expenses' : 'graph+evaluation'}.
+- Para CADA funcionalidade escolhida, escreva um INSIGHT curtissimo (ate ~5 palavras) sobre o que aquele dado revela na pratica — uma observacao concreta ${_isGer ? '(ex: "Mercado puxou o mes", "Faltam 2 contas a pagar", "Saldo no positivo de novo", "Gasto fixo caiu")' : ', de analista (ex: "Talhao 7 puxou a media", "Vigor caiu em 2 areas", "Janela seca pra aplicar", "Falta 1 visita pra fechar")'}. NAO use slogan nem frase publicitaria. Retorne em "mockupCaps" (objeto com as 2 chaves escolhidas).
 
 INSIGHT (frase de efeito, 1 linha curtissima):
 - Uma frase de efeito de 3 a 6 palavras, memoravel, que sintetize o valor central do anuncio.
@@ -23743,7 +23940,7 @@ INSIGHT (frase de efeito, 1 linha curtissima):
 
 IMAGE_PROMPT:
 - Foto ultra-realista editorial premium
-- Agro brasileiro bem manejado
+- ${_isGer ? 'Cena real de gestao financeira do dia a dia (pessoa organizando recibos/contas pelo celular — casa, escritorio ou pequeno comercio). Paleta neutra/zinc, SEM agro, SEM lavoura, SEM verde de campo' : 'Agro brasileiro bem manejado'}
 - Espaco negativo para sobreposicao de texto
 - Sem texto, logos ou marcas visiveis
 - Visual limpo, sem vinheta ou faixa escura
@@ -23751,7 +23948,7 @@ IMAGE_PROMPT:
 Responda APENAS em JSON valido:
 {
   "hook": "Dor concreta da rotina + a virada, em texto corrido.",
-  "complement": "O Cropware CDM centraliza <strong>evidencias</strong> e gera <strong>historico</strong> por cliente e talhao.",
+  "complement": "${_isGer ? 'O Gerentia organiza seus <strong>lancamentos</strong> e mostra <strong>para onde vai</strong> seu dinheiro.' : 'O Cropware CDM centraliza <strong>evidencias</strong> e gera <strong>historico</strong> por cliente e talhao.'}",
   "title": "titulo curto para sidebar",
   "primaryText": "texto principal do anuncio",
   "headline": "headline curta",
@@ -23760,10 +23957,10 @@ Responda APENAS em JSON valido:
   "angle": "angulo criativo resumido",
   "offer": "proposta de valor resumida",
   "creativeNotes": "observacao criativa curta",
-  "mockupFns": ["ndvi", "visits"],
-  "mockupZoom": "ndvi",
-  "mockupCaps": { "ndvi": "Vigor caiu em 2 areas", "visits": "Falta 1 visita pra fechar" },
-  "insight": "Menos achismo, mais evidencia",
+  "mockupFns": ${_isGer ? '["balance", "expenses"]' : '["ndvi", "visits"]'},
+  "mockupZoom": "${_isGer ? 'balance' : 'ndvi'}",
+  "mockupCaps": ${_isGer ? '{ "balance": "Saldo no positivo", "expenses": "Gasto fixo caiu" }' : '{ "ndvi": "Vigor caiu em 2 areas", "visits": "Falta 1 visita pra fechar" }'},
+  "insight": "${_isGer ? 'Menos planilha, mais clareza' : 'Menos achismo, mais evidencia'}",
   "imagePrompt": "photorealistic image prompt in english"
 }`;
 }
@@ -24066,7 +24263,7 @@ function buildSystemPrompt(tone) {
 
 REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais da Cropware. Use apenas benefícios qualitativos e conceituais. Qualquer número inventado é desinformação e prejudica a marca.
 
-${buildCropwarePositioningContext('instagram')}
+${buildPositioningContext('instagram')}
 
 Crie posts para Instagram seguindo exatamente este padrão visual:
 
@@ -24125,13 +24322,13 @@ ${toneBlock}
 ${buildDesignContext()}
 IMAGE_PROMPT: descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
 - Estilo: fotografia documental/editorial profissional, estética Fujifilm, 50mm, profundidade de campo sutil e natural (primeiro plano e sujeito nítidos)
-- Contexto brasileiro: lavouras bem manejadas (soja, milho, algodão), fazendas organizadas, agrônomos com boa postura e vestimenta neutra
-- Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
-- Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
+- Contexto: ${activePlatform === 'gerentia' ? 'gestao financeira do dia a dia — uma pessoa organizando recibos/contas ou conferindo as financas no celular, em ambiente cotidiano (casa/home office, pequeno comercio, mesa de trabalho, cafe); perfis variados, sem clima de lavoura, o agro so como UM cenario possivel' : 'lavouras bem manejadas (soja, milho, algodão), fazendas organizadas, agrônomos com boa postura e vestimenta neutra'}
+- Iluminação: ${activePlatform === 'gerentia' ? 'luz natural de ambiente, suave e difusa' : 'golden hour, luz suave e difusa, incluir lens flare sutil e glow natural'}
+- Paleta: ${activePlatform === 'gerentia' ? 'neutra e moderna (cinzas/zinc do app), tons sobrios, SEM verde de agro' : 'tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves'}, sem saturação exagerada
 - Composição limpa e aberta, com espaço negativo para texto overlay, sem cobrir o topo
 - NÃO adicionar faixas escuras, gradientes, vinhetas ou escurecimento artificial
 - Sem texto, logotipos ou marcas visíveis
-- Variar personagens: homem/mulher, jovem/sênior, campo/gestão
+- Variar personagens: homem/mulher, jovem/sênior, ${activePlatform === 'gerentia' ? 'casa/escritorio/pequeno comercio' : 'campo/gestão'}
 
 Responda APENAS em JSON válido, sem texto fora do JSON:
 {
@@ -24173,7 +24370,7 @@ REGRAS:
 - Evite frases vazias como "revolucione sua gestão" ou "aumente sua produtividade" sem explicar a ação prática.
 - O foco é demonstrar como a ferramenta ajuda quem acompanha campo, GD, DM, consultoria, assistência técnica, revenda, produtor ou equipe comercial.
 
-${buildCropwarePositioningContext('instagram')}
+${buildPositioningContext('instagram')}
 
 HOOK:
 - 1 ou 2 linhas no total
@@ -24245,7 +24442,7 @@ REGRA ABSOLUTA:
 - Nunca invente numeros, percentuais, estatisticas, prazos ou promessas quantitativas.
 - Use o contexto real do app Cropware, mas escreva de forma muito resumida.
 
-${buildCropwarePositioningContext('instagram')}
+${buildPositioningContext('instagram')}
 
 ESTRUTURA DO TEXTO:
 
@@ -24318,7 +24515,7 @@ REGRA ABSOLUTA:
 - Nunca invente numeros, percentuais, estatisticas, prazos ou promessas quantitativas.
 - Use o contexto real do app Cropware e do agrônomo de campo.
 
-${buildCropwarePositioningContext('instagram')}
+${buildPositioningContext('instagram')}
 
 CHAMADA (campo "hook"):
 - Entre 70 e 85 caracteres (CONTANDO espacos e pontuacao).
@@ -24743,7 +24940,7 @@ async function generatePost() {
       const imgStepLabel = isNewsLike ? 'Nano Banana gerando foto editorial...' : 'Passo 2/2 — Nano Banana gerando imagem...';
       setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>${imgStepLabel}`, '');
       const imageTopic = isFeature && selectedFeature ? `${selectedFeature.name} ${theme}`.trim() : theme;
-      const imgPrompt = parsed.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${imageTopic}. Golden hour lighting, subtle lens flare, gentle, natural depth of field (foreground and subject sharp), natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
+      const imgPrompt = parsed.imagePrompt || defaultThemeImagePrompt(imageTopic);
       const chipDirectives = getActiveChipDirectives().join(' ');
       const img = await callGeminiImage(imgPrompt, chipDirectives);
       finalImgBase64 = img.base64;
@@ -24791,11 +24988,12 @@ async function generatePost() {
     };
     if (platform === 'instagram-ads') postData.type = (activeMode === 'instagram-ads-ii-post') ? 'instagram-ads-ii-post' : 'instagram-ads-post';
     if (postData.type === 'instagram-ads-post') {
-      const _fns = Array.isArray(parsed.mockupFns) ? parsed.mockupFns.filter(k => ADS_MOCKUP_FUNCTIONS[k]) : [];
+      const _FNS = adsMockupFns(activePlatform);
+      const _fns = Array.isArray(parsed.mockupFns) ? parsed.mockupFns.filter(k => _FNS[k]) : [];
       // Par válido da IA é respeitado; senão deixa null → o render sorteia
       // (seed por post.id). Evita cair sempre em graph+evaluation.
       postData.mockupFns = (_fns.length === 2 && _fns[0] !== _fns[1]) ? _fns : null;
-      postData.mockupZoom = (postData.mockupFns && ADS_MOCKUP_FUNCTIONS[parsed.mockupZoom] && postData.mockupFns.includes(parsed.mockupZoom)) ? parsed.mockupZoom : (postData.mockupFns ? postData.mockupFns[0] : null);
+      postData.mockupZoom = (postData.mockupFns && _FNS[parsed.mockupZoom] && postData.mockupFns.includes(parsed.mockupZoom)) ? parsed.mockupZoom : (postData.mockupFns ? postData.mockupFns[0] : null);
       const _caps = (parsed.mockupCaps && typeof parsed.mockupCaps === 'object') ? parsed.mockupCaps : {};
       postData.mockupCaps = {};
       (postData.mockupFns || []).forEach(k => { const v = (_caps[k] || '').toString().trim(); if (v) postData.mockupCaps[k] = v.slice(0, 42); });
@@ -24938,7 +25136,7 @@ function buildCarouselSystemPrompt(tone, slideCount) {
 
 REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais da Cropware. Use apenas benefícios qualitativos e conceituais.
 
-${buildCropwarePositioningContext('instagramCarousel')}
+${buildPositioningContext('instagramCarousel')}
 
 Crie um CARROSSEL para Instagram com ${slideCount} slides seguindo exatamente este padrão:
 
@@ -24982,13 +25180,13 @@ ${buildDesignContext()}
 
 IMAGE_PROMPT (um por slide): descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
 - Estilo: fotografia documental/editorial profissional, estética Fujifilm, 50mm, profundidade de campo sutil e natural (primeiro plano e sujeito nítidos)
-- Contexto brasileiro: lavouras bem manejadas (soja, milho, algodão), fazendas organizadas, agrônomos com boa postura e vestimenta neutra
-- Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
-- Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
+- Contexto: ${activePlatform === 'gerentia' ? 'gestao financeira do dia a dia — uma pessoa organizando recibos/contas ou conferindo as financas no celular, em ambiente cotidiano (casa/home office, pequeno comercio, mesa de trabalho, cafe); perfis variados, sem clima de lavoura, o agro so como UM cenario possivel' : 'lavouras bem manejadas (soja, milho, algodão), fazendas organizadas, agrônomos com boa postura e vestimenta neutra'}
+- Iluminação: ${activePlatform === 'gerentia' ? 'luz natural de ambiente, suave e difusa' : 'golden hour, luz suave e difusa, incluir lens flare sutil e glow natural'}
+- Paleta: ${activePlatform === 'gerentia' ? 'neutra e moderna (cinzas/zinc do app), tons sobrios, SEM verde de agro' : 'tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves'}, sem saturação exagerada
 - Composição limpa e aberta, com espaço negativo para texto overlay, sem cobrir o topo
 - NÃO adicionar faixas escuras, gradientes, vinhetas ou escurecimento artificial
 - Sem texto, logotipos ou marcas visíveis
-- Variar personagens: homem/mulher, jovem/sênior, campo/gestão
+- Variar personagens: homem/mulher, jovem/sênior, ${activePlatform === 'gerentia' ? 'casa/escritorio/pequeno comercio' : 'campo/gestão'}
 - Cada slide deve ter uma imagem DIFERENTE e complementar
 
 Responda APENAS em JSON válido:
@@ -25034,7 +25232,7 @@ REGRAS:
 - Cada slide deve avançar a narrativa e demonstrar um uso concreto.
 - Evite discurso publicitário genérico. Prefira ação prática, telas, campos, dados e decisões.
 
-${buildCropwarePositioningContext('instagramCarousel')}
+${buildPositioningContext('instagramCarousel')}
 
 ESTRUTURA:
 - Slide 1: problema prático ou oportunidade de uso.
@@ -25111,7 +25309,7 @@ REGRA ABSOLUTA: NUNCA invente numeros, porcentagens, estatisticas ou dados quant
 
 Seu trabalho e criar um CARROSSEL de ${slideCount} slides para Instagram Ads. Linguagem de anuncio, nao de post organico.
 
-${buildCropwarePositioningContext('instagramAdsCarousel')}
+${buildPositioningContext('instagramAdsCarousel')}
 
 ESTRUTURA DO CARROSSEL (DOR -> SOLUCAO -> CTA):
 - Slide 1 (CAPA): a DOR principal e concreta que para o scroll (gargalo real de quem desenvolve mercado no campo). Frase curta.
@@ -25136,7 +25334,7 @@ COPY DO ANUNCIO (campos compartilhados para todo o carrossel):
 - primaryText: 1-3 frases curtas para o texto principal do anuncio
 - headline: titulo curto e direto para o card/link
 - description: apoio curto para o link
-- cta: CTA leve de descoberta (ex: "Saiba mais", "Conheca a Cropware"); nunca venda dura nem CTA generico de post social
+- cta: CTA leve de descoberta (ex: "Saiba mais"); nunca venda dura nem CTA generico de post social
 - angle: resumo do angulo criativo em uma frase curta
 - offer: proposta de valor resumida
 - creativeNotes: orientacao criativa curta sobre o conjunto de slides
@@ -25184,7 +25382,7 @@ CONTEXTO LINKEDIN:
 - O público são gestores, agrônomos sêniores, executivos de agro, investidores e profissionais de tecnologia agrícola.
 - O post visual será exibido como imagem no LinkedIn (mesmo formato 1080x1350 do Instagram).
 
-${buildCropwarePositioningContext('linkedin')}
+${buildPositioningContext('linkedin')}
 
 HOOK (texto grande, impactante):
 - 1 OU 2 linhas no total (prefira 2; use 1 só quando a frase já fechar sozinha e for forte)
@@ -25229,12 +25427,12 @@ ${buildDesignContext('linkedin')}
 IMAGE_PROMPT: descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
 - Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo sutil e natural (primeiro plano e sujeito nítidos)
 - Contexto brasileiro de escala: lavouras bem manejadas, fazendas organizadas, tecnologia e maquinário moderno, agrônomos com boa postura e vestimenta neutra
-- Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
-- Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
+- Iluminação: ${activePlatform === 'gerentia' ? 'luz natural de ambiente, suave e difusa' : 'golden hour, luz suave e difusa, incluir lens flare sutil e glow natural'}
+- Paleta: ${activePlatform === 'gerentia' ? 'neutra e moderna (cinzas/zinc do app), tons sobrios, SEM verde de agro' : 'tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves'}, sem saturação exagerada
 - Composição profissional que transmita escala e modernidade, com espaço negativo para texto overlay
 - NÃO adicionar faixas escuras, gradientes, vinhetas ou escurecimento artificial
 - Sem texto, logotipos ou marcas visíveis
-- Variar personagens: homem/mulher, jovem/sênior, campo/gestão
+- Variar personagens: homem/mulher, jovem/sênior, ${activePlatform === 'gerentia' ? 'casa/escritorio/pequeno comercio' : 'campo/gestão'}
 
 Responda APENAS em JSON válido, sem texto fora do JSON:
 {
@@ -25269,7 +25467,7 @@ CONTEXTO LINKEDIN:
 - O público são gestores, agrônomos sêniores, executivos, investidores e profissionais de agtech.
 - Foco em thought leadership, dados e raciocínio estratégico.
 
-${buildCropwarePositioningContext('linkedinCarousel')}
+${buildPositioningContext('linkedinCarousel')}
 
 ESTRUTURA DO CARROSSEL:
 - Slide 1 (CAPA): hook forte que gere curiosidade profissional. Tese provocativa ou dado impactante.
@@ -25313,12 +25511,12 @@ ${buildDesignContext('linkedin')}
 IMAGE_PROMPT (um por slide): descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
 - Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo sutil e natural (primeiro plano e sujeito nítidos)
 - Contexto brasileiro de escala: lavouras bem manejadas, fazendas organizadas, tecnologia e maquinário moderno, agrônomos com boa postura e vestimenta neutra
-- Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
-- Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
+- Iluminação: ${activePlatform === 'gerentia' ? 'luz natural de ambiente, suave e difusa' : 'golden hour, luz suave e difusa, incluir lens flare sutil e glow natural'}
+- Paleta: ${activePlatform === 'gerentia' ? 'neutra e moderna (cinzas/zinc do app), tons sobrios, SEM verde de agro' : 'tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves'}, sem saturação exagerada
 - Composição profissional que transmita escala e modernidade
 - NÃO adicionar faixas escuras, gradientes, vinhetas ou escurecimento artificial
 - Sem texto, logotipos ou marcas visíveis
-- Variar personagens: homem/mulher, jovem/sênior, campo/gestão
+- Variar personagens: homem/mulher, jovem/sênior, ${activePlatform === 'gerentia' ? 'casa/escritorio/pequeno comercio' : 'campo/gestão'}
 - Cada slide deve ter uma imagem DIFERENTE e complementar
 
 Responda APENAS em JSON válido:
@@ -25372,7 +25570,7 @@ CONTEXTO LINKEDIN:
 - O público são profissionais do agro: gestores, agrônomos, técnicos, executivos, investidores.
 - O post deve parecer conteúdo de valor, não desabafo ou storytelling pessoal.
 
-${buildCropwarePositioningContext('linkedinPessoal')}
+${buildPositioningContext('linkedinPessoal')}
 
 HOOK (texto grande, impactante):
 - 1 OU 2 linhas no total (prefira 2; use 1 só quando a frase já fechar sozinha e for forte)
@@ -25428,12 +25626,12 @@ ${buildDesignContext('linkedin')}
 IMAGE_PROMPT: descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
 - Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo sutil e natural (primeiro plano e sujeito nítidos)
 - Contexto brasileiro de escala: lavouras bem manejadas, fazendas organizadas, tecnologia e maquinário moderno, agrônomos com boa postura e vestimenta neutra
-- Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
-- Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves, sem saturação exagerada
+- Iluminação: ${activePlatform === 'gerentia' ? 'luz natural de ambiente, suave e difusa' : 'golden hour, luz suave e difusa, incluir lens flare sutil e glow natural'}
+- Paleta: ${activePlatform === 'gerentia' ? 'neutra e moderna (cinzas/zinc do app), tons sobrios, SEM verde de agro' : 'tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves'}, sem saturação exagerada
 - Composição profissional que transmita escala e modernidade, com espaço negativo para texto overlay
 - NÃO adicionar faixas escuras, gradientes, vinhetas ou escurecimento artificial
 - Sem texto, logotipos ou marcas visíveis
-- Variar personagens: homem/mulher, jovem/sênior, campo/gestão
+- Variar personagens: homem/mulher, jovem/sênior, ${activePlatform === 'gerentia' ? 'casa/escritorio/pequeno comercio' : 'campo/gestão'}
 
 Responda APENAS em JSON válido, sem texto fora do JSON:
 {
@@ -25482,7 +25680,7 @@ CONTEXTO LINKEDIN:
 - O público são profissionais do agro: gestores, agrônomos, técnicos, executivos.
 - Foco em thought leadership técnico, insights de mercado e raciocínio estratégico.
 
-${buildCropwarePositioningContext('linkedinPessoalCarousel')}
+${buildPositioningContext('linkedinPessoalCarousel')}
 
 ESTRUTURA DO CARROSSEL:
 - Slide 1 (CAPA): hook forte com provocação técnica ou tese estratégica. Ex: "Por que dados históricos valem mais que previsão."
@@ -25531,12 +25729,12 @@ ${buildDesignContext('linkedin')}
 IMAGE_PROMPT (um por slide): descrição em inglês para gerar foto ultra-realista de qualidade editorial premium.
 - Estilo: fotografia corporativa/editorial profissional, estética Fujifilm, 50mm, profundidade de campo sutil e natural (primeiro plano e sujeito nítidos)
 - Contexto brasileiro de escala: lavouras bem manejadas, fazendas organizadas, tecnologia e maquinário moderno
-- Iluminação: golden hour, luz suave e difusa, incluir lens flare sutil e glow natural
+- Iluminação: ${activePlatform === 'gerentia' ? 'luz natural de ambiente, suave e difusa' : 'golden hour, luz suave e difusa, incluir lens flare sutil e glow natural'}
 - Paleta: tons verdes naturais com ênfase em #44AA7B, brancos e cinzas suaves
 - Composição profissional que transmita escala e modernidade
 - NÃO adicionar faixas escuras, gradientes, vinhetas ou escurecimento artificial
 - Sem texto, logotipos ou marcas visíveis
-- Variar personagens: homem/mulher, jovem/sênior, campo/gestão
+- Variar personagens: homem/mulher, jovem/sênior, ${activePlatform === 'gerentia' ? 'casa/escritorio/pequeno comercio' : 'campo/gestão'}
 - Cada slide deve ter uma imagem DIFERENTE e complementar
 
 Responda APENAS em JSON válido:
@@ -26659,7 +26857,7 @@ function buildInsertSlideSystemPrompt(tone) {
 
 REGRA ABSOLUTA: NUNCA invente números, porcentagens, estatísticas ou dados quantitativos (ex: "80%", "3x mais", "reduz 10%", "em 30 dias"). Você NÃO tem dados reais da Cropware. Use apenas benefícios qualitativos e conceituais.
 
-${buildCropwarePositioningContext('instagramCarousel')}
+${buildPositioningContext('instagramCarousel')}
 
 Crie UM ÚNICO slide complementar para encaixar entre slides existentes de um carrossel.
 O slide deve manter coerência narrativa e visual com os slides vizinhos fornecidos no contexto.
@@ -26801,7 +26999,7 @@ async function confirmInsertSlide() {
     const slideText = await callGeminiInsertSlideText(theme, tone, context, platform);
 
     statusEl.textContent = 'Gerando imagem com IA...';
-    const imgPrompt = slideText.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${theme}. Golden hour lighting, subtle lens flare, gentle, natural depth of field (foreground and subject sharp), natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
+    const imgPrompt = slideText.imagePrompt || defaultThemeImagePrompt(theme);
     const img = await callGeminiImage(imgPrompt);
 
     const timestamp = Date.now();
@@ -26983,7 +27181,7 @@ async function generateCarousel() {
       if (needImage) {
         setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo ${i + 2}/${totalSteps} — Gerando imagem ${i + 1}/${slides.length}...`, '');
         const imageTopic = isFeature && selectedFeature ? `${selectedFeature.name} ${theme}`.trim() : theme;
-        const imgPrompt = s.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${imageTopic}. Golden hour lighting, subtle lens flare, gentle, natural depth of field (foreground and subject sharp), natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
+        const imgPrompt = s.imagePrompt || defaultThemeImagePrompt(imageTopic);
         const img = await callGeminiImage(imgPrompt, getActiveChipDirectives().join(' '));
         imgBase64 = img.base64;
         imgMime = img.mime;
@@ -27341,7 +27539,7 @@ async function generateNewsCarousel() {
 
       if (needImage) {
         setGenStatus(`<i class="ph ph-hourglass sz-18" style="margin-right:6px"></i>Passo ${i + 3}/${totalSteps} — Gerando imagem ${i + 1}/${slides.length}...`, '');
-        const imgPrompt = s.imagePrompt || `Photojournalistic editorial image of Brazilian agriculture related to: ${theme}. Soft natural lighting, muted greens, gentle, natural depth of field (foreground and subject sharp), no text or logos.`;
+        const imgPrompt = s.imagePrompt || defaultThemeImagePrompt(theme);
         const img = await callGeminiImage(imgPrompt, combinedDirective);
         imgBase64 = img.base64;
         imgMime = img.mime;
@@ -28545,7 +28743,7 @@ async function regenerateImage() {
   const direction = await promptForDirection('Regerar Imagem', true);
   if (direction === null) return;
   // Prompt base = o original da geração (ou reconstruído do tema)
-  const basePrompt = post.imagePrompt || `Ultra-realistic editorial photograph of Brazilian agriculture related to: ${post.theme || ''}. Golden hour lighting, subtle lens flare, gentle, natural depth of field (foreground and subject sharp), natural green tones (#44AA7B palette), clean composition with negative space, Fujifilm 50mm style. No text.`;
+  const basePrompt = post.imagePrompt || defaultThemeImagePrompt(post.theme || '');
   // Direção do usuário complementa o prompt original (não substitui)
   const imagePrompt = direction
     ? `${basePrompt}\n\nAdditional direction (keep everything else the same): ${direction}`
