@@ -11936,19 +11936,40 @@ const CROPWARE_FEATURE_CATALOG = [
   {"id":"cropware-radar-assistente-ia-agronomico-analise-claude","module":"Cropware Radar","name":"Assistente IA Agronômico (Análise Claude)","description":"Análise textual gerada por IA Claude que combina previsão de 16 dias com contexto agrário; gera 4 saídas — Boletim Climático, Análise Agronômica, Resumo 3 dias e Resumo 16 dias — em markdown leve renderizado com ícones.","userActions":"Carrega previsão, clica \"Gerar Análise IA\", aguarda 5-10s, alterna entre 4 abas (Boletim/Análise/3D/16D), copia para WhatsApp/email ou exporta PDF.","screens":"4 abas (Boletim, Análise Agronômica, Resumo 3D, Resumo 16D), AiMarkdownContent com ícones contextuais, botão Copiar, botão Gerar novamente.","examples":"RTV gera análise para soja e recebe \"## Janela de Aplicação - recomenda fungicida em 12/05 (3 dias favoráveis seguidos)\"; DM apresenta Resumo 16D em reunião regional (\"prognóstico GDD: +120 dias à colheita\"); consultor cola Resumo 3D em email para produtor (prova de análise técnica datada).","benefits":"Escala (1 clique = análise para 50 boletins), especificidade (contexto de fazenda), linguagem agronômica natural, rastreabilidade (data + versionado por forecast).","data":"Edge function /radar/ai-analysis (entrada weatherData + farmName, saída analysis + bulletin + summary3Days + summary16Days + summaryPanorama), cache local, persistido em radar_forecasts.","themes":"Recomendação por stage (semeadura, V-stage, floração, enchimento), otimização de inputs, planejamento logístico.","terms":"Markdown leve (## título, **negrito**, - bullet), prompt com farm context, cache até mudança de previsão.","positioning":"\"Análise human-like\" gerada por IA = credibilidade diferencial. Para consultoria: análise automatizada reduz custo de produção. Para RTV: recomendação datada vira documentação legal. Para biológicos: Claude pode ser tunada com base de conhecimento de produto."}
 ];
 
+// Catálogo de funcionalidades do GERENTIA (app de gestão financeira via WhatsApp).
+// Mesma forma do catálogo Cropware; voz e terminologia do gerentia (lançamento, recibo,
+// centro de custo, categoria — sem jargão contábil, benefício antes de feature).
+const GERENTIA_FEATURE_CATALOG = [
+  {"id":"gerentia-captura-por-foto","module":"Gerentia Captura","name":"Captura por Foto (WhatsApp)","description":"Tire uma foto do recibo, nota ou comprovante pelo WhatsApp — o assistente do Gerentia lê valor, data, estabelecimento e categoria e devolve um lançamento pronto pra você só confirmar.","userActions":"Manda a foto no WhatsApp, confere o que o assistente preencheu (valor, data, categoria, centro de custo), ajusta se quiser e confirma — vira lançamento no app.","screens":"Conversa do WhatsApp, prévia do lançamento extraído (valor, data, estabelecimento, categoria sugerida), botão confirmar, recibo anexado automaticamente.","examples":"No fim do almoço, a pessoa fotografa a nota do restaurante; em segundos o assistente devolve \"R$ 48,00 — Alimentação — hoje\" e ela só confirma.","benefits":"Zero digitação, zero planilha. Registrar uma despesa leva o tempo de tirar uma foto.","data":"Valor, data, estabelecimento, categoria, centro de custo, recibo anexado.","themes":"Captura sem esforço, fim da planilha, registrar na hora, organização automática.","terms":"Lançamento, recibo, anexo, categoria, assistente do Gerentia.","positioning":"\"A foto é o produto\" — o gesto que todo mundo já faz (fotografar) vira controle financeiro completo."},
+  {"id":"gerentia-captura-audio-texto","module":"Gerentia Captura","name":"Captura por Áudio e Texto","description":"Sem o recibo em mãos? Manda um áudio ou uma mensagem (\"paguei 90 de gasolina\") no WhatsApp e o assistente transforma em lançamento categorizado.","userActions":"Fala ou escreve o gasto no WhatsApp; o assistente entende valor, categoria e data, e devolve o lançamento pra confirmar.","screens":"Mensagem de áudio/texto no WhatsApp, prévia do lançamento interpretado, confirmação rápida.","examples":"No posto, a pessoa manda áudio \"abasteci, 120 reais\"; o lançamento de Combustível já fica registrado sem ela parar pra digitar.","benefits":"Registrar do jeito que for mais rápido no momento — foto, áudio ou texto. Nada se perde por preguiça de anotar.","data":"Valor, categoria, data, descrição livre.","themes":"Captura sem esforço, registrar na hora, tudo no WhatsApp que você já usa.","terms":"Lançamento, categoria, assistente do Gerentia.","positioning":"\"Anotar virou conversa\" — o controle acontece no app de mensagens que a pessoa já tem aberto o dia todo."},
+  {"id":"gerentia-dashboard","module":"Gerentia App","name":"Visão do Mês (Dashboard)","description":"Uma tela que responde na hora: quanto entrou, quanto saiu, qual o saldo e pra onde o dinheiro está indo no mês.","userActions":"Abre o app e vê saldo, entradas e saídas do mês, evolução e os maiores gastos por categoria, sem montar relatório nenhum.","screens":"Cards de saldo/receitas/despesas, gráfico de evolução, ranking de categorias, comparação com o mês anterior.","examples":"No dia 20, a pessoa abre o app e vê \"já gastei R$ 2.300, sendo 40% em Casa\" — e decide segurar o resto do mês.","benefits":"Clareza, não só registro. A resposta de \"como estou esse mês?\" sem abrir planilha.","data":"Saldo, total de receitas e despesas, evolução, gasto por categoria, comparativo mensal.","themes":"Clareza na hora, controle do dia a dia, fim da planilha, decisão com dados.","terms":"Saldo, receita, despesa, categoria, mês.","positioning":"\"Clareza, não burocracia\" — o número que importa, na hora, sem você ter que somar nada."},
+  {"id":"gerentia-lancamentos","module":"Gerentia App","name":"Lançamentos","description":"Lista organizada de tudo que entra e sai, com status claro: pago, a pagar, recebido, a receber, vencido.","userActions":"Vê, busca e edita lançamentos; marca como pago/recebido; filtra por período, categoria ou centro de custo.","screens":"Lista de lançamentos com valor/data/categoria, etiquetas de status coloridas, busca e filtros, detalhe com recibo anexado.","examples":"A pessoa filtra \"a pagar esta semana\" e vê 3 contas pendentes antes de cada uma vencer.","benefits":"Nada se perde nem vence esquecido. Cada movimento tem origem, status e comprovante.","data":"Valor, data, categoria, centro de custo, status (pago/a pagar/recebido/a receber/vencido), recibo.","themes":"Tudo num lugar só, controle do solo, nada esquecido.","terms":"Lançamento, receita, despesa, status pago/a pagar/vencido, recibo.","positioning":"\"Cada real com origem\" — o extrato que você realmente entende, no lugar do print do banco."},
+  {"id":"gerentia-categorias","module":"Gerentia App","name":"Categorias","description":"Cada lançamento entra numa categoria — automaticamente — então a pergunta \"quanto gastei com X?\" tem resposta na hora.","userActions":"Aceita a categoria sugerida pelo assistente ou ajusta; cria categorias próprias; vê o total por categoria no mês.","screens":"Categoria sugerida na captura, lista editável de categorias, gráfico de gasto por categoria.","examples":"A pessoa quer saber quanto gastou com Mercado no mês; em um toque vê \"R$ 740\" sem somar nota por nota.","benefits":"Saber pra onde vai o dinheiro sem montar planilha de categorias na mão.","data":"Categoria por lançamento, total por categoria, evolução por categoria.","themes":"Clareza na hora, organização automática, para onde vai o dinheiro.","terms":"Categoria, lançamento, gasto por categoria.","positioning":"\"Pra onde foi o dinheiro\" — a categorização acontece sozinha; você só lê a resposta."},
+  {"id":"gerentia-centros-de-custo","module":"Gerentia App","name":"Centros de Custo","description":"Separe as finanças por contexto — casa, loja, veículo, um projeto — sem precisar de contas ou apps diferentes.","userActions":"Cria centros de custo, associa lançamentos a cada um (manual ou pelo assistente), acompanha o resultado de cada contexto separadamente.","screens":"Lista de centros de custo, seletor no lançamento, resumo financeiro por centro.","examples":"Quem tem um pequeno comércio separa \"Loja\" de \"Pessoal\" e enxerga o lucro real do negócio sem misturar com as contas de casa.","benefits":"Enxergar cada parte da vida financeira sozinha — sem misturar pessoal com trabalho.","data":"Centro de custo por lançamento, total e saldo por centro.","themes":"Controle do solo, clareza, pessoal e trabalho separados.","terms":"Centro de custo, lançamento, saldo por centro.","positioning":"\"Cada contexto no seu lugar\" — a separação que o autônomo e o pequeno negócio precisam, sem virar um ERP."},
+  {"id":"gerentia-recibos-anexos","module":"Gerentia App","name":"Recibos e Anexos","description":"Todo lançamento guarda o comprovante original — a foto do recibo, a nota, o anexo — junto do registro.","userActions":"O recibo fotografado fica anexado ao lançamento; a pessoa abre, consulta e recupera quando precisa.","screens":"Lançamento com miniatura do recibo, visualizador do anexo, busca por comprovante.","examples":"Meses depois, a pessoa precisa provar um pagamento; abre o lançamento e o recibo está lá, junto.","benefits":"Acabou a gaveta de papéis e a foto perdida na galeria. O comprovante mora junto do gasto.","data":"Imagem/arquivo do recibo, vínculo com o lançamento, data.","themes":"Tudo num lugar só, fim da bagunça de papel, confiança.","terms":"Recibo, nota, anexo, lançamento.","positioning":"\"O comprovante mora junto do gasto\" — registro e prova no mesmo lugar, sempre."},
+  {"id":"gerentia-vencimentos-recorrencia","module":"Gerentia App","name":"Vencimentos e Recorrência","description":"Contas a pagar e a receber, com datas e recorrência — pra nada vencer esquecido nem pegar de surpresa.","userActions":"Cadastra contas com vencimento, marca as que se repetem todo mês, acompanha o que está por vir e marca como pago/recebido.","screens":"Agenda de vencimentos, lançamentos recorrentes, alertas de \"a vencer\" e \"vencido\".","examples":"No começo do mês a pessoa já vê todas as contas fixas que vão cair, e sabe quanto vai sobrar.","benefits":"Previsibilidade — saber o que vem antes de chegar, sem sustos no fim do mês.","data":"Vencimento, recorrência, status (a pagar/a receber/vencido), valor previsto.","themes":"Nada esquecido, previsibilidade, controle do dia a dia.","terms":"Vencimento, recorrência, fatura, a pagar/a receber, vencido.","positioning":"\"Nada vence esquecido\" — o que vai cair no mês, claro e antecipado."},
+  {"id":"gerentia-relatorios-exportacao","module":"Gerentia App","name":"Relatórios e Exportação","description":"Feche o mês com um resumo claro de entradas, saídas e categorias — e exporte quando precisar compartilhar ou guardar.","userActions":"Gera o resumo do período, vê totais por categoria e centro de custo, exporta pra compartilhar com contador, sócio ou pra arquivo.","screens":"Resumo do período, totais por categoria/centro, opção de exportar.","examples":"No fim do mês a pessoa gera o resumo e manda pro contador — pronto, sem montar planilha.","benefits":"Fechar o mês em minutos e ter o que mostrar quando alguém pede — sem trabalho manual.","data":"Resumo por período, totais por categoria e centro de custo, exportação.","themes":"Fim da planilha, clareza, fechar o mês sem esforço.","terms":"Relatório, exportação, período, categoria, centro de custo.","positioning":"\"Fecha o mês em minutos\" — o relatório pronto que antes levava uma tarde de planilha."},
+  {"id":"gerentia-conta-seguranca","module":"Gerentia Conta","name":"Conta Individual e Segurança","description":"Uma conta sua, individual, com proteção por autenticação em dois fatores — e sem puxar dados do seu banco.","userActions":"Cria a conta individual, ativa a verificação em dois fatores, controla seus próprios dados; o app não acessa o banco nem o open finance.","screens":"Cadastro individual, ativação de MFA, configurações de privacidade da conta.","examples":"A pessoa usa o Gerentia sabendo que os dados são dela, protegidos, e que nada é puxado automaticamente do banco.","benefits":"Controle e privacidade — seus números são seus, sem conexão obrigatória com o banco.","data":"Conta individual, MFA, preferências de privacidade.","themes":"Confiança e privacidade, controle do solo, conta individual.","terms":"Conta individual, MFA (dois fatores), privacidade.","positioning":"\"Seus números são seus\" — confiança e privacidade, sem abrir o banco pra ninguém."}
+];
+
+// Catálogo da plataforma ativa (Cropware ou Gerentia).
+function featureCatalog() { return activePlatform === 'gerentia' ? GERENTIA_FEATURE_CATALOG : CROPWARE_FEATURE_CATALOG; }
+
 function getFeatureById(id) {
-  return CROPWARE_FEATURE_CATALOG.find(f => f.id === id) || null;
+  return featureCatalog().find(f => f.id === id) || null;
 }
 
 function populateFeatureSelect() {
   const select = document.getElementById('genFeatureSelect');
-  if (!select || select.dataset.ready === 'true') return;
-  const modules = [...new Set(CROPWARE_FEATURE_CATALOG.map(f => f.module))];
+  // Re-popula quando troca de plataforma (catálogo Cropware vs Gerentia).
+  if (!select || select.dataset.platform === activePlatform) return;
+  const catalog = featureCatalog();
+  const modules = [...new Set(catalog.map(f => f.module))];
   select.innerHTML = '<option value="">Selecione uma funcionalidade</option>';
   modules.forEach(moduleName => {
     const group = document.createElement('optgroup');
-    group.label = moduleName.replace('Cropware ', '');
-    CROPWARE_FEATURE_CATALOG
+    group.label = moduleName.replace(/^(Cropware|Gerentia) /, '');
+    catalog
       .filter(f => f.module === moduleName)
       .forEach(feature => {
         const opt = document.createElement('option');
@@ -11958,6 +11979,7 @@ function populateFeatureSelect() {
       });
     select.appendChild(group);
   });
+  select.dataset.platform = activePlatform;
   select.dataset.ready = 'true';
 }
 
@@ -11968,18 +11990,19 @@ function getSelectedFeatureForGeneration() {
 
 function formatFeaturePromptContext(feature, theme) {
   if (!feature) return '';
-  const optionalTheme = (theme || '').trim() || 'sem tema/cultura específico informado';
+  const ger = activePlatform === 'gerentia';
+  const optionalTheme = (theme || '').trim() || (ger ? 'sem tema específico informado' : 'sem tema/cultura específico informado');
   return [
     `Funcionalidade selecionada: ${feature.name}`,
     `Módulo: ${feature.module}`,
-    `Contexto agrícola opcional informado pelo usuário: ${optionalTheme}`,
+    `${ger ? 'Contexto opcional informado pelo usuário' : 'Contexto agrícola opcional informado pelo usuário'}: ${optionalTheme}`,
     `Descrição: ${feature.description || ''}`,
     `O que o usuário faz nela: ${feature.userActions || ''}`,
     `Telas/campos/ações: ${feature.screens || ''}`,
     `Exemplos práticos do app: ${feature.examples || ''}`,
     `Benefícios: ${feature.benefits || ''}`,
     `Dados gerados/organizados: ${feature.data || ''}`,
-    `Temas agrícolas relacionados: ${feature.themes || ''}`,
+    `${ger ? 'Temas relacionados' : 'Temas agrícolas relacionados'}: ${feature.themes || ''}`,
     `Termos técnicos: ${feature.terms || ''}`,
     `Posicionamento: ${feature.positioning || ''}`,
   ].filter(Boolean).join('\n');
@@ -22683,12 +22706,12 @@ function openGenerator() {
     : isSinal
     ? 'Ex: especialidades como correcao de gargalo; rastreabilidade em areas demonstrativas...'
     : isFeature
-    ? 'Ex: soja, área de GD em milho, rotina de consultoria, safra de algodão...'
+    ? (activePlatform === 'gerentia' ? 'Ex: organizar os gastos do mês, separar contas de casa e do trabalho, parar de usar planilha...' : 'Ex: soja, área de GD em milho, rotina de consultoria, safra de algodão...')
     : isOpinion
     ? 'Ex: o que a alta dos defensivos revela sobre a safra, por que a soja perdeu margem, leitura sobre crédito rural...'
     : isNews
     ? 'Ex: preço da soja em Mato Grosso, exportação de milho para a China, clima na safra de cana, política agrícola...'
-    : 'Ex: colheita de soja com variação por talhão, foco em decisão baseada em dado...';
+    : (activePlatform === 'gerentia' ? 'Ex: controle de despesas do dia a dia, foto do recibo no WhatsApp, clareza de para onde vai o dinheiro...' : 'Ex: colheita de soja com variação por talhão, foco em decisão baseada em dado...');
   const featureGroup = document.getElementById('genFeatureGroup');
   if (featureGroup) featureGroup.style.display = isFeature ? '' : 'none';
   if (isFeature) populateFeatureSelect();
