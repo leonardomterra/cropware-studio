@@ -1104,12 +1104,13 @@
 
   /* Brand mode: controle claro/escuro da LOGO (cropware ou gerentia — o brightness(0)
      zera a cor nativa, entao o invert tinge qualquer logo igual). */
+  /* .ads-brand-logo-img é a logo em cor ORIGINAL do Ads — fica fora do tingimento. */
   .post[data-brand="light"] img[src*="logo-cropware"],
-  .post[data-brand="light"] img[src*="logo-gerentia"] {
+  .post[data-brand="light"] img[src*="logo-gerentia"]:not(.ads-brand-logo-img) {
     filter: brightness(0) invert(1) !important;
   }
   .post[data-brand="dark"] img[src*="logo-cropware"],
-  .post[data-brand="dark"] img[src*="logo-gerentia"] {
+  .post[data-brand="dark"] img[src*="logo-gerentia"]:not(.ads-brand-logo-img) {
     filter: brightness(0) invert(0.3) !important;
     opacity: 1 !important;
   }
@@ -1474,9 +1475,10 @@
 
   .post[data-type="instagram-flat-post"][data-style="flat"] .post-bullets { display: none; }
   /* Flat I: linhas (acima/abaixo do complemento) um pouco mais grossas e sólidas (sem transparência) */
+  /* Seguem a cor de destaque (accent) — vale p/ Cropware e Gerentia. */
   .post[data-type="instagram-flat-post"][data-style="flat"] .separator-short {
     height: 3px;
-    background: #7ab87e;
+    background: var(--post-accent, #7ab87e);
   }
   /* Flat I: texto mais baixo e centralizado */
   .post[data-type="instagram-flat-post"][data-style="flat"] .content-top {
@@ -1484,6 +1486,17 @@
     left: 80px;
     right: 80px;
     max-width: 100%;
+  }
+
+  /* Gerentia: Flat I com texto escuro — hook + complemento em #262626 (só p/ gerentia). */
+  .post[data-platform="gerentia"][data-type="instagram-flat-post"][data-style="flat"] .hook,
+  .post[data-platform="gerentia"][data-type="instagram-flat-post"][data-style="flat"] .complement {
+    color: #262626;
+  }
+  /* Gerentia: logo do Flat I na cor original (sem o tingimento branco/escuro) e um pouco maior. */
+  .post[data-platform="gerentia"][data-type="instagram-flat-post"][data-style="flat"] .flat-brand-logo {
+    filter: none !important;
+    width: calc(270px * var(--logo-scale, 1));
   }
 
   /* Flat II: Vend Sans — mantém o estilo display original */
@@ -3984,6 +3997,39 @@
     position: absolute; left: 56px; bottom: 110px; z-index: 3;
     display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
   }
+  /* Wrapper da logo do Ads (sem fundo — o card de vidro foi removido). */
+  .ads-logo-card {
+    display: inline-flex; width: max-content; box-sizing: border-box;
+  }
+  /* Logo do Ads do gerentia: símbolo + "gerentia.app" em Mozilla Headline, tudo branco. */
+  .ads-gerentia-logo { display: inline-flex; align-items: center; gap: 14px; }
+  .ads-gerentia-logo .ads-gerentia-sym { height: 46px; width: auto; display: block; filter: brightness(0) invert(1); transform: translateY(6px); }
+  .ads-gerentia-logo .ads-gerentia-txt {
+    font-family: 'Mozilla Headline', sans-serif;
+    font-weight: 600; font-size: 56px; line-height: 1;
+    color: #ffffff; letter-spacing: -0.015em;
+  }
+  .ads-gerentia-logo .ads-gerentia-txt .lt { font-weight: 300; }
+  /* Gerentia: um respiro a mais entre a logo e o CTA. */
+  .post[data-platform="gerentia"] .ads-brand { gap: 24px; }
+  /* Ads I com "Cor do Texto: Escuro" — hook, título (card do topo) e complemento em #262626. */
+  .post[data-ads-text="dark"][data-type="instagram-ads-post"][data-natural-hook="true"] .hook {
+    color: #262626 !important;
+  }
+  .post[data-ads-text="dark"][data-type="instagram-ads-post"] .ads-insight-card {
+    color: #262626 !important;
+  }
+  .post[data-ads-text="dark"][data-type="instagram-ads-post"] .complement,
+  .post[data-ads-text="dark"][data-type="instagram-ads-post"] .complement strong {
+    color: #262626 !important;
+  }
+  /* Ads I com "Escuro" DESLIGADO (claro) — tudo branco, inclusive o hook (que normalmente é o accent). */
+  .post[data-ads-text="light"][data-type="instagram-ads-post"][data-natural-hook="true"] .hook,
+  .post[data-ads-text="light"][data-type="instagram-ads-post"] .ads-insight-card,
+  .post[data-ads-text="light"][data-type="instagram-ads-post"] .complement,
+  .post[data-ads-text="light"][data-type="instagram-ads-post"] .complement strong {
+    color: #ffffff !important;
+  }
   .ads-insight-logo {
     width: 460px; height: 74px;
     -webkit-mask: url('logo-cropware-pb-final.svg') left center / contain no-repeat;
@@ -5558,6 +5604,10 @@
   /* Instagram Flat (I e II): mesmo padrão do editorial — sem labels, Modelo oculto, divisores limpos. */
   #postControls.style-flat #pcSubStyle { display: none; }
   #postControls.style-flat .pc-direct-controls { grid-template-columns: 1fr; }
+
+  /* Instagram Ads (I e II): só Formato (Modelo oculto), ocupando a largura toda, label compacto. */
+  #postControls.ads-simple-mode .pc-direct-controls { grid-template-columns: 1fr; }
+  #postControls.ads-simple-mode #pcSubFormat .pc-label { display: none; }
   /* Editorial: toggles de Hook/Complemento não se aplicam → some o divisor órfão acima de "Cor de Destaque" */
   #postControls.style-li-editorial #pcSubVisibilityDivider { display: none; }
   /* Editorial + Flat: alinha com aside-mode-wrap (mesmos espaçamentos). */
@@ -10534,6 +10584,14 @@
             </button>
           </div>
         </div>
+        <div class="pc-sub" id="pcSubAdsTextMode" style="display:none">
+          <div class="pc-vis-row">
+            <button type="button" class="pc-vis-btn" id="pcAdsTextDarkBtn">
+              <i class="ph ph-moon"></i><span>Escuro</span>
+              <span class="pc-vis-switch"></span>
+            </button>
+          </div>
+        </div>
         <div class="pc-sub-divider" id="pcSubVisibilityDivider"></div>
         <div class="pc-sub" id="pcSubAccentColor">
           <div class="pc-label">Cor de Destaque</div>
@@ -12413,6 +12471,7 @@ function switchPlatform(id) {
   if (pf.id === activePlatform) return;
   activePlatform = pf.id;
   try { localStorage.setItem('studio_active_platform', activePlatform); } catch (_) {}
+  colorDropdownBuilt = false; // paleta de cores difere por plataforma — força rebuild
   buildSidebar();
   selectNewestOrEmptyForActivePlatform();
   updateSlideNav();
@@ -14220,9 +14279,15 @@ function applyWeatherForecastVisualDefaults(postData, { force = false, chartType
 function renderGeneratedPost(postData, legendText) {
   // Plataforma: posts novos nascem na plataforma ativa (loadSession já tagueia os existentes).
   if (!postData.platform) postData.platform = activePlatform;
+  // Ads I/II: modo de cor do texto. Default: branco (light); toggle "Escuro" deixa em #262626.
+  if ((postData.type === 'instagram-ads-post' || postData.type === 'instagram-ads-ii-post') && !postData.adsTextMode) {
+    postData.adsTextMode = 'light';
+  }
   // Default values para posts novos/antigos sem essas props
   // Migra accents antigos (#4aa276, #3b9f73) pro novo brand #7AB87E
-  if (!postData.accent || ['#4aa276', '#3b9f73', '#7ab87e'].includes(postData.accent.toLowerCase())) {
+  if (postData.platform === 'gerentia') {
+    reconcileGerentiaAccent(postData);
+  } else if (!postData.accent || ['#4aa276', '#3b9f73', '#7ab87e'].includes(postData.accent.toLowerCase())) {
     postData.accent = '#6ac58f';
   }
   if (!postData.layout)    postData.layout    = 'top';
@@ -14540,7 +14605,9 @@ function renderGeneratedCarousel(carouselData, legendText) {
   }
   // Ensure each slide has proper defaults (reuse the same logic as renderGeneratedPost)
   carouselData.slides.forEach((slideData, i) => {
-    if (!slideData.accent || ['#4aa276', '#3b9f73'].includes((slideData.accent || '').toLowerCase())) {
+    if (carouselData.platform === 'gerentia') {
+      reconcileGerentiaAccent(slideData, 'gerentia');
+    } else if (!slideData.accent || ['#4aa276', '#3b9f73'].includes((slideData.accent || '').toLowerCase())) {
       slideData.accent = '#6ac58f';
     }
     if (!slideData.layout)    slideData.layout    = 'top';
@@ -14690,7 +14757,9 @@ function renderGeneratedPresentation(presentationData, legendText) {
 
   presentationData.slides.forEach((slideData, i) => {
     // Defaults — modelo visual sem texto (logo + site + layout)
-    if (!slideData.accent || ['#4aa276', '#3b9f73'].includes((slideData.accent || '').toLowerCase())) {
+    if (presentationData.platform === 'gerentia') {
+      reconcileGerentiaAccent(slideData, 'gerentia');
+    } else if (!slideData.accent || ['#4aa276', '#3b9f73'].includes((slideData.accent || '').toLowerCase())) {
       slideData.accent = '#6ac58f';
     }
     if (!slideData.layout)    slideData.layout    = 'top';
@@ -15102,7 +15171,8 @@ function renderClassicStyle(postData) {
 // Flat I: trava de marca no rodapé esquerdo — logo + divisor "|" + site.
 function renderFlatBrandRow(postData) {
   const showLogo = postData.logoEnabled !== false;
-  const showSite = postData.siteEnabled !== false;
+  // Gerentia: a logo (lockup) ja mostra "gerentia.app" — entao o site ao lado fica redundante.
+  const showSite = postData.siteEnabled !== false && postData.platform !== 'gerentia';
   if (!showLogo && !showSite) return '';
   const logoEl = showLogo ? `<img class="flat-brand-logo" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : '';
   const siteEl = showSite ? `<span class="flat-brand-site">${escapeHTML(displaySiteText(postData))}</span>` : '';
@@ -15387,14 +15457,17 @@ const ADS_MOCKUP_DEFAULT_CAPS = {
 function renderAdsInsight(postData) {
   const ger = postData.platform === 'gerentia';
   const tagline = ger ? 'Suas finanças organizadas, direto do WhatsApp' : 'Desenvolvimento de mercado, com inteligência de campo';
-  // .ads-insight-logo usa CSS mask (pintado pela background-color clara). Pro gerentia,
-  // sobrescreve o mask pro logo dele — herda o mesmo tingimento branco automaticamente.
-  const logoStyle = ger ? ' style="-webkit-mask-image:url(logo-gerentia-full.svg);mask-image:url(logo-gerentia-full.svg)"' : '';
-  const site = ger ? 'Comece em gerentia.app' : 'Saiba mais em cropware.com.br/conheça';
+  // Gerentia: símbolo + "gerentia.app" em Mozilla Headline (branco) sobre o card de vidro.
+  // Cropware: máscara branca como antes.
+  const logoInner = ger
+    ? `<div class="ads-gerentia-logo"><img class="ads-gerentia-sym" src="gerentia-symbol.svg" alt="Gerentia"><span class="ads-gerentia-txt">gerent<span class="lt">ia.app</span></span></div>`
+    : `<div class="ads-insight-logo"></div>`;
+  // Gerentia: a logo ja mostra gerentia.app — entao o texto vira CTA, nao o site.
+  const site = ger ? 'por cropware — cropware.com.br/gerentia' : 'Saiba mais em cropware.com.br/conheça';
   return `
     <div class="ads-insight-card">${tagline}</div>
     <div class="ads-brand">
-      <div class="ads-insight-logo"${logoStyle}></div>
+      <div class="ads-logo-card">${logoInner}</div>
       <div class="ads-brand-site">${site}</div>
     </div>`;
 }
@@ -16663,6 +16736,8 @@ function applyPostVariant(postEl, postData) {
   postEl.classList.toggle('cw-post--sinal', postData.type === 'sinal-post' || postData.type === 'sinal-carousel-slide');
   postEl.dataset.style   = style;
   postEl.dataset.type    = postData.type || '';
+  postEl.dataset.platform = postData.platform || 'cropware';
+  postEl.dataset.adsText = postData.adsTextMode || 'light';
   postEl.dataset.naturalHook = useNaturalText ? 'true' : 'false';
   postEl.dataset.layout  = layout;
   postEl.dataset.logoPos = logoPos;
@@ -16987,9 +17062,12 @@ function updatePostControls(idx) {
   panel.classList.toggle('logo-cropware-mode', logoCropwareMode);
   const directControls = document.getElementById('pcGroupStyle');
   const hideFlatWaveModel = post.type === 'instagram-flat-ii-post';
+  // Ads I/II: esconde só o seletor Modelo (mantém o Formato), como nos tipos novos.
+  const adsHideModel = post.type === 'instagram-ads-post' || post.type === 'instagram-ads-ii-post';
+  panel.classList.toggle('ads-simple-mode', adsHideModel); // Formato ocupa a largura toda + label oculto
   if (directControls) directControls.style.display = (logoCropwareMode || hideFlatWaveModel) ? 'none' : '';
   const styleSub = document.getElementById('pcSubStyle');
-  if (styleSub) styleSub.style.display = (logoCropwareMode || hideFlatWaveModel) ? 'none' : '';
+  if (styleSub) styleSub.style.display = (logoCropwareMode || hideFlatWaveModel || adsHideModel) ? 'none' : '';
   const styleSelect = document.getElementById('pcStyleSelect');
   if (styleSelect) {
     if (weatherMode && post.style !== 'moldura') {
@@ -17586,6 +17664,13 @@ function updatePostControls(idx) {
     b.classList.toggle('active', b.dataset.mode === currentTextMode);
   });
 
+  // Toggle "Cor do Texto" do Ads I/II (claro/escuro) — só aparece nos tipos Ads.
+  const adsTM = document.getElementById('pcSubAdsTextMode');
+  const isAdsTypeTM = post.type === 'instagram-ads-post' || post.type === 'instagram-ads-ii-post';
+  if (adsTM) adsTM.style.display = isAdsTypeTM ? '' : 'none';
+  const adsDarkBtn = document.getElementById('pcAdsTextDarkBtn');
+  if (adsDarkBtn) adsDarkBtn.classList.toggle('active', (post.adsTextMode || 'light') === 'dark');
+
   // Undo inline + badge "Regerada" por kind — sincroniza state do dialog Regerar com IA
   syncRegenActionsState();
   updateStyleSectionPicker();
@@ -17696,6 +17781,10 @@ function isStyleSectionAvailable(id) {
   if (_ap && _ap.type === 'instagram-flat-post' &&
       ['pcGroupBullets', 'pcSectionLogo', 'pcSectionSite', 'pcSectionDetail', 'pcSectionBlock'].includes(id)) {
     return false; // flat I: só Texto e Imagem (=Fundo)
+  }
+  if (_ap && (_ap.type === 'instagram-ads-post' || _ap.type === 'instagram-ads-ii-post') &&
+      ['pcGroupBullets', 'pcSectionLogo', 'pcSectionSite', 'pcSectionDetail', 'pcSectionBlock'].includes(id)) {
+    return false; // ads I/II: versão simples do menu — só Texto e Imagem
   }
   if (id === 'pcSectionSite') {
     const ap = getActivePost();
@@ -17934,7 +18023,36 @@ function pushUndoSnapshot(post, snapshot) {
 // Paleta Cropware (6 rows × 7 cols = 42 cells), ordenada cool→warm→muted→grayscale.
 // Row 1: teal-leaning (#4DB69D)   / Row 2: brand profunda   / Row 3: brand saturada (#42AA7B)
 // Row 4: vibrant warmer (#6DCA73) / Row 5: muted sage       / Row 6: grayscale neutra
-const COLOR_PALETTE_FAMILIES = [
+// Neutros compartilhados entre plataformas.
+const NEUTRAL_COLOR_FAMILIES = [
+  {
+    family: 'gray',
+    label: 'Gray',
+    colors: [
+      ['100', '#F3F4F6'], ['200', '#E5E7EB'], ['300', '#D1D5DB'], ['400', '#9CA3AF'],
+      ['500', '#6B7280'], ['600', '#4B5563'], ['700', '#374151'], ['900', '#111827'],
+    ],
+  },
+  {
+    family: 'slate',
+    label: 'Slate',
+    colors: [
+      ['100', '#F1F5F9'], ['200', '#E2E8F0'], ['300', '#CBD5E1'], ['400', '#94A3B8'],
+      ['500', '#64748B'], ['600', '#475569'], ['700', '#334155'], ['900', '#0F172A'],
+    ],
+  },
+  {
+    family: 'neutral',
+    label: 'Neutral',
+    colors: [
+      ['100', '#F5F5F5'], ['200', '#E5E5E5'], ['300', '#D4D4D4'], ['400', '#A3A3A3'],
+      ['500', '#737373'], ['600', '#525252'], ['700', '#404040'], ['900', '#171717'],
+    ],
+  },
+];
+
+// Paleta CROPWARE — verdes do agro + neutros.
+const CROPWARE_COLOR_FAMILIES = [
   {
     family: 'lime',
     label: 'Lime',
@@ -17967,34 +18085,64 @@ const COLOR_PALETTE_FAMILIES = [
       ['500', '#6F9F8D'], ['600', '#527B6D'], ['700', '#3E6256'], ['900', '#1C302A'],
     ],
   },
-  {
-    family: 'gray',
-    label: 'Gray',
-    colors: [
-      ['100', '#F3F4F6'], ['200', '#E5E7EB'], ['300', '#D1D5DB'], ['400', '#9CA3AF'],
-      ['500', '#6B7280'], ['600', '#4B5563'], ['700', '#374151'], ['900', '#111827'],
-    ],
-  },
-  {
-    family: 'slate',
-    label: 'Slate',
-    colors: [
-      ['100', '#F1F5F9'], ['200', '#E2E8F0'], ['300', '#CBD5E1'], ['400', '#94A3B8'],
-      ['500', '#64748B'], ['600', '#475569'], ['700', '#334155'], ['900', '#0F172A'],
-    ],
-  },
-  {
-    family: 'neutral',
-    label: 'Neutral',
-    colors: [
-      ['100', '#F5F5F5'], ['200', '#E5E5E5'], ['300', '#D4D4D4'], ['400', '#A3A3A3'],
-      ['500', '#737373'], ['600', '#525252'], ['700', '#404040'], ['900', '#171717'],
-    ],
-  },
+  ...NEUTRAL_COLOR_FAMILIES,
 ];
 
+// Paleta GERENTIA — quente e terrosa: olive, taupe, amber + neutros.
+// (amber = Tailwind exato; olive e taupe desenhados pra combinar.)
+const GERENTIA_COLOR_FAMILIES = [
+  {
+    family: 'olive',
+    label: 'Olive',
+    colors: [
+      ['100', '#F0F1E2'], ['200', '#E0E2C2'], ['300', '#C8CB94'], ['400', '#ACB061'],
+      ['500', '#8E9444'], ['600', '#6F7536'], ['700', '#565B2C'], ['900', '#2F3318'],
+    ],
+  },
+  {
+    family: 'taupe',
+    label: 'Taupe',
+    colors: [
+      ['100', '#EDE9E3'], ['200', '#D9D1C7'], ['300', '#C0B3A4'], ['400', '#A38F7C'],
+      ['500', '#87715E'], ['600', '#6B5849'], ['700', '#524338'], ['900', '#2C231D'],
+    ],
+  },
+  {
+    family: 'amber',
+    label: 'Amber',
+    colors: [
+      ['100', '#FEF3C7'], ['200', '#FDE68A'], ['300', '#FCD34D'], ['400', '#FBBF24'],
+      ['500', '#F59E0B'], ['600', '#D97706'], ['700', '#B45309'], ['900', '#78350F'],
+    ],
+  },
+  ...NEUTRAL_COLOR_FAMILIES,
+];
+
+// Famílias da plataforma ativa (consumido pelo dropdown de cores).
+function colorPaletteFamilies() { return activePlatform === 'gerentia' ? GERENTIA_COLOR_FAMILIES : CROPWARE_COLOR_FAMILIES; }
+// Compat p/ código legado que itera direto.
+const COLOR_PALETTE_FAMILIES = CROPWARE_COLOR_FAMILIES;
+
+// Accent default do gerentia = NEUTRO (escolha do usuário); olive/taupe/amber ficam como
+// cor de ênfase opcional. Convertemos qualquer accent "verde herdado" do Cropware.
+const GERENTIA_DEFAULT_ACCENT = '#A3A3A3'; // neutral-400 — brilho parecido com o verde default do Cropware
+const CROPWARE_GREEN_ACCENTS = new Set([
+  ...['lime', 'green', 'emerald', 'mist'].flatMap(fam =>
+    (CROPWARE_COLOR_FAMILIES.find(g => g.family === fam)?.colors || []).map(c => c[1].toLowerCase())),
+  '#4aa276', '#3b9f73', '#7ab87e', '#6ac58f', '#8bf592', '#10b981', '#55a05a', '#2b452d', '#44aa7b',
+]);
+function isCropwareGreenAccent(a) { return !!a && CROPWARE_GREEN_ACCENTS.has(String(a).toLowerCase()); }
+// Se o objeto (post/slide) é do gerentia e o accent é vazio ou um verde herdado, vira o neutro.
+function reconcileGerentiaAccent(obj, platform) {
+  const pf = platform || (obj && obj.platform);
+  if (pf === 'gerentia' && (!obj.accent || isCropwareGreenAccent(obj.accent))) {
+    obj.accent = GERENTIA_DEFAULT_ACCENT;
+  }
+}
+
+// Índice reverso hex -> {familia, shade} varre AMBAS as paletas (rótulo "Olive 500" etc.).
 const COLOR_CHOICE_INDEX = new Map();
-COLOR_PALETTE_FAMILIES.forEach(group => {
+[...CROPWARE_COLOR_FAMILIES, ...GERENTIA_COLOR_FAMILIES].forEach(group => {
   group.colors.forEach(([shade, color]) => {
     COLOR_CHOICE_INDEX.set(color.toLowerCase(), {
       family: group.family,
@@ -18012,7 +18160,7 @@ function buildColorDropdown() {
   const dd = document.getElementById('pcColorDropdown');
   if (!dd) return;
   let html = '';
-  for (const group of COLOR_PALETTE_FAMILIES) {
+  for (const group of colorPaletteFamilies()) {
     html += `<div class="pc-color-group" data-family="${group.family}">
       <div class="pc-color-group-label">${group.label}</div>
       <div class="pc-color-group-swatches">`;
@@ -19480,6 +19628,17 @@ function initPostControls() {
       updatePostControls(current);
       saveSession();
     });
+  });
+  // Toggle "Escuro" do texto do Ads I/II — desligado = branco, ligado = #262626.
+  const adsTextDarkBtn = document.getElementById('pcAdsTextDarkBtn');
+  if (adsTextDarkBtn) adsTextDarkBtn.addEventListener('click', () => {
+    const post = getActivePost();
+    if (!post || !post.isGenerated) return;
+    post.adsTextMode = (post.adsTextMode === 'dark') ? 'light' : 'dark';
+    const postEl = document.getElementById(post.id);
+    if (postEl) applyPostVariant(postEl, post);
+    updatePostControls(current);
+    saveSession();
   });
   // Revista — proporção da foto (campo numérico)
   const wirePhotoPct = (inputId, postField, cssVar, min, max) => {
@@ -23811,6 +23970,13 @@ function buildPositioningContext(channel) {
 function pbNome() { return activePlatform === 'gerentia' ? 'Gerentia' : 'Cropware'; }
 function pbDa()   { return activePlatform === 'gerentia' ? 'do Gerentia' : 'da Cropware'; }
 function pbDesc() { return activePlatform === 'gerentia' ? 'app de gestao financeira pessoal e de pequenos negocios pelo WhatsApp' : 'plataforma para quem constroi mercado no campo'; }
+// Cena que a IA deve descrever no imagePrompt, por plataforma.
+// gerentia = cotidiano de gestao financeira (sem agro); cropware = agro brasileiro.
+function imgScene() {
+  return activePlatform === 'gerentia'
+    ? 'cena real de gestao financeira do cotidiano (uma pessoa organizando recibos ou conferindo contas pelo celular — em casa, escritorio, cafe ou pequeno comercio), paleta neutra e quente SEM verde de agro, luz natural de ambiente, SEM lavoura/campo/fazenda/plantacao'
+    : 'agro brasileiro bem manejado';
+}
 
 // Fallback de imagePrompt (quando o LLM nao devolve um) por plataforma.
 function defaultThemeImagePrompt(theme) {
@@ -24435,8 +24601,8 @@ ${toneBlock}
 ${buildDesignContext()}
 
 IMAGE_PROMPT:
-- Foto ultra-realista editorial premium, agro brasileiro, com espaço negativo para texto
-- Deve refletir o uso prático da funcionalidade: técnico em campo, mapa/talhão, avaliação, relatório, equipe analisando dados, lavoura monitorada, revenda, fazenda, tablet/celular sem texto legível
+- Foto ultra-realista editorial premium, ${imgScene()}, com espaço negativo para texto
+- Deve refletir o uso prático da funcionalidade: ${activePlatform === 'gerentia' ? 'pessoa organizando recibos/contas no celular, conferindo as financas, mesa de trabalho, casa/escritorio/pequeno comercio (SEM agro)' : 'técnico em campo, mapa/talhão, avaliação, relatório, equipe analisando dados, lavoura monitorada, revenda, fazenda, tablet/celular sem texto legível'}
 - Sem logos, marcas ou texto visível
 
 Responda APENAS em JSON válido:
@@ -24578,9 +24744,9 @@ ${buildDesignContext('instagram')}
 
 IMAGE PROMPT:
 - Descreva uma fotografia real de campo agricola brasileiro relacionada ao conteudo.
-- Estilo: foto profissional, luz natural, foco em lavoura ou solo ou equipamento.
+- Estilo: foto profissional, luz natural, ${activePlatform === 'gerentia' ? 'foco em pessoa organizando recibos/contas no celular (casa, escritorio ou pequeno comercio), SEM agro' : 'foco em lavoura ou solo ou equipamento'}.
 - Sem texto, sem logos, sem pessoas em destaque.
-- Exemplo: "aerial view of soybean field in Brazilian Cerrado, golden hour, green rows"
+- Exemplo: "${activePlatform === 'gerentia' ? 'a person reviewing receipts and bills on a smartphone at a tidy home-office desk, warm natural light, neutral palette, no agriculture' : 'aerial view of soybean field in Brazilian Cerrado, golden hour, green rows'}"
 - Maximo 20 palavras em ingles.
 
 Responda APENAS em JSON valido:
@@ -24595,7 +24761,7 @@ Responda APENAS em JSON valido:
   "title": "titulo curto",
   "legend": "legenda curta",
   "hashtags": "#tag1 #tag2 #tag3",
-  "imagePrompt": "professional photo of soybean field at golden hour, Brazilian Cerrado, green rows aerial view"
+  "imagePrompt": "${activePlatform === 'gerentia' ? 'a person reviewing receipts and bills on a smartphone at a tidy home-office desk, warm natural light, neutral modern palette, no agriculture' : 'professional photo of soybean field at golden hour, Brazilian Cerrado, green rows aerial view'}"
 }`;
 }
 
@@ -24739,19 +24905,34 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
 // Chama o Gemini imagem (3.1 Flash Image Preview) e retorna { base64, mime }.
 // aspectRatio: '4:5' (default), '16:9' (presentation), '9:16' (story)
 async function callGeminiImage(imagePrompt, extraDirection, aspectRatio) {
+  // Regras universais (valem p/ qualquer plataforma).
   const hardRules = [
     'Strict rule: absolutely NO text, NO watermarks, NO logos, NO brand marks, NO writing anywhere in the image.',
     'All clothing, caps, shirts and uniforms must be PLAIN and UNBRANDED — no prints, no logos, no labels, no visible text.',
     'All equipment, machinery, tools and devices must be generic and unbranded — no visible brand names or labels.',
     'DO NOT add any dark bands, dark gradients, vignettes, dark overlays or artificial darkening to the image. The image must be clean and evenly lit — text overlays are added separately by the app.',
-    'Visual style: ultra-realistic photography, premium editorial quality (Apple/Stripe aesthetic meets agriculture). No artificial, plastic, or overly AI-generated look — real textures on leaves, soil, clothing, and light.',
-    'Brazilian agriculture context: well-managed crop fields (soybean, corn, cotton), clean and organized farming environment, realistic soil and plant spacing, defined planting rows. No failed crops, abandoned or messy scenes.',
-    'Agronomic accuracy (CRITICAL): crops must match their real harvest stage. Combines/harvesters only appear on MATURE, DRY, SENESCED crops — never on green/vegetative fields. Soybean at harvest: dry brown-to-golden pods, fallen leaves, dry stems (never green leaves or green pods with a combine). Corn at harvest: dry brown stalks, dry husks, mature yellow kernels (never green corn with a combine). Wheat at harvest: uniform golden-yellow ears. Cotton at harvest: brown dry plants with open white bolls. Green/vegetative fields (lush leaves, flowering) are only for scouting, spraying, fertilizing, irrigation, monitoring — NOT harvesting. Match the visible crop stage to the scene activity.',
-    'Characters (when present): Brazilian appearance with regional diversity, professional agronomist look, neutral clean clothing (gray, soft green, beige), NO logos or brands, confident and focused expression. Vary between men/women, young (25-30) and senior (40-55).',
-    'Color palette: natural greens with emphasis on #44AA7B tones, balanced with whites and soft grays. No oversaturation, no neon greens.',
-    'Lighting: golden hour preferred, soft diffuse light, subtle warm glow. Add subtle lens flare and gentle, natural depth of field (foreground and subject sharp, only the far background slightly soft). No exaggerated HDR, no fake lighting.',
-    'Composition: professional documentary/editorial photography style, Fujifilm aesthetic, 50mm lens feel. Use crop row lines as leading lines, natural perspective, clear subject focus, negative space for text overlay.',
   ];
+  // Regras de CONTEXTO por plataforma — gerentia (gestão financeira do cotidiano) vs cropware (agro).
+  if (activePlatform === 'gerentia') {
+    hardRules.push(
+      'Visual style: ultra-realistic photography, premium editorial quality (clean Apple/Stripe fintech aesthetic). No artificial, plastic, or overly AI-generated look — real textures on skin, paper, fabric, wood and light.',
+      'Context: everyday personal and small-business financial management. Real, relatable scenes — a person organizing paper receipts and bills, reviewing finances on a smartphone, at a home office, kitchen table, small shop counter or cafe. Calm, clean, organized environment. STRICTLY NO agriculture: no crop fields, no farms, no plantations, no tractors, no rural landscapes, no agronomists.',
+      'Characters (when present): Brazilian appearance with everyday diversity — ordinary people such as autonomous workers, small-business owners and professionals. Smart-casual PLAIN clothing, NO logos or brands, calm and confident expression. Vary between men/women, young (25-30) and senior (40-55).',
+      'Color palette: neutral, warm and modern — soft grays, zinc, beige, warm off-white, with subtle amber or olive accents. NO agricultural greens, no neon, no oversaturation. Sober and sophisticated.',
+      'Lighting: soft natural indoor/ambient light, gentle and diffuse, subtle warm glow. Gentle, natural depth of field (foreground and subject sharp, far background slightly soft). No exaggerated HDR, no fake lighting.',
+      'Composition: professional documentary/editorial photography style, Fujifilm aesthetic, 50mm lens feel, natural perspective, clear subject focus, generous negative space for text overlay.',
+    );
+  } else {
+    hardRules.push(
+      'Visual style: ultra-realistic photography, premium editorial quality (Apple/Stripe aesthetic meets agriculture). No artificial, plastic, or overly AI-generated look — real textures on leaves, soil, clothing, and light.',
+      'Brazilian agriculture context: well-managed crop fields (soybean, corn, cotton), clean and organized farming environment, realistic soil and plant spacing, defined planting rows. No failed crops, abandoned or messy scenes.',
+      'Agronomic accuracy (CRITICAL): crops must match their real harvest stage. Combines/harvesters only appear on MATURE, DRY, SENESCED crops — never on green/vegetative fields. Soybean at harvest: dry brown-to-golden pods, fallen leaves, dry stems (never green leaves or green pods with a combine). Corn at harvest: dry brown stalks, dry husks, mature yellow kernels (never green corn with a combine). Wheat at harvest: uniform golden-yellow ears. Cotton at harvest: brown dry plants with open white bolls. Green/vegetative fields (lush leaves, flowering) are only for scouting, spraying, fertilizing, irrigation, monitoring — NOT harvesting. Match the visible crop stage to the scene activity.',
+      'Characters (when present): Brazilian appearance with regional diversity, professional agronomist look, neutral clean clothing (gray, soft green, beige), NO logos or brands, confident and focused expression. Vary between men/women, young (25-30) and senior (40-55).',
+      'Color palette: natural greens with emphasis on #44AA7B tones, balanced with whites and soft grays. No oversaturation, no neon greens.',
+      'Lighting: golden hour preferred, soft diffuse light, subtle warm glow. Add subtle lens flare and gentle, natural depth of field (foreground and subject sharp, only the far background slightly soft). No exaggerated HDR, no fake lighting.',
+      'Composition: professional documentary/editorial photography style, Fujifilm aesthetic, 50mm lens feel. Use crop row lines as leading lines, natural perspective, clear subject focus, negative space for text overlay.',
+    );
+  }
   const avoid = (getActiveDesignConfig().avoid || '').trim();
   if (avoid) {
     hardRules.push(`Additional brand restrictions to avoid: ${avoid}`);
@@ -25045,7 +25226,7 @@ async function generatePost() {
       // Flat II (flat-wave): gera imagem de campo pra preencher a zona de foto.
       // Flat I continua sem imagem (design intencional).
       if (isII) {
-        const imgPrompt = parsed.imagePrompt || `professional aerial photo of soybean field in Brazilian Cerrado, golden hour, lush green rows`;
+        const imgPrompt = parsed.imagePrompt || defaultThemeImagePrompt(parsed.theme || postData.title || '');
         // Usa imagem do usuário se já fez upload, senão gera via Gemini.
         if (genImageBase64) {
           postData.bgImage = `data:${genImageMime};base64,${genImageBase64}`;
@@ -25301,8 +25482,8 @@ ${buildDesignContext()}
 
 IMAGE_PROMPT:
 - Um prompt em inglês por slide
-- Foto ultra-realista editorial premium do agro brasileiro, espaço negativo para texto, sem marcas/texto visível
-- Varie cenas coerentes: técnico em campo, talhão, tablet/celular sem texto legível, mapa, equipe técnica, relatório em notebook sem texto legível, lavoura, armazém, fazenda
+- Foto ultra-realista editorial premium — ${imgScene()} —, espaço negativo para texto, sem marcas/texto visível
+- Varie cenas coerentes: ${activePlatform === 'gerentia' ? 'pessoa com recibos/celular, conferindo finanças, mesa de trabalho, casa/escritório/pequeno comércio (SEM agro)' : 'técnico em campo, talhão, tablet/celular sem texto legível, mapa, equipe técnica, relatório em notebook sem texto legível, lavoura, armazém, fazenda'}
 
 Responda APENAS em JSON válido:
 {
@@ -25373,7 +25554,7 @@ COPY DO ANUNCIO (campos compartilhados para todo o carrossel):
 
 ${toneBlock}
 ${buildDesignContext('instagram')}
-IMAGE_PROMPT (um por slide): foto ultra-realista editorial premium, agro brasileiro, espaco negativo para texto, sem marcas visiveis, cada slide com imagem diferente.
+IMAGE_PROMPT (um por slide): foto ultra-realista editorial premium, ${imgScene()}, espaco negativo para texto, sem marcas visiveis, cada slide com imagem diferente.
 
 Responda APENAS em JSON valido:
 {
