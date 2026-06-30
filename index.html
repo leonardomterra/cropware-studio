@@ -11162,7 +11162,7 @@
             <option value="normal">Normal</option>
           </select>
         </div>
-        <div class="pc-sub" id="pcSubTexGen">
+        <div class="pc-sub hidden" id="pcSubTexGen">
           <div class="pc-label">Textura</div>
           <button class="pc-color-btn" type="button" onclick="openTexGenDialog()">
             <span class="pc-color-btn-swatch" id="pcTexGenBtnSwatch" style="background:#1f2937"></span>
@@ -17051,6 +17051,8 @@ function updatePostControls(idx) {
   } else {
     panel.classList.remove('style-li-editorial');
   }
+  // Botão da textura procedural: visível só no Editorial II (toggle explícito + CSS).
+  { const _tb = document.getElementById('pcSubTexGen'); if (_tb) _tb.classList.toggle('hidden', !isLinkedinEditorialType(post.type)); }
   const FORMATS_LIST = ['feed','story','square','presentation'];
   FORMATS_LIST.forEach(f => panel.classList.toggle(`format-${f}`, post.format === f));
 
