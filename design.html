@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>studio · texturas</title>
+<link rel="icon" type="image/svg+xml" href="favicon-studio-svg.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0c0e; --panel: #141619; --panel-2: #1b1e22; --line: #2a2e34;
+    --text: #e7e9ec; --muted: #8b9099; --accent: #6ab04c; --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    font-size: 12.5px; font-weight: 400; letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: 'Space Mono', monospace; }
+  header.top {
+    display: flex; align-items: center; gap: 12px;
+    padding: 18px 28px; border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; background: rgba(11,12,14,.82); backdrop-filter: blur(10px); z-index: 10;
+  }
+  header.top .brand { display: flex; align-items: baseline; gap: 8px; }
+  header.top .brand b { font-weight: 600; font-size: 15px; }
+  header.top .brand span { color: var(--muted); text-transform: uppercase; letter-spacing: .14em; font-size: 10.5px; }
+  header.top .hint { margin-left: auto; color: var(--muted); font-size: 11px; }
+  .layout { display: grid; grid-template-columns: 320px 1fr; min-height: calc(100vh - 61px); }
+  aside { border-right: 1px solid var(--line); padding: 22px 22px 60px; overflow-y: auto; height: calc(100vh - 61px); position: sticky; top: 61px; }
+  aside h2 { font-size: 10.5px; text-transform: uppercase; letter-spacing: .16em; color: var(--muted); font-weight: 600; margin: 26px 0 12px; }
+  aside h2:first-child { margin-top: 0; }
+  .ctrl { margin-bottom: 16px; }
+  .ctrl .row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .ctrl label { color: var(--text); }
+  .ctrl .val { color: var(--accent); font-size: 11px; }
+  input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 3px; background: var(--line); border-radius: 3px; outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--text); cursor: pointer; border: 3px solid var(--bg); box-shadow: 0 0 0 1px var(--line); }
+  .seg { display: flex; gap: 6px; flex-wrap: wrap; }
+  .seg button { flex: 1; min-width: fit-content; background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; cursor: pointer; font: inherit; font-size: 11.5px; }
+  .seg button.active { background: var(--accent); color: #08130a; border-color: var(--accent); font-weight: 600; }
+  .colorrow { display: flex; align-items: center; gap: 10px; }
+  input[type=color] { width: 38px; height: 30px; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); cursor: pointer; }
+  select { width: 100%; background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; font: inherit; font-size: 11.5px; cursor: pointer; }
+  .btn { background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: 9px; padding: 9px 13px; cursor: pointer; font: inherit; width: 100%; margin-top: 6px; }
+  .btn:hover { border-color: var(--muted); }
+  main { padding: 24px 28px 60px; }
+  .stage { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); background: #000; }
+  .stage svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .stage .caption { position: absolute; left: 18px; bottom: 16px; z-index: 3; font-family: 'Space Mono', monospace; font-size: 12px; color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.6); letter-spacing: .02em; }
+  .meta { display: flex; gap: 22px; flex-wrap: wrap; margin: 14px 2px 30px; color: var(--muted); font-size: 11px; font-family: 'Space Mono', monospace; }
+  .meta b { color: var(--text); font-weight: 400; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><b>studio</b><span>texturas</span></div>
+  <div class="hint">geradores vetoriais procedurais</div>
+</header>
+
+<div class="layout">
+  <aside>
+    <h2>Tipo</h2>
+    <div class="ctrl">
+      <div class="seg" id="segType">
+        <button data-type="topografia" class="active">Topografia</button>
+        <button data-type="ondas">Ondas</button>
+        <button data-type="aneis">Anéis</button>
+        <button data-type="caos">Caos</button>
+        <button data-type="squiggle">Squiggle</button>
+        <button data-type="granulado">Granulado</button>
+        <button data-type="giro">Giro</button>
+      </div>
+    </div>
+
+    <div class="ctrl">
+      <div class="row"><label>seed</label><span class="val"></span></div>
+      <input type="range" id="vSeed" min="0" max="80" value="18">
+    </div>
+
+    <!-- TOPOGRAFIA -->
+    <div class="grp" data-type="topografia">
+      <h2>Topografia</h2>
+      <div class="ctrl"><div class="row"><label>escala</label><span class="val"></span></div><input type="range" id="tScale" min="2" max="40" value="4"></div>
+      <div class="ctrl"><div class="row"><label>níveis</label><span class="val"></span></div><input type="range" id="tLevels" min="3" max="50" value="18"></div>
+      <div class="ctrl"><div class="row"><label>octaves</label><span class="val"></span></div><input type="range" id="tOct" min="1" max="6" value="4"></div>
+      <div class="ctrl"><div class="row"><label>distorção</label><span class="val"></span></div><input type="range" id="tWarp" min="0" max="100" value="0" data-unit="%"></div>
+      <div class="ctrl"><div class="row"><label>suavidade</label><span class="val"></span></div><input type="range" id="tSmooth" min="0" max="100" value="73" data-unit="%"></div>
+      <div class="ctrl"><div class="row"><label>espessura</label><span class="val"></span></div><input type="range" id="tWidth" min="2" max="40" value="17"></div>
+      <div class="ctrl"><div class="row"><label>linha-mestra a cada</label><span class="val"></span></div><input type="range" id="tIndex" min="0" max="10" value="5"></div>
+      <div class="ctrl"><div class="row"><label>espessura da mestra</label><span class="val"></span></div><input type="range" id="tMaster" min="10" max="40" value="20"></div>
+      <div class="ctrl"><div class="row"><label>repetível (tile)</label></div>
+        <div class="seg" id="segTile"><button data-tile="0" class="active">não</button><button data-tile="1">sim</button></div>
+      </div>
+    </div>
+
+    <!-- ONDAS -->
+    <div class="grp" data-type="ondas" style="display:none">
+      <h2>Ondas</h2>
+      <div class="ctrl"><div class="row"><label>linhas</label><span class="val"></span></div><input type="range" id="oSpacing" min="4" max="80" value="26"></div>
+      <div class="ctrl"><div class="row"><label>amplitude</label><span class="val"></span></div><input type="range" id="oAmp" min="0" max="120" value="42"></div>
+      <div class="ctrl"><div class="row"><label>frequência</label><span class="val"></span></div><input type="range" id="oFreq" min="2" max="40" value="12"></div>
+      <div class="ctrl"><div class="row"><label>variação vertical</label><span class="val"></span></div><input type="range" id="oVar" min="0" max="100" value="35" data-unit="%"></div>
+      <div class="ctrl"><div class="row"><label>espessura</label><span class="val"></span></div><input type="range" id="oWidth" min="2" max="40" value="12"></div>
+    </div>
+
+    <!-- ANÉIS -->
+    <div class="grp" data-type="aneis" style="display:none">
+      <h2>Anéis</h2>
+      <div class="ctrl"><div class="row"><label>anéis</label><span class="val"></span></div><input type="range" id="aRings" min="5" max="60" value="26"></div>
+      <div class="ctrl"><div class="row"><label>lóbulos</label><span class="val"></span></div><input type="range" id="aLobes" min="2" max="10" value="5"></div>
+      <div class="ctrl"><div class="row"><label>amplitude</label><span class="val"></span></div><input type="range" id="aAmp" min="0" max="100" value="38" data-unit="%"></div>
+      <div class="ctrl"><div class="row"><label>rotação</label><span class="val"></span></div><input type="range" id="aRot" min="0" max="40" value="12" data-unit="°"></div>
+      <div class="ctrl"><div class="row"><label>tamanho</label><span class="val"></span></div><input type="range" id="aSize" min="30" max="220" value="135" data-unit="%"></div>
+      <div class="ctrl"><div class="row"><label>deslocamento</label><span class="val"></span></div><input type="range" id="aDrift" min="0" max="100" value="30" data-unit="%"></div>
+      <div class="ctrl"><div class="row"><label>espessura</label><span class="val"></span></div><input type="range" id="aWidth" min="2" max="30" value="18"></div>
+      <div class="ctrl"><div class="row"><label>cor 2 (gradiente)</label></div>
+        <div class="colorrow"><input type="color" id="aColor2" value="#2a7de1"><span class="mono" id="aColor2L" style="color:var(--muted);font-size:11px;">#2a7de1</span></div>
+      </div>
+    </div>
+
+    <!-- CAOS -->
+    <div class="grp" data-type="caos" style="display:none">
+      <h2>Caos</h2>
+      <div class="ctrl"><div class="row"><label>camadas</label><span class="val"></span></div><input type="range" id="kRings" min="6" max="80" value="34"></div>
+      <div class="ctrl"><div class="row"><label>lóbulos</label><span class="val"></span></div><input type="range" id="kLobes" min="2" max="10" value="5"></div>
+      <div class="ctrl"><div class="row"><label>amplitude</label><span class="val"></span></div><input type="range" id="kAmp" min="0" max="100" value="32" data-unit="%"></div>
+      <div class="ctrl"><div class="row"><label>rotação</label><span class="val"></span></div><input type="range" id="kRot" min="0" max="20" value="4" data-unit="°"></div>
+      <div class="ctrl"><div class="row"><label>tamanho</label><span class="val"></span></div><input type="range" id="kSize" min="30" max="220" value="120" data-unit="%"></div>
+      <div class="ctrl"><div class="row"><label>caos</label><span class="val"></span></div><input type="range" id="kChaos" min="0" max="100" value="70" data-unit="%"></div>
+      <div class="ctrl"><div class="row"><label>espessura</label><span class="val"></span></div><input type="range" id="kWidth" min="2" max="30" value="11"></div>
+      <div class="ctrl"><div class="row"><label>tracejado</label></div>
+        <div class="seg" id="segKDash"><button data-dash="1" class="active">sim</button><button data-dash="0">não</button></div>
+      </div>
+      <div class="ctrl"><div class="row"><label>cor 2 (gradiente)</label></div>
+        <div class="colorrow"><input type="color" id="kColor2" value="#e0559b"><span class="mono" id="kColor2L" style="color:var(--muted);font-size:11px;">#e0559b</span></div>
+      </div>
+    </div>
+
+    <!-- SQUIGGLE -->
+    <div class="grp" data-type="squiggle" style="display:none">
+      <h2>Squiggle</h2>
+      <div class="ctrl"><div class="row"><label>fileiras</label><span class="val"></span></div><input type="range" id="sRows" min="4" max="60" value="24"></div>
+      <div class="ctrl"><div class="row"><label>ondulações</label><span class="val"></span></div><input type="range" id="sFreq" min="2" max="24" value="7"></div>
+      <div class="ctrl"><div class="row"><label>amplitude</label><span class="val"></span></div><input type="range" id="sAmp" min="5" max="140" value="60"></div>
+      <div class="ctrl"><div class="row"><label>variação por fileira</label><span class="val"></span></div><input type="range" id="sVar" min="0" max="100" value="0" data-unit="%"></div>
+      <div class="ctrl"><div class="row"><label>espessura</label><span class="val"></span></div><input type="range" id="sWidth" min="2" max="80" value="32"></div>
+      <div class="ctrl"><div class="row"><label>cor 2 (gradiente)</label></div>
+        <div class="colorrow"><input type="color" id="sColor2" value="#e0559b"><span class="mono" id="sColor2L" style="color:var(--muted);font-size:11px;">#e0559b</span></div>
+      </div>
+    </div>
+
+    <!-- GRANULADO -->
+    <div class="grp" data-type="granulado" style="display:none">
+      <h2>Granulado</h2>
+      <div class="ctrl"><div class="row"><label>grão (fino → grosso)</label><span class="val"></span></div><input type="range" id="gFreq" min="20" max="120" value="55" data-div="100"></div>
+      <div class="ctrl"><div class="row"><label>contraste</label><span class="val"></span></div><input type="range" id="gContraste" min="10" max="60" value="30" data-div="10"></div>
+      <div class="ctrl"><div class="row"><label>intensidade</label><span class="val"></span></div><input type="range" id="gIntensidade" min="10" max="100" value="100" data-unit="%"></div>
+      <div class="ctrl"><div class="row"><label>cor 2 (gradiente)</label></div>
+        <div class="colorrow"><input type="color" id="gCor2" value="#2a7de1"><span class="mono" id="gCor2L" style="color:var(--muted);font-size:11px;">#2a7de1</span></div>
+      </div>
+      <div class="ctrl"><div class="row"><label>mistura</label></div>
+        <select id="gBlend"><option value="soft-light" selected>soft-light</option><option value="overlay">overlay</option><option value="screen">screen</option><option value="normal">normal</option></select>
+      </div>
+    </div>
+
+    <!-- GIRO -->
+    <div class="grp" data-type="giro" style="display:none">
+      <h2>Giro</h2>
+      <div class="ctrl"><div class="row"><label>camadas</label><span class="val"></span></div><input type="range" id="yLayers" min="6" max="60" value="22"></div>
+      <div class="ctrl"><div class="row"><label>lados</label><span class="val"></span></div><input type="range" id="ySides" min="3" max="12" value="6"></div>
+      <div class="ctrl"><div class="row"><label>arredondamento</label><span class="val"></span></div><input type="range" id="yRound" min="0" max="100" value="35" data-unit="%"></div>
+      <div class="ctrl"><div class="row"><label>rotação</label><span class="val"></span></div><input type="range" id="yRot" min="0" max="15" value="2" data-unit="°"></div>
+      <div class="ctrl"><div class="row"><label>tamanho</label><span class="val"></span></div><input type="range" id="ySize" min="30" max="220" value="115" data-unit="%"></div>
+      <div class="ctrl"><div class="row"><label>espessura</label><span class="val"></span></div><input type="range" id="yWidth" min="2" max="30" value="13"></div>
+      <div class="ctrl"><div class="row"><label>cor 2 (gradiente)</label></div>
+        <div class="colorrow"><input type="color" id="yCor2" value="#f06ab0"><span class="mono" id="yCor2L" style="color:var(--muted);font-size:11px;">#f06ab0</span></div>
+      </div>
+    </div>
+
+    <h2>Cores</h2>
+    <div class="ctrl"><div class="row"><label>fundo</label></div>
+      <div class="colorrow"><input type="color" id="cBg" value="#0e1116"><span class="mono" id="cBgL" style="color:var(--muted);font-size:11px;">#0e1116</span></div>
+    </div>
+    <div class="ctrl"><div class="row"><label>cor</label></div>
+      <div class="colorrow"><input type="color" id="cLine" value="#6ab04c"><span class="mono" id="cLineL" style="color:var(--muted);font-size:11px;">#6ab04c</span></div>
+    </div>
+    <div class="ctrl"><div class="row"><label>opacidade</label><span class="val"></span></div><input type="range" id="cOp" min="5" max="100" value="60" data-unit="%"></div>
+
+    <button class="btn" id="dlSvg">Baixar SVG</button>
+    <button class="btn" id="randomize">Aleatorizar seed</button>
+  </aside>
+
+  <main>
+    <div class="stage">
+      <svg id="tex" viewBox="0 0 1200 675" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect id="bgRect" width="1200" height="675" fill="#0e1116"/>
+        <g id="content"></g>
+      </svg>
+      <div class="caption mono" id="cap"></div>
+    </div>
+    <div class="meta" id="meta"></div>
+  </main>
+</div>
+
+<script>
+const VW = 1200, VH = 675, AR = VH / VW, TAU = Math.PI * 2;
+const el = id => document.getElementById(id);
+const content = el('content'), bgRect = el('bgRect'), cap = el('cap'), meta = el('meta');
+const cBg = el('cBg'), cLine = el('cLine'), cOp = el('cOp');
+let type = 'topografia', tile = 0, caosDash = 1;
+let lastInner = '';
+
+/* ---------- ruído de gradiente (Perlin) periódico + fbm ---------- */
+function makeNoise(seed) {
+  function grad(xi, yi) {
+    let h = (xi * 374761393 + yi * 668265263 + seed * 1442695041) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    const a = ((h ^ (h >>> 16)) >>> 0) / 4294967295 * TAU;
+    return [Math.cos(a), Math.sin(a)];
+  }
+  const fade = t => t * t * t * (t * (t * 6 - 15) + 10);
+  const wrap = (v, p) => p ? ((v % p) + p) % p : v;
+  return (x, y, px, py) => {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+    const x0 = wrap(xi, px), x1 = wrap(xi + 1, px), y0 = wrap(yi, py), y1 = wrap(yi + 1, py);
+    const g00 = grad(x0, y0), g10 = grad(x1, y0), g01 = grad(x0, y1), g11 = grad(x1, y1);
+    const d00 = g00[0] * xf + g00[1] * yf, d10 = g10[0] * (xf - 1) + g10[1] * yf;
+    const d01 = g01[0] * xf + g01[1] * (yf - 1), d11 = g11[0] * (xf - 1) + g11[1] * (yf - 1);
+    const u = fade(xf), v = fade(yf);
+    return ((d00 * (1 - u) + d10 * u) * (1 - v) + (d01 * (1 - u) + d11 * u) * v) * 0.7 + 0.5;
+  };
+}
+function fbm(n, x, y, oct, px, py) {
+  let s = 0, a = 0.5, f = 1, nm = 0;
+  for (let i = 0; i < oct; i++) { s += a * n(x * f, y * f, px ? px * f : 0, py ? py * f : 0); nm += a; a *= 0.5; f *= 2; }
+  return s / nm;
+}
+function rng(seed) {
+  let a = (seed * 2654435761) >>> 0;
+  return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+function chain(segs) {
+  const key = p => `${Math.round(p[0] * 10)},${Math.round(p[1] * 10)}`;
+  const map = new Map();
+  segs.forEach((s, i) => { for (const e of [0, 1]) { const k = key(s[e]); let arr = map.get(k); if (!arr) { arr = []; map.set(k, arr); } arr.push(i); } });
+  const used = new Array(segs.length).fill(false);
+  const find = pt => { const arr = map.get(key(pt)); if (arr) for (const si of arr) if (!used[si]) return si; return -1; };
+  const lines = [];
+  for (let i = 0; i < segs.length; i++) {
+    if (used[i]) continue;
+    used[i] = true;
+    const line = [segs[i][0], segs[i][1]];
+    for (let dir = 0; dir < 2; dir++) {
+      while (true) {
+        const pt = dir === 0 ? line[line.length - 1] : line[0];
+        const si = find(pt); if (si < 0) break;
+        used[si] = true;
+        const a = segs[si][0], b = segs[si][1];
+        const next = key(a) === key(pt) ? b : a;
+        if (dir === 0) line.push(next); else line.unshift(next);
+      }
+    }
+    lines.push(line);
+  }
+  return lines;
+}
+function contourD(field, cols, rows, iso, tension) {
+  const stride = cols + 1, cw = VW / cols, ch = VH / rows;
+  const at = (i, j) => field[j * stride + i];
+  const segs = [];
+  for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+    const a = at(i, j), b = at(i + 1, j), c = at(i + 1, j + 1), e = at(i, j + 1);
+    let idx = 0; if (a > iso) idx |= 8; if (b > iso) idx |= 4; if (c > iso) idx |= 2; if (e > iso) idx |= 1;
+    if (idx === 0 || idx === 15) continue;
+    const x0 = i * cw, y0 = j * ch, x1 = x0 + cw, y1 = y0 + ch;
+    const lp = (p, q, va, vb) => p + (q - p) * ((iso - va) / (vb - va));
+    const top = () => [lp(x0, x1, a, b), y0], right = () => [x1, lp(y0, y1, b, c)];
+    const bot = () => [lp(x0, x1, e, c), y1], lft = () => [x0, lp(y0, y1, a, e)];
+    switch (idx) {
+      case 1: case 14: segs.push([lft(), bot()]); break;
+      case 2: case 13: segs.push([bot(), right()]); break;
+      case 3: case 12: segs.push([lft(), right()]); break;
+      case 4: case 11: segs.push([top(), right()]); break;
+      case 6: case 9: segs.push([top(), bot()]); break;
+      case 7: case 8: segs.push([lft(), top()]); break;
+      case 5: segs.push([lft(), top()]); segs.push([bot(), right()]); break;
+      case 10: segs.push([top(), right()]); segs.push([lft(), bot()]); break;
+    }
+  }
+  let d = '';
+  for (const line of chain(segs)) d += smoothPath(line, tension);
+  return d;
+}
+function smoothPath(pts, k) {
+  let n = pts.length;
+  if (n < 2) return '';
+  const closed = n > 3 && Math.hypot(pts[0][0] - pts[n - 1][0], pts[0][1] - pts[n - 1][1]) < 0.6;
+  if (closed) { pts = pts.slice(0, -1); n--; }
+  const f = p => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`;
+  if (k <= 0 || n === 2) { let d = `M${f(pts[0])}`; for (let i = 1; i < n; i++) d += `L${f(pts[i])}`; return d + (closed ? 'Z' : ''); }
+  const get = i => closed ? pts[((i % n) + n) % n] : pts[Math.max(0, Math.min(n - 1, i))];
+  let d = `M${f(pts[0])}`;
+  const end = closed ? n : n - 1;
+  for (let i = 0; i < end; i++) {
+    const p0 = get(i - 1), p1 = get(i), p2 = get(i + 1), p3 = get(i + 2);
+    const c1x = p1[0] + (p2[0] - p0[0]) * k, c1y = p1[1] + (p2[1] - p0[1]) * k;
+    const c2x = p2[0] - (p3[0] - p1[0]) * k, c2y = p2[1] - (p3[1] - p1[1]) * k;
+    d += `C${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${f(p2)}`;
+  }
+  return d + (closed ? 'Z' : '');
+}
+/* ===================== GERADORES ===================== */
+
+function renderTopografia(o) {
+  const scale = +el('tScale').value, levels = +el('tLevels').value, oct = +el('tOct').value;
+  const warp = +el('tWarp').value / 100, tension = +el('tSmooth').value / 100 * 0.22;
+  const width = +el('tWidth').value / 10, idxEvery = +el('tIndex').value, masterW = +el('tMaster').value / 10;
+  const cols = Math.min(360, Math.max(160, Math.round(100 + scale * 14))), rows = Math.round(cols * AR), stride = cols + 1;
+  const pX = tile ? Math.max(2, Math.round(scale)) : 0, pY = tile ? Math.max(2, Math.round(scale * AR)) : 0;
+  const sx = tile ? pX : scale, sy = tile ? pY : scale * AR;
+  const base = makeNoise(o.seed), wa = makeNoise(o.seed + 101), wb = makeNoise(o.seed + 211);
+  const amp = warp * 4, wf = tile ? 1 : 0.55, N = stride * (rows + 1);
+  const field = new Float32Array(N); let mn = Infinity, mx = -Infinity;
+  for (let j = 0; j <= rows; j++) for (let i = 0; i <= cols; i++) {
+    const x = (i / cols) * sx, y = (j / rows) * sy;
+    const qx = fbm(wa, x * wf, y * wf, 3, pX, pY) - 0.5, qy = fbm(wb, x * wf + 5.2, y * wf + 1.3, 3, pX, pY) - 0.5;
+    const v = fbm(base, x + amp * qx, y + amp * qy, oct, pX, pY);
+    field[j * stride + i] = v; if (v < mn) mn = v; if (v > mx) mx = v;
+  }
+  const inv = mx > mn ? 1 / (mx - mn) : 1; for (let k = 0; k < N; k++) field[k] = (field[k] - mn) * inv;
+  let dN = '', dM = '';
+  for (let l = 1; l <= levels; l++) {
+    const d = contourD(field, cols, rows, l / (levels + 1), tension);
+    if (idxEvery > 0 && l % idxEvery === 0) dM += d; else dN += d;
+  }
+  const st = `fill="none" stroke="${o.cor}" stroke-linecap="round" stroke-linejoin="round"`;
+  const svg = `<path ${st} stroke-width="${width}" stroke-opacity="${o.op}" d="${dN}"/>` +
+    `<path ${st} stroke-width="${masterW}" stroke-opacity="${Math.min(1, o.op + 0.2)}" d="${dM}"/>`;
+  return { svg, cap: `topografia · ${levels} níveis${tile ? ' · tile' : ''}`,
+    meta: `<span>escala <b>${scale}</b></span><span>níveis <b>${levels}</b></span><span>distorção <b>${Math.round(warp*100)}%</b></span><span>grade <b>${cols}×${rows}</b></span><span>tile <b>${tile?'sim':'não'}</b></span>` };
+}
+
+function renderOndas(o) {
+  const lines = +el('oSpacing').value, amp = +el('oAmp').value, freq = +el('oFreq').value / 1000;
+  const vvar = +el('oVar').value / 100, width = +el('oWidth').value / 10;
+  const n = makeNoise(o.seed), dx = VW / 160;
+  let d = '';
+  for (let li = 0; li < lines; li++) {
+    const baseY = (li + 0.5) / lines * VH;
+    const pts = [];
+    for (let x = 0; x <= VW; x += dx) {
+      const y = baseY + amp * (fbm(n, x * freq, li * (0.2 + vvar), 2) - 0.5) * 2;
+      pts.push([x, y]);
+    }
+    d += smoothPath(pts, 0.16);
+  }
+  const svg = `<path fill="none" stroke="${o.cor}" stroke-width="${width}" stroke-opacity="${o.op}" stroke-linecap="round" d="${d}"/>`;
+  return { svg, cap: `ondas · ${lines} linhas`,
+    meta: `<span>linhas <b>${lines}</b></span><span>amplitude <b>${amp}</b></span><span>frequência <b>${freq.toFixed(3)}</b></span>` };
+}
+
+function renderAneis(o) {
+  const N = +el('aRings').value, lobes = +el('aLobes').value, amp = +el('aAmp').value / 100 * 0.6;
+  const rot = +el('aRot').value * Math.PI / 180, sizeF = +el('aSize').value / 100;
+  const drift = +el('aDrift').value / 100, width = +el('aWidth').value / 10, col2 = el('aColor2').value;
+  const cx = VW / 2, cy = VH / 2, Rmax = Math.min(VW, VH) * 0.5 * sizeF, Rmin = Rmax * 0.05;
+  const r = rng(o.seed + 13);
+  // harmônicas dos lóbulos (amplitudes normalizadas pra somar 1 => sem auto-interseção)
+  const lob = [], pha = []; let sum = 0;
+  for (let h = 1; h <= lobes; h++) { const a = (0.4 + 0.6 * r()) / Math.pow(h, 0.75); lob.push(a); pha.push(r() * TAU); sum += a; }
+  for (let h = 0; h < lobes; h++) lob[h] /= sum;
+  const dirA = r() * TAU, M = 160;
+  let d = '';
+  for (let i = 0; i < N; i++) {
+    const t = N > 1 ? i / (N - 1) : 0, R = Rmax + (Rmin - Rmax) * t, rp = i * rot;
+    const dm = (1 - R / Rmax) * Rmax * drift, ox = cx + Math.cos(dirA) * dm, oy = cy + Math.sin(dirA) * dm;
+    const pts = [];
+    for (let m = 0; m <= M; m++) {
+      const th = (m / M) * TAU;
+      let rr = 1;
+      for (let h = 0; h < lobes; h++) rr += amp * lob[h] * Math.sin((h + 1) * th + pha[h] + rp);
+      pts.push([ox + Math.cos(th) * R * rr, oy + Math.sin(th) * R * rr]);
+    }
+    d += smoothPath(pts, 0.16);
+  }
+  const grad = `<defs><linearGradient id="aneis-grad" x1="50%" y1="0%" x2="50%" y2="100%"><stop offset="40%" stop-color="${o.cor}"/><stop offset="100%" stop-color="${col2}"/></linearGradient></defs>`;
+  const svg = grad + `<path fill="none" stroke="url(#aneis-grad)" stroke-width="${width}" stroke-opacity="${o.op}" stroke-linejoin="round" d="${d}"/>`;
+  return { svg, cap: `anéis · ${N} loops`,
+    meta: `<span>anéis <b>${N}</b></span><span>lóbulos <b>${lobes}</b></span><span>amplitude <b>${Math.round(+el('aAmp').value)}%</b></span><span>rotação <b>${+el('aRot').value}°</b></span>` };
+}
+
+function renderCaos(o) {
+  const N = +el('kRings').value, lobes = +el('kLobes').value, amp = +el('kAmp').value / 100 * 0.6;
+  const rot = +el('kRot').value * Math.PI / 180, sizeF = +el('kSize').value / 100;
+  const chaos = +el('kChaos').value / 100, width = +el('kWidth').value / 10, col2 = el('kColor2').value;
+  const cx = VW / 2, cy = VH / 2, Rmax = Math.min(VW, VH) * 0.5 * sizeF, Rmin = Rmax * 0.16;
+  const r = rng(o.seed + 23);
+  const lob = [], pha = []; let sum = 0;
+  for (let h = 1; h <= lobes; h++) { const a = (0.4 + 0.6 * r()) / Math.pow(h, 0.75); lob.push(a); pha.push(r() * TAU); sum += a; }
+  for (let h = 0; h < lobes; h++) lob[h] /= sum;
+  const M = 150;
+  let paths = '';
+  for (let i = 0; i < N; i++) {
+    const t = N > 1 ? i / (N - 1) : 0, R = Rmax + (Rmin - Rmax) * t, rp = i * rot;
+    const pts = [];
+    for (let m = 0; m <= M; m++) {
+      const th = (m / M) * TAU;
+      let rr = 1;
+      for (let h = 0; h < lobes; h++) rr += amp * lob[h] * Math.sin((h + 1) * th + pha[h] + rp);
+      pts.push([cx + Math.cos(th) * R * rr, cy + Math.sin(th) * R * rr]);
+    }
+    const d = smoothPath(pts, 0.16);
+    const op = (o.op * (1 - chaos * 0.6) + o.op * chaos * 0.6 * r()).toFixed(2);
+    const da = caosDash ? ` stroke-dasharray="${4 + Math.floor(r() * 12)} ${2 + Math.floor(r() * 6)}"` : '';
+    paths += `<path d="${d}" stroke-opacity="${op}"${da}/>`;
+  }
+  const grad = `<defs><linearGradient id="caos-grad" x1="50%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="${o.cor}"/><stop offset="100%" stop-color="${col2}"/></linearGradient></defs>`;
+  const svg = grad + `<g fill="none" stroke="url(#caos-grad)" stroke-width="${width}" stroke-linecap="round">${paths}</g>`;
+  return { svg, cap: `caos · ${N} camadas`,
+    meta: `<span>camadas <b>${N}</b></span><span>lóbulos <b>${lobes}</b></span><span>rotação <b>${+el('kRot').value}°</b></span><span>caos <b>${Math.round(chaos*100)}%</b></span><span>tracejado <b>${caosDash?'sim':'não'}</b></span>` };
+}
+
+function renderSquiggle(o) {
+  const rows = +el('sRows').value, bumps = +el('sFreq').value, amp = +el('sAmp').value;
+  const vvar = +el('sVar').value / 100, width = +el('sWidth').value / 10, col2 = el('sColor2').value;
+  const n = makeNoise(o.seed), dx = VW / 220, freq = bumps / VW;
+  let paths = '';
+  for (let i = 0; i < rows; i++) {
+    const by = (i + 0.5) / rows * VH, rs = i * vvar * 0.7;
+    const pts = [];
+    for (let x = 0; x <= VW; x += dx) pts.push([x, by + amp * (fbm(n, x * freq, rs, 2) - 0.5) * 2]);
+    paths += `<path d="${smoothPath(pts, 0.16)}"/>`;
+  }
+  const grad = `<defs><linearGradient id="sq-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="${VH}"><stop offset="0%" stop-color="${o.cor}"/><stop offset="100%" stop-color="${col2}"/></linearGradient></defs>`;
+  const svg = grad + `<g fill="none" stroke="url(#sq-grad)" stroke-width="${width}" stroke-linecap="round">${paths}</g>`;
+  return { svg, cap: `squiggle · ${rows} fileiras`,
+    meta: `<span>fileiras <b>${rows}</b></span><span>ondulações <b>${bumps}</b></span><span>amplitude <b>${amp}</b></span><span>variação <b>${Math.round(vvar*100)}%</b></span>` };
+}
+
+function renderGranulado(o) {
+  const freq = (+el('gFreq').value / 100).toFixed(2), slope = (+el('gContraste').value / 10).toFixed(1);
+  const intens = +el('gIntensidade').value / 100, col2 = el('gCor2').value, blend = el('gBlend').value;
+  const gA = `<linearGradient id="grain-g1" gradientTransform="rotate(-150,0.5,0.5)" x1="50%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="${o.cor}"/><stop offset="100%" stop-color="${o.cor}" stop-opacity="0"/></linearGradient>`;
+  const gB = `<linearGradient id="grain-g2" gradientTransform="rotate(150,0.5,0.5)" x1="50%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="${col2}"/><stop offset="100%" stop-color="${col2}" stop-opacity="0"/></linearGradient>`;
+  const filt = `<filter id="grain-f" x="-20%" y="-20%" width="140%" height="140%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">` +
+    `<feTurbulence type="fractalNoise" baseFrequency="${freq}" numOctaves="2" seed="${o.seed}" stitchTiles="stitch" result="t"/>` +
+    `<feColorMatrix in="t" type="saturate" values="0" result="d"/>` +
+    `<feComponentTransfer in="d" result="c"><feFuncR type="linear" slope="${slope}"/><feFuncG type="linear" slope="${slope}"/><feFuncB type="linear" slope="${slope}"/></feComponentTransfer>` +
+    `<feColorMatrix in="c" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 19 -11"/></filter>`;
+  const svg = `<defs>${gA}${gB}${filt}</defs>` +
+    `<rect width="${VW}" height="${VH}" fill="url(#grain-g2)"/>` +
+    `<rect width="${VW}" height="${VH}" fill="url(#grain-g1)"/>` +
+    `<rect width="${VW}" height="${VH}" fill="transparent" filter="url(#grain-f)" opacity="${intens}" style="mix-blend-mode:${blend}"/>`;
+  return { svg, cap: `granulado`,
+    meta: `<span>grão <b>${freq}</b></span><span>contraste <b>${slope}</b></span><span>intensidade <b>${Math.round(intens*100)}%</b></span><span>mistura <b>${blend}</b></span>` };
+}
+
+function roundedPolyD(cx, cy, R, sides, rotRad, r) {
+  const V = [];
+  for (let i = 0; i < sides; i++) { const a = rotRad - Math.PI / 2 + i * TAU / sides; V.push([cx + Math.cos(a) * R, cy + Math.sin(a) * R]); }
+  const nrm = (x, y) => { const l = Math.hypot(x, y) || 1; return [x / l, y / l]; };
+  let d = '';
+  for (let i = 0; i < sides; i++) {
+    const a = V[i], b = V[(i + 1) % sides], c = V[(i + 2) % sides];
+    const ba = nrm(a[0] - b[0], a[1] - b[1]), bc = nrm(c[0] - b[0], c[1] - b[1]);
+    const p1 = [b[0] + ba[0] * r, b[1] + ba[1] * r], p2 = [b[0] + bc[0] * r, b[1] + bc[1] * r];
+    d += (i === 0 ? 'M' : 'L') + `${p1[0].toFixed(1)} ${p1[1].toFixed(1)}`;
+    d += `Q${b[0].toFixed(1)} ${b[1].toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  return d + 'Z';
+}
+
+function renderGiro(o) {
+  const N = +el('yLayers').value, sides = +el('ySides').value, round = +el('yRound').value / 100;
+  const rot = +el('yRot').value * Math.PI / 180, sizeF = +el('ySize').value / 100;
+  const width = +el('yWidth').value / 10, col2 = el('yCor2').value;
+  const cx = VW / 2, cy = VH / 2, Rmax = Math.min(VW, VH) * 0.5 * sizeF, Rmin = Rmax * 0.04;
+  let paths = '';
+  for (let i = 0; i < N; i++) {
+    const t = N > 1 ? i / (N - 1) : 0, R = Rmin + (Rmax - Rmin) * t;
+    const edge = 2 * R * Math.sin(Math.PI / sides), r = Math.min(edge * 0.5, round * R * 0.7);
+    const d = roundedPolyD(cx, cy, R, sides, i * rot, r);
+    const op = (o.op * (1 - t * 0.95)).toFixed(2);
+    paths += `<path d="${d}" stroke-opacity="${op}"/>`;
+  }
+  const grad = `<defs><linearGradient id="giro-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="${VH}"><stop offset="0%" stop-color="${o.cor}"/><stop offset="100%" stop-color="${col2}"/></linearGradient></defs>`;
+  const svg = grad + `<g fill="none" stroke="url(#giro-grad)" stroke-width="${width}" stroke-linejoin="round">${paths}</g>`;
+  return { svg, cap: `giro · ${N} camadas · ${sides} lados`,
+    meta: `<span>camadas <b>${N}</b></span><span>lados <b>${sides}</b></span><span>rotação <b>${+el('yRot').value}°</b></span><span>arredond. <b>${Math.round(round*100)}%</b></span>` };
+}
+
+const GEN = { topografia: renderTopografia, ondas: renderOndas, aneis: renderAneis, caos: renderCaos, squiggle: renderSquiggle, granulado: renderGranulado, giro: renderGiro };
+
+/* ---------- render / UI ---------- */
+function syncLabels() {
+  document.querySelectorAll('aside input[type=range]').forEach(inp => {
+    const v = inp.closest('.ctrl').querySelector('.val'); if (!v) return;
+    const dv = inp.dataset.div ? (+inp.value / +inp.dataset.div).toFixed(1) : inp.value;
+    v.textContent = dv + (inp.dataset.unit || '');
+  });
+  el('cBgL').textContent = cBg.value; el('cLineL').textContent = cLine.value;
+  const a2 = el('aColor2L'); if (a2) a2.textContent = el('aColor2').value;
+  const k2 = el('kColor2L'); if (k2) k2.textContent = el('kColor2').value;
+  const s2 = el('sColor2L'); if (s2) s2.textContent = el('sColor2').value;
+  const g2 = el('gCor2L'); if (g2) g2.textContent = el('gCor2').value;
+  const y2 = el('yCor2L'); if (y2) y2.textContent = el('yCor2').value;
+}
+function render() {
+  syncLabels();
+  document.querySelectorAll('.grp').forEach(g => g.style.display = g.dataset.type === type ? '' : 'none');
+  bgRect.setAttribute('fill', cBg.value);
+  const out = GEN[type]({ seed: +el('vSeed').value, cor: cLine.value, op: +cOp.value / 100 });
+  content.innerHTML = out.svg; lastInner = out.svg;
+  cap.textContent = out.cap; meta.innerHTML = out.meta;
+}
+let raf = null;
+function renderT() { if (raf) return; raf = requestAnimationFrame(() => { raf = null; render(); }); }
+document.querySelectorAll('aside input, aside select').forEach(i => i.addEventListener('input', renderT));
+
+function segHandler(sel, cb) {
+  document.querySelectorAll(sel + ' button').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll(sel + ' button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active'); cb(btn); render();
+  }));
+}
+segHandler('#segType', b => type = b.dataset.type);
+segHandler('#segTile', b => tile = +b.dataset.tile);
+segHandler('#segKDash', b => caosDash = +b.dataset.dash);
+
+el('randomize').addEventListener('click', () => { el('vSeed').value = Math.floor(Math.random() * 80); render(); });
+el('dlSvg').addEventListener('click', () => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${VW}" height="${VH}" viewBox="0 0 ${VW} ${VH}"><rect width="${VW}" height="${VH}" fill="${cBg.value}"/>${lastInner}</svg>`;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+  a.download = `studio-${type}-${el('vSeed').value}.svg`; a.click();
+});
+
+const qt = new URLSearchParams(location.search).get('t');
+if (qt && GEN[qt]) { type = qt; document.querySelectorAll('#segType button').forEach(b => b.classList.toggle('active', b.dataset.type === qt)); }
+render();
+</script>
+</body>
+</html>
