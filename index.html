@@ -16950,6 +16950,12 @@ function paintPostRangeFill(input) {
   const value = Number(input.value) || 0;
   const pct = max > min ? ((value - min) / (max - min)) * 100 : 0;
   input.style.setProperty('--fill', String(Math.max(0, Math.min(100, pct))));
+  // Mantém o número do stepper inline (.pc-inline-stepper-val) em sincronia quando o
+  // valor do range é setado de fora SEM disparar 'input' (ex.: syncSignalTextureControls).
+  // Sem isso o display fica defasado e o +/- "pula" (calcula do valor real do range).
+  const _field = input.closest && input.closest('.pc-offset-field');
+  const _valEl = _field && _field.querySelector('.pc-inline-stepper-val');
+  if (_valEl) _valEl.textContent = input.value + (input.dataset.valueUnit || '');
 }
 
 function paintAllPostRangeFills(scope) {
