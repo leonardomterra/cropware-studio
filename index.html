@@ -7,9 +7,15 @@
 <link rel="icon" type="image/svg+xml" href="favicon-studio-svg.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Mozilla+Text:wght@400;500;600;700&family=Mozilla+Headline:wght@200;300;400;500;600;700&family=Alumni+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Vend+Sans:wght@400..700&family=Pathway+Extreme:wdth,wght@75..125,400..700&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" rel="stylesheet">
+<!-- Phosphor icons: CSS grande (~9000 classes) carregado assincrono p/ nao bloquear o render; o webfont so baixa os glifos usados -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" media="print" onload="this.media='all'">
+<noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css">
+</noscript>
 <script defer src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.11/dist/html2canvas-pro.min.js"></script>
 <script type="module">
   import * as htmlToImage from 'html-to-image';
