@@ -24,6 +24,7 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="texture-gen.js"></script>
 <style>
   /* ── LOGIN SCREEN ── */
   .login-screen {
@@ -11152,6 +11153,14 @@
             <option value="normal">Normal</option>
           </select>
         </div>
+        <div class="pc-sub" id="pcSubTexGen" style="display:none">
+          <div class="pc-label">Textura</div>
+          <button class="pc-color-btn" type="button" onclick="openTexGenDialog()">
+            <span class="pc-color-btn-swatch" id="pcTexGenBtnSwatch" style="background:#1f2937"></span>
+            <span class="pc-color-btn-label" id="pcTexGenBtnLabel">Configurar textura…</span>
+            <i class="ph ph-caret-right pc-color-btn-chevron"></i>
+          </button>
+        </div>
         <div class="pc-sub hidden" id="pcSubApplyPhotoTextureToAll">
           <button type="button" class="pc-apply-all-btn" id="pcApplyPhotoTextureToAllBtn" title="Replica a textura da foto deste slide em todos os outros do carrossel">
             Aplicar à Todos
@@ -14025,6 +14034,7 @@ const PER_STYLE_FIELDS = [
   'hookScale', 'complementScale', 'bulletsScale', 'bulletIconScale', 'bulletDisplayMode',
   'hookVisible', 'complementVisible', 'bulletsVisible', 'bulletIconsVisible',
   'signalPhotoTexture', 'signalPhotoTextureIntensity', 'signalPhotoTextureInvert', 'signalPhotoTextureBlendMode',
+  'texGen',
   // Dashboard
   'dashCardColor', 'dashCardOpacity', 'dashCardBlur', 'dashCardPos',
   // Moldura (Especial)
@@ -14407,6 +14417,17 @@ function renderGeneratedPost(postData, legendText) {
         if (postData.signalPhotoTextureIntensity == null) postData.signalPhotoTextureIntensity = 80;
         if (!postData.signalPhotoTextureBlendMode)         postData.signalPhotoTextureBlendMode = 'overlay';
         if (postData.signalPhotoTextureInvert == null)     postData.signalPhotoTextureInvert    = true;
+      }
+      // Textura procedural: se o post tem texGen, gera o SVG (data-URI) em tempo de
+      // render e injeta no campo existente — reaproveita todo o pipeline de overlay.
+      if (postData.texGen && typeof window !== 'undefined' && window.TextureGen) {
+        try {
+          postData.signalPhotoTexture = window.TextureGen.overlayDataUri({
+            type: postData.texGen.type, scale: postData.texGen.scale,
+            thickness: postData.texGen.thickness, seed: postData.texGen.seed,
+            w: 1000, h: 1250,
+          });
+        } catch (_) {}
       }
     }
     if (postData.kickerScale    == null) postData.kickerScale       = 1;
@@ -17354,6 +17375,16 @@ function updatePostControls(idx) {
     const el = document.getElementById(id);
     if (el) el.style.removeProperty('display');
   });
+  // Editorial II: textura é procedural via dialog — mostra o botão e esconde os
+  // controles legados de textura (.webp) pra manter a coluna limpa e objetiva.
+  (function () {
+    const texBtn = document.getElementById('pcSubTexGen');
+    if (texBtn) texBtn.style.display = isLiEditorial ? 'flex' : 'none';
+    if (isLiEditorial) {
+      ['pcSubSignalTexture', 'pcSubSignalTextureIntensity', 'pcSubSignalTextureInvert', 'pcSubSignalTextureBlend']
+        .forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
+    }
+  })();
   // Sync accent bar controls
   const abPos = post.accentBarPos || 'tl';
   const abLegacy = abPos === 'top' || abPos === 'bottom' || abPos === 'left' || abPos === 'right';
@@ -32893,6 +32924,190 @@ window.handleMotionReelTrackKey = handleMotionReelTrackKey;
      e expõe window.mountMotionReelPlayer / window.unmountMotionReelPlayer
      pro vanilla JS chamar quando o modo motion-reel é ativado. -->
 <script type="module" src="/motion-reel/mount.jsx"></script>
+
+<!-- ===================== Dialog de Textura procedural ===================== -->
+<style>
+  .texgen-overlay {
+    position: fixed; inset: 0; z-index: 9998;
+    background: rgba(23,23,23,0.45);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center;
+    font-family: var(--ds-font, 'Inter Tight', system-ui, sans-serif);
+    font-stretch: var(--ds-font-stretch, 100%);
+  }
+  .texgen-overlay.open { display: flex; }
+  .texgen-dialog {
+    width: 380px; max-width: calc(100vw - 32px); max-height: calc(100vh - 48px);
+    overflow-y: auto; background: #fff; border-radius: 16px;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.28); padding: 20px 20px 18px;
+    color: #171717;
+  }
+  .texgen-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .texgen-head h3 { margin: 0; font-size: 14.5px; font-weight: 600; letter-spacing: .01em; }
+  .texgen-x { border: none; background: #f1f1f3; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; color: #555; font-size: 15px; display: flex; align-items: center; justify-content: center; }
+  .texgen-x:hover { background: #e7e7ea; }
+  .texgen-prev {
+    position: relative; height: 150px; border-radius: 11px; overflow: hidden; margin-bottom: 16px;
+    background: linear-gradient(160deg,#9ec5e8 0%,#cdd98f 48%,#caa24a 100%);
+  }
+  .texgen-prev .t { position: absolute; inset: 0; background-size: cover; background-position: center; pointer-events: none; }
+  .texgen-row { margin-bottom: 13px; }
+  .texgen-row .lab { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; font-size: 12px; color: #444; }
+  .texgen-row .lab b { color: #6ab04c; font-weight: 600; font-size: 11px; }
+  .texgen-types { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .texgen-types button {
+    border: 1px solid #e2e2e6; background: #fafafb; border-radius: 8px; padding: 7px 4px;
+    font: inherit; font-size: 11px; color: #333; cursor: pointer;
+  }
+  .texgen-types button.active { background: #6ab04c; border-color: #6ab04c; color: #fff; font-weight: 600; }
+  .texgen-range { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 3px; background: #e4e4e8; outline: none; }
+  .texgen-range::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #6ab04c; cursor: pointer; border: 3px solid #fff; box-shadow: 0 0 0 1px #d9d9de; }
+  .texgen-sel { width: 100%; border: 1px solid #e2e2e6; border-radius: 8px; padding: 7px 9px; font: inherit; font-size: 12.5px; background: #fafafb; cursor: pointer; color: #171717; }
+  .texgen-inline { display: flex; gap: 8px; align-items: center; }
+  .texgen-toggle { flex: 1; display: flex; align-items: center; gap: 8px; border: 1px solid #e2e2e6; background: #fafafb; border-radius: 8px; padding: 8px 10px; cursor: pointer; font: inherit; font-size: 12.5px; color: #333; }
+  .texgen-toggle.on { background: #eef7ea; border-color: #6ab04c; color: #2f6b22; font-weight: 500; }
+  .texgen-toggle .dot { width: 14px; height: 14px; border-radius: 4px; border: 1.5px solid #bbb; }
+  .texgen-toggle.on .dot { background: #6ab04c; border-color: #6ab04c; }
+  .texgen-btn { border: 1px solid #e2e2e6; background: #fafafb; border-radius: 8px; padding: 8px 12px; cursor: pointer; font: inherit; font-size: 12.5px; color: #333; }
+  .texgen-btn:hover { border-color: #bbb; }
+  .texgen-foot { display: flex; gap: 8px; margin-top: 16px; }
+  .texgen-foot .ghost { flex: 1; }
+  .texgen-foot .primary { flex: 1; background: #171717; color: #fff; border: none; border-radius: 9px; padding: 10px; cursor: pointer; font: inherit; font-size: 13px; font-weight: 600; }
+</style>
+<div class="texgen-overlay" id="texgenOverlay">
+  <div class="texgen-dialog" role="dialog" aria-label="Textura">
+    <div class="texgen-head">
+      <h3>Textura</h3>
+      <button class="texgen-x" type="button" onclick="closeTexGenDialog()" aria-label="Fechar">✕</button>
+    </div>
+    <div class="texgen-prev"><div class="t" id="texgenPrev"></div></div>
+    <div class="texgen-row">
+      <div class="lab">Tipo</div>
+      <div class="texgen-types" id="texgenTypes"></div>
+    </div>
+    <div class="texgen-row">
+      <div class="lab">Escala <b id="texgenScaleV">50</b></div>
+      <input type="range" class="texgen-range" id="texgenScale" min="0" max="100" value="50">
+    </div>
+    <div class="texgen-row">
+      <div class="lab">Espessura <b id="texgenThickV">50</b></div>
+      <input type="range" class="texgen-range" id="texgenThick" min="0" max="100" value="50">
+    </div>
+    <div class="texgen-row">
+      <div class="lab">Opacidade <b id="texgenOpV">60%</b></div>
+      <input type="range" class="texgen-range" id="texgenOp" min="0" max="100" value="60">
+    </div>
+    <div class="texgen-row">
+      <div class="lab">Mistura</div>
+      <select class="texgen-sel" id="texgenBlend">
+        <option value="overlay">Sobrepor</option>
+        <option value="soft-light">Luz Suave</option>
+        <option value="multiply">Multiplicar</option>
+        <option value="screen">Clarear</option>
+        <option value="normal">Normal</option>
+      </select>
+    </div>
+    <div class="texgen-row texgen-inline">
+      <button class="texgen-toggle" id="texgenInvert" type="button"><span class="dot"></span>Inverter</button>
+      <button class="texgen-btn" id="texgenRandom" type="button">Aleatorizar</button>
+    </div>
+    <div class="texgen-foot">
+      <button class="texgen-btn ghost" type="button" id="texgenNone">Remover textura</button>
+      <button class="primary" type="button" onclick="closeTexGenDialog()">Concluir</button>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  const TG = window.TextureGen;
+  let post = null, raf = null;
+  const $ = id => document.getElementById(id);
+  const defaults = () => ({ type: 'topografia', scale: 50, thickness: 50, seed: 7 });
+
+  function dataUri(g, w, h) { return TG.overlayDataUri({ type: g.type, scale: g.scale, thickness: g.thickness, seed: g.seed, w: w, h: h }); }
+
+  function updatePreview() {
+    if (!post || !post.texGen) return;
+    const p = $('texgenPrev');
+    p.style.backgroundImage = `url("${dataUri(post.texGen, 600, 600)}")`;
+    p.style.opacity = (post.signalPhotoTextureIntensity != null ? post.signalPhotoTextureIntensity : 60) / 100;
+    p.style.mixBlendMode = post.signalPhotoTextureBlendMode || 'overlay';
+    p.style.filter = 'grayscale(1)' + (post.signalPhotoTextureInvert ? ' invert(1)' : '');
+  }
+
+  function apply(save) {
+    if (!post) return;
+    if (post.texGen) post.signalPhotoTexture = dataUri(post.texGen, 1000, 1250);
+    const el = document.getElementById(post.id);
+    if (el && typeof applyPostVariant === 'function') applyPostVariant(el, post);
+    updatePreview();
+    if (save && typeof saveSession === 'function') saveSession();
+  }
+  function applyLive() { if (raf) return; raf = requestAnimationFrame(() => { raf = null; apply(false); }); }
+
+  function syncDialog() {
+    if (!post || !post.texGen) return;
+    const g = post.texGen;
+    document.querySelectorAll('#texgenTypes button').forEach(b => b.classList.toggle('active', b.dataset.t === g.type));
+    $('texgenScale').value = g.scale; $('texgenScaleV').textContent = g.scale;
+    $('texgenThick').value = g.thickness; $('texgenThickV').textContent = g.thickness;
+    const op = post.signalPhotoTextureIntensity != null ? post.signalPhotoTextureIntensity : 60;
+    $('texgenOp').value = op; $('texgenOpV').textContent = op + '%';
+    $('texgenBlend').value = post.signalPhotoTextureBlendMode || 'overlay';
+    $('texgenInvert').classList.toggle('on', !!post.signalPhotoTextureInvert);
+  }
+
+  // monta os botões de tipo
+  function buildTypes() {
+    const wrap = $('texgenTypes');
+    if (!wrap || wrap.childElementCount) return;
+    TG.TYPES.forEach(t => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.dataset.t = t; b.textContent = TG.LABELS[t];
+      b.addEventListener('click', () => { if (!post) return; post.texGen.type = t; syncDialog(); apply(true); });
+      wrap.appendChild(b);
+    });
+  }
+
+  window.openTexGenDialog = function () {
+    if (!TG) return;
+    post = (typeof getActivePost === 'function') ? getActivePost() : null;
+    if (!post) return;
+    if (!post.texGen) {
+      post.texGen = defaults();
+      post.signalPhotoTextureInvert = false;
+      if (post.signalPhotoTextureIntensity == null) post.signalPhotoTextureIntensity = 60;
+      if (!post.signalPhotoTextureBlendMode) post.signalPhotoTextureBlendMode = 'overlay';
+    }
+    buildTypes();
+    syncDialog();
+    apply(true);
+    $('texgenOverlay').classList.add('open');
+  };
+  window.closeTexGenDialog = function () { $('texgenOverlay').classList.remove('open'); };
+
+  // wiring (uma vez)
+  $('texgenScale').addEventListener('input', () => { if (!post) return; const v = +$('texgenScale').value; post.texGen.scale = v; $('texgenScaleV').textContent = v; applyLive(); });
+  $('texgenScale').addEventListener('change', () => apply(true));
+  $('texgenThick').addEventListener('input', () => { if (!post) return; const v = +$('texgenThick').value; post.texGen.thickness = v; $('texgenThickV').textContent = v; applyLive(); });
+  $('texgenThick').addEventListener('change', () => apply(true));
+  $('texgenOp').addEventListener('input', () => { if (!post) return; const v = +$('texgenOp').value; post.signalPhotoTextureIntensity = v; $('texgenOpV').textContent = v + '%'; applyLive(); });
+  $('texgenOp').addEventListener('change', () => apply(true));
+  $('texgenBlend').addEventListener('change', () => { if (!post) return; post.signalPhotoTextureBlendMode = $('texgenBlend').value; apply(true); });
+  $('texgenInvert').addEventListener('click', () => { if (!post) return; post.signalPhotoTextureInvert = !post.signalPhotoTextureInvert; $('texgenInvert').classList.toggle('on', !!post.signalPhotoTextureInvert); apply(true); });
+  $('texgenRandom').addEventListener('click', () => { if (!post) return; post.texGen.seed = Math.floor(Math.random() * 80) + 1; apply(true); });
+  $('texgenNone').addEventListener('click', () => {
+    if (!post) return;
+    post.texGen = null; post.signalPhotoTexture = 'none';
+    const el = document.getElementById(post.id);
+    if (el && typeof applyPostVariant === 'function') applyPostVariant(el, post);
+    if (typeof saveSession === 'function') saveSession();
+    window.closeTexGenDialog();
+  });
+  $('texgenOverlay').addEventListener('click', e => { if (e.target === $('texgenOverlay')) window.closeTexGenDialog(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('texgenOverlay').classList.contains('open')) window.closeTexGenDialog(); });
+})();
+</script>
 
 </body>
 </html>
