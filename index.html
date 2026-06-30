@@ -5417,6 +5417,15 @@
   #postControls #pcSubSignalTextureInvert,
   #postControls #pcSubSignalTextureBlend { display: flex; }
 
+  /* Textura procedural (dialog) — botão escondido por padrão, visível só no Editorial II. */
+  #postControls #pcSubTexGen { display: none; }
+  #postControls.style-li-editorial #pcSubTexGen { display: flex; }
+  /* No Editorial II a textura é procedural via dialog: esconde os controles legados (.webp). */
+  #postControls.style-li-editorial #pcSubSignalTexture,
+  #postControls.style-li-editorial #pcSubSignalTextureIntensity,
+  #postControls.style-li-editorial #pcSubSignalTextureInvert,
+  #postControls.style-li-editorial #pcSubSignalTextureBlend { display: none; }
+
   /* News editorial reaproveita os subs do revista (mesmos campos no postData),
      exceto a sombra na divisa — não faz sentido aqui (foto não toca o bloco). */
   #postControls.style-news-editorial #pcSubRevistaBlockColor,
@@ -11153,7 +11162,7 @@
             <option value="normal">Normal</option>
           </select>
         </div>
-        <div class="pc-sub" id="pcSubTexGen" style="display:none">
+        <div class="pc-sub" id="pcSubTexGen">
           <div class="pc-label">Textura</div>
           <button class="pc-color-btn" type="button" onclick="openTexGenDialog()">
             <span class="pc-color-btn-swatch" id="pcTexGenBtnSwatch" style="background:#1f2937"></span>
@@ -17375,16 +17384,6 @@ function updatePostControls(idx) {
     const el = document.getElementById(id);
     if (el) el.style.removeProperty('display');
   });
-  // Editorial II: textura é procedural via dialog — mostra o botão e esconde os
-  // controles legados de textura (.webp) pra manter a coluna limpa e objetiva.
-  (function () {
-    const texBtn = document.getElementById('pcSubTexGen');
-    if (texBtn) texBtn.style.display = isLiEditorial ? 'flex' : 'none';
-    if (isLiEditorial) {
-      ['pcSubSignalTexture', 'pcSubSignalTextureIntensity', 'pcSubSignalTextureInvert', 'pcSubSignalTextureBlend']
-        .forEach(id => { const e = document.getElementById(id); if (e) e.style.display = 'none'; });
-    }
-  })();
   // Sync accent bar controls
   const abPos = post.accentBarPos || 'tl';
   const abLegacy = abPos === 'top' || abPos === 'bottom' || abPos === 'left' || abPos === 'right';
