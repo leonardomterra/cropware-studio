@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>studio</title>
-<link rel="icon" type="image/png" href="favicon-studio.png">
+<link rel="icon" type="image/png" href="02-studio-favicon-png.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -2446,6 +2446,57 @@
     font-stretch: normal;
     font-weight: 500;
     letter-spacing: -0.015em;
+  }
+  /* ===== LinkedIn Editorial II: foto no topo (~40%) + bloco branco (~60%).
+     Manchete curta SOBRE a foto; lide (parágrafo) DENTRO do bloco branco. ===== */
+  .li-editii-photo { height: 45% !important; }
+  .li-editii-manchete {
+    position: absolute;
+    left: 64px; right: 64px; bottom: 46px;
+    z-index: 3;
+    color: #ffffff;
+    font-family: 'Vend Sans', 'Inter Tight', sans-serif;
+    font-weight: 700;
+    font-stretch: 92%;
+    font-size: calc(50px * var(--manchete-scale, 1));
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 26px rgba(0,0,0,0.38);
+  }
+  .news-edit-block.li-editii-block {
+    height: calc(55% + 1px);
+    background: #ffffff;
+    justify-content: flex-start;
+    padding: 60px 64px 76px 64px;
+    box-shadow: 0 -30px 60px rgba(15,23,42,0.08);
+  }
+  .li-editii-lide {
+    color: #1f2937;
+    font-family: 'Inter Tight', 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: calc(32px * var(--manchete-scale, 1));
+    line-height: 1.4;
+    letter-spacing: -0.003em;
+  }
+  /* Linha de destaque na divisa foto/bloco — 30% da largura, cor de destaque.
+     Alta especificidade p/ vencer `.news-edit-block > *` (que força position:relative). */
+  .news-edit-block.li-editii-block .li-editii-rule {
+    position: absolute;
+    top: 0; left: 64px;
+    width: 30%;
+    height: 6px;
+    background: var(--post-accent, #7AB87E);
+    border-radius: 999px;
+    z-index: 2;
+  }
+  /* Site ("saiba mais...") no topo-direito, SOBRE a foto (libera espaço no bloco).
+     Força a posição independente do data-pos e volta a cor clara + sombra. */
+  .post[data-type="linkedin-editorial-ii-post"] .post-site {
+    top: calc(56px + var(--site-offset-y, 0px));
+    right: calc(64px + var(--site-offset-x, 0px));
+    bottom: auto; left: auto;
+    color: rgba(255,255,255,0.82);
+    text-shadow: 0 1px 8px rgba(0,0,0,0.45);
   }
 
   /* Carrossel de tendência: header (só kicker, à direita) sobre a foto */
@@ -8656,11 +8707,12 @@
     transition: border-color 120ms ease, box-shadow 120ms ease;
   }
   .news-card.selected {
-    border-color: #2B452D;
-    box-shadow: 0 0 0 2px rgba(43,69,45,0.18);
+    border-color: #a3a3a3;
+    background: #f5f5f5;
+    box-shadow: none;
   }
   .news-card.selected .news-card-action {
-    background: #2B452D;
+    background: #404040;
     color: #fff;
   }
   .news-card-title {
@@ -15710,9 +15762,35 @@ function renderNewsEditorialStyle(postData) {
   // LinkedIn Editorial — variante full-bleed: imagem inteira + overlay + textura, texto por cima.
   // Sem bloco verde, sem kicker/datalinha — só chamada (hook curto) + manchete.
   if (isLinkedinEditorialType(postData.type)) {
-    const chamada    = postData.chamada || '';
     // Overlay + textura de foto: mesma mecânica do Instagram Ads I (overlayColor/Opacity/Direction + signalPhotoTexture)
     const overlayStyle = buildPostOverlayStyle(postData.overlayColor || '#0d2410', postData.overlayOpacity == null ? 68 : postData.overlayOpacity, postData.overlayDirection || 'bottom');
+
+    // Editorial II: foto no topo (~40%) + bloco branco (~60%). Manchete curta SOBRE a
+    // foto; lide (parágrafo) DENTRO do bloco branco em texto escuro.
+    if (postData.type === 'linkedin-editorial-ii-post') {
+      // Fallback p/ posts antigos (sem campo "lide"): o parágrafo está na manchete →
+      // joga no bloco branco e deixa o headline sobre a foto vazio.
+      const hasLide  = !!(postData.lide && postData.lide.trim());
+      const lide     = hasLide ? postData.lide : (manchete || '');
+      const headline = hasLide ? (manchete || '') : '';
+      return `
+    <div class="news-edit-photo li-editii-photo" style="background-image:url('${imgSrc}');background-position:${bgPos};">
+      ${renderPhotoTextureOverlay(postData)}
+      <div class="li-edit-overlay" style="${overlayStyle}"></div>
+      ${headline ? `<div class="li-editii-manchete" contenteditable="true" spellcheck="false">${escapeHTML(headline)}</div>` : ''}
+    </div>
+    <div class="news-edit-block li-editii-block">
+      <div class="li-editii-rule"></div>
+      <div class="li-editii-lide" contenteditable="true" spellcheck="false">${escapeHTML(lide)}</div>
+    </div>
+    ${postData.logoEnabled !== false ? `<img class="news-edit-logo" src="${brandLogoSrc(postData)}" alt="${brandLogoAlt(postData)}">` : ''}
+    ${renderSiteText(postData)}
+    <div class="brand-strip"></div>
+    `;
+    }
+
+    // Editorial I: variante full-bleed (imagem inteira + overlay, chamada + manchete grande).
+    const chamada    = postData.chamada || '';
     return `
     <div class="news-edit-photo li-edit-photo" style="background-image:url('${imgSrc}');background-position:${bgPos};">
       ${renderPhotoTextureOverlay(postData)}
@@ -23128,20 +23206,37 @@ async function listNewsCandidates(topic, referenceLinks) {
   const links = Array.isArray(referenceLinks) ? referenceLinks.filter(Boolean).slice(0, 5) : [];
   const today = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: 'long', year: 'numeric' });
   const linksBlock = links.length ? `\n\nLINKS DE REFERÊNCIA (ponto de partida da busca): ${links.join(' , ')}` : '';
+  // Editorial II usa um RECORTE TÉCNICO na busca (inovação/produto/ciência),
+  // enquanto o Editorial I mantém a varredura geral do agro.
+  const editorialII = activeMode === 'linkedin-editorial-ii-post';
   const themeLine = topic
     ? `Foco temático pedido pelo usuário: ${topic}.`
-    : 'Sem foco específico — traga as pautas mais relevantes do agronegócio brasileiro neste momento.';
-  const systemPrompt = `Você é editor de pauta da Cropware News. Faça UMA varredura via Google Search e devolva as 5 notícias MAIS RELEVANTES e RECENTES do agronegócio brasileiro${topic ? ' relacionadas ao foco pedido' : ''}.
+    : (editorialII
+      ? 'Sem foco específico — traga as pautas de INOVAÇÃO E TECNOLOGIA mais relevantes do agro brasileiro neste momento (lançamentos, moléculas, biológicos, sementes, nutrição vegetal, fertilizantes, pesquisa e movimentos de empresas).'
+      : 'Sem foco específico — traga as pautas mais relevantes do agronegócio brasileiro neste momento.');
+  const focusBlock = editorialII ? `
+
+RECORTE OBRIGATÓRIO — PAUTAS TÉCNICAS/DE INOVAÇÃO (não pautas de mercado):
+- Busque APENAS notícias de natureza técnica, científica, tecnológica ou de produto: lançamento de produtos/insumos, nova molécula ou ingrediente ativo, registro no MAPA, novo cultivar ou evento biotecnológico, defensivos químicos, produtos biológicos, nutrição vegetal, fertilizantes, tecnologia agrícola/agtech, pesquisa (Embrapa/universidades) e movimentos relevantes de EMPRESAS do agro (novas fábricas, aquisições, parcerias de P&D, aprovações regulatórias).
+- EXCLUA pautas cujo eixo seja preço, cotação, câmbio, safra/produção em números, clima, frete/logística ou política/crédito — essas são do Editorial I e NÃO devem aparecer aqui.
+- Fontes preferenciais para este recorte: AgroPages, AgFeed, Notícias Agrícolas (insumos/tecnologia), Globo Rural, Canal Rural, Revista Cultivar, Campo & Negócios, Embrapa, MAPA, CropLife, e comunicados de empresas (Bayer, Syngenta, BASF, Corteva, Nufarm, UPL, FMC, Biotrop, Simbiose, Yara, Mosaic, Nutrien, Koppert).` : '';
+  const sourcesLine = editorialII
+    ? '- Fontes preferenciais: AgroPages, AgFeed, Notícias Agrícolas, Globo Rural, Canal Rural, Revista Cultivar, Campo & Negócios, Agrolink, Embrapa, MAPA, CropLife e comunicados de empresas de insumos e tecnologia.'
+    : '- Fontes preferenciais: Globo Rural, Canal Rural, Notícias Agrícolas, Agrolink, AgFeed, Reuters, Valor Econômico, CONAB, USDA, MAPA, CEPEA, ANEC, ABIOVE, Aprosoja.';
+  const kickerLine = editorialII
+    ? '- Cada pauta: manchete factual (máx 90 caracteres), categoria (kicker MAIÚSCULO de 1-2 palavras: TECNOLOGIA, BIOLÓGICOS, DEFENSIVOS, SEMENTES, NUTRIÇÃO, FERTILIZANTES, PESQUISA, LANÇAMENTO, REGISTRO, EMPRESAS), data curta (DD/MM), resumo de 1 frase (máx 160 caracteres) e 1 a 3 URLs de fonte.'
+    : '- Cada pauta: manchete factual (máx 90 caracteres), categoria (kicker MAIÚSCULO de 1-2 palavras: MERCADO, CLIMA, SAFRA, EXPORTAÇÃO, POLÍTICA AGRO, PECUÁRIA, TECNOLOGIA, CÂMBIO, LOGÍSTICA, BIOLÓGICOS), data curta (DD/MM), resumo de 1 frase (máx 160 caracteres) e 1 a 3 URLs de fonte.';
+  const systemPrompt = `Você é editor de pauta da Cropware News. Faça UMA varredura via Google Search e devolva as 5 notícias ${editorialII ? 'TÉCNICAS/DE INOVAÇÃO' : 'MAIS RELEVANTES e RECENTES'} do agronegócio brasileiro${topic ? ' relacionadas ao foco pedido' : ''}.${focusBlock}
 
 REGRAS:
-- Use Google Search agora. Janela: últimos 7 dias (hoje é ${today}), priorizando as últimas 72h.
-- Fontes preferenciais: Globo Rural, Canal Rural, Notícias Agrícolas, Agrolink, AgFeed, Reuters, Valor Econômico, CONAB, USDA, MAPA, CEPEA, ANEC, ABIOVE, Aprosoja.
+- Use Google Search agora. ${editorialII ? `Janela: últimos 30 dias (hoje é ${today}), priorizando as mais recentes — pautas técnicas/de lançamento são menos frequentes, então vale um pouco mais de retrospecto.` : `Janela: últimos 7 dias (hoje é ${today}), priorizando as últimas 72h.`}
+${sourcesLine}
 - 5 pautas DISTINTAS (não repita a mesma notícia com palavras diferentes). Sem clickbait.
-- Cada pauta: manchete factual (máx 90 caracteres), categoria (kicker MAIÚSCULO de 1-2 palavras: MERCADO, CLIMA, SAFRA, EXPORTAÇÃO, POLÍTICA AGRO, PECUÁRIA, TECNOLOGIA, CÂMBIO, LOGÍSTICA, BIOLÓGICOS), data curta (DD/MM), resumo de 1 frase (máx 160 caracteres) e 1 a 3 URLs de fonte.
+${kickerLine}
 
 FORMATO DE SAÍDA — APENAS um array JSON válido, sem markdown, sem texto fora do array:
 [
-  {"kicker":"MERCADO","manchete":"...","data":"DD/MM","resumo":"...","fontes":["url1","url2"]}
+  {"kicker":"${editorialII ? 'TECNOLOGIA' : 'MERCADO'}","manchete":"...","data":"DD/MM","resumo":"...","fontes":["url1","url2"]}
 ]`;
   const userPrompt = `${themeLine}${linksBlock}\n\nPesquise agora via Google Search e devolva as 5 melhores pautas no formato JSON (array puro).`;
 
@@ -24422,9 +24517,11 @@ A LEGENDA é o coração do post — uma RELEITURA AMPLA escrita em parágrafos 
 - PROIBIDO terminar com pergunta retórica ("o que vocês acham?", "concordam?"), CTA genérico ("comenta aí") ou venda dura do produto.
 - Linguagem real do agro brasileiro (saca, safra, plantio, contratos, prêmio, basis, embarque, comercialização, manejo, rastreabilidade, defensivos, biológicos, exportação, etc) quando o tema permite.
 
-ÂNGULO CROPWARE (CONDICIONAL):
-- Inclua leitura ligada a desenvolvimento de mercado, geração de demanda, inteligência de campo, validação técnica, dados que sustentam decisão comercial — APENAS quando houver ligação NATURAL e ÓBVIA com a pauta. NÃO force.
-- Quando incluir, use forma editorial, NÃO publicitária: "Para quem constrói mercado no campo, a leitura é...", "Na operação de quem desenvolve mercado, o sinal aponta para...". Não trate "Cropware" como produto à venda no corpo do texto.
+ÂNGULO CROPWARE (OCASIONAL E DISCRETO):
+- Este ângulo é OPCIONAL e deve aparecer em NO MÁXIMO um a cada dois ou três posts. Na maioria das vezes o editorial fecha melhor SEM ele — se a ligação com a pauta não for espontânea e óbvia, simplesmente NÃO inclua. Omitir é preferível a encaixar à força.
+- Quando (e só quando) fizer sentido, DILUA a leitura de desenvolvimento de mercado / geração de demanda / inteligência de campo / dados que sustentam decisão comercial DENTRO de um parágrafo que já existe — nunca como um parágrafo-ponte isolado, nunca como abertura de frase padronizada.
+- PROIBIDO usar fórmulas de abertura recorrentes como "Para quem constrói mercado no campo...", "Para quem atua no desenvolvimento de mercado...", "Para lideranças técnicas e comerciais que...", "Na operação de quem desenvolve mercado...". Essas construções já ficaram batidas e robóticas. VARIE radicalmente a cada texto: o ângulo pode entrar como uma observação no meio de um parágrafo, uma oração subordinada, uma consequência prática citada de passagem, um aparte — e a forma exata deve ser ditada pelo assunto específico daquela pauta, nunca por um molde fixo.
+- Não nomeie "Cropware" como produto à venda no corpo do texto. É leitura de mercado com voz editorial, não anúncio.
 
 HASHTAGS:
 - 3 a 5 hashtags profissionais em linha separada após a legenda. Misture 1-2 de atualidade/setor (#agronegocio, #agro, #agronews) + 2-3 temáticas da pauta (#soja, #pecuaria, #exportacao, etc). Sem capitalização criativa. NÃO use #cropware nem #cropwarenews.
@@ -24446,6 +24543,75 @@ Responda APENAS em JSON válido, sem markdown:
   "manchete":    "Frase única, máx 14 palavras, com ponto final.",
   "title":       "título curto para sidebar (máx 60 caracteres)",
   "legend":      "releitura ampla em parágrafos curtos separados por linha em branco: abertura → fatos preservados → leitura de mercado → tese de fecho. 150-260 palavras.",
+  "hashtags":    "#tag1 #tag2 #tag3",
+  "imagePrompt": "photojournalistic editorial image prompt in english, no text, 4:5 composition with negative space at bottom"
+}`;
+}
+
+// LinkedIn Editorial II — mesma FORMA do Editorial I (mesmo JSON, mesma imagem
+// news-editorial), porém com RECORTE EDITORIAL TÉCNICO: lançamento de produtos,
+// novas moléculas, novidades tecnológicas, tendências e ciência do agro, movimentos
+// de empresas do setor, sementes, defensivos químicos, biológicos, nutrição vegetal
+// e fertilizantes. Menos leitura comercial, mais profundidade técnica/agronômica.
+function buildLinkedInEditorialIISystemPrompt(tone) {
+  const toneDirectives = {
+    casual:      'TOM: editorial técnico acessível, preciso mas legível, credibilidade B2B sem jargão gratuito.',
+    tecnico:     'TOM: editorial técnico/agronômico, vocabulário real do setor (modo de ação, ingrediente ativo, cultivar, evento biotecnológico, formulação, eficácia agronômica), sem inventar números.',
+    inspirador:  'TOM: editorial de visão tecnológica do setor, leitura de inovação e tendência, sem hype nem futurologia vazia.',
+    provocativo: 'TOM: editorial com tese técnica afiada que questiona um consenso do agro, fundamentada em ciência, sem clickbait.',
+  };
+  const toneBlock = toneDirectives[tone] || toneDirectives.tecnico;
+
+  return `Você é editor técnico-científico da redação da Cropware no LinkedIn. Sua função é pegar UMA pauta consolidada (que já vem com manchete, lide, fatos preservados, contexto e fontes) e escrever um POST EDITORIAL TÉCNICO de LinkedIn: uma releitura de uma novidade do agro com foco em INOVAÇÃO, CIÊNCIA E TECNOLOGIA — lançamento de produto, nova molécula/ingrediente ativo, novo cultivar ou evento biotecnológico, defensivo químico, produto biológico, nutrição vegetal, fertilizante, tecnologia agrícola, ou movimento relevante de uma empresa do setor. É a fusão da precisão factual de uma NOTÍCIA com a profundidade de uma análise TÉCNICA e a leitura de TENDÊNCIA tecnológica.
+
+RECORTE EDITORIAL (o que diferencia este formato do Editorial I): o ângulo aqui é TÉCNICO, NÃO comercial. Priorize o "como funciona", o "o que muda na lavoura e no manejo", o mecanismo agronômico, a novidade científica e o posicionamento do produto dentro do sistema de produção. Evite preço, negociação e leitura de mercado como eixo central — isso é o Editorial I. Aqui o protagonista é a tecnologia e a agronomia.
+
+REGRA ABSOLUTA: NUNCA invente fato, número, percentual, nome, molécula, mecanismo, data ou citação. Use APENAS o que vem na pauta entregue. Se faltar dado técnico, escreva sem ele — não preencha vazios com suposição nem invente modo de ação, dose ou resultado.
+
+REGRA DE PRESERVAÇÃO DOS FATOS (CRÍTICO):
+- A pauta traz um array de FATOS (nomes de produtos, moléculas/ingredientes ativos, culturas, empresas, datas, registros, resultados). Use pelo menos 2 desses fatos LITERALMENTE na legenda. NÃO arredonde, NÃO parafraseie a ponto de perder a precisão técnica.
+- Nomes próprios (produtos, moléculas, cultivares, empresas, órgãos como MAPA/Embrapa), datas (DD/MM/YYYY) e quaisquer números aparecem EXATAMENTE como na pauta.
+- Uma legenda editorial técnica sem nenhum dado concreto está ERRADA.
+
+A ARTE tem DUAS zonas: a FOTO no topo (~40%) e um BLOCO BRANCO embaixo (~60%). Ela leva DOIS blocos de texto:
+
+1. MANCHETE (campo "manchete") — fica SOBRE a foto, logo acima do bloco branco. Uma frase-título curta, máx 14 palavras, máx ~90 caracteres (1 a 2 linhas). Sentence case (só a primeira palavra e nomes próprios em maiúscula), termina com ponto final. Sem CAPS LOCK, sem aspas, sem emoji, sem reticências. Carrega o fato técnico mais importante, com leitura editorial mas factual.
+
+2. LIDE (campo "lide") — é o texto principal, DENTRO do bloco branco (texto escuro). Um PARÁGRAFO único e ENCORPADO de 100 a 130 palavras (aprox. 12 linhas — precisa preencher bem o bloco), factual e técnico, que desenvolve a novidade: o que é, como funciona/o que muda no manejo, para quais culturas ou sistemas, e por que importa agora. Frases corridas em 3-5 orações, SEM bullets, SEM quebras de linha manuais, SEM título embutido. Termina com ponto final. Sem CAPS LOCK, sem aspas, sem emoji, sem pergunta retórica. Usa pelo menos 2 fatos preservados da pauta (nome do produto/molécula/empresa/data/registro). NÃO repete a manchete — desenvolve. É diferente da LEGENDA (o texto longo do post) — o lide é a síntese densa que aparece na arte.
+
+A LEGENDA é o coração do post — uma RELEITURA TÉCNICA escrita em parágrafos curtos (estilo coluna de LinkedIn que respira):
+- Estrutura sugerida: (a) abertura de 1-2 frases que situa a novidade e por que ela importa agronomicamente; (b) 1-2 parágrafos com os fatos preservados da pauta (nomes, moléculas, culturas, datas) costurados em narrativa, não em lista; (c) a LEITURA TÉCNICA — o que muda no manejo e no sistema de produção, onde a tecnologia se encaixa, que problema agronômico ela endereça; (d) fecho com TESE editorial — o que observar na adoção/validação a seguir.
+- Tamanho: 150 a 260 palavras. Vários parágrafos curtos (2-4 frases cada), separados por linha em branco. Pode usar 1 ou 2 emojis sóbrios no máximo (opcional), no estilo editorial de LinkedIn — nunca poluir.
+- Não use primeira pessoa autobiográfica ("eu acho", "na minha experiência").
+- PROIBIDO terminar com pergunta retórica ("o que vocês acham?", "concordam?"), CTA genérico ("comenta aí") ou venda dura do produto.
+- Linguagem técnica real do agro brasileiro (modo de ação, ingrediente ativo, formulação, dose, cultivar, evento, refúgio, seletividade, eficácia, espectro de controle, fixação biológica, bioestimulante, uso eficiente de nutrientes, manejo integrado, resistência) quando o tema permite — sem inventar dados.
+
+ÂNGULO CROPWARE (RARO E TÉCNICO):
+- Este ângulo é OPCIONAL e deve aparecer em NO MÁXIMO um a cada três posts. Como aqui o foco é técnico, o mais comum é NÃO incluir. Só entre se a pauta tocar naturalmente em validação a campo, ensaios, geração de evidência técnica ou acompanhamento de desempenho.
+- Quando (e só quando) fizer sentido, dilua a menção DENTRO de um parágrafo já existente, em chave técnica (validar a campo, gerar evidência, acompanhar desempenho por talhão/região, registrar avaliações) — nunca como parágrafo-ponte isolado, nunca como abertura de frase padronizada, nunca em chave comercial de "construir mercado".
+- Não nomeie "Cropware" como produto à venda no corpo do texto.
+
+HASHTAGS:
+- 3 a 5 hashtags profissionais em linha separada após a legenda. Misture 1-2 de setor (#agronegocio, #agro, #tecnologiaagricola) + 2-3 temáticas da pauta (#biologicos, #defensivos, #sementes, #fertilizantes, #nutricaovegetal, #pesquisaagricola, etc). Sem capitalização criativa. NÃO use #cropware nem #cropwarenews.
+
+${toneBlock}
+${buildDesignContext('linkedin')}
+
+IMAGE_PROMPT (descrição em inglês para gerar a foto editorial 4:5):
+- Photojournalistic editorial premium image, contexto técnico/agronômico FACTUALMENTE conectado à pauta (molécula/defensivo → aplicação foliar ou detalhe de folha sadia; biológico → raiz com nódulos/solo vivo; semente/cultivar → lavoura no estádio certo ou plot de ensaio; nutrição/fertilizante → solo e nutrição de planta; tecnologia → cena de campo real com pessoa ou lavoura, SEM aparelhos de tela).
+- EVITE ABSOLUTAMENTE cenas propensas a texto: NADA de smartphones, tablets, monitores, dashboards, gráficos, telas, interfaces/HUD, painéis digitais, embalagens/rótulos de produto, placas, cartazes ou documentos. Esses elementos fazem o gerador cravar letras e números falsos na foto. Prefira SEMPRE cena natural de campo (planta, solo, folha, raiz, lavoura, mão do profissional) sem nenhum dispositivo com display.
+- The generated English prompt MUST end with this exact clause: "absolutely no text, no letters, no words, no numbers, no UI, no screens, no labels, no watermark anywhere in the image".
+- Clean composition, negative space at the bottom third (for the editorial block overlay).
+- Magnum/Reuters/Bloomberg aesthetic — NOT Apple-corporate, NOT generic stock.
+- Natural lighting, 50mm feel, gentle, natural depth of field (foreground and subject sharp). NO artificial dark gradients or overlays.
+
+Responda APENAS em JSON válido, sem markdown:
+{
+  "manchete":    "Frase-título curta, máx 14 palavras, sentence case, com ponto final (vai SOBRE a foto).",
+  "kicker":      "TECNOLOGIA",
+  "lide":        "Parágrafo-lide ENCORPADO de 100-130 palavras, factual e técnico, frases corridas, com ponto final (vai no BLOCO BRANCO).",
+  "title":       "título curto para sidebar (máx 60 caracteres)",
+  "legend":      "releitura técnica em parágrafos curtos separados por linha em branco: abertura → fatos preservados → leitura técnica → tese de fecho. 150-260 palavras.",
   "hashtags":    "#tag1 #tag2 #tag3",
   "imagePrompt": "photojournalistic editorial image prompt in english, no text, 4:5 composition with negative space at bottom"
 }`;
@@ -24810,7 +24976,9 @@ async function callGeminiText(theme, tone, userImageBase64, userImageMime, extra
     : platform === 'linkedin'
     ? buildLinkedInSystemPrompt(tone)
     : platform === 'linkedin-editorial'
-    ? buildLinkedInEditorialSystemPrompt(tone)
+    ? (activeMode === 'linkedin-editorial-ii-post'
+        ? buildLinkedInEditorialIISystemPrompt(tone)
+        : buildLinkedInEditorialSystemPrompt(tone))
     : platform === 'news'
     ? buildNewsPostSystemPrompt(tone)
     : platform === 'features'
@@ -25294,6 +25462,8 @@ async function generatePost() {
       postData.chamada   = (parsed.chamada  || '').toString().toUpperCase().replace(/[.]+$/, '').slice(0, 40).trim();
       postData.kicker    = (parsed.kicker    || (selectedNewsPauta && selectedNewsPauta.kicker) || 'AGRO').toString().toUpperCase().slice(0, 24).trim();
       postData.manchete  = (parsed.manchete  || '').toString().trim();
+      // Editorial II: manchete curta vai SOBRE a foto e o lide (parágrafo) no bloco branco.
+      postData.lide      = (parsed.lide      || '').toString().trim();
       postData.dataLinha = formatBrazilDateShort();
       // Variante full-bleed: a imagem não usa hook/complement/bullets/bloco
       delete postData.hookHTML;
