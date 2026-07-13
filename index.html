@@ -20768,6 +20768,58 @@ async function ensureLogoSvgMarkup() {
   return LOGO_SVG_MARKUP;
 }
 
+// Safari/WebKit não rasteriza SVG inline de forma confiável no html2canvas nem no
+// html-to-image (foreignObject) → o logo saía em branco no export do Mac/iPhone.
+// Solução: rasterizar o SVG para PNG data-URL aqui (drawImage com dimensões explícitas,
+// que o Safari suporta) e usar esse PNG no clone de export — renderiza igual em todo browser.
+const LOGO_PNG_CACHE = {};
+async function ensureLogoPng(fill) {
+  if (LOGO_PNG_CACHE[fill]) return LOGO_PNG_CACHE[fill];
+  const markup = await ensureLogoSvgMarkup();
+  if (!markup) return null;
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = markup;
+  const svg = wrapper.querySelector('svg');
+  if (!svg) return null;
+  // Pinta os paths com a cor de fill (mesma lógica do inline).
+  svg.querySelectorAll('path').forEach(p => {
+    p.setAttribute('fill', fill);
+    if (!p.getAttribute('fill-rule')) {
+      const ownStyle = p.getAttribute('style') || '';
+      const m = ownStyle.match(/fill-rule\s*:\s*(\w+)/);
+      p.setAttribute('fill-rule', m ? m[1] : 'evenodd');
+    }
+  });
+  // xmlns é obrigatório pra o SVG renderizar quando carregado como <img src="data:...">.
+  if (!svg.getAttribute('xmlns')) svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  const vb = (svg.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
+  const ratio = (vb.length === 4 && vb[2] && vb[3]) ? (vb[3] / vb[2]) : (29 / 210);
+  const outW = 1600;
+  const outH = Math.max(1, Math.round(outW * ratio));
+  svg.setAttribute('width', outW);
+  svg.setAttribute('height', outH);
+  const svgUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(svg));
+  const dataUrl = await new Promise(resolve => {
+    const im = new Image();
+    im.onload = () => {
+      try {
+        const c = document.createElement('canvas');
+        c.width = outW; c.height = outH;
+        c.getContext('2d').drawImage(im, 0, 0, outW, outH);
+        resolve(c.toDataURL('image/png'));
+      } catch (_) { resolve(null); }
+    };
+    im.onerror = () => resolve(null);
+    im.src = svgUrl;
+  });
+  if (dataUrl) LOGO_PNG_CACHE[fill] = dataUrl;
+  return dataUrl;
+}
+// Pré-rasteriza as duas cores de fill usadas (branco / cinza escuro).
+async function ensureLogoRasters() {
+  await Promise.all(['#ffffff', '#4d4d4d'].map(ensureLogoPng));
+}
+
 // Decide cor do fill pra substituir a logo no clone de download.
 // Classic/dashboard/split (default) → branco. Revista → cinza escuro.
 // data-brand no .post é a fonte de verdade (CSS usa !important),
@@ -21742,6 +21794,17 @@ function inlineLogosForCapture(rootEl, doc, dims) {
   const imgs = Array.from(rootEl.querySelectorAll('img[src*="logo-cropware"]'));
   imgs.forEach((img, i) => {
     const fill = resolveLogoFillColor(img);
+    // Preferência: PNG rasterizado (renderiza no Safari). Mantém o <img>, só troca o src.
+    const png = LOGO_PNG_CACHE[fill];
+    if (png) {
+      const w = (dims && dims[i] && dims[i].width)  || img.offsetWidth  || 210;
+      const h = (dims && dims[i] && dims[i].height) || img.offsetHeight || 29;
+      img.removeAttribute('srcset');
+      img.src = png;
+      img.style.cssText = (img.getAttribute('style') || '') + `;width:${w}px;height:${h}px;filter:none;display:block;`;
+      return;
+    }
+    // Fallback (browsers que rasterizam SVG inline, ex. Chrome): substitui por <svg>.
     const wrapper = doc.createElement('div');
     wrapper.innerHTML = LOGO_SVG_MARKUP;
     const svg = wrapper.querySelector('svg');
@@ -21842,7 +21905,7 @@ async function bootStudio() {
     console.error('bootStudio loadDesignConfig failed:', e);
   }
 
-  ensureLogoSvgMarkup();       // pré-carrega SVG markup (pro html2canvas inline)
+  ensureLogoRasters();         // pré-carrega SVG markup + rasteriza logo p/ PNG (export cross-browser)
 
   // Restaura último modo selecionado (persistido no localStorage)
   try {
@@ -22144,6 +22207,7 @@ async function downloadCurrent() {
 
     await ensureFontsReady();
     await ensureLogoSvgMarkup();
+    await ensureLogoRasters();
     await preloadPhosphorSvgsFor(postEl);
 
     scaler.style.visibility = 'hidden';
@@ -22188,15 +22252,24 @@ async function downloadCurrent() {
       if (blurInputSrc.startsWith('blob:')) URL.revokeObjectURL(blurInputSrc);
     }
 
-    // Mobile: scale 2 em vez de 4 (limite de ~16M pixels em browsers mobile)
-    const exportScale = isMobile() ? 2 : 4;
-
     if (shouldUseHtmlToImageExport(post)) {
       const htmlToImageBgSwap = await swapBgsToBlobUrl(postEl, effectiveBgImage);
       try {
-        const exportName = buildPngExportName(post, isInstagramFlatTypeAny(post.type) ? 'cropware_flat.png' : 'cropware.png');
-        const blob = await capturePostWithHtmlToImage(postEl, post, postW, postH, exportScale, logoDims, blurredUrl);
-        downloadBlob(blob, exportName);
+        // Resolução nativa do feed (1080px): supersample 2× → downscale. Evita o
+        // export a 4× (4320px) que estoura o limite de tamanho do upload. Ads
+        // (fotográfico) sai em JPEG; demais estilos preservam PNG lossless.
+        const isAds = isInstagramAdsTypeAny(post.type);
+        const hiResBlob = await capturePostWithHtmlToImage(postEl, post, postW, postH, 2, logoDims, blurredUrl);
+        const bitmap = await createImageBitmap(hiResBlob);
+        try {
+          const mime = isAds ? 'image/jpeg' : 'image/png';
+          const nativeBlob = await encodeNativeSocialBlob(bitmap, postW, postH, mime, 0.9);
+          let exportName = buildPngExportName(post, isInstagramFlatTypeAny(post.type) ? 'cropware_flat.png' : isAds ? 'cropware_ads.png' : 'cropware.png');
+          if (isAds) exportName = exportName.replace(/\.png$/i, '.jpg');
+          downloadBlob(nativeBlob, exportName);
+        } finally {
+          bitmap.close();
+        }
         return;
       } catch (err) {
         console.warn('html-to-image export failed; falling back to html2canvas.', err);
@@ -22218,7 +22291,7 @@ async function downloadCurrent() {
     let canvas;
     try {
       canvas = await html2canvas(postEl, {
-        scale: exportScale,
+        scale: 2, // supersample → reduzido para 1080px nativo abaixo
         useCORS: true,
         width:  postW,
         height: postH,
@@ -22256,12 +22329,12 @@ async function downloadCurrent() {
       blurSaved.forEach(s => { s.el.style.backgroundImage = s.orig; });
     }
 
-    // Exporta PNG para logos (cor chapada/ícone) e JPEG para posts com foto.
+    // Reduz o supersample para a resolução nativa do feed (1080px) em JPEG.
     const baseFilename = post.filename || 'cropware.jpg';
     const filename = post.format === 'story'
       ? baseFilename.replace(/\.jpg$/i, '_story.jpg')
       : baseFilename;
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
+    const blob = await encodeNativeSocialBlob(canvas, postW, postH, 'image/jpeg', 0.9);
     downloadBlob(blob, filename);
   } catch(e) {
     alert('Erro ao exportar: ' + e.message);
@@ -22302,6 +22375,7 @@ async function captureSlideAsCanvas(slideData, scale = 4) {
   try {
     await ensureFontsReady();
     await ensureLogoSvgMarkup();
+    await ensureLogoRasters();
     await preloadPhosphorSvgsFor(postEl);
 
     scaler.style.visibility = 'hidden';
@@ -22415,16 +22489,42 @@ function getSlideExportMime(slideData) {
   return getSlideExportExtension(slideData) === 'png' ? 'image/png' : 'image/jpeg';
 }
 
+// Reduz uma fonte hi-res (canvas/imagem/bitmap) para a resolução nativa do feed
+// (1080px) e encoda. Instagram/LinkedIn exibem no máximo 1080px de largura e
+// recomprimem qualquer coisa maior — exportar a 4× (4320px) só infla o arquivo e
+// faz o upload falhar por tamanho ("escolha um arquivo menor"), sem ganho visível.
+// JPEG (fotográfico) leva unsharp pra compensar downscale+compressão; PNG fica
+// lossless (flat/ícone), sem sharpen pra não criar halo nas bordas duras.
+async function encodeNativeSocialBlob(source, targetW, targetH, mime = 'image/jpeg', quality = 0.9) {
+  const flat = document.createElement('canvas');
+  flat.width = targetW;
+  flat.height = targetH;
+  const ctx = flat.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(source, 0, 0, targetW, targetH); // downscale bicúbico
+  if (mime === 'image/jpeg') {
+    sharpenCanvas(flat, 1, 0.3);
+    return new Promise(resolve => flat.toBlob(resolve, 'image/jpeg', quality));
+  }
+  return new Promise(resolve => flat.toBlob(resolve, mime));
+}
+
 async function captureSlideAsBlob(slideData) {
-  // Mobile: scale 2; Presentation (1920×1080) scale 2 → 3840×2160 4K; Feed/story: scale 4
-  const isPres = slideData.format === 'presentation';
-  const scale = (isMobile() || isPres) ? 2 : 4;
-  const canvas = await captureSlideAsCanvas(slideData, scale);
-  const mime = getSlideExportMime(slideData);
-  return new Promise(resolve => {
-    if (mime === 'image/jpeg') canvas.toBlob(resolve, mime, 0.95);
-    else canvas.toBlob(resolve, mime);
-  });
+  // Apresentação (1920×1080 landscape) não vai pro feed — pode ser projetada ou
+  // embutida em deck; mantém alta resolução (scale 2 → 4K).
+  if (slideData.format === 'presentation') {
+    const canvas = await captureSlideAsCanvas(slideData, 2);
+    const mime = getSlideExportMime(slideData);
+    return new Promise(resolve => {
+      if (mime === 'image/jpeg') canvas.toBlob(resolve, mime, 0.95);
+      else canvas.toBlob(resolve, mime);
+    });
+  }
+  // Feed/story/square: supersample 2× → resolução nativa (1080px) do Instagram.
+  const dims = getPostDimensions(slideData.format || 'feed');
+  const canvas = await captureSlideAsCanvas(slideData, 2);
+  return encodeNativeSocialBlob(canvas, dims.w, dims.h, getSlideExportMime(slideData), 0.9);
 }
 
 async function downloadCarousel() {
