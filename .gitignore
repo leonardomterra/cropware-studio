@@ -32,3 +32,7 @@ test-reel*.json
 # Logs do dev-server (gerados pelo vite quando rodado em background)
 dev-server.log
 dev-server.err.log
+
+# Renders de teste do piloto Buriti (~35 MB de PNG, gerados durante o desenvolvimento)
+_testes-recorte/
+_testes-aniversario/
